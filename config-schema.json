@@ -34,85 +34,90 @@
             "type": "object"
         },
         "modules": {
-            "httpServer": {
-                "additionalProperties": false,
-                "properties": {
-                    "enabled": {
-                        "type": "boolean"
-                    },
-                    "cors": {
-                        "$ref": "#/definitions/CorsOptions"
-                    },
-                    "apiKey": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "sync": {
-                "additionalProperties": false,
-                "properties": {
-                    "enabled": {
-                        "type": "boolean"
-                    },
-                    "interval": {
-                        "type": "integer",
-                        "default": 60,
-                        "example": 50,
-                        "minimum": 1
-                    }
-                },
-                "type": "object"
-            },
-            "autoAcceptRelationshipCreationChanges": {
-                "additionalProperties": false,
-                "properties": {
-                    "enabled": {
-                        "type": "boolean"
-                    },
-                    "responseContent": {}
-                },
-                "type": "object"
-            },
-            "coreHttpApi": {
-                "additionalProperties": false,
-                "properties": {
-                    "enabled": {
-                        "type": "boolean"
-                    },
-                    "docs": {
-                        "additionalProperties": false,
-                        "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "httpServer": {
+                    "additionalProperties": false,
+                    "properties": {
                         "enabled": {
                             "type": "boolean"
+                        },
+                        "cors": {
+                            "$ref": "#/definitions/CorsOptions"
+                        },
+                        "apiKey": {
+                            "type": "string"
                         }
-                    }
+                    },
+                    "type": "object"
                 },
-                "type": "object"
-            },
-            "webhooks": {
-                "additionalProperties": false,
-                "properties": {
-                    "enabled": {
-                        "type": "boolean"
+                "sync": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "interval": {
+                            "type": "integer",
+                            "default": 60,
+                            "example": 50,
+                            "minimum": 1
+                        }
                     },
-                    "url": {
-                        "type": "string"
+                    "type": "object"
+                },
+                "autoAcceptRelationshipCreationChanges": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "responseContent": {}
                     },
-                    "headers": {
-                        "additionalProperties": {
+                    "type": "object"
+                },
+                "coreHttpApi": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "docs": {
+                            "additionalProperties": false,
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    },
+                    "type": "object"
+                },
+                "webhooks": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "url": {
                             "type": "string"
                         },
-                        "type": "object"
+                        "headers": {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        "publishInterval": {
+                            "type": "integer",
+                            "default": 60,
+                            "example": 50,
+                            "minimum": 1
+                        }
                     },
-                    "publishInterval": {
-                        "type": "integer",
-                        "default": 60,
-                        "example": 50,
-                        "minimum": 1
-                    }
-                },
-                "type": "object"
+                    "type": "object"
+                }
             },
             "type": "object"
         }
