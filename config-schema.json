@@ -1,0 +1,193 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "properties": {
+        "transportLibrary": {
+            "additionalProperties": false,
+            "properties": {
+                "platformClientId": {
+                    "type": "string"
+                },
+                "platformClientSecret": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "database": {
+            "additionalProperties": false,
+            "properties": {
+                "connectionString": {
+                    "type": "string"
+                },
+                "dbName": {
+                    "type": "string"
+                }
+            },
+            "required": ["connectionString"],
+            "type": "object"
+        },
+        "modules": {
+            "httpServer": {
+                "additionalProperties": false,
+                "properties": {
+                    "enabled": {
+                        "type": "boolean"
+                    },
+                    "cors": {
+                        "$ref": "#/definitions/CorsOptions"
+                    },
+                    "apiKey": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "sync": {
+                "additionalProperties": false,
+                "properties": {
+                    "enabled": {
+                        "type": "boolean"
+                    },
+                    "interval": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "autoAcceptRelationshipCreationChanges": {
+                "additionalProperties": false,
+                "properties": {
+                    "enabled": {
+                        "type": "boolean"
+                    },
+                    "responseContent": {}
+                },
+                "type": "object"
+            },
+            "coreHttpApi": {
+                "additionalProperties": false,
+                "properties": {
+                    "enabled": {
+                        "type": "boolean"
+                    },
+                    "docs": {
+                        "additionalProperties": false,
+                        "type": "object",
+                        "enabled": {
+                            "type": "boolean"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "webhooks": {
+                "additionalProperties": false,
+                "properties": {
+                    "enabled": {
+                        "type": "boolean"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "headers": {
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "type": "object"
+                    },
+                    "publishInterval": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "object"
+        }
+    },
+    "required": ["database", "transportLibrary"],
+    "type": "object",
+    "definitions": {
+        "CorsOptionMethod": {
+            "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
+            "type": "string"
+        },
+        "CorsOptions": {
+            "additionalProperties": false,
+            "properties": {
+                "allowedHeaders": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    ]
+                },
+                "credentials": {
+                    "type": "boolean"
+                },
+                "exposedHeaders": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    ]
+                },
+                "maxAge": {
+                    "type": "number"
+                },
+                "methods": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/CorsOptionMethod"
+                        },
+                        {
+                            "items": {
+                                "$ref": "#/definitions/CorsOptionMethod"
+                            },
+                            "type": "array"
+                        }
+                    ]
+                },
+                "optionsSuccessStatus": {
+                    "type": "number"
+                },
+                "origin": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "format": "regex",
+                            "type": "string"
+                        },
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    ]
+                },
+                "preflightContinue": {
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        }
+    }
+}
