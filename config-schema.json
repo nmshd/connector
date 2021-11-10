@@ -16,7 +16,8 @@
                     "type": "string"
                 }
             },
-            "type": "object"
+            "type": "object",
+            "required": ["platformClientId", "platformClientSecret"]
         },
         "database": {
             "additionalProperties": false,
@@ -29,6 +30,7 @@
                 }
             },
             "required": ["connectionString"],
+
             "type": "object"
         },
         "modules": {
@@ -54,7 +56,10 @@
                         "type": "boolean"
                     },
                     "interval": {
-                        "type": "integer"
+                        "type": "integer",
+                        "default": 60,
+                        "example": 50,
+                        "minimum": 1
                     }
                 },
                 "type": "object"
@@ -101,7 +106,10 @@
                         "type": "object"
                     },
                     "publishInterval": {
-                        "type": "integer"
+                        "type": "integer",
+                        "default": 60,
+                        "example": 50,
+                        "minimum": 1
                     }
                 },
                 "type": "object"
