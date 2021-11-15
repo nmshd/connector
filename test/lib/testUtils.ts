@@ -20,9 +20,9 @@ export async function syncUntil(client: ConnectorClient, until: (syncResult: Con
     const connectorSyncResult: ConnectorSyncResult = { messages: [...syncResponse.result.messages], relationships: [...syncResponse.result.relationships] };
 
     let iterationNumber = 0;
-    while (!until(connectorSyncResult) && iterationNumber < 15) {
+    while (!until(connectorSyncResult) && iterationNumber < 25) {
         iterationNumber++;
-        await sleep(iterationNumber * 25);
+        await sleep(iterationNumber * 50);
 
         const newSyncResponse = await client.account.sync();
         expectSuccess(newSyncResponse, ValidationSchema.ConnectorSyncResult);
