@@ -1,0 +1,64 @@
+version: "3.7"
+services:
+  bc-1:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.debug
+    ports:
+      - "3000:80" # Webserver
+      - "9229:9229" # Debugger
+    environment:
+      - CUSTOM_CONFIG_LOCATION=/config.json
+      - SYNC_ENABLED
+    volumes:
+      - ..:/usr/app
+      - ./config.json:/config.json:RO
+    depends_on:
+      - mongo
+      - mongo-express
+    stdin_open: true
+    tty: true
+
+  bc-2:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.debug
+    ports:
+      - "3001:80" # Webserver
+      - "9231:9229" # Debugger
+    environment:
+      - CUSTOM_CONFIG_LOCATION=/config.json
+      - SYNC_ENABLED
+    volumes:
+      - .:/usr/app
+      - ./config.json:/config.json:RO
+    depends_on:
+      - mongo
+      - mongo-express
+    stdin_open: true
+    tty: true
+
+  mongo:
+    container_name: mongo
+    hostname: mongo
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    logging:
+      driver: none
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express
+    ports:
+      - "3003:8081"
+    environment:
+      ME_CONFIG_OPTIONS_EDITORTHEME: lucario
+      ME_CONFIG_MONGODB_SERVER: mongo
+    depends_on:
+      - mongo
+
+volumes:
+  mongo_data:

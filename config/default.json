@@ -1,0 +1,87 @@
+{
+    "transportLibrary": {
+        "realm": "id1"
+    },
+    "database": {
+        "connectionString": "default-connection-string",
+        "dbName": "default"
+    },
+    "logging": {
+        "appenders": {
+            "fileAppender": {
+                "type": "dateFile",
+                "filename": "./logs/latest.log"
+            },
+            "consoleAppender": {
+                "type": "stdout",
+                "layout": { "type": "pattern", "pattern": "%[[%d] [%p] %c - %m%]" }
+            },
+            "console": {
+                "type": "logLevelFilter",
+                "level": "INFO",
+                "appender": "consoleAppender"
+            },
+            "file": {
+                "type": "logLevelFilter",
+                "level": "INFO",
+                "appender": "fileAppender"
+            }
+        },
+
+        "categories": {
+            "default": {
+                "appenders": ["file", "console"],
+                "level": "TRACE"
+            }
+        }
+    },
+    "modules": {
+        "httpServer": {
+            "displayName": "HTTP Server",
+            "location": "httpServer/HttpServerModule",
+            "enabled": true,
+
+            "port": 80,
+            "cors": {
+                "origin": false
+            }
+        },
+        "sync": {
+            "displayName": "Sync",
+            "location": "sync/SyncModule",
+            "enabled": false,
+
+            "interval": 60
+        },
+        "autoAcceptRelationshipCreationChanges": {
+            "displayName": "Auto Accept Relationship Creation Changes",
+            "location": "autoAcceptRelationshipCreationChanges/AutoAcceptRelationshipCreationChangesModule",
+            "enabled": false,
+
+            "dependsOn": ["sync"],
+
+            "responseContent": {}
+        },
+        "coreHttpApi": {
+            "displayName": "Core HTTP API",
+            "location": "coreHttpApi/CoreHttpApiModule",
+            "enabled": true,
+
+            "dependsOn": ["httpServer"],
+
+            "docs": {
+                "enabled": true
+            }
+        },
+        "webhooks": {
+            "displayName": "Webhooks",
+            "enabled": false,
+            "location": "webhooks/WebhooksModule",
+            "dependsOn": ["sync"],
+
+            "url": "",
+            "headers": {},
+            "publishInterval": 60
+        }
+    }
+}

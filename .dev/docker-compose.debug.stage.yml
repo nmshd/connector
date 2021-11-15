@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+  bc-1:
+    container_name: bc-1-stage
+    environment:
+      - NODE_CONFIG_ENV=stage
+      - DATABASE_NAME=stage-1
+
+  bc-2:
+    container_name: bc-2-stage
+    environment:
+      - NODE_CONFIG_ENV=stage
+      - DATABASE_NAME=stage-2

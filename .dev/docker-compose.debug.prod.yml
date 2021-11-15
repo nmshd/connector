@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  bc-1:
+    container_name: bc-1-prod
+    environment:
+      - NODE_CONFIG_ENV=prod
+      - DATABASE_NAME=prod-1
+  bc-2:
+    container_name: bc-2-prod
+    environment:
+      - NODE_CONFIG_ENV=prod
+      - DATABASE_NAME=prod-2

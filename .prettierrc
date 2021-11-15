@@ -7,7 +7,7 @@
     "arrowParens": "always",
     "overrides": [
         {
-            "files": ["*.yaml", "*.yml"],
+            "files": ["*.yml"],
             "options": {
                 "tabWidth": 2
             }
