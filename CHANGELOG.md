@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.8
+
+-> SDK 1.1.5
+
+-   open source release
+
 ## 2.0.7
 
 -> SDK 1.1.4

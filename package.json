@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/connector",
-    "version": "2.0.7",
+    "version": "2.0.8",
     "private": true,
     "description": "The Enmeshed Business Connector",
     "license": "MIT",
