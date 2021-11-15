@@ -1,0 +1,15 @@
+{
+    "ignorePatterns": ["/*", "!/src", "!/test", "!/packages", "/packages/*/*", "!/packages/*/src"],
+    "extends": ["@js-soft/ts", "@js-soft/ts/jest"],
+    "parserOptions": {
+        "project": ["./tsconfig.json", "./test/tsconfig.json", "./packages/*/tsconfig.json"]
+    },
+    "rules": {
+        "jest/expect-expect": [
+            "error",
+            {
+                "assertFunctionNames": ["expect", "*.executeTests", "expectSuccess", "expectError", "validateSchema"]
+            }
+        ]
+    }
+}

@@ -1,0 +1,9 @@
+packages
+.vscode
+examples
+test
+logs
+.git
+dist
+node_modules
+scripts

@@ -1,0 +1,1029 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {},
+    "properties": {
+        "database": {
+            "additionalProperties": false,
+            "properties": {
+                "connectionString": {
+                    "type": "string"
+                },
+                "dbName": {
+                    "type": "string"
+                }
+            },
+            "required": ["connectionString", "dbName"],
+            "type": "object"
+        },
+        "logging": {
+            "additionalProperties": false,
+            "properties": {
+                "appenders": {
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "additionalProperties": false,
+                                "description": "Category Filter",
+                                "properties": {
+                                    "appender": {
+                                        "type": "string"
+                                    },
+                                    "exclude": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            }
+                                        ]
+                                    },
+                                    "type": {
+                                        "const": "categoryFilter",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["type"],
+                                "type": "object"
+                            },
+                            {
+                                "additionalProperties": false,
+                                "description": "Console Appender",
+                                "properties": {
+                                    "layout": {
+                                        "anyOf": [
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "basic",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "enum": ["colored", "coloured"],
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "messagePassThrough",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "dummy",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "pattern": {
+                                                        "type": "string"
+                                                    },
+                                                    "tokens": {
+                                                        "additionalProperties": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "type": {
+                                                        "const": "pattern",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type", "pattern"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "type": {
+                                        "const": "console",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["type"],
+                                "type": "object"
+                            },
+                            {
+                                "additionalProperties": false,
+                                "properties": {
+                                    "backups": {
+                                        "type": "number"
+                                    },
+                                    "compress": {
+                                        "type": "boolean"
+                                    },
+                                    "encoding": {
+                                        "type": "string"
+                                    },
+                                    "filename": {
+                                        "type": "string"
+                                    },
+                                    "flags": {
+                                        "type": "string"
+                                    },
+                                    "keepFileExt": {
+                                        "type": "boolean"
+                                    },
+                                    "layout": {
+                                        "anyOf": [
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "basic",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "enum": ["colored", "coloured"],
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "messagePassThrough",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "dummy",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "pattern": {
+                                                        "type": "string"
+                                                    },
+                                                    "tokens": {
+                                                        "additionalProperties": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "type": {
+                                                        "const": "pattern",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type", "pattern"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "maxLogSize": {
+                                        "type": ["number", "string"]
+                                    },
+                                    "mode": {
+                                        "type": "number"
+                                    },
+                                    "numBackups": {
+                                        "type": "number"
+                                    },
+                                    "type": {
+                                        "const": "file",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["type", "filename"],
+                                "type": "object"
+                            },
+                            {
+                                "additionalProperties": false,
+                                "properties": {
+                                    "backups": {
+                                        "type": "number"
+                                    },
+                                    "filename": {
+                                        "type": "string"
+                                    },
+                                    "layout": {
+                                        "anyOf": [
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "basic",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "enum": ["colored", "coloured"],
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "messagePassThrough",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "dummy",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "pattern": {
+                                                        "type": "string"
+                                                    },
+                                                    "tokens": {
+                                                        "additionalProperties": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "type": {
+                                                        "const": "pattern",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type", "pattern"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "maxLogSize": {
+                                        "type": ["number", "string"]
+                                    },
+                                    "type": {
+                                        "const": "fileSync",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["type", "filename"],
+                                "type": "object"
+                            },
+                            {
+                                "additionalProperties": false,
+                                "properties": {
+                                    "alwaysIncludePattern": {
+                                        "type": "boolean"
+                                    },
+                                    "compress": {
+                                        "type": "boolean"
+                                    },
+                                    "daysToKeep": {
+                                        "type": "number"
+                                    },
+                                    "encoding": {
+                                        "type": "string"
+                                    },
+                                    "filename": {
+                                        "type": "string"
+                                    },
+                                    "flags": {
+                                        "type": "string"
+                                    },
+                                    "keepFileExt": {
+                                        "type": "boolean"
+                                    },
+                                    "layout": {
+                                        "anyOf": [
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "basic",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "enum": ["colored", "coloured"],
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "messagePassThrough",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "dummy",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "pattern": {
+                                                        "type": "string"
+                                                    },
+                                                    "tokens": {
+                                                        "additionalProperties": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "type": {
+                                                        "const": "pattern",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type", "pattern"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "mode": {
+                                        "type": "number"
+                                    },
+                                    "pattern": {
+                                        "description": "The following strings are recognised in the pattern:  - yyyy : the full year, use yy for just the last two digits  - MM   : the month  - dd   : the day of the month  - hh   : the hour of the day (24-hour clock)  - mm   : the minute of the hour  - ss   : seconds  - SSS  : milliseconds (although I'm not sure you'd want to roll your logs every millisecond)  - O    : timezone (capital letter o)",
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "const": "dateFile",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["type", "filename"],
+                                "type": "object"
+                            },
+                            {
+                                "additionalProperties": false,
+                                "properties": {
+                                    "appender": {
+                                        "type": "string"
+                                    },
+                                    "level": {
+                                        "type": "string"
+                                    },
+                                    "maxLevel": {
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "const": "logLevelFilter",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["type", "appender", "level"],
+                                "type": "object"
+                            },
+                            {
+                                "additionalProperties": false,
+                                "description": "No Log Filter",
+                                "properties": {
+                                    "appender": {
+                                        "type": "string"
+                                    },
+                                    "exclude": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            }
+                                        ]
+                                    },
+                                    "type": {
+                                        "const": "noLogFilter",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["type", "exclude", "appender"],
+                                "type": "object"
+                            },
+                            {
+                                "additionalProperties": false,
+                                "properties": {
+                                    "base": {
+                                        "type": "string"
+                                    },
+                                    "extension": {
+                                        "type": "string"
+                                    },
+                                    "property": {
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "const": "multiFile",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["type", "base", "property", "extension"],
+                                "type": "object"
+                            },
+                            {
+                                "additionalProperties": false,
+                                "properties": {
+                                    "appender": {
+                                        "type": "string"
+                                    },
+                                    "loggerHost": {
+                                        "type": "string"
+                                    },
+                                    "loggerPort": {
+                                        "type": "number"
+                                    },
+                                    "mode": {
+                                        "enum": ["master", "worker"],
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "const": "multiprocess",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["type", "mode"],
+                                "type": "object"
+                            },
+                            {
+                                "additionalProperties": false,
+                                "properties": {
+                                    "type": {
+                                        "const": "recording",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["type"],
+                                "type": "object"
+                            },
+                            {
+                                "additionalProperties": false,
+                                "properties": {
+                                    "layout": {
+                                        "anyOf": [
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "basic",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "enum": ["colored", "coloured"],
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "messagePassThrough",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "dummy",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "pattern": {
+                                                        "type": "string"
+                                                    },
+                                                    "tokens": {
+                                                        "additionalProperties": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "type": {
+                                                        "const": "pattern",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type", "pattern"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "type": {
+                                        "const": "stderr",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["type"],
+                                "type": "object"
+                            },
+                            {
+                                "additionalProperties": false,
+                                "properties": {
+                                    "layout": {
+                                        "anyOf": [
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "basic",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "enum": ["colored", "coloured"],
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "messagePassThrough",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "type": {
+                                                        "const": "dummy",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "pattern": {
+                                                        "type": "string"
+                                                    },
+                                                    "tokens": {
+                                                        "additionalProperties": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "type": {
+                                                        "const": "pattern",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type", "pattern"],
+                                                "type": "object"
+                                            },
+                                            {
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["type"],
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "type": {
+                                        "const": "stdout",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["type"],
+                                "type": "object"
+                            },
+                            {
+                                "properties": {
+                                    "type": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "additionalProperties": false,
+                                                "type": "object"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "required": ["type"],
+                                "type": "object"
+                            }
+                        ]
+                    },
+                    "type": "object"
+                },
+                "categories": {
+                    "additionalProperties": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "appenders": {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            "enableCallStack": {
+                                "type": "boolean"
+                            },
+                            "level": {
+                                "type": "string"
+                            }
+                        },
+                        "required": ["appenders", "level"],
+                        "type": "object"
+                    },
+                    "type": "object"
+                },
+                "disableClustering": {
+                    "type": "boolean"
+                },
+                "levels": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "ALL": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "colour": {
+                                    "type": "string"
+                                },
+                                "level": {
+                                    "type": "number"
+                                },
+                                "levelStr": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["colour", "level", "levelStr"],
+                            "type": "object"
+                        },
+                        "DEBUG": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "colour": {
+                                    "type": "string"
+                                },
+                                "level": {
+                                    "type": "number"
+                                },
+                                "levelStr": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["colour", "level", "levelStr"],
+                            "type": "object"
+                        },
+                        "ERROR": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "colour": {
+                                    "type": "string"
+                                },
+                                "level": {
+                                    "type": "number"
+                                },
+                                "levelStr": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["colour", "level", "levelStr"],
+                            "type": "object"
+                        },
+                        "FATAL": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "colour": {
+                                    "type": "string"
+                                },
+                                "level": {
+                                    "type": "number"
+                                },
+                                "levelStr": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["colour", "level", "levelStr"],
+                            "type": "object"
+                        },
+                        "INFO": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "colour": {
+                                    "type": "string"
+                                },
+                                "level": {
+                                    "type": "number"
+                                },
+                                "levelStr": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["colour", "level", "levelStr"],
+                            "type": "object"
+                        },
+                        "MARK": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "colour": {
+                                    "type": "string"
+                                },
+                                "level": {
+                                    "type": "number"
+                                },
+                                "levelStr": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["colour", "level", "levelStr"],
+                            "type": "object"
+                        },
+                        "OFF": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "colour": {
+                                    "type": "string"
+                                },
+                                "level": {
+                                    "type": "number"
+                                },
+                                "levelStr": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["colour", "level", "levelStr"],
+                            "type": "object"
+                        },
+                        "TRACE": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "colour": {
+                                    "type": "string"
+                                },
+                                "level": {
+                                    "type": "number"
+                                },
+                                "levelStr": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["colour", "level", "levelStr"],
+                            "type": "object"
+                        },
+                        "WARN": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "colour": {
+                                    "type": "string"
+                                },
+                                "level": {
+                                    "type": "number"
+                                },
+                                "levelStr": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["colour", "level", "levelStr"],
+                            "type": "object"
+                        },
+                        "levels": {
+                            "items": {
+                                "additionalProperties": false,
+                                "properties": {
+                                    "colour": {
+                                        "type": "string"
+                                    },
+                                    "level": {
+                                        "type": "number"
+                                    },
+                                    "levelStr": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["colour", "level", "levelStr"],
+                                "type": "object"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "required": ["ALL", "MARK", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL", "OFF", "levels"],
+                    "type": "object"
+                },
+                "pm2": {
+                    "type": "boolean"
+                },
+                "pm2InstanceVar": {
+                    "type": "string"
+                }
+            },
+            "required": ["appenders", "categories"],
+            "type": "object"
+        },
+        "modules": {
+            "additionalProperties": {
+                "properties": {
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "enabled": {
+                        "type": "boolean"
+                    },
+                    "location": {
+                        "type": "string"
+                    }
+                },
+                "required": ["enabled", "displayName", "location"],
+                "type": "object"
+            },
+            "type": "object"
+        },
+        "transportLibrary": {
+            "additionalProperties": false,
+            "properties": {
+                "baseUrl": {
+                    "type": "string"
+                },
+                "datawalletEnabled": {
+                    "type": "boolean"
+                },
+                "platformAdditionalHeaders": {
+                    "type": "object"
+                },
+                "platformClientId": {
+                    "type": "string"
+                },
+                "platformClientSecret": {
+                    "type": "string"
+                },
+                "platformMaxContentLength": {
+                    "type": "number"
+                },
+                "platformMaxRedirects": {
+                    "type": "number"
+                },
+                "platformTimeout": {
+                    "type": "number"
+                },
+                "realm": {
+                    "enum": ["dev", "id0", "id1"],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "required": ["database", "transportLibrary", "logging", "modules"],
+    "type": "object"
+}

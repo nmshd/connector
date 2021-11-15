@@ -1,0 +1,8 @@
+FROM node:16.13.0
+WORKDIR /usr/app
+RUN npm install nodemon -g
+
+# Webserver, Debugger
+EXPOSE 80 9229
+
+ENTRYPOINT ["nodemon", "-e", "js,json,yml", "--watch", "./dist", "--inspect=0.0.0.0:9229", "--nolazy", "./dist/index.js"]

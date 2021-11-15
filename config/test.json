@@ -1,0 +1,32 @@
+{
+    "transportLibrary": {
+        "baseUrl": "https://stage.enmeshed.eu",
+        "platformClientId": "test",
+        "platformClientSecret": "a6owPRo8c98Ue8Z6mHoNgg5viF5teD"
+    },
+    "logging": {
+        "appenders": {
+            "consoleAppender": {
+                "type": "stdout",
+                "layout": { "type": "pattern", "pattern": "%[[%d] [%p] %c - %m%]" }
+            },
+            "console": {
+                "type": "logLevelFilter",
+                "level": "ERROR",
+                "appender": "consoleAppender"
+            }
+        },
+
+        "categories": {
+            "default": {
+                "appenders": ["console"],
+                "level": "TRACE"
+            }
+        }
+    },
+    "modules": {
+        "httpServer": {
+            "apiKey": "xxx"
+        }
+    }
+}

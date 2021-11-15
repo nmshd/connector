@@ -1,0 +1,2981 @@
+openapi: 3.0.0
+
+servers:
+  - url: /
+    description: Local Connector API
+
+info:
+  version: "0.4"
+  title: Connector
+  description: |
+    This API is work in progress and might be changed without further notice on any time.
+
+    You can retrieve the [yaml](/docs/yaml) or [json](/docs/json) representation of this specification by following the corresponding links.
+
+    You can also view this documenation in [rapidoc](/docs/rapidoc).
+
+  license:
+    name: MIT
+    url: https://raw.githubusercontent.com/nmshd/cns-connector/main/LICENSE
+  contact:
+    name: j&s-soft GmbH
+    email: info@js-soft.com
+    url: https://www.js-soft.com/
+
+paths:
+  /health:
+    get:
+      security: []
+      operationId: getHealth
+      description: Show the service health.
+      tags:
+        - Monitoring
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/ConnectorHealth"
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /Monitoring/Version:
+    get:
+      operationId: getVersion
+      description: Show the Connector version information.
+      tags:
+        - Monitoring
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/ConnectorVersion"
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /Monitoring/Requests:
+    get:
+      operationId: getRequests
+      description: Show the number of requests and the status codes that were returned by the Connector.
+      tags:
+        - Monitoring
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  since:
+                    type: string
+                    format: date-time
+                    description: The time since when the data was collected (typically this is the startup time of the Connector).
+                  requestCount:
+                    type: number
+                    example: 507
+                    description: The number of requests the Connector has processed.
+                  requestCountByStatus:
+                    type: object
+                    additionalProperties:
+                      type: number
+                    example: { "200": 500, "401": 2, "500": 5 }
+                required:
+                  - since
+                  - requestCount
+                  - responseCountByStatus
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /Monitoring/Support:
+    get:
+      operationId: getSupportInfo
+      description: Show support Information.
+      tags:
+        - Monitoring
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: object
+                    $ref: "#/components/schemas/ConnectorVersion"
+                  health:
+                    type: object
+                    $ref: "#/components/schemas/ConnectorHealth"
+                  configuration:
+                    type: object
+                    example:
+                      {
+                        "database": { "connectionString": "**********************************", "dbName": "accountName" },
+                        "modules": { "httpServer": { "enabled": true }, "coreHttpApi": { "enabled": true } }
+                      }
+                  identityInfo:
+                    type: object
+                    $ref: "#/components/schemas/IdentityInfo"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  # ------------------- Account -------------------
+
+  /api/v1/Account/IdentityInfo:
+    get:
+      operationId: getIdentityInfo
+      description: Shows the Account Information.
+      tags:
+        - Account
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    nullable: false
+                    $ref: "#/components/schemas/IdentityInfo"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Account/SyncInfo:
+    get:
+      operationId: getSyncInfo
+      description: show information about the last completed sync run
+      tags:
+        - Account
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      lastSyncRun:
+                        type: object
+                        properties:
+                          completedAt:
+                            type: string
+                            format: date-time
+                        required:
+                          - syncTime
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Account/Sync:
+    post:
+      operationId: sync
+      description: >
+        Syncs the Connector messages and relationships with the Backbone.
+        Checks for new relationships as well as incoming changes of existing ones.
+        Checks for new or updated Messages.
+        Returns all affected relationships and messages.
+      tags:
+        - Account
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      relationships:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Relationship"
+                      messages:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Message"
+                    required:
+                      - messages
+                      - relationships
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  # ------------------- Files -------------------
+
+  /api/v1/Files:
+    get:
+      operationId: getAllFileMetadata
+      description: Queries metadata of all files.
+      tags:
+        - Files
+      parameters:
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: createdBy
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: createdByDevice
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: deletedAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: deletedBy
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: deletedByDevice
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: description
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: expiresAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: filename
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: filesize
+          schema:
+            $ref: "#/components/schemas/NumberFilter"
+        - in: query
+          name: mimetype
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: title
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: isOwn
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    nullable: false
+                    items:
+                      $ref: "#/components/schemas/FileMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Files/Own:
+    post:
+      operationId: uploadNewOwnFile
+      description: Uploads a new own file with metadata.
+      tags:
+        - Files
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  nullable: false
+                  description: A user-friendly title for the file which is shown on the UI.
+                  example: Curriculum Vitae
+                description:
+                  type: string
+                  nullable: false
+                  description: A description for the file which is shown on the UI.
+                  example: My curriculum vitae
+                expiresAt:
+                  type: string
+                  format: date-time
+                  description: A timestamp that describes when this file will expire.
+                  example: 2022-01-01
+                  nullable: false
+                file:
+                  type: string
+                  format: binary
+                  nullable: false
+              required:
+                - title
+                - expiresAt
+                - file
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: "#/components/schemas/FileMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+    get:
+      operationId: getOwnFiles
+      description: Queries metadata of files owned by this Connector.
+      tags:
+        - Files
+      parameters:
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: createdByDevice
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: deletedAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: deletedBy
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: deletedByDevice
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: description
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: expiresAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: filename
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: filesize
+          schema:
+            $ref: "#/components/schemas/NumberFilter"
+        - in: query
+          name: mimetype
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: title
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    nullable: false
+                    items:
+                      $ref: "#/components/schemas/FileMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Files/Peer:
+    post:
+      operationId: loadPeerFile
+      description: Loads a file of another identity. After it is loaded once, you can retrieve it without the need for the secret key by calling one of the GET-routes.
+      tags:
+        - Files
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/FileReference"
+                - $ref: "#/components/schemas/TokenReferenceTruncated"
+            examples:
+              FileReference:
+                value: |
+                  {
+                    "id": "FIL_________________",
+                    "secretKey": "YOUR_SECRET_KEY"
+                  }
+              TokenReferenceTruncated:
+                value: |
+                  {
+                    "reference": "YOUR_REFERENCE"
+                  }
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: "#/components/schemas/FileMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+    get:
+      operationId: getPeerFiles
+      description: Queries metadata of files you obtained from other identities.
+      tags:
+        - Files
+      parameters:
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: createdBy
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: deletedAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: deletedBy
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: deletedByDevice
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: description
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: expiresAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: filename
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: filesize
+          schema:
+            $ref: "#/components/schemas/NumberFilter"
+        - in: query
+          name: mimetype
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: title
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    nullable: false
+                    items:
+                      $ref: "#/components/schemas/FileMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Files/{id}:
+    get:
+      operationId: getFileMetadata
+      description: Gets metadata for the file with the given `id`.
+      tags:
+        - Files
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileID"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/FileMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Files/{id}/Download:
+    get:
+      operationId: downloadFile
+      description: Downloads the file with the given `id`.
+      tags:
+        - Files
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileID"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/octet-stream:
+              schema:
+                description: File Content
+                type: string
+                format: binary
+                example: binary
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Files/{id}/Token:
+    post:
+      operationId: createTokenForFile
+      description: Creates a `Token` for the `File` with the given `id`.
+      tags:
+        - Files
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the `File`.
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                expiresAt:
+                  description: The expiry of the token. Defaults to the expiry of the file.
+                  type: string
+                  format: date-time
+                ephemeral:
+                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the id and secretKey of the token. Defaults to true. Will be ignored if Accept is set to image/png.
+                  type: boolean
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Token"
+                required:
+                  - result
+            image/png:
+              schema:
+                description: A QR Code that contains all necessary information about the token which itself contains a reference to the file.
+                type: string
+                format: binary
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  # ------------------- Messages -------------------
+
+  /api/v1/Messages:
+    post:
+      operationId: sendMessage
+      description: >
+        Sends a new message to the given recipient(s).
+      tags:
+        - Messages
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: A message can theoretically consist of any content. But our end user apps can only interpret some specific content types.
+              type: object
+              properties:
+                recipients:
+                  type: array
+                  description: Addresses of the recipients of this message.
+                  nullable: false
+                  items:
+                    $ref: "#/components/schemas/Address"
+                content:
+                  allOf:
+                    - $ref: "#/components/schemas/MessageContent"
+                  nullable: false
+                  example:
+                    "@type": Mail
+                    to: [id_________________________________]
+                    cc: [id_________________________________]
+                    subject: Subject
+                    body: Body
+                attachments:
+                  type: array
+                  nullable: true
+                  items:
+                    $ref: "#/components/schemas/FileID"
+              required:
+                - recipients
+                - content
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Message"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+    get:
+      operationId: getMessages
+      description: Queries messages.
+      tags:
+        - Messages
+      parameters:
+        - in: query
+          name: createdBy
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: createdByDevice
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: recipients.address
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: participant
+          description: Either `createdBy` or one of the recipients should be equal to this ID.
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: attachments
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: content.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: content.subject
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: content.body
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: relationshipIds
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    nullable: false
+                    items:
+                      $ref: "#/components/schemas/Message"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Messages/{id}:
+    get:
+      operationId: getMessage
+      description: Fetches the message with the given `id`.
+      tags:
+        - Messages
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the message.
+          required: true
+          schema:
+            $ref: "#/components/schemas/MessageID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/MessageWithAttachments"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Messages/{messageId}/Attachments/{attachmentId}:
+    get:
+      operationId: getMetadataOfMessageAttachment
+      description: Returns the attachment's metadata of the given `attachmentId` of message with `messageId`.
+      tags:
+        - Messages
+      parameters:
+        - in: path
+          name: messageId
+          description: The ID of the message.
+          required: true
+          schema:
+            $ref: "#/components/schemas/MessageID"
+        - in: path
+          name: attachmentId
+          description: The ID of the attachment.
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: "#/components/schemas/FileMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Messages/{messageId}/Attachments/{attachmentId}/Download:
+    get:
+      operationId: downloadAttachmentOfMessage
+      description: Downloads the file of the given `attachmentId` of message with `messageId`.
+      tags:
+        - Messages
+      parameters:
+        - in: path
+          name: messageId
+          description: The ID of the message.
+          required: true
+          schema:
+            $ref: "#/components/schemas/MessageID"
+        - in: path
+          name: attachmentId
+          description: The ID of the attachment.
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  # ------------------- Relationships -------------------
+
+  /api/v1/Relationships:
+    post:
+      operationId: createRelationship
+      description: Creates a `Relationship` to the creator of a given relationshipTemplateId. The `RelationshipTemplate` of the given `relationshipTemplateId` must come from another identity and must be loaded by `POST /RelationshipTemplates/Peer` first.
+      tags:
+        - Relationships
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                templateId:
+                  allOf:
+                    - $ref: "#/components/schemas/RelationshipTemplateID"
+                  nullable: false
+                content:
+                  allOf:
+                    - $ref: "#/components/schemas/RelationshipChangeRequestContent"
+                  nullable: false
+                  example:
+                    prop1: value
+                    prop2: 1
+              required:
+                - templateId
+                - content
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Relationship"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+    get:
+      operationId: getRelationships
+      description: Queries relationships.
+      tags:
+        - Relationships
+      parameters:
+        - in: query
+          name: template.id
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: lastMessageReceivedAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: lastMessageSentAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: peer
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: status
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Relationship"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Relationships/{id}:
+    get:
+      operationId: getRelationshipById
+      description: Fetches the `Relationship` with the given `id`.
+      tags:
+        - Relationships
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the relationship.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipID"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Relationship"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Relationships/{id}/Changes/{changeId}/Accept:
+    put:
+      operationId: acceptRelationshipChange
+      description: Accepts the change with the given `changeId`. If the change exists but belongs to another relationship, this call will fail and return status 404.
+      tags:
+        - Relationships
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the relationship which contains the change.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipID"
+        - in: path
+          name: changeId
+          description: The ID of the change to accept.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipChangeID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  allOf:
+                    - $ref: "#/components/schemas/RelationshipChangeResponseContent"
+                  example:
+                    prop1: value
+                    prop2: 1
+              required:
+                - content
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: "#/components/schemas/Relationship"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Relationships/{id}/Changes/{changeId}/Reject:
+    put:
+      operationId: rejectRelationshipChange
+      description: Rejects the change with the given `changeId`. If the change exists but belongs to another relationship, this call will fail and return status 404.
+      tags:
+        - Relationships
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the relationship which contains the change.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipID"
+        - in: path
+          name: changeId
+          description: The ID of the change to reject.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipChangeID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  allOf:
+                    - $ref: "#/components/schemas/RelationshipChangeResponseContent"
+                  example:
+                    prop1: value
+                    prop2: 1
+              required:
+                - content
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Relationship"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Relationships/{id}/Changes/{changeId}/Revoke:
+    put:
+      operationId: revokeRelationshipChange
+      description: Revokes the change with the given `changeId`. If the change exists but belongs to another relationship, this call will fail and return status 404.
+      tags:
+        - Relationships
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the relationship which contains the change.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipID"
+        - in: path
+          name: changeId
+          description: The ID of the change to revoke.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipChangeID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  allOf:
+                    - $ref: "#/components/schemas/RelationshipChangeResponseContent"
+                  example:
+                    prop1: value
+                    prop2: 1
+              required:
+                - content
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Relationship"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  # ------------------- RelationshipTemplates -------------------
+
+  /api/v1/RelationshipTemplates:
+    get:
+      operationId: getRelationshipTemplates
+      description: Queries `RelationshipTemplates`.
+      tags:
+        - RelationshipTemplates
+      parameters:
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: expiresAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: createdBy
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: createdByDevice
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: maxNumberOfRelationships
+          schema:
+            $ref: "#/components/schemas/NumberFilter"
+        - in: query
+          name: isOwn
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RelationshipTemplate"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/RelationshipTemplates/Own:
+    post:
+      operationId: createOwnRelationshipTemplate
+      description: Creates a new `RelationshipTemplate`.
+      tags:
+        - RelationshipTemplates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                maxNumberOfRelationships:
+                  type: integer
+                  format: int32
+                  nullable: true
+                  description: The maximum number of relationships that can be established with this template. Omitting this property leads to an infinite number of possible relationships.
+                  example: 1
+                expiresAt:
+                  type: string
+                  format: date-time
+                  example: 2022-01-01
+                  description: A timestamp that describes when this relationship template expires. Expired templates cannot be used to create relationship requests anymore.
+                content:
+                  allOf:
+                    - $ref: "#/components/schemas/RelationshipTemplateContent"
+                  nullable: false
+                  example:
+                    prop1: value
+                    prop2: 1
+              required:
+                - expiresAt
+                - content
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/RelationshipTemplate"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+    get:
+      operationId: getOwnRelationshipTemplates
+      description: Queries own `RelationshipTemplates`.
+      tags:
+        - RelationshipTemplates
+      parameters:
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: expiresAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: createdByDevice
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: maxNumberOfRelationships
+          schema:
+            $ref: "#/components/schemas/NumberFilter"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RelationshipTemplate"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/RelationshipTemplates/Peer:
+    post:
+      operationId: loadPeerRelationshipTemplate
+      description: Loads a `RelationshipTemplate` created by others. This is a prerequisite for using the template while creating a new `Relationship`.
+      tags:
+        - RelationshipTemplates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/RelationshipTemplateReference"
+                - $ref: "#/components/schemas/TokenReferenceTruncated"
+            examples:
+              RelationshipTemplateReference:
+                value: |
+                  { 
+                    "id": "RLT_________________",
+                    "secretKey": "YOUR_SECRET_KEY"
+                  }
+              TokenReferenceTruncated:
+                value: |
+                  {
+                    "reference": "YOUR_REFERENCE"
+                  }
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/RelationshipTemplate"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+    get:
+      operationId: getPeerRelationshipTemplates
+      description: Queries `RelationshipTemplates` of other identities. The templates have to be loaded by calling `POST /RelationshipTemplates/Peer`.
+      tags:
+        - RelationshipTemplates
+      parameters:
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: expiresAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: createdBy
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: maxNumberOfRelationships
+          schema:
+            $ref: "#/components/schemas/NumberFilter"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RelationshipTemplate"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/RelationshipTemplates/{id}:
+    get:
+      operationId: getRelationshipTemplate
+      description: Fetches the `RelationshipTemplate` with the given `id`.
+      tags:
+        - RelationshipTemplates
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the relationship template.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipTemplateID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/RelationshipTemplate"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/RelationshipTemplates/Own/{id}/Token:
+    post:
+      operationId: createTokenForTemplate
+      description: Creates a `Token` for the own `RelationshipTemplate` with the given `id`
+      tags:
+        - RelationshipTemplates
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the relationship template.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipTemplateID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                expiresAt:
+                  description: The expiry of the token. Defaults to the expiry of the relationship template.
+                  type: string
+                  format: date-time
+                ephemeral:
+                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the id and secretKey of the token. Defaults to true. Will be ignored if Accept is set to image/png.
+                  type: boolean
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Token"
+                required:
+                  - result
+            image/png:
+              schema:
+                description: A QR Code that contains all necessary information about the token which itself contains a reference to the relationship template.
+                type: string
+                format: binary
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  # ------------------- Tokens -------------------
+
+  /api/v1/Tokens/Own:
+    post:
+      operationId: createOwnToken
+      description: Creates a new `Token` with the given content.
+      tags:
+        - Tokens
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  allOf:
+                    - $ref: "#/components/schemas/TokenContent"
+                  nullable: false
+                  example:
+                    prop1: value
+                    prop2: 1
+                expiresAt:
+                  type: string
+                  format: date-time
+                  example: 2022-01-01
+                  nullable: false
+                  description: A timestamp that describes when this token expires. An expired token cannot be fetched from the platform anymore. However it will still be available for auditing purposes.
+                ephemeral:
+                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the id and secretKey of the token. Defaults to false.
+                  type: boolean
+              required:
+                - content
+                - expiresAt
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Token"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+    get:
+      operationId: getOwnTokens
+      description: Queries `Tokens`.
+      tags:
+        - Tokens
+      parameters:
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: createdByDevice
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: expiresAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Token"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Tokens/Peer:
+    post:
+      operationId: loadPeerToken
+      description: Load a `Token` created by others.
+      tags:
+        - Tokens
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    id:
+                      allOf:
+                        - $ref: "#/components/schemas/TokenID"
+                      nullable: false
+                      description: The ID of the received Token which should be fetched. This is usually shared over the side channel (QR-Code, Link).
+                    secretKey:
+                      type: string
+                      format: byte
+                      nullable: false
+                      description: The base64 encoded secret key which was used to encrypt the Token. This is usually shared over the side channel (QR-Code, Link).
+                    ephemeral:
+                      description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the id and secretKey of the token. Defaults to false.
+                      type: boolean
+                  required:
+                    - id
+                    - secretKey
+                - type: object
+                  properties:
+                    reference:
+                      type: string
+                      format: byte
+                      nullable: false
+                      description: The base64 encoded truncated reference of the token, which actually consists of the TokenId and the secretKey.
+                    ephemeral:
+                      description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the id and secretKey of the token. Defaults to false.
+                      type: boolean
+                  required:
+                    - reference
+            examples:
+              TokenReference:
+                value: |
+                  {
+                    "id": "TOK_________________",
+                    "secretKey": "YOUR_SECRET_KEY"
+                  }
+              TokenReferenceTruncated:
+                value: |
+                  { 
+                    "reference": "YOUR_REFERENCE"
+                  }
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Token"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+    get:
+      operationId: getPeerTokens
+      description: Queries `Tokens`.
+      tags:
+        - Tokens
+      parameters:
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: createdBy
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: expiresAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Token"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Tokens/{id}:
+    get:
+      operationId: getToken
+      description: Fetches the `Token` with the given `id`.
+      tags:
+        - Tokens
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the token.
+          required: true
+          schema:
+            $ref: "#/components/schemas/TokenID"
+      responses:
+        200:
+          description: Success
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Token"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+security:
+  - ApiKeyAuth: []
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+
+  schemas:
+    # ------------------- Filter -------------------
+
+    TextFilter:
+      type: string
+      description: >
+        <table class="query-examples">
+          <tr>
+            <th>Operation</th>
+            <th>Example</th>
+          </tr>
+          <tr>
+            <td>equal</td>
+            <td>?foo=bar</td>
+          </tr>
+          <tr>
+            <td>not equal</td>
+            <td>?foo=!bar</td>
+          </tr>
+          <tr>
+            <td>
+              exists (=> not undefined)*
+              <br/>
+            </td>
+            <td>?foo=</td>
+          </tr>
+          <tr>
+            <td>not exists (=> undefined)</td>
+            <td>?foo=!</td>
+          </tr>
+          <tr>
+            <td>starts with</td>
+            <td>?foo=^bar</td>
+          </tr>
+          <tr>
+            <td>ends with</td>
+            <td>?foo=$bar</td>
+          </tr>
+          <tr>
+            <td>matches regex</td>
+            <td>?foo=~.+bar.+</td>
+          </tr>
+          <tr>
+            <td>in*</td>
+            <td>?foo=bar&foo=baz</td>
+          </tr>
+          <tr>
+            <td>not in*</td>
+            <td>?foo=!bar&foo=!baz</td>
+          </tr>
+        </table>
+        <p>* Due to limitations of Swagger UI, this feature cannot be tested in Swagger UI. Use a REST Client instead (e.g. Postman).</p>
+
+    IdFilter:
+      type: string
+      description: >
+        <p>Filters for an ID. Basically a `TextFilter`, but with less useful operators</p>
+        <p>The following operators are supported:</p>
+        <table>
+          <tr>
+            <th>Operation</th>
+            <th>Example</th>
+          </tr>
+          <tr>
+            <td>equal</td>
+            <td>?foo=XXX_________________</td>
+          </tr>
+          <tr>
+            <td>not equal</td>
+            <td>?foo=!XXX_________________</td>
+          </tr>
+          <tr>
+            <td>
+              exists (=> not undefined)*
+              <br/>
+            </td>
+            <td>?foo=</td>
+          </tr>
+          <tr>
+            <td>not exists (=> undefined)</td>
+            <td>?foo=!</td>
+          </tr>
+          <tr>
+            <td>in*</td>
+            <td>?foo=XXX_________________&foo=YYY_________________</td>
+          </tr>
+          <tr>
+            <td>not in*</td>
+            <td>?foo=!XXX_________________&foo=!YYY_________________</td>
+          </tr>
+        </table>
+        <p>* Due to limitations of Swagger UI, this feature cannot be tested in Swagger UI. Use a REST Client instead (e.g. Postman).</p>
+
+    DateFilter:
+      type: string
+      description: >
+        <p>Filters for a date. In the background, a `DateFilter` compares dates based on their text value. Due to the order of ISO Date string characters though, this doesn't matter - as long as no timezones are used. We are looking for a better solution to this. For now you can convert your non-UTC dates to UTC before sending them in a query.</p>
+        <p>The following operators are supported:</p>
+        <table>
+          <tr>
+            <th>Operation</th>
+            <th>Example</th>
+          </tr>
+          <tr>
+            <td>equal</td>
+            <td>?foo=2020-01-01T00:00:00.000Z</td>
+          </tr>
+          <tr>
+            <td>not equal</td>
+            <td>?foo=!2020-01-01T00:00:00.000Z</td>
+          </tr>
+          <tr>
+            <td>
+              exists (=> not undefined)*
+              <br/>
+            </td>
+            <td>?foo=</td>
+          </tr>
+          <tr>
+            <td>not exists (=> undefined)</td>
+            <td>?foo=!</td>
+          </tr>
+          <tr>
+            <td>greater than</td>
+            <td>?foo=>2020</td>
+          </tr>
+          <tr>
+            <td>less than</td>
+            <td>?foo=<2020</td>
+          </tr>
+          <tr>
+            <td>greater than or equal to</td>
+            <td>?foo=>=2020-01-01T00:00:00.000Z</td>
+          </tr>
+          <tr>
+            <td>less than or equal to</td>
+            <td>?foo=<=2020-01-01T00:00:00.000Z</td>
+          </tr>
+          <tr>
+            <td>matches regex</td>
+            <td>?foo=~.+01-01T.+</td>
+          </tr>
+          <tr>
+            <td>in*</td>
+            <td>?foo=2020-01-01T00:00:00.000Z&foo=2021-01-01T00:00:00.000Z</td>
+          </tr>
+          <tr>
+            <td>not in*</td>
+            <td>?foo=!2020-01-01T00:00:00.000Z&foo=!2021-01-01T00:00:00.000Z</td>
+          </tr>
+        </table>
+        <p>* Due to limitations of Swagger UI, this feature cannot be tested in Swagger UI. Use a REST Client instead (e.g. Postman).</p>
+
+    BooleanFilter:
+      type: string
+      description: >
+        <p>Filters for a boolean.
+        <p>The following operators are supported:</p>
+        <table>
+          <tr>
+            <th>Operation</th>
+            <th>Example</th>
+          </tr>
+          <tr>
+            <td>equal</td>
+            <td>?foo=true</td>
+          </tr>
+          <tr>
+            <td>not equal</td>
+            <td>?foo=!true</td>
+          </tr>
+        </table>
+        <p>* Due to limitations of Swagger UI, this feature cannot be tested in Swagger UI. Use a REST Client instead (e.g. Postman).</p>
+
+    NumberFilter:
+      type: string
+      description: >
+        <p>Filters for a number.
+        <p>The following operators are supported:</p>
+        <table>
+          <tr>
+            <th>Operation</th>
+            <th>Example</th>
+          </tr>
+          <tr>
+            <td>equal</td>
+            <td>?foo=bar</td>
+          </tr>
+          <tr>
+            <td>not equal</td>
+            <td>?foo=!bar</td>
+          </tr>
+          <tr>
+            <td>
+              exists (=> not undefined)*
+              <br/>
+            </td>
+            <td>?foo=</td>
+          </tr>
+          <tr>
+            <td>not exists (=> undefined)</td>
+            <td>?foo=!</td>
+          </tr>
+          <tr>
+            <td>greater than</td>
+            <td>?foo=>5</td>
+          </tr>
+          <tr>
+            <td>less than</td>
+            <td>?foo=<5</td>
+          </tr>
+          <tr>
+            <td>greater than or equal to</td>
+            <td>?foo=>=5</td>
+          </tr>
+          <tr>
+            <td>less than or equal to</td>
+            <td>?foo=5</td>
+          </tr>
+          <tr>
+            <td>in*</td>
+            <td>?foo=5&foo=6</td>
+          </tr>
+          <tr>
+            <td>not in*</td>
+            <td>?foo=!5&foo=!6</td>
+          </tr>
+        </table>
+        <p>* Due to limitations of Swagger UI, this feature cannot be tested in Swagger UI. Use a REST Client instead (e.g. Postman).</p>
+
+    # ------------------- IDs -------------------
+
+    Address:
+      type: string
+      format: Address
+      minLength: 35
+      maxLength: 36
+      example: id_________________________________
+
+    DeviceID:
+      type: string
+      format: DeviceID
+      minLength: 20
+      maxLength: 20
+      example: DVC_________________
+
+    FileID:
+      type: string
+      format: FileID
+      minLength: 20
+      maxLength: 20
+      example: FIL_________________
+      description: The ID of a file.
+
+    MessageID:
+      type: string
+      format: MessageID
+      minLength: 20
+      example: MSG_________________
+      maxLength: 20
+      description: The ID of a message.
+
+    RelationshipID:
+      type: string
+      format: RelationshipID
+      minLength: 20
+      maxLength: 20
+      example: REL_________________
+      description: The ID of a relationship.
+
+    RelationshipChangeID:
+      type: string
+      format: RelationshipChangeID
+      minLength: 20
+      maxLength: 20
+      example: RCH_________________
+      description: The ID of a relationship change.
+
+    RelationshipTemplateID:
+      type: string
+      format: RelationshipTemplateID
+      minLength: 20
+      maxLength: 20
+      example: RLT_________________
+      description: The ID of a relationship template.
+
+    TokenID:
+      type: string
+      format: TokenID
+      minLength: 20
+      maxLength: 20
+      example: TOK_________________
+      description: The ID of a message.
+
+    # ------------------- Entities -------------------
+
+    IdentityInfo:
+      type: object
+      properties:
+        address:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          description: The enmeshed address of the Connector.
+          nullable: false
+        publicKey:
+          type: string
+          description: The public key of the Connector used to digitally sign data.
+          nullable: false
+      required:
+        - address
+        - publicKey
+
+    ConnectorHealth:
+      type: object
+      properties:
+        isHealthy:
+          type: boolean
+          nullable: false
+        services:
+          type: object
+          nullable: false
+          properties:
+            database:
+              type: string
+              enum: [healthy, unhealthy]
+            backbone:
+              type: string
+              enum: [healthy, unhealthy]
+          required:
+            - database
+            - backbone
+      required:
+        - isHealthy
+        - services
+
+    ConnectorVersion:
+      type: object
+      properties:
+        build:
+          type: string
+          example: 50
+          description: The build number of the Connector Docker image.
+        commit:
+          type: string
+          example: c459aa1b74a6b51d1230869ec8b199d4c7506679
+          description: The commit that triggered the build of the Connector docker-image.
+        version:
+          type: string
+          example: 1.0.0
+          description: The Connector version.
+        date:
+          type: string
+          format: date-time
+          description: The time the Connector docker-image was built.
+      required:
+        - build
+        - commit
+        - version
+        - date
+
+    FileMetadata:
+      type: object
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/FileID"
+          minLength: 20
+          maxLength: 20
+          description: The ID of the file.
+          nullable: false
+        title:
+          type: string
+          description: A user-friendly title for the file which is shown on the UI. If it is not passed, it will be set to the name of the file.
+          example: Curriculum Vitae
+          nullable: true
+        description:
+          type: string
+          description: A description for the file which is shown on the UI.
+          example: My curriculum vitae
+          nullable: true
+        filename:
+          type: string
+          description: The name of the file.
+          example: CurriculumVitae.pdf
+          nullable: false
+        filesize:
+          type: integer
+          format: int64
+          description: The size of the file in bytes.
+          nullable: false
+        createdAt:
+          type: string
+          format: date-time
+          description: A timestamp that describes when this file was created.
+          example: 2020-05-25T11:05:02.924Z
+          nullable: false
+        createdBy:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+        createdByDevice:
+          allOf:
+            - $ref: "#/components/schemas/DeviceID"
+          nullable: false
+        expiresAt:
+          type: string
+          format: date-time
+          description: A timestamp that describes when this file will expire. Expired files cannot be accessed anymore. Notice that they will still be available for auditing purposes.
+          example: 2022-05-25T11:05:02.924Z
+          nullable: true
+        mimetype:
+          type: string
+          example: application/pdf
+          nullable: false
+        isOwn:
+          type: boolean
+          nullable: false
+        deletedAt:
+          type: string
+          format: date-time
+          example: 2020-05-25T10:48:29.534Z
+          nullable: true
+          description: A timestamp that describes when this file was deleted.
+        deletedBy:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          description: A reference to the identity who deleted this file.
+          nullable: true
+        deletedByDevice:
+          allOf:
+            - $ref: "#/components/schemas/DeviceID"
+          description: The device this file was deleted with.
+          nullable: true
+      required:
+        - id
+        - title
+        - filename
+        - filesize
+        - createdAt
+        - createdBy
+        - createdByDevice
+        - expiresAt
+        - mimetype
+        - isOwn
+
+    FileReference:
+      type: object
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/FileID"
+          nullable: false
+          description: The ID of the `File` which should be fetched. This is usually shared within a Token.
+        secretKey:
+          type: string
+          format: byte
+          nullable: false
+          description: The secret key which was used to encrypt the `File`. This is usually shared within a Token.
+      required:
+        - id
+        - secretKey
+
+    Recipient:
+      type: object
+      description: Information about the recipient of a message.
+      properties:
+        address:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+          description: The address of this recipient.
+      required:
+        - address
+
+    Message:
+      type: object
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/MessageID"
+          nullable: false
+        createdBy:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+          description: The ID of the sender of this message.
+        createdByDevice:
+          allOf:
+            - $ref: "#/components/schemas/DeviceID"
+          nullable: false
+          description: The ID of the device this message was sent with.
+        createdAt:
+          type: string
+          format: date-time
+          nullable: false
+          description: A timestamp that describes when this message was received by the platform.
+        recipients:
+          type: array
+          description: Information about the recipients of this message.
+          items:
+            $ref: "#/components/schemas/Recipient"
+        relationshipIds:
+          type: array
+          description: If you are the sender of this message, the array will contain the IDs of the `Relationship`s to all recipients. If you are a recipient, the array will only contain the ID of the `Relationship` to the sender.
+          items:
+            type: string
+        content:
+          allOf:
+            - $ref: "#/components/schemas/MessageContent"
+          nullable: false
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/FileID"
+      required:
+        - id
+        - createdBy
+        - createdByDevice
+        - createdAt
+        - recipients
+        - relationshipIds
+        - content
+
+    MessageWithAttachments:
+      type: object
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/MessageID"
+          nullable: false
+        createdBy:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+          description: The ID of the sender of this message.
+        createdByDevice:
+          allOf:
+            - $ref: "#/components/schemas/DeviceID"
+          nullable: false
+          description: The ID of the device this message was sent with.
+        createdAt:
+          type: string
+          format: date-time
+          nullable: false
+          description: A timestamp that describes when this message was received by the platform.
+        recipients:
+          type: array
+          description: Information about the recipients of this message.
+          items:
+            $ref: "#/components/schemas/Recipient"
+        relationshipIds:
+          type: array
+          description: If you are the sender of this message, the array will contain the IDs of the `Relationship`s to all recipients. If you are a recipient, the array will only contain the ID of the `Relationship` to the sender.
+          items:
+            type: string
+        content:
+          allOf:
+            - $ref: "#/components/schemas/MessageContent"
+          nullable: false
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/FileMetadata"
+      required:
+        - id
+        - createdBy
+        - createdByDevice
+        - createdAt
+        - recipients
+        - relationshipIds
+        - content
+
+    MessageContent:
+      type: object
+
+    Relationship:
+      type: object
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/RelationshipID"
+          nullable: false
+          description: The ID of the relationship.
+        template:
+          allOf:
+            - $ref: "#/components/schemas/RelationshipTemplate"
+          nullable: false
+        status:
+          type: string
+          enum: [Pending, Active, Rejected, Revoked, Terminated]
+          nullable: false
+          description: The status of the relationship
+        peer:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+          description: The address of the peer identity.
+        changes:
+          type: array
+          items:
+            $ref: "#/components/schemas/RelationshipChange"
+          nullable: false
+        lastMessageSentAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: A timestamp that describes when the last message was sent to the peer.
+        lastMessageReceivedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: A timestamp that describes when the last message was received from the peer.
+      required:
+        - id
+        - template
+        - status
+        - peer
+        - changes
+
+    RelationshipChange:
+      type: object
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/RelationshipChangeID"
+          nullable: false
+        type:
+          type: string
+          nullable: false
+          enum: [Creation, Termination]
+        status:
+          type: string
+          nullable: false
+          enum: [Pending, Rejected, Revoked, Accepted]
+        request:
+          $ref: "#/components/schemas/RelationshipChangeRequest"
+        response:
+          $ref: "#/components/schemas/RelationshipChangeResponse"
+      required:
+        - id
+        - type
+        - status
+        - request
+
+    RelationshipChangeRequest:
+      type: object
+      properties:
+        createdBy:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+        createdByDevice:
+          allOf:
+            - $ref: "#/components/schemas/DeviceID"
+          nullable: false
+        createdAt:
+          type: string
+          format: date-time
+          nullable: false
+          description: A timestamp that describes when this `RelationshipChange` was created on the platform.
+          readOnly: true
+        content:
+          $ref: "#/components/schemas/RelationshipChangeRequestContent"
+      required:
+        - createdBy
+        - createdByDevice
+        - createdAt
+        - content
+
+    RelationshipChangeRequestContent:
+      type: object
+
+    RelationshipChangeResponse:
+      type: object
+      properties:
+        createdBy:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+        createdByDevice:
+          allOf:
+            - $ref: "#/components/schemas/DeviceID"
+          nullable: false
+        createdAt:
+          type: string
+          format: date-time
+          nullable: false
+          description: A timestamp that describes when this `RelationshipChange` was created on the platform.
+          readOnly: true
+        content:
+          $ref: "#/components/schemas/RelationshipChangeResponseContent"
+      required:
+        - createdBy
+        - createdByDevice
+        - createdAt
+        - content
+
+    RelationshipChangeResponseContent:
+      type: object
+
+    RelationshipTemplateContent:
+      type: object
+
+    RelationshipTemplate:
+      type: object
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/RelationshipTemplateID"
+          nullable: false
+          readOnly: true
+        maxNumberOfRelationships:
+          type: integer
+          format: int32
+          nullable: true
+          description: The maximum number of relationships that can be established with this template. Omitting this property leads to an infinite number of possible relationships.
+        isOwn:
+          type: boolean
+          description: Describes whether the template was created by the connector (true) or whether it was loaded from another identity (false).
+          nullable: false
+        createdBy:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+          description: The address of the identity who created this template.
+        createdByDevice:
+          allOf:
+            - $ref: "#/components/schemas/DeviceID"
+          nullable: false
+          description: The address of the identity who created this template.
+        createdAt:
+          type: string
+          format: date-time
+          nullable: false
+          description: A timestamp that describes when this relationship template was created on the platform.
+        expiresAt:
+          type: string
+          format: date-time
+          description: A timestamp that describes when this relationship template expires. Expired templates cannot be used to create relationship requests anymore.
+        content:
+          allOf:
+            - $ref: "#/components/schemas/RelationshipTemplateContent"
+          nullable: false
+      required:
+        - id
+        - isOwn
+        - createdBy
+        - createdByDevice
+        - createdAt
+        - expiresAt
+        - content
+
+    RelationshipTemplateReference:
+      type: object
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/RelationshipTemplateID"
+          nullable: false
+          description: The ID of the received RelationshipTemplate which should be fetched. This is usually shared within a Token.
+        secretKey:
+          type: string
+          format: byte
+          nullable: false
+          description: The secret key which was used to encrypt the RelationshipTemplate. This is usually shared within a Token.
+      required:
+        - id
+        - secretKey
+
+    Token:
+      type: object
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/TokenID"
+          nullable: false
+        createdBy:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+          description: The ID of the identity who created this token.
+        createdByDevice:
+          allOf:
+            - $ref: "#/components/schemas/DeviceID"
+          nullable: false
+          description: The ID of the device which created this token.
+        content:
+          allOf:
+            - $ref: "#/components/schemas/TokenContent"
+          nullable: false
+        createdAt:
+          type: string
+          format: date-time
+          nullable: false
+          description: A timestamp that describes when this token was created on the platform.
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: false
+          description: A timestamp that describes when this token expires. An expired token cannot be fetched from the platform anymore. However it will still be available for auditing purposes.
+        secretKey:
+          type: string
+          format: byte
+          nullable: false
+          description: The base64 encoded secret key which was used to encrypt the Token. This is usually shared over the side channel (QR-Code, Link).
+        truncatedReference:
+          type: string
+          format: byte
+          nullable: false
+          description: The base64 encoded truncated reference of the token, which actually consists of the TokenId and the secretKey.
+      required:
+        - id
+        - createdBy
+        - createdByDevice
+        - content
+        - createdAt
+        - expiresAt
+        - secretKey
+        - truncatedReference
+
+    TokenReference:
+      type: object
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/TokenID"
+          nullable: false
+          description: The ID of the received Token which should be fetched. This is usually shared over the side channel (QR-Code, Link).
+        secretKey:
+          type: string
+          format: byte
+          nullable: false
+          description: The base64 encoded secret key which was used to encrypt the Token. This is usually shared over the side channel (QR-Code, Link).
+      required:
+        - id
+        - secretKey
+
+    TokenReferenceTruncated:
+      type: object
+      properties:
+        reference:
+          type: string
+          format: byte
+          nullable: false
+          description: The base64 encoded truncated reference of the token, which actually consists of the TokenId and the secretKey.
+      required:
+        - reference
+
+    TokenContent:
+      type: object
+      description: The arbitrary JSON object which should be shared between creator of the Token and the recipient.
+
+    # ------------------- General -------------------
+
+    ErrorContent:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            id:
+              description: A unique ID for the error instance.
+              type: string
+            code:
+              description: >
+                The error code.  
+
+                There are some generic error codes like: 
+                  - error.connector.recordNotFound
+                  - error.connector.unauthorized
+                  - error.connector.forbidden
+                  - error.connector.validation.missingProperty
+                  - error.connector.validation.invalidPropertyValueLength
+                  - error.connector.validation.invalidPropertyValue
+
+                Further there are route specific error codes.
+              type: string
+            message:
+              description: An error message having more details about what went wrong. This message is not localized.
+              type: string
+            docs:
+              description: A link to additional documentation about the error.
+              type: string
+            time:
+              description: A timestamp that describes when the error occured.
+              type: string
+          required:
+            - id
+            - code
+            - message
+            - docs
+            - time
+      required:
+        - error
+
+    HeaderContent_X-Response-Duration-ms:
+      description: The time in milliseconds the request took to be processed by the platform.
+      type: number
+
+    HeaderContent_X-Response-Time:
+      description: A timestamp that describes when the response was sent to the client.
+      type: string
+      format: number
+
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorContent"
+      headers:
+        X-Response-Duration-ms:
+          schema:
+            $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+        X-Response-Time:
+          schema:
+            $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorContent"
+      headers:
+        X-Response-Duration-ms:
+          schema:
+            $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+        X-Response-Time:
+          schema:
+            $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorContent"
+      headers:
+        X-Response-Duration-ms:
+          schema:
+            $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+        X-Response-Time:
+          schema:
+            $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorContent"
+      headers:
+        X-Response-Duration-ms:
+          schema:
+            $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+        X-Response-Time:
+          schema:
+            $ref: "#/components/schemas/HeaderContent_X-Response-Time"
