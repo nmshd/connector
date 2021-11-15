@@ -5,7 +5,7 @@
 
 This monorepo consolidates the following packages / applications:
 
--   [The Connector itself](.)
+-   [The Connector itself](./)
 -   [TypeScript Connector SDK](packages/sdk/)
 
 ## Documentation
