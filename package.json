@@ -3,6 +3,8 @@
     "version": "2.0.8",
     "private": true,
     "description": "The Enmeshed Business Connector",
+    "homepage": "https://enmeshed.eu/integrate",
+    "repository": "github:nmshd/cns-connector",
     "license": "MIT",
     "author": "j&s-soft GmbH",
     "scripts": {
