@@ -217,7 +217,7 @@ export class HttpServer extends ConnctorInfrastructure<HttpServerConfiguration> 
         this.configure();
         return await new Promise((resolve) => {
             this.server = this.app.listen(80, () => {
-                this.logger.info("Listening");
+                this.logger.info("Listening on port 80");
                 resolve();
             });
         });

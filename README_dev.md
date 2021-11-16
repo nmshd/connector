@@ -30,7 +30,7 @@ After a few seconds you should see the following output:
 ```console
 bc-api-1-stage             | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transportinitialized
 ...
-bc-api-1-stage             | [2021-01-25T11:27:41.241] [INFO] HttpServerModule - Listening onport 80
+bc-api-1-stage             | [2021-01-25T11:27:41.241] [INFO] HttpServerModule - Listening on port 80
 ...
 bc-api-1-stage             | [2021-01-25T11:27:41.241] [INFO] Runtime - Started all modules.
 ```
