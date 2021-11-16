@@ -8,9 +8,8 @@ import http from "http";
 import { Server } from "typescript-rest";
 import TypescriptRestIOC from "typescript-rest-ioc";
 import { buildInformation } from "../../buildInformation";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
-import { Envelope } from "../coreHttpApi/common/Envelope";
-import { HttpError } from "../coreHttpApi/common/HttpError";
+import { ConnctorInfrastructure, InfrastructureConfiguration } from "../ConnectorInfastructure";
+import { Envelope, HttpError } from "./common";
 import { HttpMethod } from "./HttpMethod";
 import { csrfErrorHandler } from "./middlewares/csrfErrorHandler";
 import { genericErrorHandler, RouteNotFoundError } from "./middlewares/genericErrorHandler";
@@ -37,14 +36,12 @@ export interface ControllerConfig {
     baseDirectory: string;
 }
 
-export interface HttpServerModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
-    port: number;
-    hostname: string;
-    apiKey: string;
+export interface HttpServerConfiguration extends InfrastructureConfiguration {
+    apiKey?: string;
     cors?: CorsOptions;
 }
 
-export default class HttpServerModule extends ConnectorRuntimeModule<HttpServerModuleConfiguration> {
+export class HttpServer extends ConnctorInfrastructure<HttpServerConfiguration> {
     private app: Application;
     private readonly customEndpoints: CustomEndpoint[] = [];
     private readonly controllers: ControllerConfig[] = [];
@@ -219,8 +216,8 @@ export default class HttpServerModule extends ConnectorRuntimeModule<HttpServerM
     public async start(): Promise<void> {
         this.configure();
         return await new Promise((resolve) => {
-            this.server = this.app.listen(this.configuration.port, () => {
-                this.logger.info(`Listening on port ${this.configuration.port}`);
+            this.server = this.app.listen(80, () => {
+                this.logger.info("Listening");
                 resolve();
             });
         });

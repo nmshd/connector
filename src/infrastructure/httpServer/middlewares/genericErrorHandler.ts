@@ -5,8 +5,7 @@ import express from "express";
 import stringify from "json-stringify-safe";
 import { Errors } from "typescript-rest";
 import { BCLoggerFactory } from "../../../logging/BCLoggerFactory";
-import { Envelope } from "../../coreHttpApi/common/Envelope";
-import { HttpError } from "../../coreHttpApi/common/HttpError";
+import { Envelope, HttpError } from "../common";
 
 export class RouteNotFoundError extends Error {}
 
