@@ -37,7 +37,6 @@
     },
     "infrastructure": {
         "httpServer": {
-            "displayName": "HTTP Server",
             "enabled": true,
 
             "cors": {
