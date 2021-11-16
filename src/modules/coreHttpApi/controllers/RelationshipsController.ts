@@ -1,8 +1,8 @@
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
 import { Context, GET, Path, PathParam, POST, PUT, Return, ServiceContext } from "typescript-rest";
+import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
-import { Envelope } from "../common/Envelope";
 
 class RelationshipChangeAnswer {
     public content: any;

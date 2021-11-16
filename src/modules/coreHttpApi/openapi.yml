@@ -140,10 +140,7 @@ paths:
                   configuration:
                     type: object
                     example:
-                      {
-                        "database": { "connectionString": "**********************************", "dbName": "accountName" },
-                        "modules": { "httpServer": { "enabled": true }, "coreHttpApi": { "enabled": true } }
-                      }
+                      { "database": { "connectionString": "**********************************", "dbName": "accountName" }, "modules": { "coreHttpApi": { "enabled": true } } }
                   identityInfo:
                     type: object
                     $ref: "#/components/schemas/IdentityInfo"
