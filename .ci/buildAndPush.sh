@@ -1,21 +1,26 @@
 PACKAGE_VERSION=$(jq .version -r package.json)
 
 docker build \
-    --tag ghcr.io/connector:$BUILD_NUMBER \
-    --tag ghcr.io/connector:$COMMIT_HASH \
-    --tag ghcr.io/connector:latest \
-    --tag ghcr.io/connector:$PACKAGE_VERSION \
+    --tag ghcr.io/nmshd/connector:$BUILD_NUMBER \
+    --tag ghcr.io/nmshd/connector:$COMMIT_HASH \
+    --tag ghcr.io/nmshd/connector:latest \
+    --tag ghcr.io/nmshd/connector:$PACKAGE_VERSION \
     --build-arg COMMIT_HASH=$COMMIT_HASH \
     --build-arg BUILD_NUMBER=$BUILD_NUMBER .
 
-docker push ghcr.io/connector:$BUILD_NUMBER
-docker push ghcr.io/connector:$COMMIT_HASH
+echo "pushing tag '$BUILD_NUMBER'"
+docker push ghcr.io/nmshd/connector:$BUILD_NUMBER
 
-OUTPUT=$(DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect ghcr.io/connector:${PACKAGE_VERSION} 2>&1)
+echo "pushing tag '$COMMIT_HASH'"
+docker push ghcr.io/nmshd/connector:$COMMIT_HASH
 
-if [[ $OUTPUT =~ (no such manifest: ghcr.io/connector:) ]]; then # manifest not found -> push
-    docker push ghcr.io/connector:latest
-    docker push ghcr.io/connector:${PACKAGE_VERSION}
+OUTPUT=$(DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect ghcr.io/nmshd/connector:${PACKAGE_VERSION} 2>&1)
+if [[ $OUTPUT =~ (no such manifest: ghcr.io/nmshd/connector:) ]]; then # manifest not found -> push
+    echo "pushing tag 'latest'"
+    docker push ghcr.io/nmshd/connector:latest
+
+    echo "pushing tag '$PACKAGE_VERSION'"
+    docker push ghcr.io/nmshd/connector:$PACKAGE_VERSION
 elif [[ $OUTPUT =~ (\{) ]]; then # manifest found -> ignore
     echo "image '$PACKAGE_VERSION' already exists"
 else # other error
