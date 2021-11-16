@@ -13,6 +13,7 @@ export interface ConnectorConfig {
     logging: Log4jsConfiguration;
 
     modules: Record<string, ModuleConfiguration>;
+    infrastructure: InfrastructureConfiguration;
 
     [key: string]: any;
 }
@@ -22,6 +23,13 @@ interface ModuleConfiguration {
     displayName: string;
     location: string;
     [key: string]: any;
+}
+interface InfrastructureConfiguration {
+    httpServer: {
+        enabled: boolean;
+        apiKey?: string;
+        cors?: any;
+    };
 }
 
 // ================================ Transport Library ================================

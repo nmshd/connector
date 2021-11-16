@@ -62,7 +62,7 @@ const envKeyMapping: Record<string, string> = {
     ACCOUNT: "DATABASE__DB_NAME", // eslint-disable-line @typescript-eslint/naming-convention
 
     DATABASE_NAME: "DATABASE__DB_NAME", // eslint-disable-line @typescript-eslint/naming-convention
-    API_KEY: "MODULES__HTTP_SERVER__API_KEY", // eslint-disable-line @typescript-eslint/naming-convention
+    API_KEY: "INFRASTRUCTURE__HTTP_SERVER__API_KEY", // eslint-disable-line @typescript-eslint/naming-convention
     DATABASE_CONNECTION_STRING: "DATABASE__CONNECTION_STRING", // eslint-disable-line @typescript-eslint/naming-convention
     SYNC_ENABLED: "MODULES__SYNC__ENABLED", // eslint-disable-line @typescript-eslint/naming-convention
     PLATFORM_CLIENT_ID: "TRANSPORT_LIBRARY__PLATFORM_CLIENT_ID", // eslint-disable-line @typescript-eslint/naming-convention

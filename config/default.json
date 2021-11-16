@@ -35,17 +35,17 @@
             }
         }
     },
-    "modules": {
+    "infrastructure": {
         "httpServer": {
             "displayName": "HTTP Server",
-            "location": "httpServer/HttpServerModule",
             "enabled": true,
 
-            "port": 80,
             "cors": {
                 "origin": false
             }
-        },
+        }
+    },
+    "modules": {
         "sync": {
             "displayName": "Sync",
             "location": "sync/SyncModule",
@@ -67,7 +67,7 @@
             "location": "coreHttpApi/CoreHttpApiModule",
             "enabled": true,
 
-            "dependsOn": ["httpServer"],
+            "infrastructure": ["httpServer"],
 
             "docs": {
                 "enabled": true

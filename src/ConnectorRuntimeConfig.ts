@@ -8,4 +8,12 @@ export interface ConnectorRuntimeConfig extends RuntimeConfig {
     };
 
     logging: log4js.Configuration;
+
+    infrastructure: {
+        httpServer: {
+            enabled: boolean;
+            apiKey?: string;
+            cors?: any;
+        };
+    };
 }
