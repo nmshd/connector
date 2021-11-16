@@ -57,8 +57,6 @@
             "location": "autoAcceptRelationshipCreationChanges/AutoAcceptRelationshipCreationChangesModule",
             "enabled": false,
 
-            "dependsOn": ["sync"],
-
             "responseContent": {}
         },
         "coreHttpApi": {
@@ -76,7 +74,6 @@
             "displayName": "Webhooks",
             "enabled": false,
             "location": "webhooks/WebhooksModule",
-            "dependsOn": ["sync"],
 
             "url": "",
             "headers": {},
