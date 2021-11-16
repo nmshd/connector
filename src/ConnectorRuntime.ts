@@ -14,6 +14,7 @@ import { buildInformation } from "./buildInformation";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
 import { HealthChecker } from "./HealthChecker";
+import { HttpServer } from "./infrastructure";
 import { BCLoggerFactory } from "./logging/BCLoggerFactory";
 
 interface SupportInformation {
@@ -28,6 +29,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     private mongodbConnection?: MongoDbConnection;
     private accountController: AccountController;
+
+    public httpServer?: HttpServer;
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
         const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
@@ -133,7 +136,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private sanitizeConfig(config: ConnectorRuntimeConfig) {
         config.database.connectionString = config.database.connectionString.replace(/./g, "*");
 
-        const httpServer = config.modules.httpServer as any;
+        const httpServer = config.infrastructure.httpServer as any;
         if (httpServer?.apiKey) {
             httpServer.apiKey = httpServer.apiKey.replace(/./g, "*");
         }
@@ -209,6 +212,31 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         }
     }
 
+    public async init(): Promise<void> {
+        this.loggerFactory = this.createLoggerFactory();
+
+        this.initInfrastructure();
+
+        await super.init();
+    }
+
+    private initInfrastructure(): void {
+        if (this.runtimeConfig.infrastructure.httpServer.enabled) {
+            this.httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer));
+            this.httpServer.init();
+        }
+    }
+
+    public async start(): Promise<void> {
+        await this.startInfrastructure();
+
+        await super.start();
+    }
+
+    private async startInfrastructure(): Promise<void> {
+        await this.httpServer!.start();
+    }
+
     protected async stop(): Promise<void> {
         try {
             await super.stop();
@@ -216,11 +244,12 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             this.logger.error(e);
         }
 
-        // This must be the last operation as some stop tasks use the logger
-        await this._cleanup();
-    }
+        try {
+            this.stopInfrastructure();
+        } catch (e) {
+            this.logger.error(e);
+        }
 
-    private async _cleanup() {
         try {
             await this.mongodbConnection?.close();
         } catch (e) {
@@ -229,6 +258,10 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         // This must be the last operation as some stop tasks use the logger
         (this.loggerFactory as NodeLoggerFactory).close();
+    }
+
+    private stopInfrastructure() {
+        this.httpServer!.stop();
     }
 
     private scheduleKillTask() {
