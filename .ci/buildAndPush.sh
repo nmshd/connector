@@ -9,7 +9,8 @@ docker build \
     --tag ghcr.io/nmshd/connector:latest \
     --tag ghcr.io/nmshd/connector:$PACKAGE_VERSION \
     --build-arg COMMIT_HASH=$COMMIT_HASH \
-    --build-arg BUILD_NUMBER=$BUILD_NUMBER .
+    --build-arg BUILD_NUMBER=$BUILD_NUMBER \
+    --build-arg PACKAGE_VERSION=$PACKAGE_VERSION .
 
 echo "pushing tag '$BUILD_NUMBER'"
 docker push ghcr.io/nmshd/connector:$BUILD_NUMBER
