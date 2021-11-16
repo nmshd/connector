@@ -8,13 +8,18 @@ docker build \
     --build-arg COMMIT_HASH=$COMMIT_HASH \
     --build-arg BUILD_NUMBER=$BUILD_NUMBER .
 
+echo "pushing tag '$BUILD_NUMBER'"
 docker push ghcr.io/nmshd/connector:$BUILD_NUMBER
+
+echo "pushing tag '$COMMIT_HASH'"
 docker push ghcr.io/nmshd/connector:$COMMIT_HASH
 
 OUTPUT=$(DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect ghcr.io/nmshd/connector:${PACKAGE_VERSION} 2>&1)
 if [[ $OUTPUT =~ (no such manifest: ghcr.io/nmshd/connector:) ]]; then # manifest not found -> push
+    echo "pushing tag 'latest'"
     docker push ghcr.io/nmshd/connector:latest
 
+    echo "pushing tag '$PACKAGE_VERSION'"
     docker push ghcr.io/nmshd/connector:$PACKAGE_VERSION
 elif [[ $OUTPUT =~ (\{) ]]; then # manifest found -> ignore
     echo "image '$PACKAGE_VERSION' already exists"
