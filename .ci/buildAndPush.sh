@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
 PACKAGE_VERSION=$(jq .version -r package.json)
 
 docker build \
@@ -14,8 +17,8 @@ docker push ghcr.io/nmshd/connector:$BUILD_NUMBER
 echo "pushing tag '$COMMIT_HASH'"
 docker push ghcr.io/nmshd/connector:$COMMIT_HASH
 
-OUTPUT=$(DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect ghcr.io/nmshd/connector:${PACKAGE_VERSION} 2>&1)
-if [[ $OUTPUT =~ (no such manifest: ghcr.io/nmshd/connector:) ]]; then # manifest not found -> push
+OUTPUT="$(DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect ghcr.io/nmshd/connector:${PACKAGE_VERSION} 2>&1)" || true
+if [[ $OUTPUT =~ (no such manifest: ghcr.io/nmshd/connector:) ]] || [[ $OUTPUT == "manifest unknown" ]]; then # manifest not found -> push
     echo "pushing tag 'latest'"
     docker push ghcr.io/nmshd/connector:latest
 
