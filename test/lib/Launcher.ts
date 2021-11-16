@@ -9,7 +9,7 @@ export class Launcher {
 
     private spawnConnector(port: number, accountName: string) {
         const env = process.env;
-        env["MODULES__HTTP_SERVER__PORT"] = port.toString();
+        env["INFRASTRUCTURE__HTTP_SERVER__PORT"] = port.toString();
         env.NODE_CONFIG_ENV = "test";
         env.DATABASE_NAME = accountName;
         return spawn("node_modules/.bin/ts-node", ["src/index.ts"], {

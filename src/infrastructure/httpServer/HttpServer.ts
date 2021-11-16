@@ -37,6 +37,7 @@ export interface ControllerConfig {
 }
 
 export interface HttpServerConfiguration extends InfrastructureConfiguration {
+    port?: number;
     apiKey?: string;
     cors?: CorsOptions;
 }
@@ -216,8 +217,9 @@ export class HttpServer extends ConnctorInfrastructure<HttpServerConfiguration> 
     public async start(): Promise<void> {
         this.configure();
         return await new Promise((resolve) => {
-            this.server = this.app.listen(80, () => {
-                this.logger.info("Listening on port 80");
+            const port = this.configuration.port ?? 80;
+            this.server = this.app.listen(port, () => {
+                this.logger.info(`Listening on port ${port}`);
                 resolve();
             });
         });

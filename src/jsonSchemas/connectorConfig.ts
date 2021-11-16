@@ -27,6 +27,7 @@ interface ModuleConfiguration {
 interface InfrastructureConfiguration {
     httpServer: {
         enabled: boolean;
+        port?: string | number;
         apiKey?: string;
         cors?: any;
     };
