@@ -20,7 +20,8 @@
         "tsc:watch": "tsc -w",
         "test:ci": "jest -i",
         "test:local": ". scripts/testSetup.sh && jest",
-        "test:watch": ". scripts/testSetup.sh && jest --watch"
+        "test:watch": ". scripts/testSetup.sh && jest --watch",
+        "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json"
     },
     "jest": {
         "maxWorkers": 2,
