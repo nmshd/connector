@@ -44,6 +44,7 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
         });
 
         this.useRapidoc();
+        this.useFavicon();
     }
 
     private useRapidoc() {
@@ -51,14 +52,13 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
             res.sendFile(require.resolve("rapidoc"));
         });
 
-        this.runtime.httpServer.addEndpoint(HttpMethod.Get, "/docs/rapidoc", false, (_req, res) => {
-            res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src data: https://enmeshed.eu");
+            res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval' 'unsafe-inline'");
 
             res.send(`
                 <!doctype html>
                     <head>
                         <title>Business Connector API</title>
-                        <link rel="icon" href="https://enmeshed.eu/favicon.ico" />
+                        <link rel="icon" href="/favicon.ico" />
                         <meta charset="utf-8">
                         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&amp;family=Roboto+Mono&amp;display=swap" rel="stylesheet">
                         <script type="module" src="/rapidoc/rapidoc-min.js"></script>
@@ -81,6 +81,12 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
         });
     }
 
+    private useFavicon() {
+        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/favicon.ico", false, (_req, res) => {
+            res.sendFile(path.join(this.baseDirectory, "static", "favicon.ico"));
+        });
+    }
+
     private useOpenApi() {
         const swaggerDocument = this.loadOpenApiSpec();
 
@@ -99,7 +105,7 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
 
         const swaggerUiOptions: SwaggerUiOptions = {
             explorer: true,
-            swaggerOptions: options
+            customfavIcon: "/favicon.ico",
         };
 
         const handlers = swaggerUi.serve;
