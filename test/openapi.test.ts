@@ -23,7 +23,7 @@ describe("API documentation", () => {
     });
 
     test("the route /docs/swagger should return Swagger UI html", async () => {
-        const response = await axiosClient.get("/docs/swagger");
+        const response = await axiosClient.get("/docs/swagger/");
         expect(response.status).toBe(200);
         expect(response.headers["content-type"]).toContain("text/html");
         expect(response.data).toContain('<div id="swagger-ui">');
