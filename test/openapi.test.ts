@@ -35,4 +35,10 @@ describe("API documentation", () => {
         expect(response.headers["content-type"]).toContain("text/html");
         expect(response.data).toContain("<rapi-doc");
     });
+
+    test("the /favicon.ico route should be accessible", async () => {
+        const response = await axiosClient.get("/favicon.ico");
+        expect(response.status).toBe(200);
+        expect(response.headers["content-type"]).toContain("image/x-icon");
+    });
 });
