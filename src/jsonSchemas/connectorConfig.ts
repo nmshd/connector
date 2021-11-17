@@ -22,8 +22,10 @@ interface ModuleConfiguration {
     enabled: boolean;
     displayName: string;
     location: string;
+    requiredInfrastructure?: string[];
     [key: string]: any;
 }
+
 interface InfrastructureConfiguration {
     httpServer: {
         enabled: boolean;

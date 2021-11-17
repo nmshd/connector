@@ -64,7 +64,7 @@
             "location": "coreHttpApi/CoreHttpApiModule",
             "enabled": true,
 
-            "infrastructure": ["httpServer"],
+            "requiredInfrastructure": ["httpServer"],
 
             "docs": {
                 "enabled": true
