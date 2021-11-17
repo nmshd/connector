@@ -38,7 +38,7 @@ export interface ControllerConfig {
 
 export interface HttpServerConfiguration extends InfrastructureConfiguration {
     port?: number;
-    apiKey?: string;
+    apiKey: string;
     cors?: CorsOptions;
 }
 
