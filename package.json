@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/connector",
-    "version": "2.0.8",
+    "version": "2.1.0",
     "private": true,
     "description": "The Enmeshed Business Connector",
     "homepage": "https://enmeshed.eu/integrate",
@@ -14,13 +14,14 @@
         "lint:tsc": "lerna run build:ci && tsc --noEmit && tsc -p test/tsconfig.json --noEmit",
         "build": "run-p tsc copy-additional-files",
         "build:watch": "run-p -r tsc:watch copy-additional-files:watch",
-        "copy-additional-files": "npx cpx \"src/**/*.{json,yml}\" dist",
-        "copy-additional-files:watch": "npx cpx \"src/**/*.{json,yml}\" dist --watch",
+        "copy-additional-files": "npx cpx \"src/**/*.{json,yml,ico}\" dist",
+        "copy-additional-files:watch": "npx cpx \"src/**/*.{json,yml,ico}\" dist --watch",
         "tsc": "tsc",
         "tsc:watch": "tsc -w",
         "test:ci": "jest -i",
         "test:local": ". scripts/testSetup.sh && jest",
-        "test:watch": ". scripts/testSetup.sh && jest --watch"
+        "test:watch": ". scripts/testSetup.sh && jest --watch",
+        "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json"
     },
     "jest": {
         "maxWorkers": 2,
@@ -34,8 +35,8 @@
     "dependencies": {
         "@js-soft/docdb-access-mongo": "1.0.2",
         "@js-soft/node-logger": "1.0.0",
-        "@js-soft/ts-utils": "^1.0.1",
-        "@nmshd/runtime": "1.0.5",
+        "@js-soft/ts-utils": "^1.1.1",
+        "@nmshd/runtime": "1.0.7",
         "agentkeepalive": "4.1.4",
         "axios": "0.24.0",
         "compression": "1.7.4",
@@ -59,7 +60,7 @@
         "@alex_neo/jest-expect-message": "^1.0.5",
         "@js-soft/eslint-config-ts": "1.4.2",
         "@js-soft/license-check": "1.0.3",
-        "@nmshd/connector-sdk": "1.1.4",
+        "@nmshd/connector-sdk": "1.1.5",
         "@types/compression": "^1.7.2",
         "@types/cors": "^2.8.12",
         "@types/express": "4.17.13",

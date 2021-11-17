@@ -19,10 +19,10 @@ describe("API documentation", () => {
     test("the route /docs should redirect to /docs/swagger", async () => {
         const response = await axiosClient.get("/docs");
         expect(response.status).toBe(301);
-        expect(response.headers.location).toContain("/docs/swagger/");
+        expect(response.headers.location).toContain("/docs/swagger");
     });
 
-    test("the route /docs/swagger/ should return Swagger UI html", async () => {
+    test("the route /docs/swagger should return Swagger UI html", async () => {
         const response = await axiosClient.get("/docs/swagger/");
         expect(response.status).toBe(200);
         expect(response.headers["content-type"]).toContain("text/html");
@@ -34,5 +34,11 @@ describe("API documentation", () => {
         expect(response.status).toBe(200);
         expect(response.headers["content-type"]).toContain("text/html");
         expect(response.data).toContain("<rapi-doc");
+    });
+
+    test("the /favicon.ico route should be accessible", async () => {
+        const response = await axiosClient.get("/favicon.ico");
+        expect(response.status).toBe(200);
+        expect(response.headers["content-type"]).toContain("image/x-icon");
     });
 });

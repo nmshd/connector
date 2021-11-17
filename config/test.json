@@ -24,7 +24,7 @@
             }
         }
     },
-    "modules": {
+    "infrastructure": {
         "httpServer": {
             "apiKey": "xxx"
         }

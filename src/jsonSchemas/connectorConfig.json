@@ -15,6 +15,30 @@
             "required": ["connectionString", "dbName"],
             "type": "object"
         },
+        "infrastructure": {
+            "additionalProperties": false,
+            "properties": {
+                "httpServer": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "apiKey": {
+                            "type": "string"
+                        },
+                        "cors": {},
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "port": {
+                            "type": ["string", "number"]
+                        }
+                    },
+                    "required": ["enabled", "apiKey"],
+                    "type": "object"
+                }
+            },
+            "required": ["httpServer"],
+            "type": "object"
+        },
         "logging": {
             "additionalProperties": false,
             "properties": {
@@ -982,6 +1006,12 @@
                     },
                     "location": {
                         "type": "string"
+                    },
+                    "requiredInfrastructure": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
                     }
                 },
                 "required": ["enabled", "displayName", "location"],
@@ -1024,6 +1054,6 @@
             "type": "object"
         }
     },
-    "required": ["database", "transportLibrary", "logging", "modules"],
+    "required": ["database", "transportLibrary", "logging", "modules", "infrastructure"],
     "type": "object"
 }

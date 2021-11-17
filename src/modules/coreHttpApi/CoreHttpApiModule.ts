@@ -1,10 +1,8 @@
 import path from "path";
 import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
-import { SwaggerOptions } from "typescript-rest";
 import YAML from "yamljs";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
-import { HttpMethod } from "../httpServer/HttpMethod";
-import HttpServerModule from "../httpServer/HttpServerModule";
+import { HttpMethod } from "../../infrastructure";
 
 export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     docs: {
@@ -13,57 +11,42 @@ export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleCo
 }
 
 export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleConfiguration> {
-    private httpServerModule: HttpServerModule;
-
     public init(): void {
-        this.httpServerModule = this.runtime.modules.getByName<HttpServerModule>("httpServer");
-
         if (this.configuration.docs.enabled) {
             this.addDocumentation();
         }
 
-        this.httpServerModule.addControllers(["controllers/*.js", "controllers/*.ts", "!controllers/*.d.ts"], this.baseDirectory);
+        this.runtime.infrastructure.httpServer.addControllers(["controllers/*.js", "controllers/*.ts", "!controllers/*.d.ts"], this.baseDirectory);
     }
 
     private addDocumentation() {
-        this.httpServerModule.addEndpoint(HttpMethod.Get, "/api-docs*", false, (_req, res) => {
-            res.redirect(301, "/docs/swagger/");
+        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/api-docs*", false, (_req, res) => {
+            res.redirect(301, "/docs/swagger");
         });
 
-        this.httpServerModule.addEndpoint(HttpMethod.Get, "/docs", false, (_req, res) => {
-            res.redirect(301, "/docs/swagger/");
+        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs", false, (_req, res) => {
+            res.redirect(301, "/docs/swagger");
         });
 
         this.useOpenApi();
-        this.useSwagger({
-            endpoint: "docs/swagger/",
-            swaggerUiOptions: {
-                customfavIcon: "https://enmeshed.eu/favicon.ico",
-                customSiteTitle: "Business Connector API",
-                customCss:
-                    ".swagger-ui .topbar {background-color: #29235c;}" +
-                    ".renderedMarkdown table th {border: 1px solid black; border-collapse: collapse}" +
-                    ".renderedMarkdown table td {border: 1px solid black; border-collapse: collapse}"
-            },
-            filePath: path.resolve(__dirname, "./openapi.yml")
-        });
-
+        this.useSwagger();
         this.useRapidoc();
+        this.useFavicon();
     }
 
     private useRapidoc() {
-        this.httpServerModule.addEndpoint(HttpMethod.Get, "/rapidoc/rapidoc-min.js", false, (_req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/rapidoc/rapidoc-min.js", false, (_req, res) => {
             res.sendFile(require.resolve("rapidoc"));
         });
 
-        this.httpServerModule.addEndpoint(HttpMethod.Get, "/docs/rapidoc", false, (_req, res) => {
-            res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src data: https://enmeshed.eu");
+        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/rapidoc", false, (_req, res) => {
+            res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval' 'unsafe-inline'");
 
             res.send(`
                 <!doctype html>
                     <head>
                         <title>Business Connector API</title>
-                        <link rel="icon" href="https://enmeshed.eu/favicon.ico" />
+                        <link rel="icon" href="/favicon.ico" />
                         <meta charset="utf-8">
                         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&amp;family=Roboto+Mono&amp;display=swap" rel="stylesheet">
                         <script type="module" src="/rapidoc/rapidoc-min.js"></script>
@@ -86,31 +69,40 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
         });
     }
 
+    private useFavicon() {
+        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/favicon.ico", false, (_req, res) => {
+            res.sendFile(path.join(this.baseDirectory, "static", "favicon.ico"));
+        });
+    }
+
     private useOpenApi() {
         const swaggerDocument = this.loadOpenApiSpec();
 
-        this.httpServerModule.addEndpoint(HttpMethod.Get, "/docs/json", false, (req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/json", false, (req, res) => {
             res.send(swaggerDocument);
         });
 
-        this.httpServerModule.addEndpoint(HttpMethod.Get, "/docs/yaml", false, (req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/yaml", false, (req, res) => {
             res.set("Content-Type", "text/vnd.yaml");
             res.send(YAML.stringify(swaggerDocument, 1000));
         });
     }
 
-    private useSwagger(options: SwaggerOptions) {
-        const spec = this.loadOpenApiSpec();
-
+    private useSwagger() {
         const swaggerUiOptions: SwaggerUiOptions = {
             explorer: true,
-            swaggerOptions: options
+            customfavIcon: "/favicon.ico",
+            customSiteTitle: "Business Connector API",
+            customCss:
+                ".swagger-ui .topbar {background-color: #29235c;}" +
+                ".renderedMarkdown table th {border: 1px solid black; border-collapse: collapse}" +
+                ".renderedMarkdown table td {border: 1px solid black; border-collapse: collapse}"
         };
 
-        const handlers = swaggerUi.serve;
-        handlers.push(swaggerUi.setup(spec, swaggerUiOptions));
+        const spec = this.loadOpenApiSpec();
 
-        this.httpServerModule.addMiddleware(path.posix.join("/", options.endpoint!), false, ...handlers);
+        this.runtime.infrastructure.httpServer.addMiddleware("/docs/swagger", false, ...swaggerUi.serve);
+        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/swagger", false, swaggerUi.setup(spec, swaggerUiOptions));
     }
 
     private loadOpenApiSpec() {

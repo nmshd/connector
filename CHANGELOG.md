@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0
+
+-   the `httpServer` configuration moved from `modules` to `infrastructure`
+-   the `apiKey` in the `httpServer` infrastructure is now mandatory
+
 ## 2.0.8
 
 -> SDK 1.1.5

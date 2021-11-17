@@ -1,3 +1,11 @@
+#!/usr/bin/env bash
+set -e
+
+if [ -z "$(which jq)" ]; then
+    echo "jq could not be found"
+    exit 1
+fi
+
 PACKAGE_VERSION=$(jq .version -r package.json)
 
 docker build \
@@ -6,7 +14,8 @@ docker build \
     --tag ghcr.io/nmshd/connector:latest \
     --tag ghcr.io/nmshd/connector:$PACKAGE_VERSION \
     --build-arg COMMIT_HASH=$COMMIT_HASH \
-    --build-arg BUILD_NUMBER=$BUILD_NUMBER .
+    --build-arg BUILD_NUMBER=$BUILD_NUMBER \
+    --build-arg PACKAGE_VERSION=$PACKAGE_VERSION .
 
 echo "pushing tag '$BUILD_NUMBER'"
 docker push ghcr.io/nmshd/connector:$BUILD_NUMBER
@@ -14,8 +23,8 @@ docker push ghcr.io/nmshd/connector:$BUILD_NUMBER
 echo "pushing tag '$COMMIT_HASH'"
 docker push ghcr.io/nmshd/connector:$COMMIT_HASH
 
-OUTPUT=$(DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect ghcr.io/nmshd/connector:${PACKAGE_VERSION} 2>&1)
-if [[ $OUTPUT =~ (no such manifest: ghcr.io/nmshd/connector:) ]]; then # manifest not found -> push
+OUTPUT="$(DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect ghcr.io/nmshd/connector:${PACKAGE_VERSION} 2>&1)" || true
+if [[ $OUTPUT =~ (no such manifest: ghcr.io/nmshd/connector:) ]] || [[ $OUTPUT == "manifest unknown" ]]; then # manifest not found -> push
     echo "pushing tag 'latest'"
     docker push ghcr.io/nmshd/connector:latest
 

@@ -35,17 +35,16 @@
             }
         }
     },
-    "modules": {
+    "infrastructure": {
         "httpServer": {
-            "displayName": "HTTP Server",
-            "location": "httpServer/HttpServerModule",
             "enabled": true,
 
-            "port": 80,
             "cors": {
                 "origin": false
             }
-        },
+        }
+    },
+    "modules": {
         "sync": {
             "displayName": "Sync",
             "location": "sync/SyncModule",
@@ -58,8 +57,6 @@
             "location": "autoAcceptRelationshipCreationChanges/AutoAcceptRelationshipCreationChangesModule",
             "enabled": false,
 
-            "dependsOn": ["sync"],
-
             "responseContent": {}
         },
         "coreHttpApi": {
@@ -67,7 +64,7 @@
             "location": "coreHttpApi/CoreHttpApiModule",
             "enabled": true,
 
-            "dependsOn": ["httpServer"],
+            "requiredInfrastructure": ["httpServer"],
 
             "docs": {
                 "enabled": true
@@ -77,7 +74,6 @@
             "displayName": "Webhooks",
             "enabled": false,
             "location": "webhooks/WebhooksModule",
-            "dependsOn": ["sync"],
 
             "url": "",
             "headers": {},
