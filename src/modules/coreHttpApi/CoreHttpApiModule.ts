@@ -12,28 +12,20 @@ export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleCo
 }
 
 export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleConfiguration> {
-    private get httpServer() {
-        return this.runtime.httpServer!;
-    }
-
     public init(): void {
         if (this.configuration.docs.enabled) {
             this.addDocumentation();
         }
 
-        if (!this.runtime.httpServer || !this.runtime.httpServer.isEnabled) {
-            throw new Error("HTTP server is not enabled");
-        }
-
-        this.httpServer.addControllers(["controllers/*.js", "controllers/*.ts", "!controllers/*.d.ts"], this.baseDirectory);
+        this.runtime.httpServer.addControllers(["controllers/*.js", "controllers/*.ts", "!controllers/*.d.ts"], this.baseDirectory);
     }
 
     private addDocumentation() {
-        this.httpServer.addEndpoint(HttpMethod.Get, "/api-docs*", false, (_req, res) => {
+        this.runtime.httpServer.addEndpoint(HttpMethod.Get, "/api-docs*", false, (_req, res) => {
             res.redirect(301, "/docs/swagger/");
         });
 
-        this.httpServer.addEndpoint(HttpMethod.Get, "/docs", false, (_req, res) => {
+        this.runtime.httpServer.addEndpoint(HttpMethod.Get, "/docs", false, (_req, res) => {
             res.redirect(301, "/docs/swagger/");
         });
 
@@ -55,11 +47,11 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
     }
 
     private useRapidoc() {
-        this.httpServer.addEndpoint(HttpMethod.Get, "/rapidoc/rapidoc-min.js", false, (_req, res) => {
+        this.runtime.httpServer.addEndpoint(HttpMethod.Get, "/rapidoc/rapidoc-min.js", false, (_req, res) => {
             res.sendFile(require.resolve("rapidoc"));
         });
 
-        this.httpServer.addEndpoint(HttpMethod.Get, "/docs/rapidoc", false, (_req, res) => {
+        this.runtime.httpServer.addEndpoint(HttpMethod.Get, "/docs/rapidoc", false, (_req, res) => {
             res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src data: https://enmeshed.eu");
 
             res.send(`
@@ -92,11 +84,11 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
     private useOpenApi() {
         const swaggerDocument = this.loadOpenApiSpec();
 
-        this.httpServer.addEndpoint(HttpMethod.Get, "/docs/json", false, (req, res) => {
+        this.runtime.httpServer.addEndpoint(HttpMethod.Get, "/docs/json", false, (req, res) => {
             res.send(swaggerDocument);
         });
 
-        this.httpServer.addEndpoint(HttpMethod.Get, "/docs/yaml", false, (req, res) => {
+        this.runtime.httpServer.addEndpoint(HttpMethod.Get, "/docs/yaml", false, (req, res) => {
             res.set("Content-Type", "text/vnd.yaml");
             res.send(YAML.stringify(swaggerDocument, 1000));
         });
@@ -113,7 +105,7 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
         const handlers = swaggerUi.serve;
         handlers.push(swaggerUi.setup(spec, swaggerUiOptions));
 
-        this.httpServer.addMiddleware(path.posix.join("/", options.endpoint!), false, ...handlers);
+        this.runtime.httpServer.addMiddleware(path.posix.join("/", options.endpoint!), false, ...handlers);
     }
 
     private loadOpenApiSpec() {

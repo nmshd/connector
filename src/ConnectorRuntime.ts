@@ -30,7 +30,13 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private mongodbConnection?: MongoDbConnection;
     private accountController: AccountController;
 
-    public httpServer?: HttpServer;
+    private _httpServer?: HttpServer;
+    public get httpServer(): HttpServer {
+        if (!this._httpServer) {
+            throw new Error("Infrastructure 'HTTP server' is not available.");
+        }
+        return this._httpServer;
+    }
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
         const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
@@ -231,8 +237,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     private initInfrastructure(): void {
         if (this.runtimeConfig.infrastructure.httpServer.enabled) {
-            this.httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer));
-            this.httpServer.init();
+            this._httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer));
+            this._httpServer.init();
         }
     }
 
@@ -243,7 +249,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     private async startInfrastructure(): Promise<void> {
-        await this.httpServer!.start();
+        await this._httpServer!.start();
     }
 
     protected async stop(): Promise<void> {
@@ -270,7 +276,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     private stopInfrastructure() {
-        this.httpServer!.stop();
+        this._httpServer!.stop();
     }
 
     private scheduleKillTask() {
