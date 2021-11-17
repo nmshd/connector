@@ -1,4 +1,4 @@
-import { DocumentationLinkBuilder } from "../../../DocumentationLinkBuilder";
+import { DocumentationLink } from "../../../DocumentationLink";
 
 export class HttpError {
     public readonly code: string;
@@ -13,8 +13,7 @@ export class HttpError {
         this.code = code;
         this.message = message;
 
-        const docLinkBuilder = new DocumentationLinkBuilder();
-        this.docs = docLinkBuilder.integrate().errorCodes().build(code);
+        this.docs = DocumentationLink.integrate__errorCodes(code);
     }
 
     public static forDev(code: string, message: string, stacktrace: string[], details: string): HttpErrorDev {

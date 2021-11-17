@@ -1,4 +1,4 @@
-import { DocumentationLinkBuilder } from "../DocumentationLinkBuilder";
+import { DocumentationLink } from "../DocumentationLink";
 import { ConnectorInfrastructure } from "./ConnectorInfastructure";
 import { HttpServer } from "./httpServer";
 
@@ -13,8 +13,7 @@ export class ConnectorInfrastructureRegistry {
     public getByName<T extends ConnectorInfrastructure>(name: string): T {
         const infrastructure = this.infrastructure[name.toLowerCase()];
         if (!infrastructure) {
-            const docLinkBuilder = new DocumentationLinkBuilder();
-            const docLink = docLinkBuilder.integrate().configuration().build(name.toLowerCase());
+            const docLink = DocumentationLink.integrate__configuration(name);
             throw new Error(`The infrastructure '${name}' is not available. Visit the docs '${docLink}'' to learn how to enable it.`);
         }
 
