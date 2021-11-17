@@ -34,7 +34,7 @@
             "required": ["connectionString"],
             "type": "object"
         },
-        "modules": {
+        "infrastructure": {
             "additionalProperties": false,
             "properties": {
                 "httpServer": {
@@ -56,7 +56,13 @@
                     },
                     "required": ["apiKey"],
                     "type": "object"
-                },
+                }
+            },
+            "required": ["httpServer"]
+        },
+        "modules": {
+            "additionalProperties": false,
+            "properties": {
                 "sync": {
                     "additionalProperties": false,
                     "properties": {
@@ -133,7 +139,7 @@
             "type": "object"
         }
     },
-    "required": ["database", "transportLibrary"],
+    "required": ["database", "transportLibrary", "infrastructure"],
     "type": "object",
     "definitions": {
         "CorsOptionMethod": {
