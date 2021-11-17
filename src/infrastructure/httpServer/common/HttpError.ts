@@ -1,3 +1,5 @@
+import { DocumentationLinkBuilder } from "../../../DocumentationLinkBuilder";
+
 export class HttpError {
     public readonly code: string;
     public readonly message: string;
@@ -10,7 +12,9 @@ export class HttpError {
         this.time = new Date().toISOString();
         this.code = code;
         this.message = message;
-        this.docs = `https://enmeshed.eu/integrate/error-codes#${code}`;
+
+        const docLinkBuilder = new DocumentationLinkBuilder();
+        this.docs = docLinkBuilder.integrate().errorCodes().build(code);
     }
 
     public static forDev(code: string, message: string, stacktrace: string[], details: string): HttpErrorDev {
