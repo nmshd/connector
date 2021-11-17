@@ -140,16 +140,16 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     private sanitizeConfig(config: ConnectorRuntimeConfig) {
-        config.database.connectionString = config.database.connectionString.replace(/./g, "*");
+        config.database.connectionString = "***";
 
         const httpServer = config.infrastructure.httpServer as any;
         if (httpServer?.apiKey) {
-            httpServer.apiKey = httpServer.apiKey.replace(/./g, "*");
+            httpServer.apiKey = "***";
         }
 
         const transport = config.transportLibrary;
         if (transport.platformClientSecret) {
-            transport.platformClientSecret = transport.platformClientSecret.replace(/./g, "*");
+            transport.platformClientSecret = "***";
         }
 
         return config;
