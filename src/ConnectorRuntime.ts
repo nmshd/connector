@@ -166,6 +166,15 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     protected async loadModule(moduleConfiguration: ModuleConfiguration): Promise<void> {
         const connectorModuleConfiguration = moduleConfiguration as ConnectorRuntimeModuleConfiguration;
 
+        for (const requiredInfrastructure of connectorModuleConfiguration.requiredInfrastructure ?? []) {
+            if (!(this.runtimeConfig.infrastructure as any)[requiredInfrastructure]?.enabled) {
+                this.logger.error(
+                    `Module '${connectorModuleConfiguration.displayName}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`
+                );
+                process.exit(1);
+            }
+        }
+
         const modulePath = path.join(ConnectorRuntime.MODULES_DIRECTORY, moduleConfiguration.location);
         const nodeModule = await this.import(modulePath);
 
