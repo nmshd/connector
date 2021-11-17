@@ -12,7 +12,9 @@ export class ConnectorInfrastructureRegistry {
     public getByName<T extends ConnectorInfrastructure>(name: string): T {
         const infrastructure = this.infrastructure[name.toLowerCase()];
         if (!infrastructure) {
-            throw new Error(`The infrastructure '${name}' is not available.`); // TODO: docs??
+            throw new Error(
+                `The infrastructure '${name}' is not available. Visit the docs 'https://enmeshed.eu/integrate/connector-configuration#httpserver' to learn how to enable it.`
+            );
         }
 
         return infrastructure as T;
