@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+if [ -z "$(which jq)" ]; then
+    echo "jq could not be found"
+    exit 1
+fi
+
 PACKAGE_VERSION=$(jq .version -r package.json)
 
 docker build \
