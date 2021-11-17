@@ -15,7 +15,7 @@ export interface ConnectorRuntimeConfig extends RuntimeConfig {
     infrastructure: {
         httpServer: {
             enabled: boolean;
-            apiKey?: string;
+            apiKey: string;
             cors?: any;
         };
     };

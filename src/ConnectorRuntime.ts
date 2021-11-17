@@ -24,18 +24,19 @@ interface SupportInformation {
     identityInfo: GetIdentityInfoResponse | { error: string };
 }
 
+interface ConnectorInfrastructure {
+    httpServer: HttpServer;
+}
+
 export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private static readonly MODULES_DIRECTORY = path.join(__dirname, "modules");
 
     private mongodbConnection?: MongoDbConnection;
     private accountController: AccountController;
 
-    private _httpServer?: HttpServer;
-    public get httpServer(): HttpServer {
-        if (!this._httpServer) {
-            throw new Error("Infrastructure 'HTTP server' is not available.");
-        }
-        return this._httpServer;
+    private _infrastructure: Partial<ConnectorInfrastructure>;
+    public get infrastructure(): ConnectorInfrastructure {
+        return this._infrastructure as ConnectorInfrastructure;
     }
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
@@ -236,9 +237,10 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     private initInfrastructure(): void {
+        this._infrastructure = {};
         if (this.runtimeConfig.infrastructure.httpServer.enabled) {
-            this._httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer));
-            this._httpServer.init();
+            this._infrastructure.httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer));
+            this._infrastructure.httpServer.init();
         }
     }
 
@@ -249,7 +251,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     private async startInfrastructure(): Promise<void> {
-        await this._httpServer?.start();
+        await this._infrastructure.httpServer?.start();
     }
 
     protected async stop(): Promise<void> {
@@ -276,7 +278,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     private stopInfrastructure() {
-        this._httpServer?.stop();
+        this._infrastructure.httpServer?.stop();
     }
 
     private scheduleKillTask() {
