@@ -8,7 +8,7 @@ import http from "http";
 import { Server } from "typescript-rest";
 import TypescriptRestIOC from "typescript-rest-ioc";
 import { buildInformation } from "../../buildInformation";
-import { ConnctorInfrastructure, InfrastructureConfiguration } from "../ConnectorInfastructure";
+import { ConnectorInfrastructure, InfrastructureConfiguration } from "../ConnectorInfastructure";
 import { Envelope, HttpError } from "./common";
 import { HttpMethod } from "./HttpMethod";
 import { csrfErrorHandler } from "./middlewares/csrfErrorHandler";
@@ -42,7 +42,7 @@ export interface HttpServerConfiguration extends InfrastructureConfiguration {
     cors?: CorsOptions;
 }
 
-export class HttpServer extends ConnctorInfrastructure<HttpServerConfiguration> {
+export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration> {
     private app: Application;
     private readonly customEndpoints: CustomEndpoint[] = [];
     private readonly controllers: ControllerConfig[] = [];

@@ -15,6 +15,7 @@ import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
 import { HealthChecker } from "./HealthChecker";
 import { HttpServer } from "./infrastructure";
+import { ConnectorInfrastructureRegistry } from "./infrastructure/ConnectorInfrastructureRegistry";
 import { BCLoggerFactory } from "./logging/BCLoggerFactory";
 
 interface SupportInformation {
@@ -24,20 +25,13 @@ interface SupportInformation {
     identityInfo: GetIdentityInfoResponse | { error: string };
 }
 
-interface ConnectorInfrastructure {
-    httpServer: HttpServer;
-}
-
 export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private static readonly MODULES_DIRECTORY = path.join(__dirname, "modules");
 
     private mongodbConnection?: MongoDbConnection;
     private accountController: AccountController;
 
-    private _infrastructure: Partial<ConnectorInfrastructure>;
-    public get infrastructure(): ConnectorInfrastructure {
-        return this._infrastructure as ConnectorInfrastructure;
-    }
+    public readonly infrastructure = new ConnectorInfrastructureRegistry();
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
         const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
@@ -174,12 +168,11 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         const connectorModuleConfiguration = moduleConfiguration as ConnectorRuntimeModuleConfiguration;
 
         for (const requiredInfrastructure of connectorModuleConfiguration.requiredInfrastructure ?? []) {
-            if (!(this.runtimeConfig.infrastructure as any)[requiredInfrastructure]?.enabled) {
-                this.logger.error(
-                    `Module '${connectorModuleConfiguration.displayName}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`
-                );
-                process.exit(1);
-            }
+            const infrastructureConfiguration = (this.runtimeConfig.infrastructure as any)[requiredInfrastructure];
+            if (infrastructureConfiguration?.enabled) continue;
+
+            this.logger.error(`Module '${connectorModuleConfiguration.displayName}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`);
+            process.exit(1);
         }
 
         const modulePath = path.join(ConnectorRuntime.MODULES_DIRECTORY, moduleConfiguration.location);
@@ -228,41 +221,23 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         }
     }
 
-    public async init(): Promise<void> {
-        this.loggerFactory = this.createLoggerFactory();
-
-        this.initInfrastructure();
-
-        await super.init();
-    }
-
-    private initInfrastructure(): void {
-        this._infrastructure = {};
+    protected initInfrastructure(): void {
         if (this.runtimeConfig.infrastructure.httpServer.enabled) {
-            this._infrastructure.httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer));
-            this._infrastructure.httpServer.init();
+            const httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer), "httpServer");
+            httpServer.init();
+            this.infrastructure.add(httpServer);
         }
     }
 
-    public async start(): Promise<void> {
-        await this.startInfrastructure();
-
-        await super.start();
-    }
-
-    private async startInfrastructure(): Promise<void> {
-        await this._infrastructure.httpServer?.start();
+    protected async startInfrastructure(): Promise<void> {
+        for (const infrastructure of this.infrastructure) {
+            await infrastructure.start();
+        }
     }
 
     protected async stop(): Promise<void> {
         try {
             await super.stop();
-        } catch (e) {
-            this.logger.error(e);
-        }
-
-        try {
-            this.stopInfrastructure();
         } catch (e) {
             this.logger.error(e);
         }
@@ -277,8 +252,10 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         (this.loggerFactory as NodeLoggerFactory).close();
     }
 
-    private stopInfrastructure() {
-        this._infrastructure.httpServer?.stop();
+    protected async stopInfrastructure(): Promise<void> {
+        for (const infrastructure of this.infrastructure) {
+            await infrastructure.stop();
+        }
     }
 
     private scheduleKillTask() {
