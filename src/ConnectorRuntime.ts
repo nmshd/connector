@@ -249,7 +249,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     private async startInfrastructure(): Promise<void> {
-        await this._httpServer!.start();
+        await this._httpServer?.start();
     }
 
     protected async stop(): Promise<void> {
@@ -276,7 +276,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     private stopInfrastructure() {
-        this._httpServer!.stop();
+        this._httpServer?.stop();
     }
 
     private scheduleKillTask() {
