@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.1
+
+-   upgrade the runtime to version 1.0.8
+
 ## 2.1.0
 
 -   the `httpServer` configuration moved from `modules` to `infrastructure`
