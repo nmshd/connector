@@ -1,0 +1,20 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - helmChart
+
+jobs:
+  publish-helm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: azure/setup-helm@v1
+      - run: echo "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" | helm registry login -u jkoenig134 --password-stdin https://ghcr.io
+        env:
+          USER: ${{ github.actor }}
+          PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      - run: bash .ci/publishHelmChart.sh
