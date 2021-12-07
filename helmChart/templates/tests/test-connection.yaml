@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "enmeshed_connector.fullname" . }}-test-connection"
+  labels:
+    {{- include "enmeshed_connector.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "enmeshed_connector.fullname" . }}:{{ .Values.service.port }}/health']
+  restartPolicy: Never

@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "enmeshed_connector.fullname" . }}
+  {{- with .Values.podAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
+  labels:
+    {{- include "enmeshed_connector.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.imagePullSecrets }}
+  imagePullSecrets:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
+  securityContext:
+    {{- toYaml .Values.podSecurityContext | nindent 8 }}
+  containers:
+    - name: {{ .Chart.Name }}
+      securityContext:
+        {{- toYaml .Values.securityContext | nindent 12 }}
+      image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+      imagePullPolicy: {{ .Values.image.pullPolicy }}
+      ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+      livenessProbe:
+        httpGet:
+          path: /health
+          port: http
+      readinessProbe:
+        httpGet:
+          path: /health
+          port: http
+      resources:
+        {{- toYaml .Values.resources | nindent 12 }}
+      env:
+        - name: CUSTOM_CONFIG_LOCATION
+          value: "/config.json"
+      volumeMounts:
+        - name: config-volume
+          mountPath: /config.json
+          subPath: config.json
+          readOnly: true
+  volumes:
+    - name: config-volume
+      configMap:
+        name: {{ include "enmeshed_connector.fullname" . }}
+  {{- with .Values.nodeSelector }}
+  nodeSelector:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.affinity }}
+  affinity:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.tolerations }}
+  tolerations:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
