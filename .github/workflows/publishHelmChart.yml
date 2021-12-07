@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: azure/setup-helm@v1
-      - run: echo "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" | helm registry login -u jkoenig134 --password-stdin https://ghcr.io
+      - run: echo "$PASSWORD" | helm registry login -u jkoenig134 --password-stdin https://ghcr.io
         env:
           USER: ${{ github.actor }}
           PASSWORD: ${{ secrets.GITHUB_TOKEN }}
