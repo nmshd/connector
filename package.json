@@ -36,7 +36,7 @@
         "@js-soft/docdb-access-mongo": "1.0.3",
         "@js-soft/node-logger": "1.0.0",
         "@js-soft/ts-utils": "^1.1.1",
-        "@nmshd/runtime": "1.2.2",
+        "@nmshd/runtime": "1.2.3",
         "agentkeepalive": "4.1.4",
         "axios": "0.24.0",
         "compression": "1.7.4",
