@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.2
+
+-   upgrade the runtime to version 1.2.4
+
 ## 2.1.1
 
 -   upgrade the runtime to version 1.0.8
