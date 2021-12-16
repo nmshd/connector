@@ -1,12 +1,12 @@
 # Connector
 
 [![GitHub Actions CI](https://github.com/nmshd/cns-connector/workflows/Publish/badge.svg)](https://github.com/nmshd/cns-connector/actions?query=workflow%3APublish)
-[![npm version](https://badge.fury.io/js/@nmshd%2fconnector-sdk.svg)](https://www.npmjs.com/package/@nmshd/connector-sdk)
 
 This monorepo consolidates the following packages / applications:
-
--   [The Connector itself](./)
--   [TypeScript Connector SDK](packages/sdk/)
+| Component | Version(s) |
+| -- | -- |
+| [The Connector itself](./) | [see ghcr.io](https://github.com/nmshd/cns-connector/pkgs/container/connector) |
+| [TypeScript Connector SDK](packages/sdk/) | [![npm version](https://badge.fury.io/js/@nmshd%2fconnector-sdk.svg)](https://www.npmjs.com/package/@nmshd/connector-sdk) |
 
 ## Documentation
 
