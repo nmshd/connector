@@ -2,7 +2,7 @@ import { ConnectorClient, ConnectorFile } from "@nmshd/connector-sdk";
 import fs from "fs";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
-import { combinations, exchangeFile, makeUploadRequest, uploadFile } from "./lib/testUtils";
+import { exchangeFile, makeUploadRequest, uploadFile } from "./lib/testUtils";
 import { expectError, expectSuccess, ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
@@ -11,8 +11,6 @@ let client2: ConnectorClient;
 
 const UNKOWN_FILE_ID = "FILXXXXXXXXXXXXXXXXX";
 const UNKOWN_TOKEN_ID = "TOKXXXXXXXXXXXXXXXXX";
-
-const illegalParameters = [null, undefined, ""];
 
 beforeAll(async () => ([client1, client2] = await launcher.launch(2)), 30000);
 afterAll(() => launcher.stop());
@@ -212,18 +210,26 @@ describe("Load peer file with token reference", () => {
         const token = (await client1.files.createTokenForFile(file.id)).result;
 
         const response = await client2.files.loadPeerFile({ reference: token.id });
-        expectError(response, "token reference is invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "token reference invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("passing file id as truncated token reference causes an error", async () => {
         const file = await uploadFile(client1);
 
         const response = await client2.files.loadPeerFile({ reference: file.id });
-        expectError(response, "token reference is invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "token reference invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
-    test.each(illegalParameters)("passing %p as truncated token reference causes an error", async (tokenReference) => {
+    test.each([
+        [null, "token reference invalid"],
+        ["", "token reference invalid"]
+    ])("passing %p as truncated token reference causes an error", async (tokenReference, expectedMessage) => {
         const response = await client2.files.loadPeerFile({ reference: tokenReference as any });
+        expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
+    });
+
+    test("passing undefined as truncated token reference causes an error", async () => {
+        const response = await client2.files.loadPeerFile({ reference: undefined as any });
         expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
     });
 });
@@ -280,23 +286,35 @@ describe("Load peer file with file id and secret", () => {
 
         const response = await client2.files.loadPeerFile({ id: UNKOWN_TOKEN_ID, secretKey: file.secretKey });
 
-        expectError(response, "id is invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "id must match format fileId", "error.runtime.validation.invalidPropertyValue");
     });
 
-    test.each(illegalParameters)("passing valid file id and %p as secret key", async (secretKey) => {
+    test.each([
+        [null, "secretKey must be string"],
+        ["", "secretKey must NOT have fewer than 100 characters"]
+    ])("cannot pass %p as secret key", async (secretKey, expectedMessage) => {
         const response = await client2.files.loadPeerFile({ id: file.id, secretKey: secretKey as any });
 
+        expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
+    });
+
+    test("cannot pass undefined as secret key", async () => {
+        const response = await client2.files.loadPeerFile({ id: file.id, secretKey: undefined as any });
+
         expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
     });
 
-    test.each(illegalParameters)("passing %p as file id and valid secret key", async (fileId) => {
+    test.each([
+        [null, "id must be string"],
+        ["", "id must match format fileId"]
+    ])("cannot pass %p as file id", async (fileId, expectedMessage) => {
         const response = await client2.files.loadPeerFile({ id: fileId as any, secretKey: file.secretKey });
 
-        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+        expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
     });
 
-    test.each(combinations(illegalParameters, illegalParameters))("passing %p as file id and %p as secret key", async (fileId, secretKey) => {
-        const response = await client2.files.loadPeerFile({ id: fileId as any, secretKey: secretKey as any });
+    test("cannot pass undefined as file id", async () => {
+        const response = await client2.files.loadPeerFile({ id: undefined as any, secretKey: file.secretKey });
 
         expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
     });
