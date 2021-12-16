@@ -212,14 +212,14 @@ describe("Load peer file with token reference", () => {
         const token = (await client1.files.createTokenForFile(file.id)).result;
 
         const response = await client2.files.loadPeerFile({ reference: token.id });
-        expectError(response, "reference is invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "token reference is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("passing file id as truncated token reference causes an error", async () => {
         const file = await uploadFile(client1);
 
         const response = await client2.files.loadPeerFile({ reference: file.id });
-        expectError(response, "reference is invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "token reference is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test.each(illegalParameters)("passing %p as truncated token reference causes an error", async (tokenReference) => {
