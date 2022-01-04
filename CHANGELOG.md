@@ -2,6 +2,8 @@
 
 ## 2.1.3
 
+-> SDK 1.1.6
+
 -   upgrade the runtime to version 1.2.11
 -   check for creation change status in the AutoAcceptRelationshipCreationChanges module to avoid and error that results in accepting an already accepted change
 
