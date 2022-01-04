@@ -122,7 +122,7 @@ describe("Message errors", () => {
 describe("Message query", () => {
     test("query messages", async () => {
         const message = await exchangeMessage(client1, client2);
-        const conditions = new QueryParamConditions(message, client1)
+        const conditions = new QueryParamConditions(message, client2)
             .addDateSet("createdAt")
             .addDateSet("lastMessageSentAt")
             .addStringSet("createdBy")
