@@ -23,7 +23,7 @@ jobs:
 
       # auditing
       - run: npx license-check --ignoreRegex @nmshd/connector
-      - run: npx better-npm-audit audit --exclude 1006724,1004876
+      # - run: npx better-npm-audit audit --exclude 1004876
 
       # tests
       - name: Start MongoDB
