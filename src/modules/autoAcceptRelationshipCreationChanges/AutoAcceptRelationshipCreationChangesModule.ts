@@ -1,4 +1,4 @@
-import { RelationshipChangedEvent } from "@nmshd/runtime";
+import { RelationshipChangedEvent, RelationshipChangeStatus } from "@nmshd/runtime";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
 export interface AutoAcceptRelationshipCreationChangesModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
@@ -18,9 +18,8 @@ export default class AutoAcceptRelationshipCreationChangesModule extends Connect
         this.currentIdentity = currentIdentityResult.value.address;
 
         this.subscriptionId = this.runtime.eventBus.subscribe<RelationshipChangedEvent>(RelationshipChangedEvent, async (event) => {
-            if (!this.isIncomingRelationshipCreationChange(event)) {
-                return;
-            }
+            if (!this.isIncomingPendingRelationshipCreationChange(event)) return;
+
             this.logger.info("Incoming relationship creation change detected.");
 
             const result = await this.runtime.transportServices.relationships.acceptRelationshipChange({
@@ -37,8 +36,13 @@ export default class AutoAcceptRelationshipCreationChangesModule extends Connect
         });
     }
 
-    private isIncomingRelationshipCreationChange(event: RelationshipChangedEvent) {
-        return event.data.changes.length === 1 && event.data.changes[0].request.createdBy !== this.currentIdentity;
+    private isIncomingPendingRelationshipCreationChange(event: RelationshipChangedEvent) {
+        const data = event.data;
+
+        if (data.changes.length === 1) return false;
+
+        const creationChange = event.data.changes[0];
+        return creationChange.request.createdBy !== this.currentIdentity && creationChange.status === RelationshipChangeStatus.Pending;
     }
 
     public stop(): void {
