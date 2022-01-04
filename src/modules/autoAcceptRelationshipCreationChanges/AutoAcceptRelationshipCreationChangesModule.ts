@@ -38,8 +38,7 @@ export default class AutoAcceptRelationshipCreationChangesModule extends Connect
 
     private isIncomingPendingRelationshipCreationChange(event: RelationshipChangedEvent) {
         const data = event.data;
-
-        if (data.changes.length === 1) return false;
+        if (data.changes.length !== 1) return false;
 
         const creationChange = event.data.changes[0];
         return creationChange.request.createdBy !== this.currentIdentity && creationChange.status === RelationshipChangeStatus.Pending;
