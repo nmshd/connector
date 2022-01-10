@@ -16,6 +16,7 @@ RUN .ci/writeBuildInformation.sh
 
 FROM node:16.13.0-alpine
 ENV NODE_CONFIG_ENV=prod
+RUN apk add --no-cache tini
 WORKDIR /usr/app
 COPY config config
 COPY package.json package-lock.json ./
@@ -24,6 +25,9 @@ RUN npm ci --production
 
 COPY --from=builder /usr/app/dist/ dist/
 
+USER node
+
 LABEL org.opencontainers.image.source = "https://github.com/nmshd/cns-connector"
 
-ENTRYPOINT node ./dist/index.js
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["node", "/usr/app/dist/index.js"]
