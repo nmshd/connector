@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.4
+
+-   run Connector with `node` user instead of `root`
+-   run `tini` together with the Connector to ensure kernel events will be propagated to the Connector
+
 ## 2.1.3
 
 -> SDK 1.1.6
