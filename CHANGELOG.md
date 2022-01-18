@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.4
+
+-> SDK 1.1.7
+
+-   run `tini` together with the Connector to ensure kernel events will be propagated to the Connector
+-   upgrade the runtime to version 1.2.14
+
 ## 2.1.3
 
 -> SDK 1.1.6
