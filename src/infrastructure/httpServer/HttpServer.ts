@@ -64,7 +64,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                     directives: {
                         defaultSrc: [],
                         scriptSrc: ["'self'"],
-                        styleSrc: ["'self'", "'unsafe-inline'"],
+                        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
                         imgSrc: ["'self'", "https://enmeshed.eu", "data:"],
                         connectSrc: ["'self'"]
                     }

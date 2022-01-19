@@ -40,8 +40,6 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
         });
 
         this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/rapidoc", false, (_req, res) => {
-            res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval' 'unsafe-inline'");
-
             res.send(`
                 <!doctype html>
                     <head>
