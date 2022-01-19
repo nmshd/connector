@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.5
+
+-   remove `upgrade-insecure-requests` from the CSP to allow accessing the swagger and rapidoc UIs using http
+
 ## 2.1.4
 
 -> SDK 1.1.7
