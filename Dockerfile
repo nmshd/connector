@@ -25,8 +25,6 @@ RUN npm ci --production
 
 COPY --from=builder /usr/app/dist/ dist/
 
-USER node
-
 LABEL org.opencontainers.image.source = "https://github.com/nmshd/cns-connector"
 
 ENTRYPOINT ["/sbin/tini", "--"]
