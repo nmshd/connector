@@ -3,13 +3,13 @@ import AgentKeepAlive, { HttpsAgent as AgentKeepAliveHttps } from "agentkeepaliv
 import axios, { AxiosInstance } from "axios";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
-export interface HttpEndpointEventPublisherModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
+export interface WebhooksModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     url: string;
     headers: Record<string, string>;
     publishInterval: number;
 }
 
-export default class HttpEndpointEventPublisherModule extends ConnectorRuntimeModule<HttpEndpointEventPublisherModuleConfiguration> {
+export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfiguration> {
     private axios: AxiosInstance;
     private readonly unpublishedRelationships: RelationshipDTO[] = [];
     private readonly unpublishedMessages: MessageDTO[] = [];
