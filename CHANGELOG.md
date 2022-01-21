@@ -2,6 +2,11 @@
 
 ## 2.1.5
 
+-   upgrade the runtime to version 1.2.16
+-   rendered QR-Codes now include the prefix `nmshd://qr#` that opens the Enmeshed App when the Code is scanned using a QR-Code Reader
+
+## 2.1.5
+
 -   remove `upgrade-insecure-requests` from the CSP to allow accessing the swagger and rapidoc UIs using http
 
 ## 2.1.4
@@ -9,7 +14,6 @@
 -> SDK 1.1.7
 
 -   run `tini` together with the Connector to ensure kernel events will be propagated to the Connector
--   upgrade the runtime to version 1.2.14
 
 ## 2.1.3
 
