@@ -7,6 +7,9 @@ import { HttpMethod } from "../../infrastructure";
 export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     docs: {
         enabled: boolean;
+        rapidoc: {
+            persistAuth: boolean;
+        };
     };
 }
 
@@ -60,6 +63,7 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
                             theme="dark"
                             schema-description-expanded="true"
                             default-schema-tab="example"
+                            persist-auth="${this.configuration.docs.rapidoc.persistAuth}"
                         > </rapi-doc>
                     </body>
                 </html>
