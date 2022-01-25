@@ -1,6 +1,12 @@
 # Changelog
 
-## 2.1.5
+## 2.1.7
+
+-   upgrade the runtime to version 1.2.17
+-   add configuration option for the coreHttpApi to persist the authentication in rapidoc using the browsers `localStorage`
+    > **Note**: this feature is disabled by default and not recommended for production use.
+
+## 2.1.6
 
 -   upgrade the runtime to version 1.2.16
 -   rendered QR-Codes now include the prefix `nmshd://qr#` that opens the Enmeshed App when the Code is scanned using a QR-Code Reader
