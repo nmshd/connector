@@ -6,26 +6,19 @@ on:
       - main
 
 jobs:
+  run-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: bash .ci/runChecks.sh
+
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-      # packages
       - run: npx lerna bootstrap
       - run: npx lerna run build:ci
-
-      # linting
-      - run: npm run lint:prettier
-      - run: npm run lint:eslint
-
-      # auditing
-      - run: npx license-check --ignoreRegex @nmshd/connector
-      # - run: npx better-npm-audit audit --exclude 1004876
-
-      # tests
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.6.0
       - run: npx lerna run test:ci
