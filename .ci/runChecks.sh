@@ -10,4 +10,4 @@ npm run lint:prettier
 
 # auditing
 npx license-check --ignoreRegex @nmshd/connector
-npx lerna-audit --no-fix
+npx better-lerna-audit
