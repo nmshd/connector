@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.1.10
+
+-   upgrade the runtime to version 1.2.20
+    > this fixes the validation of `expiresAt` fields
+
+## 2.1.9
+
+-   upgrade the runtime to version 1.2.19
+
 ## 2.1.8
 
 -   upgrade the runtime to version 1.2.18
