@@ -83,9 +83,19 @@ describe("File Upload", () => {
         expectSuccess(response, ValidationSchema.File);
     });
 
+    test("cannot upload a file with expiry date in the past", async () => {
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "1970" }));
+        expectError(response, "'expiresAt' must be in the future.", "error.runtime.validation.invalidPropertyValue");
+    });
+
     test("cannot upload a file with empty expiry date", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "" }));
-        expectError(response, "'expiresAt' must be in the future.", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
+    });
+
+    test("cannot upload a file with undefined expiry date", async () => {
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "" }));
+        expectError(response, "expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 });
 
