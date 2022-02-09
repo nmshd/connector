@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.0
+
+-> SDK 1.2.0
+
+-   upgrade the runtime to version 1.3.0
+-   add routes to create and validate challenges
+
 ## 2.1.10
 
 -   upgrade the runtime to version 1.2.20
@@ -29,8 +36,6 @@
 -   remove `upgrade-insecure-requests` from the CSP to allow accessing the swagger and rapidoc UIs using http
 
 ## 2.1.4
-
--> SDK 1.1.7
 
 -   run `tini` together with the Connector to ensure kernel events will be propagated to the Connector
 
