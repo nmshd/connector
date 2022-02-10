@@ -12,6 +12,6 @@ export class ChallengesEndpoint extends Endpoint {
     }
 
     public async validateChallenge(request: ValidateChallengeRequest): Promise<ConnectorResponse<ConnectorChallengeValidation>> {
-        return await this.post("/api/v1/Challenges/Validate", request);
+        return await this.post("/api/v1/Challenges/Validate", request, 200);
     }
 }

@@ -18,8 +18,8 @@ export class ChallengesController extends BaseController {
 
     @POST
     @Path("/Validate")
-    public async validateChallenge(request: any): Promise<Return.NewResource<Envelope>> {
+    public async validateChallenge(request: any): Promise<Envelope> {
         const result = await this.transportServices.challenges.validateChallenge(request);
-        return this.created(result);
+        return this.ok(result);
     }
 }
