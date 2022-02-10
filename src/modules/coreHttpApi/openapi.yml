@@ -277,12 +277,12 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  # ------------------- Account -------------------
+  # ------------------- Challenges -------------------
 
   /api/v1/Challenges:
     post:
       operationId: createChallenge
-      description: Create and signed challenge.
+      description: Create a signed challenge.
       tags:
         - Challenges
       requestBody:
