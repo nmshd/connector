@@ -38,6 +38,8 @@
 
 ## 2.1.4
 
+-> SDK 1.1.7
+
 -   run `tini` together with the Connector to ensure kernel events will be propagated to the Connector
 
 ## 2.1.3
