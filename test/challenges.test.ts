@@ -16,7 +16,7 @@ beforeAll(async () => {
 
     relationshipId = (await getRelationship(client1)).id;
     client1Address = (await client1.account.getIdentityInfo()).result.address;
-}, 30000);
+}, 40000);
 afterAll(() => launcher.stop());
 
 describe("Create challenge", () => {
