@@ -18,9 +18,8 @@
         "copy-additional-files:watch": "npx cpx \"src/**/*.{json,yml,ico}\" dist --watch",
         "tsc": "tsc",
         "tsc:watch": "tsc -w",
-        "test:ci": "jest -i",
-        "test:local": ". scripts/testSetup.sh && jest",
-        "test:watch": ". scripts/testSetup.sh && jest --watch",
+        "test:ci": "npm run build && jest -i",
+        "test:local": "npm run build && . scripts/testSetup.sh && jest",
         "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json"
     },
     "jest": {
