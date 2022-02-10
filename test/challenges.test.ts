@@ -62,7 +62,7 @@ describe("Validate Challenge", () => {
             challenge: response.result.challengeString,
             signature: response.result.signature
         });
-        expectSuccess(valid, ValidationSchema.ConnectorChallengeValidation);
+        expectSuccess(valid, ValidationSchema.ConnectorChallengeValidationResult);
         expect(valid.result.isValid).toBe(true);
         expect(valid.result.challengeCreatedBy).toBe(client1Address);
     });
@@ -76,7 +76,7 @@ describe("Validate Challenge", () => {
             challenge: response.result.challengeString,
             signature: response.result.signature
         });
-        expectSuccess(valid, ValidationSchema.ConnectorChallengeValidation);
+        expectSuccess(valid, ValidationSchema.ConnectorChallengeValidationResult);
         expect(valid.result.isValid).toBe(true);
         expect(valid.result.challengeCreatedBy).toBe(client1Address);
     });
@@ -98,7 +98,7 @@ describe("Validate Challenge", () => {
             challenge: response.result.challengeString,
             signature: response2.result.signature
         });
-        expectSuccess(valid, ValidationSchema.ConnectorChallengeValidation);
+        expectSuccess(valid, ValidationSchema.ConnectorChallengeValidationResult);
         expect(valid.result.isValid).toBe(false);
     });
 
