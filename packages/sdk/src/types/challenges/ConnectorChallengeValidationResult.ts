@@ -1,4 +1,4 @@
-export interface ConnectorChallengeValidation {
+export interface ConnectorChallengeValidationResult {
     isValid: boolean;
     challengeCreatedBy?: string;
 }
