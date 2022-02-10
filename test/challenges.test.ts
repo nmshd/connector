@@ -11,11 +11,16 @@ let client1Address: string;
 let relationshipId: string;
 
 beforeAll(async () => {
+    console.log(new Date().valueOf(), new Date().toLocaleString(), "Launching"); // eslint-disable-line no-console
     [client1, client2] = await launcher.launch(2);
+    console.log(new Date().valueOf(), new Date().toLocaleString(), "Establish relationship"); // eslint-disable-line no-console
     await establishRelationship(client1, client2);
 
+    console.log(new Date().valueOf(), new Date().toLocaleString(), "Get Relationship"); // eslint-disable-line no-console
     relationshipId = (await getRelationship(client1)).id;
+    console.log(new Date().valueOf(), new Date().toLocaleString(), "Get IdentityInfo"); // eslint-disable-line no-console
     client1Address = (await client1.account.getIdentityInfo()).result.address;
+    console.log(new Date().valueOf(), new Date().toLocaleString(), "Done"); // eslint-disable-line no-console
 }, 40000);
 afterAll(() => launcher.stop());
 
