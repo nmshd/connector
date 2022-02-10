@@ -277,6 +277,104 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  # ------------------- Account -------------------
+
+  /api/v1/Challenges:
+    post:
+      operationId: createChallenge
+      description: Create and signed challenge.
+      tags:
+        - Challenges
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/CreateRelationshipChallengeRequest"
+                - $ref: "#/components/schemas/CreateIdentityChallengeRequest"
+                - $ref: "#/components/schemas/CreateDeviceChallengeRequest"
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    nullable: false
+                    $ref: "#/components/schemas/SignedChallenge"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Challenges/Validate:
+    post:
+      operationId: validateChallenge
+      description: Validate a challenge.
+      tags:
+        - Challenges
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                challenge:
+                  type: string
+                  description: The challenge to validate.
+                  nullable: false
+                signature:
+                  type: string
+                  description: The signature that will be used to validate the challenge.
+                  nullable: false
+              required:
+                - challenge
+                - signature
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    nullable: false
+                    properties:
+                      isValid:
+                        type: boolean
+                        nullable: false
+                      challengeCreatedBy:
+                        $ref: "#/components/schemas/Address"
+                    required:
+                      - isValid
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
   # ------------------- Files -------------------
 
   /api/v1/Files:
@@ -2258,6 +2356,13 @@ components:
       maxLength: 36
       example: id_________________________________
 
+    ChallengeID:
+      type: string
+      format: ChallengeID
+      minLength: 20
+      maxLength: 20
+      example: CHL_________________
+
     DeviceID:
       type: string
       format: DeviceID
@@ -2378,6 +2483,39 @@ components:
         - commit
         - version
         - date
+
+    CreateDeviceChallengeRequest:
+      type: object
+      properties:
+        challengeType:
+          type: string
+          enum: ["Device"]
+      required:
+        - challengeType
+
+    CreateIdentityChallengeRequest:
+      type: object
+      properties:
+        challengeType:
+          type: string
+          enum: ["Identity"]
+      required:
+        - challengeType
+
+    CreateRelationshipChallengeRequest:
+      type: object
+      properties:
+        challengeType:
+          type: string
+          enum: ["Relationship"]
+        relationship:
+          allOf:
+            - $ref: "#/components/schemas/RelationshipID"
+          description: The ID of the relationship to create a challenge for.
+          nullable: false
+      required:
+        - challengeType
+        - relationship
 
     FileMetadata:
       type: object
@@ -2787,6 +2925,51 @@ components:
       required:
         - id
         - secretKey
+
+    SignedChallenge:
+      type: object
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/ChallengeID"
+          nullable: false
+          description: The ID of the challenge.
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: false
+          description: The timestamp when the challenge expires.
+        createdBy:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+          description: The Address of the identity who created the challenge.
+        createdByDevice:
+          allOf:
+            - $ref: "#/components/schemas/DeviceID"
+          nullable: false
+          description: The DeviceID of the identity who created the challenge.
+        type:
+          type: string
+          enum: [Challenge, Device, Relationship]
+          nullable: false
+          description: The type of the challenge.
+        signature:
+          type: string
+          nullable: false
+          description: The signature of the challenge.
+        challengeString:
+          type: string
+          nullable: false
+          description: The challenge serialized as a string that was used to sign the challenge.
+      required:
+        - id
+        - expiresAt
+        - createdBy
+        - createdByDevice
+        - type
+        - signature
+        - challengeString
 
     Token:
       type: object
