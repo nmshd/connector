@@ -59,7 +59,7 @@ describe("Validate Challenge", () => {
         expect(response.result.type).toBe("Relationship");
 
         const validationResult = await client2.challenges.validateChallenge({
-            challenge: response.result.challengeString,
+            challengeString: response.result.challengeString,
             signature: response.result.signature
         });
         expectSuccess(validationResult, ValidationSchema.ConnectorChallengeValidationResult);
@@ -73,7 +73,7 @@ describe("Validate Challenge", () => {
         expect(response.result.type).toBe("Identity");
 
         const validationResult = await client2.challenges.validateChallenge({
-            challenge: response.result.challengeString,
+            challengeString: response.result.challengeString,
             signature: response.result.signature
         });
         expectSuccess(validationResult, ValidationSchema.ConnectorChallengeValidationResult);
@@ -95,7 +95,7 @@ describe("Validate Challenge", () => {
         expectSuccess(response, ValidationSchema.ConnectorChallenge);
 
         const validationResult = await client2.challenges.validateChallenge({
-            challenge: response.result.challengeString,
+            challengeString: response.result.challengeString,
             signature: response2.result.signature
         });
         expectSuccess(validationResult, ValidationSchema.ConnectorChallengeValidationResult);
@@ -108,7 +108,7 @@ describe("Validate Challenge", () => {
         expect(response.result.type).toBe("Device");
 
         const validationResult = await client2.challenges.validateChallenge({
-            challenge: response.result.challengeString,
+            challengeString: response.result.challengeString,
             signature: response.result.signature
         });
         expectError(validationResult, "Validating challenges of the type 'Device' is not yet implemented.", "error.runtime.featureNotImplemented");

@@ -1,4 +1,4 @@
 export interface ValidateChallengeRequest {
-    challenge: string;
+    challengeString: string;
     signature: string;
 }
