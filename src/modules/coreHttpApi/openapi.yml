@@ -331,7 +331,7 @@ paths:
             schema:
               type: object
               properties:
-                challenge:
+                challengeString:
                   type: string
                   description: The challenge to validate.
                   nullable: false
