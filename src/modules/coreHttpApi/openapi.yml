@@ -333,7 +333,7 @@ paths:
               properties:
                 challengeString:
                   type: string
-                  description: The challenge to validate.
+                  description: The signed challenge serialized as plaintext JSON string. You receive this together with the signature from the identity that signed the challenge.
                   nullable: false
                 signature:
                   type: string
