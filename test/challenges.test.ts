@@ -58,13 +58,13 @@ describe("Validate Challenge", () => {
         expectSuccess(response, ValidationSchema.ConnectorChallenge);
         expect(response.result.type).toBe("Relationship");
 
-        const valid = await client2.challenges.validateChallenge({
+        const validationResult = await client2.challenges.validateChallenge({
             challenge: response.result.challengeString,
             signature: response.result.signature
         });
-        expectSuccess(valid, ValidationSchema.ConnectorChallengeValidationResult);
-        expect(valid.result.isValid).toBe(true);
-        expect(valid.result.correspondingRelationship?.peer).toBe(client1Address);
+        expectSuccess(validationResult, ValidationSchema.ConnectorChallengeValidationResult);
+        expect(validationResult.result.isValid).toBe(true);
+        expect(validationResult.result.correspondingRelationship?.peer).toBe(client1Address);
     });
 
     test("should validate a Identity challenge", async () => {
@@ -72,13 +72,13 @@ describe("Validate Challenge", () => {
         expectSuccess(response, ValidationSchema.ConnectorChallenge);
         expect(response.result.type).toBe("Identity");
 
-        const valid = await client2.challenges.validateChallenge({
+        const validationResult = await client2.challenges.validateChallenge({
             challenge: response.result.challengeString,
             signature: response.result.signature
         });
-        expectSuccess(valid, ValidationSchema.ConnectorChallengeValidationResult);
-        expect(valid.result.isValid).toBe(true);
-        expect(valid.result.correspondingRelationship?.peer).toBe(client1Address);
+        expectSuccess(validationResult, ValidationSchema.ConnectorChallengeValidationResult);
+        expect(validationResult.result.isValid).toBe(true);
+        expect(validationResult.result.correspondingRelationship?.peer).toBe(client1Address);
     });
 
     test("challenge with the wrong signature is considered as not valid", async () => {
@@ -94,12 +94,12 @@ describe("Validate Challenge", () => {
         });
         expectSuccess(response, ValidationSchema.ConnectorChallenge);
 
-        const valid = await client2.challenges.validateChallenge({
+        const validationResult = await client2.challenges.validateChallenge({
             challenge: response.result.challengeString,
             signature: response2.result.signature
         });
-        expectSuccess(valid, ValidationSchema.ConnectorChallengeValidationResult);
-        expect(valid.result.isValid).toBe(false);
+        expectSuccess(validationResult, ValidationSchema.ConnectorChallengeValidationResult);
+        expect(validationResult.result.isValid).toBe(false);
     });
 
     test("should validate a Device challenge", async () => {
@@ -107,10 +107,10 @@ describe("Validate Challenge", () => {
         expectSuccess(response, ValidationSchema.ConnectorChallenge);
         expect(response.result.type).toBe("Device");
 
-        const valid = await client2.challenges.validateChallenge({
+        const validationResult = await client2.challenges.validateChallenge({
             challenge: response.result.challengeString,
             signature: response.result.signature
         });
-        expectError(valid, "Validating challenges of the type 'Device' is not yet implemented.", "error.runtime.featureNotImplemented");
+        expectError(validationResult, "Validating challenges of the type 'Device' is not yet implemented.", "error.runtime.featureNotImplemented");
     });
 });
