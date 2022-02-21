@@ -1049,6 +1049,9 @@
                 "realm": {
                     "enum": ["dev", "id0", "id1"],
                     "type": "string"
+                },
+                "debug": {
+                    "type": "boolean"
                 }
             },
             "type": "object"

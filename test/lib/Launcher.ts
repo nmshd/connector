@@ -12,7 +12,7 @@ export class Launcher {
         env["INFRASTRUCTURE__HTTP_SERVER__PORT"] = port.toString();
         env.NODE_CONFIG_ENV = "test";
         env.DATABASE_NAME = accountName;
-        return spawn("node_modules/.bin/ts-node", ["src/index.ts"], {
+        return spawn("node", ["dist/index.js"], {
             env: env,
             cwd: path.resolve(`${__dirname}/../..`),
             stdio: "inherit"

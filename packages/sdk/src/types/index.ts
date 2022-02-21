@@ -1,4 +1,5 @@
 export * from "./account";
+export * from "./challenges";
 export * from "./ConnectorError";
 export * from "./ConnectorResponse";
 export * from "./files";

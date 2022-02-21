@@ -10,5 +10,14 @@
         "httpServer": {
             "apiKey": "xxx"
         }
+    },
+    "modules": {
+        "coreHttpApi": {
+            "docs": {
+                "rapidoc": {
+                    "persistAuth": true
+                }
+            }
+        }
     }
 }

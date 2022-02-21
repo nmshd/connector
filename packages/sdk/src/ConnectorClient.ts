@@ -1,10 +1,20 @@
 import axios from "axios";
 import qs from "qs";
 import { ConnectorConfig } from "./ConnectorConfig";
-import { AccountEndpoint, FilesEndpoint, MessagesEndpoint, MonitoringEndpoint, RelationshipsEndpoint, RelationshipTemplatesEndpoint, TokensEndpoint } from "./endpoints";
+import {
+    AccountEndpoint,
+    ChallengesEndpoint,
+    FilesEndpoint,
+    MessagesEndpoint,
+    MonitoringEndpoint,
+    RelationshipsEndpoint,
+    RelationshipTemplatesEndpoint,
+    TokensEndpoint
+} from "./endpoints";
 
 export class ConnectorClient {
     public readonly account: AccountEndpoint;
+    public readonly challenges: ChallengesEndpoint;
     public readonly files: FilesEndpoint;
     public readonly messages: MessagesEndpoint;
     public readonly monitoring: MonitoringEndpoint;
@@ -30,6 +40,7 @@ export class ConnectorClient {
         });
 
         this.account = new AccountEndpoint(axiosInstance);
+        this.challenges = new ChallengesEndpoint(axiosInstance);
         this.files = new FilesEndpoint(axiosInstance);
         this.messages = new MessagesEndpoint(axiosInstance);
         this.monitoring = new MonitoringEndpoint(axiosInstance);

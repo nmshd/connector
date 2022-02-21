@@ -7,6 +7,9 @@ import { HttpMethod } from "../../infrastructure";
 export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     docs: {
         enabled: boolean;
+        rapidoc: {
+            persistAuth: boolean;
+        };
     };
 }
 
@@ -40,8 +43,6 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
         });
 
         this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/rapidoc", false, (_req, res) => {
-            res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval' 'unsafe-inline'");
-
             res.send(`
                 <!doctype html>
                     <head>
@@ -62,6 +63,7 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
                             theme="dark"
                             schema-description-expanded="true"
                             default-schema-tab="example"
+                            persist-auth="${this.configuration.docs.rapidoc.persistAuth}"
                         > </rapi-doc>
                     </body>
                 </html>

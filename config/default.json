@@ -67,7 +67,10 @@
             "requiredInfrastructure": ["httpServer"],
 
             "docs": {
-                "enabled": true
+                "enabled": true,
+                "rapidoc": {
+                    "persistAuth": false
+                }
             }
         },
         "webhooks": {

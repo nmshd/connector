@@ -1,5 +1,47 @@
 # Changelog
 
+## 2.2.0
+
+-> SDK 1.2.0
+
+-   upgrade the runtime to version 1.3.3
+-   add routes to create and validate challenges
+-   upgrade NodeJS to version 16.14.0 (LTS)
+
+## 2.1.10
+
+-   upgrade the runtime to version 1.2.20
+    > this fixes the validation of `expiresAt` fields
+
+## 2.1.9
+
+-   upgrade the runtime to version 1.2.19
+
+## 2.1.8
+
+-   upgrade the runtime to version 1.2.18
+
+## 2.1.7
+
+-   upgrade the runtime to version 1.2.17
+-   add configuration option for the coreHttpApi to persist the authentication in rapidoc using the browsers `localStorage`
+    > **Note**: this feature is disabled by default and not recommended for production use.
+
+## 2.1.6
+
+-   upgrade the runtime to version 1.2.16
+-   rendered QR-Codes now include the prefix `nmshd://qr#` that opens the Enmeshed App when the Code is scanned using a QR-Code Reader
+
+## 2.1.5
+
+-   remove `upgrade-insecure-requests` from the CSP to allow accessing the swagger and rapidoc UIs using http
+
+## 2.1.4
+
+-> SDK 1.1.7
+
+-   run `tini` together with the Connector to ensure kernel events will be propagated to the Connector
+
 ## 2.1.3
 
 -> SDK 1.1.6

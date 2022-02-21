@@ -6,6 +6,12 @@ on:
       - main
 
 jobs:
+  run-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: bash .ci/runChecks.sh
+
   publish-npm:
     runs-on: ubuntu-latest
     steps:
@@ -19,6 +25,7 @@ jobs:
       - run: npx lerna publish from-package --yes --no-verify-access
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    needs: ["run-checks"]
 
   publish-docker:
     runs-on: ubuntu-latest
@@ -38,3 +45,4 @@ jobs:
         env:
           BUILD_NUMBER: ${{ github.run_number }}
           COMMIT_HASH: ${{ github.sha }}
+    needs: ["run-checks"]

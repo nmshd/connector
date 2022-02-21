@@ -1,4 +1,4 @@
-FROM node:16.13.0 as builder
+FROM node:16.14.0 as builder
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
 ARG PACKAGE_VERSION
@@ -14,8 +14,9 @@ RUN npm install -g npm-run-all typescript
 RUN npm run build
 RUN .ci/writeBuildInformation.sh
 
-FROM node:16.13.0-alpine
+FROM node:16.14.0-alpine
 ENV NODE_CONFIG_ENV=prod
+RUN apk add --no-cache tini
 WORKDIR /usr/app
 COPY config config
 COPY package.json package-lock.json ./
@@ -26,4 +27,5 @@ COPY --from=builder /usr/app/dist/ dist/
 
 LABEL org.opencontainers.image.source = "https://github.com/nmshd/cns-connector"
 
-ENTRYPOINT node ./dist/index.js
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["node", "/usr/app/dist/index.js"]
