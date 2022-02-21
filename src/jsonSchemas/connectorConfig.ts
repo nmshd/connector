@@ -47,6 +47,7 @@ interface IConfigOverwrite {
     baseUrl?: string;
     realm?: Realm;
     datawalletEnabled?: boolean;
+    debug?: boolean;
 }
 
 declare enum Realm {
