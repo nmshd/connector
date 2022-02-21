@@ -1,4 +1,6 @@
+import { ConnectorRelationship } from "../relationships/ConnectorRelationship";
+
 export interface ConnectorChallengeValidationResult {
     isValid: boolean;
-    challengeCreatedBy?: string;
+    correspondingRelationship?: ConnectorRelationship;
 }

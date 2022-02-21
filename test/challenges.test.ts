@@ -64,7 +64,7 @@ describe("Validate Challenge", () => {
         });
         expectSuccess(valid, ValidationSchema.ConnectorChallengeValidationResult);
         expect(valid.result.isValid).toBe(true);
-        expect(valid.result.challengeCreatedBy).toBe(client1Address);
+        expect(valid.result.correspondingRelationship?.peer).toBe(client1Address);
     });
 
     test("should validate a Identity challenge", async () => {
@@ -78,7 +78,7 @@ describe("Validate Challenge", () => {
         });
         expectSuccess(valid, ValidationSchema.ConnectorChallengeValidationResult);
         expect(valid.result.isValid).toBe(true);
-        expect(valid.result.challengeCreatedBy).toBe(client1Address);
+        expect(valid.result.correspondingRelationship?.peer).toBe(client1Address);
     });
 
     test("challenge with the wrong signature is considered as not valid", async () => {
