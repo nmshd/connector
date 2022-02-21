@@ -30,7 +30,7 @@ services:
       - CUSTOM_CONFIG_LOCATION=/config.json
       - SYNC_ENABLED
     volumes:
-      - .:/usr/app
+      - ..:/usr/app
       - ./config.json:/config.json:RO
     depends_on:
       - mongo
