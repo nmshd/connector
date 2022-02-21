@@ -4,7 +4,7 @@
 
 -> SDK 1.2.0
 
--   upgrade the runtime to version 1.3.0
+-   upgrade the runtime to version 1.3.1
 -   add routes to create and validate challenges
 -   upgrade NodeJS to version 16.14.0 (LTS)
 
