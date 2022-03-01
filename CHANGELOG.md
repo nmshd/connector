@@ -4,9 +4,14 @@
 
 -> SDK 1.2.0
 
--   upgrade the runtime to version 1.3.3
+-   upgrade the runtime to version 1.3.4
 -   add routes to create and validate challenges
 -   upgrade NodeJS to version 16.14.0 (LTS)
+-   add a possibility to configure the Connector using environment variables
+
+    nested fields must now be separated by a colon (`:`), casing in the property names will not be changed (no more conversion to UPPER_CASE neccessary)
+
+    e.g. `INFRASTRUCTURE__HTTP_SERVER__API_KEY` (the old representation of `{ "infrastructure": { "httpServer": { "apiKey": "y" } } }`) will now be configured as `infrastructure:httpServer:apiKey`
 
 ## 2.1.10
 
