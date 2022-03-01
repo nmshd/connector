@@ -1,4 +1,4 @@
-import { DataEvent, Event, MessageReceivedEvent } from "@nmshd/runtime";
+import { DataEvent, Event } from "@nmshd/runtime";
 import AgentKeepAlive, { HttpsAgent as AgentKeepAliveHttps } from "agentkeepalive";
 import axios, { AxiosInstance } from "axios";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
@@ -24,13 +24,6 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
             httpsAgent: new AgentKeepAliveHttps(),
             validateStatus: () => true
         });
-
-        setInterval(async () => {
-            const messages = await this.runtime.transportServices.messages.getMessages({});
-            const message = messages.value[0];
-            const event = new MessageReceivedEvent(message.createdBy, message);
-            this.runtime.eventBus.publish(event);
-        }, 3000);
 
         this.configModel = ConfigParser.parse(this.configuration).value;
     }
