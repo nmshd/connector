@@ -18,12 +18,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
                 }
 
                 variable.key = variable.key.replace(/__/g, ":");
-
-                if (variable.value === "true") {
-                    variable.value = true;
-                } else if (variable.value === "false") {
-                    variable.value = false;
-                }
+                variable.value = parseString(variable.value);
 
                 return variable;
             }
@@ -52,6 +47,24 @@ function applyAlias(variable: { key: string; value: any }) {
     if (envKeyMapping[variable.key]) {
         variable.key = envKeyMapping[variable.key];
     }
+}
+
+function isNumeric(value: string) {
+    if (typeof value !== "string") return false;
+
+    return !isNaN(value as any) && !isNaN(parseFloat(value));
+}
+
+function parseString(value: string) {
+    if (value === "true") {
+        return true;
+    } else if (value === "false") {
+        return false;
+    } else if (isNumeric(value)) {
+        return parseFloat(value);
+    }
+
+    return value;
 }
 
 async function run() {
