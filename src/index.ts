@@ -17,6 +17,8 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
                     return variable;
                 }
 
+                variable.key = variable.key.replace(/__/g, ":");
+
                 if (variable.value === "true") {
                     variable.value = true;
                 } else if (variable.value === "false") {
