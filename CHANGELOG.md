@@ -4,7 +4,7 @@
 
 -> SDK 1.2.0
 
--   upgrade the runtime to version 1.3.3
+-   upgrade the runtime to version 1.3.4
 -   add routes to create and validate challenges
 -   upgrade NodeJS to version 16.14.0 (LTS)
 -   add a possibility to configure the Connector using environment variables
