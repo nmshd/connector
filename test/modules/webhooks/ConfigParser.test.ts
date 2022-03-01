@@ -79,6 +79,6 @@ describe("ConfigParser", () => {
         const parseResult = ConfigParser.parse(config);
 
         expect(parseResult.isError).toBeTruthy();
-        expect(parseResult.error.code).toBe("error.runtime.modules.invalidTargetReference");
+        expect(parseResult.error.code).toBe("error.runtime.modules.webhooksV2.invalidTargetReference");
     });
 });

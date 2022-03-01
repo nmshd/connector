@@ -1,6 +1,6 @@
 import { Result } from "@js-soft/ts-utils";
 import { ConfigModel, Target, Webhook, WebhookArray } from "./ConfigModel";
-import { WebhooksApplicationErrors } from "./WebhooksApplicationErrors";
+import { WebhooksModuleApplicationErrors } from "./WebhooksModuleApplicationErrors";
 import { WebhooksModuleConfiguration, WebhooksModuleConfigurationWebhook } from "./WebhooksModuleConfiguration";
 
 export class ConfigParser {
@@ -52,7 +52,7 @@ export class ConfigParser {
         if (typeof webhookJson.target === "string") {
             const namedTarget = namedTargets[webhookJson.target];
 
-            if (!namedTarget) return Result.fail(WebhooksApplicationErrors.invalidTargetReference(webhookJson.target));
+            if (!namedTarget) return Result.fail(WebhooksModuleApplicationErrors.invalidTargetReference(webhookJson.target));
 
             target = namedTarget;
         } else {
