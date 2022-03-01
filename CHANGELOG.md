@@ -11,7 +11,7 @@
 
     nested fields must now be separated by a colon (`:`), UPPER_CASE becomes camelCase
 
-    `INFRASTRUCTURE__HTTP_SERVER__API_KEY` becomes `infrastructure:httpServer:apiKey`
+    e.g. `INFRASTRUCTURE__HTTP_SERVER__API_KEY` (the old representation of `{ "infrastructure": { "httpServer": { "apiKey": "y" } } }`) will now be configured as `infrastructure:httpServer:apiKey`
 
 ## 2.1.10
 

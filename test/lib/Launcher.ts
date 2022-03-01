@@ -9,7 +9,7 @@ export class Launcher {
 
     private spawnConnector(port: number, accountName: string) {
         const env = process.env;
-        env["INFRASTRUCTURE__HTTP_SERVER__PORT"] = port.toString();
+        env["infrastructure:httpServer:port"] = port.toString();
         env.NODE_CONFIG_ENV = "test";
         env.DATABASE_NAME = accountName;
         return spawn("node", ["dist/index.js"], {
