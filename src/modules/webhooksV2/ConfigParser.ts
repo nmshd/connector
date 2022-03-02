@@ -1,12 +1,14 @@
 import { Result } from "@js-soft/ts-utils";
-import { ConfigModel, Target, Webhook, WebhookArray } from "./ConfigModel";
+import { ConfigModel, Target, Webhook, WebhookArray, WebhookUrlTemplate } from "./ConfigModel";
 import { WebhooksModuleApplicationErrors } from "./WebhooksModuleApplicationErrors";
 import { WebhooksModuleConfiguration, WebhooksModuleConfigurationWebhook } from "./WebhooksModuleConfiguration";
 
 export class ConfigParser {
     public static parse(configJson: WebhooksModuleConfiguration): Result<ConfigModel> {
-        const namedTargets = ConfigParser.parseNamedTargets(configJson);
-        const webhooks = ConfigParser.parseWebhooks(configJson, namedTargets);
+        const namedTargetsResult = ConfigParser.parseNamedTargets(configJson);
+        if (namedTargetsResult.isError) return Result.fail(namedTargetsResult.error);
+
+        const webhooks = ConfigParser.parseWebhooks(configJson, namedTargetsResult.value);
 
         if (webhooks.isError) {
             return Result.fail(webhooks.error);
@@ -16,16 +18,27 @@ export class ConfigParser {
         return Result.ok(configModel);
     }
 
-    private static parseNamedTargets(configJson: WebhooksModuleConfiguration) {
+    private static parseNamedTargets(configJson: WebhooksModuleConfiguration): Result<Record<string, Target | undefined>> {
         const targets: Record<string, Target | undefined> = {};
 
         for (const targetName in configJson.targets) {
             const targetJson = configJson.targets[targetName];
-            const targetModel = new Target(targetJson.url, targetJson.headers ?? {});
-            targets[targetName] = targetModel;
+            const targetModelResult = ConfigParser.createTarget(targetJson.url, targetJson.headers);
+            if (targetModelResult.isError) return Result.fail(targetModelResult.error);
+
+            targets[targetName] = targetModelResult.value;
         }
 
-        return targets;
+        return Result.ok(targets);
+    }
+
+    private static createTarget(url: string, headers: Record<string, string> | undefined): Result<Target> {
+        const urlTemplateResult = WebhookUrlTemplate.fromString(url);
+        if (urlTemplateResult.isError) return Result.fail(urlTemplateResult.error);
+
+        const target = new Target(urlTemplateResult.value, headers ?? {});
+
+        return Result.ok(target);
     }
 
     private static parseWebhooks(configJson: WebhooksModuleConfiguration, namedTargets: Record<string, Target | undefined>): Result<WebhookArray> {
@@ -56,7 +69,10 @@ export class ConfigParser {
 
             target = namedTarget;
         } else {
-            target = new Target(webhookJson.target.url, webhookJson.target.headers ?? {});
+            const targetResult = ConfigParser.createTarget(webhookJson.target.url, webhookJson.target.headers);
+            if (targetResult.isError) return Result.fail(targetResult.error);
+
+            target = targetResult.value;
         }
 
         const webhookModel = new Webhook(webhookJson.triggers, target);

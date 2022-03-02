@@ -1,9 +1,9 @@
-import { Target, Webhook, WebhookArray } from "../../../src/modules/webhooksV2/ConfigModel";
+import { Target, Webhook, WebhookArray, WebhookUrlTemplate } from "../../../src/modules/webhooksV2/ConfigModel";
 
-describe("WebhookModels", () => {
+describe("WebhookModel", () => {
     test("getWebhooksForTrigger only returns webhooks with given trigger", () => {
         const webhooks = new WebhookArray();
-        const target = new Target("http://a.domain.com/path/", {});
+        const target = new Target(WebhookUrlTemplate.fromString("http://a.domain.com/path/").value, {});
         webhooks.push(new Webhook(["trigger1"], target));
         webhooks.push(new Webhook(["trigger2"], target));
         webhooks.push(new Webhook(["trigger1"], target));
@@ -15,7 +15,7 @@ describe("WebhookModels", () => {
 
     test("getWebhooksForTrigger returns empty array when no webhooks where found for trigger", () => {
         const webhooks = new WebhookArray();
-        const target = new Target("http://a.domain.com/path/", {});
+        const target = new Target(WebhookUrlTemplate.fromString("http://a.domain.com/path/").value, {});
         webhooks.push(new Webhook(["trigger1"], target));
 
         const webhooksForTrigger = webhooks.getWebhooksForTrigger("non-existent-trigger");
@@ -35,7 +35,7 @@ describe("WebhookModels", () => {
 
     test("getDistinctTriggers returns each trigger once", () => {
         const webhooks = new WebhookArray();
-        const target = new Target("http://a.domain.com/path/", {});
+        const target = new Target(WebhookUrlTemplate.fromString("http://a.domain.com/path/").value, {});
         webhooks.push(new Webhook(["trigger1", "trigger2"], target));
         webhooks.push(new Webhook(["trigger2"], target));
         webhooks.push(new Webhook(["trigger1"], target));
@@ -45,5 +45,13 @@ describe("WebhookModels", () => {
         expect(distinctTriggers).toHaveLength(2);
         expect(distinctTriggers).toContain("trigger1");
         expect(distinctTriggers).toContain("trigger2");
+    });
+
+    describe("WebhookUrlTemplate", () => {
+        test("fillPlaceholders fills placeholders", () => {
+            const urlTemplate = WebhookUrlTemplate.fromString("http://a.domain.com/path/{{trigger}}").value;
+            const url = urlTemplate.fill({ trigger: "trigger-value" });
+            expect(url).toBe("http://a.domain.com/path/trigger-value");
+        });
     });
 });

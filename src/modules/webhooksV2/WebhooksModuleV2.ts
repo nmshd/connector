@@ -42,10 +42,7 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
     private async triggerWebhooks(trigger: string, data?: unknown) {
         const webhooksForTrigger = this.configModel.webhooks.getWebhooksForTrigger(trigger);
 
-        const promises = webhooksForTrigger.map(async (webhook) => {
-            const url = WebhooksModule.fillPlaceholders(webhook.target.url, { trigger });
-            await this.trySend(url, data);
-        });
+        const promises = webhooksForTrigger.map((webhook) => this.trySend(webhook.target.urlTemplate.fill({ trigger }), data));
 
         await Promise.all(promises);
     }
