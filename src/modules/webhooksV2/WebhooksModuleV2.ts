@@ -12,9 +12,9 @@ export interface WebhooksModuleConfiguration extends ConnectorRuntimeModuleConfi
 }
 
 export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfiguration> {
-    private axios: AxiosInstance;
     private readonly eventSubscriptionIds: number[] = [];
-    public configModel: ConfigModel;
+    private axios: AxiosInstance;
+    private configModel: ConfigModel;
 
     private static readonly TARGET_PLACEHOLDER = "{{trigger}}";
 
@@ -36,23 +36,30 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
     }
 
     private async handleEvent(event: Event) {
-        await this.publishEvent(event);
+        await this.triggerWebhooks(event.namespace, event instanceof DataEvent ? event.data : undefined);
     }
 
-    private async publishEvent(event: Event) {
-        const webhooks = this.configModel.webhooks.getWebhooksForTrigger(event.namespace);
+    private async triggerWebhooks(trigger: string, data?: unknown) {
+        const webhooksForTrigger = this.configModel.webhooks.getWebhooksForTrigger(trigger);
 
-        for (const webhook of webhooks) {
-            const data = event instanceof DataEvent ? event.data : undefined;
-            const url = webhook.target.url.replace(WebhooksModule.TARGET_PLACEHOLDER, event.namespace);
-            try {
-                const response = await this.axios.post(url, data);
-                if (response.status !== 200) {
-                    this.logger.error(`Webhook ${url} returned status ${response.status}.`);
-                }
-            } catch (e) {
-                this.logger.error(`Webhook ${url} failed with the following error:`, e);
+        for (const webhook of webhooksForTrigger) {
+            const url = WebhooksModule.fillPlaceholders(webhook.target.url, { trigger });
+            await this.trySend(url, data); // TODO: how to not await?
+        }
+    }
+
+    private static fillPlaceholders(url: string, values: { trigger: string }): string {
+        return url.replace(WebhooksModule.TARGET_PLACEHOLDER, values.trigger);
+    }
+
+    private async trySend(url: string, data: unknown) {
+        try {
+            const response = await this.axios.post(url, data);
+            if (response.status !== 200) {
+                this.logger.error(`Webhook ${url} returned status ${response.status}.`);
             }
+        } catch (e) {
+            this.logger.error(`Webhook ${url} failed with the following error:`, e);
         }
     }
 
