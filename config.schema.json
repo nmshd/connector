@@ -1,47 +1,150 @@
 {
-    "type": "object",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
     "properties": {
-        "enabled": {
-            "type": "boolean",
-            "default": false
+        "$schema": {
+            "type": "string",
+            "format": "url"
         },
-        "targets": {
-            "type": "object",
-            "additionalProperties": {
-                "type": "object",
-                "properties": {
-                    "url": {
-                        "type": "string",
-                        "format": "url"
-                    },
-                    "headers": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        }
-                    }
+        "transportLibrary": {
+            "additionalProperties": false,
+            "properties": {
+                "platformClientId": {
+                    "type": "string"
                 },
-                "required": ["url"]
-            }
+                "platformClientSecret": {
+                    "type": "string"
+                }
+            },
+            "type": "object",
+            "required": ["platformClientId", "platformClientSecret"]
         },
-        "webhooks": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "triggers": {
-                        "type": "array",
-                        "minItems": 1,
-                        "items": {
+        "database": {
+            "additionalProperties": false,
+            "properties": {
+                "connectionString": {
+                    "type": "string"
+                },
+                "dbName": {
+                    "type": "string",
+                    "default": "default",
+                    "minLength": 1
+                }
+            },
+            "required": ["connectionString"],
+            "type": "object"
+        },
+        "infrastructure": {
+            "additionalProperties": false,
+            "properties": {
+                "httpServer": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": true
+                        },
+                        "cors": {
+                            "$ref": "#/definitions/CorsOptions",
+                            "default": {
+                                "origin": false
+                            }
+                        },
+                        "apiKey": {
                             "type": "string"
                         }
                     },
-                    "target": {
-                        "oneOf": [
-                            {
+                    "required": ["apiKey"],
+                    "type": "object"
+                }
+            },
+            "required": ["httpServer"]
+        },
+        "modules": {
+            "additionalProperties": false,
+            "properties": {
+                "sync": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": false
+                        },
+                        "interval": {
+                            "type": "integer",
+                            "default": 60,
+                            "minimum": 1
+                        }
+                    },
+                    "type": "object"
+                },
+                "autoAcceptRelationshipCreationChanges": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": false
+                        },
+                        "responseContent": {}
+                    },
+                    "type": "object"
+                },
+                "coreHttpApi": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": true
+                        },
+                        "docs": {
+                            "additionalProperties": false,
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "type": "boolean",
+                                    "default": true
+                                }
+                            }
+                        }
+                    },
+                    "type": "object"
+                },
+                "webhooks": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": false
+                        },
+                        "url": {
+                            "type": "string",
+                            "format": "url"
+                        },
+                        "headers": {
+                            "additionalProperties": {
                                 "type": "string"
                             },
-                            {
+                            "type": "object"
+                        },
+                        "publishInterval": {
+                            "type": "integer",
+                            "default": 60,
+                            "minimum": 1
+                        }
+                    },
+                    "required": ["url"],
+                    "type": "object"
+                },
+                "webhooksV2": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": false
+                        },
+                        "targets": {
+                            "type": "object",
+                            "additionalProperties": {
                                 "type": "object",
                                 "properties": {
                                     "url": {
@@ -57,11 +160,135 @@
                                 },
                                 "required": ["url"]
                             }
-                        ]
+                        },
+                        "webhooks": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "triggers": {
+                                        "type": "array",
+                                        "minItems": 1,
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "target": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "url": {
+                                                        "type": "string",
+                                                        "format": "url"
+                                                    },
+                                                    "headers": {
+                                                        "type": "object",
+                                                        "additionalProperties": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "required": ["url"]
+                                            }
+                                        ]
+                                    }
+                                },
+                                "required": ["triggers", "target"]
+                            }
+                        }
                     }
+                }
+            },
+            "type": "object"
+        }
+    },
+    "required": ["database", "transportLibrary", "infrastructure"],
+    "type": "object",
+    "definitions": {
+        "CorsOptionMethod": {
+            "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
+            "type": "string"
+        },
+        "CorsOptions": {
+            "additionalProperties": false,
+            "properties": {
+                "allowedHeaders": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    ]
                 },
-                "required": ["triggers", "target"]
-            }
+                "credentials": {
+                    "type": "boolean"
+                },
+                "exposedHeaders": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    ]
+                },
+                "maxAge": {
+                    "type": "number"
+                },
+                "methods": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/CorsOptionMethod"
+                        },
+                        {
+                            "items": {
+                                "$ref": "#/definitions/CorsOptionMethod"
+                            },
+                            "type": "array"
+                        }
+                    ]
+                },
+                "optionsSuccessStatus": {
+                    "type": "number"
+                },
+                "origin": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "format": "regex",
+                            "type": "string"
+                        },
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    ]
+                },
+                "preflightContinue": {
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
         }
     }
 }
