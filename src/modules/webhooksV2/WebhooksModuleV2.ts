@@ -12,11 +12,11 @@ export interface WebhooksModuleConfiguration extends ConnectorRuntimeModuleConfi
 }
 
 export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfiguration> {
+    private static readonly PLACEHOLDER_FOR_TRIGGER = "{{trigger}}";
+
     private readonly eventSubscriptionIds: number[] = [];
     private axios: AxiosInstance;
     private configModel: ConfigModel;
-
-    private static readonly TARGET_PLACEHOLDER = "{{trigger}}";
 
     public init(): void {
         this.axios = axios.create({
@@ -42,14 +42,16 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
     private async triggerWebhooks(trigger: string, data?: unknown) {
         const webhooksForTrigger = this.configModel.webhooks.getWebhooksForTrigger(trigger);
 
-        for (const webhook of webhooksForTrigger) {
+        const promises = webhooksForTrigger.map(async (webhook) => {
             const url = WebhooksModule.fillPlaceholders(webhook.target.url, { trigger });
-            await this.trySend(url, data); // TODO: how to not await?
-        }
+            await this.trySend(url, data);
+        });
+
+        await Promise.all(promises);
     }
 
     private static fillPlaceholders(url: string, values: { trigger: string }): string {
-        return url.replace(WebhooksModule.TARGET_PLACEHOLDER, values.trigger);
+        return url.replace(WebhooksModule.PLACEHOLDER_FOR_TRIGGER, values.trigger);
     }
 
     private async trySend(url: string, data: unknown) {
