@@ -1,19 +1,12 @@
 import { DataEvent, Event } from "@nmshd/runtime";
 import AgentKeepAlive, { HttpsAgent as AgentKeepAliveHttps } from "agentkeepalive";
 import axios, { AxiosInstance } from "axios";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
+import { ConnectorRuntimeModule } from "../../ConnectorRuntimeModule";
 import { ConfigModel } from "./ConfigModel";
 import { ConfigParser } from "./ConfigParser";
+import { WebhooksModuleConfiguration } from "./WebhooksModuleConfiguration";
 
-export interface WebhooksModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
-    url: string;
-    headers: Record<string, string>;
-    publishInterval: number;
-}
-
-export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfiguration> {
-    private static readonly PLACEHOLDER_FOR_TRIGGER = "{{trigger}}";
-
+export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksModuleConfiguration> {
     private readonly eventSubscriptionIds: number[] = [];
     private axios: AxiosInstance;
     private configModel: ConfigModel;
@@ -45,10 +38,6 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
         const promises = webhooksForTrigger.map((webhook) => this.trySend(webhook.target.urlTemplate.fill({ trigger }), data));
 
         await Promise.all(promises);
-    }
-
-    private static fillPlaceholders(url: string, values: { trigger: string }): string {
-        return url.replace(WebhooksModule.PLACEHOLDER_FOR_TRIGGER, values.trigger);
     }
 
     private async trySend(url: string, data: unknown) {
