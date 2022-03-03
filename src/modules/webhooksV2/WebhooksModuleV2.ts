@@ -49,6 +49,8 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
         };
 
         try {
+            this.logger.debug(`Sending request to webhook '${url}' for trigger '${trigger}'.`);
+
             const response = await this.axios.post(url, payload, { headers: webhook.target.headers });
 
             if (response.status !== 200) {
@@ -57,7 +59,7 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
                 this.logger.debug(`Request to webhook '${url}' was successful.`);
             }
         } catch (e) {
-            this.logger.error(`Request to webhook Webhook '${url}' failed with the following error:`, e);
+            this.logger.error(`Request to webhook '${url}' failed with the following error:`, e);
         }
     }
 
