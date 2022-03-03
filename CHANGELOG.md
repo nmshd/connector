@@ -2,7 +2,8 @@
 
 ## 2.3.0
 
--   new module: 'webhooksV2' (see https://enmeshed.eu/integrate/connector-configuration#webhooksV2 for more details)
+-   new module: 'webhooksV2' (see https://enmeshed.eu/integrate/connector-configuration#webhooksV2 for more details on how to configure it)
+-   the 'webhooks' module is now deprecated
 
 ## 2.2.1
 
