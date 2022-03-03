@@ -2,7 +2,7 @@ import { DataEvent, Event } from "@nmshd/runtime";
 import AgentKeepAlive, { HttpsAgent as AgentKeepAliveHttps } from "agentkeepalive";
 import axios, { AxiosInstance } from "axios";
 import { ConnectorRuntimeModule } from "../../ConnectorRuntimeModule";
-import { ConfigModel } from "./ConfigModel";
+import { ConfigModel, Webhook } from "./ConfigModel";
 import { ConfigParser } from "./ConfigParser";
 import { WebhooksModuleConfiguration } from "./WebhooksModuleConfiguration";
 
@@ -35,19 +35,29 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
     private async triggerWebhooks(trigger: string, data?: unknown) {
         const webhooksForTrigger = this.configModel.webhooks.getWebhooksForTrigger(trigger);
 
-        const promises = webhooksForTrigger.map((webhook) => this.trySend(webhook.target.urlTemplate.fill({ trigger }), data));
+        const promises = webhooksForTrigger.map((webhook) => this.triggerWebhook(webhook, trigger, data));
 
         await Promise.all(promises);
     }
 
-    private async trySend(url: string, data: unknown) {
+    private async triggerWebhook(webhook: Webhook, trigger: string, data: unknown) {
+        const url = webhook.target.urlTemplate.fill({ trigger: trigger });
+
+        const payload: WebhookPayload = {
+            data,
+            trigger
+        };
+
         try {
-            const response = await this.axios.post(url, data);
+            const response = await this.axios.post(url, payload);
+
             if (response.status !== 200) {
-                this.logger.error(`Webhook ${url} returned status ${response.status}.`);
+                this.logger.error(`Request to webhook '${url}' returned status ${response.status}.`);
+            } else {
+                this.logger.debug(`Request to webhook '${url}' was successful.`);
             }
         } catch (e) {
-            this.logger.error(`Webhook ${url} failed with the following error:`, e);
+            this.logger.error(`Request to webhook Webhook '${url}' failed with the following error:`, e);
         }
     }
 
@@ -56,4 +66,9 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
             this.runtime.eventBus.unsubscribe(this.handleEvent.bind(this), subscriptionId);
         }
     }
+}
+
+interface WebhookPayload {
+    trigger: string;
+    data: unknown;
 }
