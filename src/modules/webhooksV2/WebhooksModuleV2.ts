@@ -41,7 +41,7 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
     }
 
     private async triggerWebhook(webhook: Webhook, trigger: string, data: unknown) {
-        const url = webhook.target.urlTemplate.fill({ trigger: trigger });
+        const url = webhook.target.urlTemplate.fill({ trigger });
 
         const payload: WebhookPayload = {
             data,
