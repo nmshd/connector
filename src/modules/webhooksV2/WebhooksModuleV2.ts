@@ -54,8 +54,8 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
 
             const response = await this.axios.post(url, payload, { headers: webhook.target.headers });
 
-            if (response.status !== 200) {
-                this.logger.warn(`Request to webhook '${url}' returned status ${response.status}. Expected 200.`);
+            if (response.status < 200 || response.status > 299) {
+                this.logger.warn(`Request to webhook '${url}' returned status ${response.status}. Expected value between 200 and 299.`);
             } else {
                 this.logger.debug(`Request to webhook '${url}' was successful.`);
             }
