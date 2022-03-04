@@ -15,7 +15,8 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
         this.axios = axios.create({
             httpAgent: new AgentKeepAlive(),
             httpsAgent: new AgentKeepAliveHttps(),
-            validateStatus: () => true
+            validateStatus: () => true,
+            maxRedirects: 0
         });
 
         this.configModel = ConfigParser.parse(this.configuration).value;
