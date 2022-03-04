@@ -24,6 +24,8 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
             httpsAgent: new AgentKeepAliveHttps()
         });
 
+        this.logger.warn("The 'webhooks' module is deprecated. Please use the 'webhooksV2' module instead. Read more at https://enmeshed.eu/blog/webhooks-v2-connector-module/");
+
         this.messageReceivedSubscriptionId = this.runtime.eventBus.subscribe<MessageReceivedEvent>(MessageReceivedEvent, (e) => this.messageReceived(e));
         this.relationshipChangedSubscriptionId = this.runtime.eventBus.subscribe<RelationshipChangedEvent>(RelationshipChangedEvent, (e) => this.relationshipChanged(e));
     }

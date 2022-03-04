@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.0
+
+-   new module: 'webhooksV2' (see https://enmeshed.eu/integrate/connector-configuration#webhooksV2 for more details on how to configure it)
+-   the 'webhooks' module is now deprecated
+
 ## 2.2.1
 
 -   format number strings (e.g. "1.9" and "1") to their number representations in the environment variable parsing
