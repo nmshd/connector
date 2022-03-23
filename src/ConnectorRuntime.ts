@@ -171,7 +171,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             const infrastructureConfiguration = (this.runtimeConfig.infrastructure as any)[requiredInfrastructure];
             if (!infrastructureConfiguration?.enabled) {
                 this.logger.error(
-                    `Module '${connectorModuleConfiguration.displayName}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`
+                    `Module '${this.getModuleName(connectorModuleConfiguration)}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`
                 );
                 process.exit(1);
             }

@@ -74,13 +74,20 @@
             }
         },
         "webhooks": {
-            "displayName": "Webhooks",
+            "displayName": "Webhooks (deprecated)",
             "enabled": false,
             "location": "webhooks/WebhooksModule",
 
             "url": "",
             "headers": {},
             "publishInterval": 60
+        },
+        "webhooksV2": {
+            "displayName": "Webhooks",
+            "enabled": false,
+            "location": "webhooksV2/WebhooksModuleV2",
+            "targets": {},
+            "webhooks": []
         }
     }
 }
