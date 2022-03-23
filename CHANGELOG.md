@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.1
+
+-   upgrade the runtime to version 1.4.0
+
 ## 2.3.0
 
 -   new module: 'webhooksV2' (see https://enmeshed.eu/integrate/connector-configuration#webhooksV2 for more details on how to configure it)

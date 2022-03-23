@@ -14,6 +14,10 @@ export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleCo
 }
 
 export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleConfiguration> {
+    public get baseDirectory(): string {
+        return __dirname;
+    }
+
     public init(): void {
         if (this.configuration.docs.enabled) {
             this.addDocumentation();

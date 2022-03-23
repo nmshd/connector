@@ -202,7 +202,6 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         module.runtime = this;
         module.configuration = connectorModuleConfiguration;
-        module.baseDirectory = modulePath.replace(path.basename(modulePath), "");
         module.logger = this.loggerFactory.getLogger(moduleConstructor);
 
         this.modules.add(module);
