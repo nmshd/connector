@@ -63,7 +63,7 @@
         },
         {
             "label": "Run 1",
-            "command": "export SYNC_ENABLED=${input:enableSync} && docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.${input:backboneEnvironment}.yml up --build bc-1",
+            "command": "export SYNC_ENABLED=${input:enableSync} && docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.${input:backboneEnvironment}.yml up bc-1",
             "type": "shell",
             "isBackground": true,
             "presentation": {
@@ -72,7 +72,7 @@
         },
         {
             "label": "Run 2",
-            "command": "export SYNC_ENABLED=${input:enableSync} && docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.${input:backboneEnvironment}.yml up --build bc-1 bc-2",
+            "command": "export SYNC_ENABLED=${input:enableSync} && docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.${input:backboneEnvironment}.yml up bc-1 bc-2",
             "type": "shell",
             "isBackground": true,
             "presentation": {
