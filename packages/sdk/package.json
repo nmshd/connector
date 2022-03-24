@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/connector-sdk",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "description": "the enmeshed businnes connector sdk",
     "keywords": [
         "enmeshed",
