@@ -28,15 +28,27 @@ export class RelationshipsEndpoint extends Endpoint {
         return await this.get(`/api/v1/Relationships/${relationshipId}`);
     }
 
-    public async acceptRelationshipChange(relationshipId: string, changeId: string, request?: AcceptRelationshipChangeRequest): Promise<ConnectorResponse<ConnectorRelationship>> {
+    public async acceptRelationshipChange(
+        relationshipId: string,
+        changeId: string,
+        request: AcceptRelationshipChangeRequest = { content: {} }
+    ): Promise<ConnectorResponse<ConnectorRelationship>> {
         return await this.put(`/api/v1/Relationships/${relationshipId}/Changes/${changeId}/Accept`, request);
     }
 
-    public async rejectRelationshipChange(relationshipId: string, changeId: string, request?: RejectRelationshipChangeRequest): Promise<ConnectorResponse<ConnectorRelationship>> {
+    public async rejectRelationshipChange(
+        relationshipId: string,
+        changeId: string,
+        request: RejectRelationshipChangeRequest = { content: {} }
+    ): Promise<ConnectorResponse<ConnectorRelationship>> {
         return await this.put(`/api/v1/Relationships/${relationshipId}/Changes/${changeId}/Reject`, request);
     }
 
-    public async revokeRelationshipChange(relationshipId: string, changeId: string, request?: RevokeRelationshipChangeRequest): Promise<ConnectorResponse<ConnectorRelationship>> {
+    public async revokeRelationshipChange(
+        relationshipId: string,
+        changeId: string,
+        request: RevokeRelationshipChangeRequest = { content: {} }
+    ): Promise<ConnectorResponse<ConnectorRelationship>> {
         return await this.put(`/api/v1/Relationships/${relationshipId}/Changes/${changeId}/Revoke`, request);
     }
 }
