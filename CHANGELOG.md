@@ -2,7 +2,7 @@
 
 ## 2.3.1
 
--> SDK 1.2.1
+-> SDK 1.2.2
 
 -   upgrade the runtime to version 1.4.0
 
