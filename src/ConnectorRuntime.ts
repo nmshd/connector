@@ -102,7 +102,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         await this.checkDeviceCredentials(this.accountController);
 
-        this.login(this.accountController, consumptionController);
+        await this.login(this.accountController, consumptionController);
     }
 
     private async checkDeviceCredentials(accountController: AccountController) {
