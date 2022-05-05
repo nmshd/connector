@@ -64,9 +64,7 @@ export async function uploadOwnToken(client: ConnectorClient): Promise<Connector
 }
 
 export async function uploadPeerToken(client: ConnectorClient, reference: string): Promise<ConnectorToken> {
-    const response = await client.tokens.loadPeerToken({
-        reference: reference
-    });
+    const response = await client.tokens.loadPeerToken({ reference });
 
     expectSuccess(response, ValidationSchema.RelationshipTemplate);
 

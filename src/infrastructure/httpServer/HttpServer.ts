@@ -231,23 +231,14 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     public addEndpoint(httpMethod: HttpMethod, route: string, authenticationRequired: boolean, handler: RequestHandler): void {
-        this.customEndpoints.push({
-            httpMethod: httpMethod,
-            route: route,
-            authenticationRequired: authenticationRequired,
-            handler: handler
-        });
+        this.customEndpoints.push({ httpMethod, route, authenticationRequired, handler });
     }
 
     public addControllers(controllerGlobs: string[], baseDirectory: string): void {
-        this.controllers.push({ globs: controllerGlobs, baseDirectory: baseDirectory });
+        this.controllers.push({ globs: controllerGlobs, baseDirectory });
     }
 
     public addMiddleware(route: string, authenticationRequired: boolean, ...handlers: RequestHandler[]): void {
-        this.middlewares.push({
-            route: route,
-            authenticationRequired: authenticationRequired,
-            handlers: handlers
-        });
+        this.middlewares.push({ route, authenticationRequired, handlers });
     }
 }

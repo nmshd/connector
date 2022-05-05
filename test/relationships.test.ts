@@ -27,7 +27,7 @@ describe("Create Relationship", () => {
     test("create relationship", async () => {
         expect(templateId).toBeDefined();
 
-        const response = await client2.relationships.createRelationship({ templateId: templateId, content: { a: "b" } });
+        const response = await client2.relationships.createRelationship({ templateId, content: { a: "b" } });
         expectSuccess(response, ValidationSchema.Relationship);
     });
 

@@ -21,11 +21,11 @@ export class FilesController extends BaseController {
     ): Promise<Return.NewResource<Envelope>> {
         const result = await this.transportServices.files.uploadOwnFile({
             content: file?.buffer,
-            expiresAt: expiresAt,
+            expiresAt,
             filename: file?.originalname,
             mimetype: file?.mimetype,
-            title: title,
-            description: description
+            title,
+            description
         } as any);
         return this.created(result);
     }
@@ -40,9 +40,7 @@ export class FilesController extends BaseController {
     @Path(":id/Download")
     @GET
     public async downloadFile(@PathParam("id") id: string, @ContextResponse response: express.Response): Promise<void> {
-        const result = await this.transportServices.files.downloadFile({
-            id: id
-        });
+        const result = await this.transportServices.files.downloadFile({ id });
 
         return this.file(
             result,
@@ -85,9 +83,7 @@ export class FilesController extends BaseController {
     @Path(":id")
     @GET
     public async getFile(@PathParam("id") id: string): Promise<Envelope> {
-        const result = await this.transportServices.files.getFile({
-            id: id
-        });
+        const result = await this.transportServices.files.getFile({ id });
         return this.ok(result);
     }
 

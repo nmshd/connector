@@ -23,9 +23,7 @@ export class RelationshipsController extends BaseController {
     @POST
     @Path("/Relationships/:id/Changes")
     public async createRelationshipChange(@PathParam("id") id: string): Promise<Return.NewResource<Envelope>> {
-        const result = await this.transportServices.relationships.createRelationshipChange({
-            id: id
-        });
+        const result = await this.transportServices.relationships.createRelationshipChange({ id });
         return this.created(result);
     }
 
@@ -34,7 +32,7 @@ export class RelationshipsController extends BaseController {
     public async acceptRelationshipChange(@PathParam("id") id: string, @PathParam("changeId") changeId: string, body?: RelationshipChangeAnswer): Promise<Envelope> {
         const result = await this.transportServices.relationships.acceptRelationshipChange({
             relationshipId: id,
-            changeId: changeId,
+            changeId,
             content: body?.content
         });
         return this.ok(result);
@@ -45,7 +43,7 @@ export class RelationshipsController extends BaseController {
     public async rejectRelationshipChange(@PathParam("id") id: string, @PathParam("changeId") changeId: string, body?: RelationshipChangeAnswer): Promise<Envelope> {
         const result = await this.transportServices.relationships.rejectRelationshipChange({
             relationshipId: id,
-            changeId: changeId,
+            changeId,
             content: body?.content
         });
         return this.ok(result);
@@ -56,7 +54,7 @@ export class RelationshipsController extends BaseController {
     public async revokeRelationshipChange(@PathParam("id") id: string, @PathParam("changeId") changeId: string, body?: RelationshipChangeAnswer): Promise<Envelope> {
         const result = await this.transportServices.relationships.revokeRelationshipChange({
             relationshipId: id,
-            changeId: changeId,
+            changeId,
             content: body?.content
         });
         return this.ok(result);
@@ -73,9 +71,7 @@ export class RelationshipsController extends BaseController {
     @GET
     @Path(":id")
     public async getRelationship(@PathParam("id") id: string): Promise<Envelope> {
-        const result = await this.transportServices.relationships.getRelationship({
-            id: id
-        });
+        const result = await this.transportServices.relationships.getRelationship({ id });
         return this.ok(result);
     }
 }

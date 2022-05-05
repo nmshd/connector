@@ -13,7 +13,7 @@ export class Launcher {
         env.NODE_CONFIG_ENV = "test";
         env.DATABASE_NAME = accountName;
         return spawn("node", ["dist/index.js"], {
-            env: env,
+            env,
             cwd: path.resolve(`${__dirname}/../..`),
             stdio: "inherit"
         });
@@ -43,7 +43,7 @@ export class Launcher {
             this._processes.push(this.spawnConnector(port, accountName));
         }
 
-        await waitOn({ resources: resources });
+        await waitOn({ resources });
 
         return clients;
     }

@@ -160,7 +160,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             version: buildInformation,
             health: supportInformation.health,
             configuration: this.sanitizeConfig(supportInformation.configuration),
-            identityInfo: identityInfo
+            identityInfo
         };
     }
 

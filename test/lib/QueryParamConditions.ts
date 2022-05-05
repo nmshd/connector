@@ -29,7 +29,7 @@ export class QueryParamConditions {
         }
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue,
             expectedResult: true
         });
@@ -37,13 +37,13 @@ export class QueryParamConditions {
         const positiveValueAsDate = DateTime.fromISO(positiveValue);
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValueAsDate.plus({ hours: 24 }).toString(),
             expectedResult: false
         });
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValueAsDate.minus({ hours: 24 }).toString(),
             expectedResult: false
         });
@@ -61,13 +61,13 @@ export class QueryParamConditions {
         }
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue,
             expectedResult: true
         });
 
         this._conditions.push({
-            key: key,
+            key,
             value: !positiveValue,
             expectedResult: false
         });
@@ -85,19 +85,19 @@ export class QueryParamConditions {
         }
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue,
             expectedResult: true
         });
 
         this._conditions.push({
-            key: key,
+            key,
             value: (positiveValue + 1).toString(),
             expectedResult: false
         });
 
         this._conditions.push({
-            key: key,
+            key,
             value: (positiveValue - 1).toString(),
             expectedResult: false
         });
@@ -115,13 +115,13 @@ export class QueryParamConditions {
         }
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue,
             expectedResult: true
         });
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue.replace(/....$/, "XXXX"),
             expectedResult: false
         });
@@ -142,13 +142,13 @@ export class QueryParamConditions {
         const positiveValue = positiveValueArray[0];
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue,
             expectedResult: true
         });
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue.replace(/....$/, "XXXX"),
             expectedResult: false
         });

@@ -52,9 +52,7 @@ export class TokensController extends BaseController {
     @Accept("application/json", "image/png")
     public async getToken(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         if (accept === "image/png") {
-            const result = await this.transportServices.tokens.getQRCodeForToken({
-                id: id
-            });
+            const result = await this.transportServices.tokens.getQRCodeForToken({ id });
 
             return this.file(
                 result,
@@ -66,9 +64,7 @@ export class TokensController extends BaseController {
             );
         }
 
-        const result = await this.transportServices.tokens.getToken({
-            id: id
-        });
+        const result = await this.transportServices.tokens.getToken({ id });
         return this.ok(result);
     }
 }
