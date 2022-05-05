@@ -6,7 +6,7 @@ export interface ConnectorRequest {
     status: ConnectorRequestStatus;
     content: any;
     source?: ConnectorRequestSource;
-    response?: ConnectorResponse;
+    response?: ConnectorRequestResponse;
 }
 
 export declare enum ConnectorRequestStatus {
@@ -23,13 +23,13 @@ export interface ConnectorRequestSource {
     reference: string;
 }
 
-export interface ConnectorResponse {
+export interface ConnectorRequestResponse {
     createdAt: string;
     content: any;
-    source?: ConnectorResponseSource;
+    source?: ConnectorRequestResponseSource;
 }
 
-export interface ConnectorResponseSource {
+export interface ConnectorRequestResponseSource {
     type: "Message" | "RelationshipChange";
     reference: string;
 }
