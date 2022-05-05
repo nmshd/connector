@@ -5,6 +5,7 @@ import {
     CanRejectIncomingRequestRequest,
     ConnectorRequest,
     ConnectorRequests,
+    ConnectorRequestValidationResult,
     ConnectorResponse,
     GetIncomingRequestsRequest,
     RejectIncomingRequestRequest
@@ -16,7 +17,7 @@ export class IncomingRequestsEndpoint extends Endpoint {
         super(axiosInstance);
     }
 
-    public async canAccept(requestId: string, request: CanAcceptIncomingRequestRequest): Promise<ConnectorResponse<ConnectorRequest>> {
+    public async canAccept(requestId: string, request: CanAcceptIncomingRequestRequest): Promise<ConnectorResponse<ConnectorRequestValidationResult>> {
         return await this.put(`/api/v1/Requests/Incoming/${requestId}/CanAccept`, request);
     }
 
@@ -24,7 +25,7 @@ export class IncomingRequestsEndpoint extends Endpoint {
         return await this.put(`/api/v1/Requests/Incoming/${requestId}/Accept`, request);
     }
 
-    public async canReject(requestId: string, request: CanRejectIncomingRequestRequest): Promise<ConnectorResponse<ConnectorRequest>> {
+    public async canReject(requestId: string, request: CanRejectIncomingRequestRequest): Promise<ConnectorResponse<ConnectorRequestValidationResult>> {
         return await this.put(`/api/v1/Requests/Incoming/${requestId}/CanReject`, request);
     }
 

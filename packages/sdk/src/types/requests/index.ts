@@ -1,5 +1,6 @@
 export * from "./ConnectorRequest";
 export * from "./ConnectorRequests";
+export * from "./ConnectorRequestValidationResult";
 export * from "./requests/AcceptIncomingRequestRequest";
 export * from "./requests/CanAcceptIncomingRequestRequest";
 export * from "./requests/CanCreateOutgoingRequestRequest";

@@ -1,5 +1,13 @@
 import { AxiosInstance } from "axios";
-import { CanCreateOutgoingRequestRequest, ConnectorRequest, ConnectorRequests, ConnectorResponse, CreateOutgoingRequestRequest, GetOutgoingRequestsRequest } from "../types";
+import {
+    CanCreateOutgoingRequestRequest,
+    ConnectorRequest,
+    ConnectorRequests,
+    ConnectorRequestValidationResult,
+    ConnectorResponse,
+    CreateOutgoingRequestRequest,
+    GetOutgoingRequestsRequest
+} from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class OutgoingRequestsEndpoint extends Endpoint {
@@ -7,7 +15,7 @@ export class OutgoingRequestsEndpoint extends Endpoint {
         super(axiosInstance);
     }
 
-    public async canCreateRequest(request: CanCreateOutgoingRequestRequest): Promise<ConnectorResponse<ConnectorRequest>> {
+    public async canCreateRequest(request: CanCreateOutgoingRequestRequest): Promise<ConnectorResponse<ConnectorRequestValidationResult>> {
         return await this.post("/api/v1/Requests/Outgoing/Validate", request);
     }
 
