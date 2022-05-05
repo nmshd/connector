@@ -1,6 +1,6 @@
 import { ApplicationError } from "@js-soft/ts-utils";
 import { RuntimeErrors } from "@nmshd/runtime";
-import { RequestError } from "@nmshd/transport";
+import { RequestError, TransportErrors } from "@nmshd/transport";
 import express from "express";
 import stringify from "json-stringify-safe";
 import { Errors } from "typescript-rest";
@@ -62,7 +62,7 @@ export function genericErrorHandler(error: any, _req: express.Request, res: expr
             const payload = Envelope.error(HttpError.forProd(error.code, error.message));
 
             let statusCode;
-            if (error.equals(RuntimeErrors.general.recordNotFound())) {
+            if (error.equals(RuntimeErrors.general.recordNotFound()) || error.equals(TransportErrors.general.recordNotFound("", ""))) {
                 statusCode = 404;
             } else {
                 statusCode = 400;
