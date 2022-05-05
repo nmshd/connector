@@ -5,8 +5,10 @@ import {
     AccountEndpoint,
     ChallengesEndpoint,
     FilesEndpoint,
+    IncomingRequestsEndpoint,
     MessagesEndpoint,
     MonitoringEndpoint,
+    OutgoingRequestsEndpoint,
     RelationshipsEndpoint,
     RelationshipTemplatesEndpoint,
     TokensEndpoint
@@ -16,8 +18,10 @@ export class ConnectorClient {
     public readonly account: AccountEndpoint;
     public readonly challenges: ChallengesEndpoint;
     public readonly files: FilesEndpoint;
+    public readonly incomingRequests: IncomingRequestsEndpoint;
     public readonly messages: MessagesEndpoint;
     public readonly monitoring: MonitoringEndpoint;
+    public readonly outgoingRequests: OutgoingRequestsEndpoint;
     public readonly relationships: RelationshipsEndpoint;
     public readonly relationshipTemplates: RelationshipTemplatesEndpoint;
     public readonly tokens: TokensEndpoint;
@@ -42,8 +46,10 @@ export class ConnectorClient {
         this.account = new AccountEndpoint(axiosInstance);
         this.challenges = new ChallengesEndpoint(axiosInstance);
         this.files = new FilesEndpoint(axiosInstance);
+        this.incomingRequests = new IncomingRequestsEndpoint(axiosInstance);
         this.messages = new MessagesEndpoint(axiosInstance);
         this.monitoring = new MonitoringEndpoint(axiosInstance);
+        this.outgoingRequests = new OutgoingRequestsEndpoint(axiosInstance);
         this.relationships = new RelationshipsEndpoint(axiosInstance);
         this.relationshipTemplates = new RelationshipTemplatesEndpoint(axiosInstance);
         this.tokens = new TokensEndpoint(axiosInstance);

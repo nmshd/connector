@@ -6,4 +6,5 @@ export * from "./files";
 export * from "./messages";
 export * from "./relationships";
 export * from "./relationshipTemplates";
+export * from "./requests";
 export * from "./tokens";
