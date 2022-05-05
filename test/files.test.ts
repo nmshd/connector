@@ -3,7 +3,7 @@ import fs from "fs";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { exchangeFile, makeUploadRequest, uploadFile } from "./lib/testUtils";
-import { expectError, expectSuccess, ValidationSchema } from "./lib/validation";
+import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -21,7 +21,7 @@ describe("File Upload", () => {
     test("can upload file", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest());
 
-        expectSuccess(response, ValidationSchema.File);
+        expect(response).toBeSuccessful(ValidationSchema.File);
 
         file = response.result;
     });
@@ -30,7 +30,7 @@ describe("File Upload", () => {
         expect(file).toBeDefined();
 
         const response = await client1.files.getFiles({ createdAt: file.createdAt });
-        expectSuccess(response, ValidationSchema.Files);
+        expect(response).toBeSuccessful(ValidationSchema.Files);
         expect(response.result).toContainEqual(file);
     });
 
@@ -38,7 +38,7 @@ describe("File Upload", () => {
         expect(file).toBeDefined();
 
         const response = await client1.files.getOwnFiles({ createdAt: file.createdAt });
-        expectSuccess(response, ValidationSchema.Files);
+        expect(response).toBeSuccessful(ValidationSchema.Files);
         expect(response.result).toContainEqual(file);
     });
 
@@ -46,7 +46,7 @@ describe("File Upload", () => {
         expect(file).toBeDefined();
 
         const response = await client1.files.getFile(file.id);
-        expectSuccess(response, ValidationSchema.File);
+        expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
     test("uploaded files keep their size", async () => {
@@ -59,7 +59,7 @@ describe("File Upload", () => {
 
     test("cannot upload an empty file", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest({ file: Buffer.of() }));
-        expectError(response, "file content is empty", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("file content is empty", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("cannot upload a file that is null", async () => {
@@ -67,35 +67,35 @@ describe("File Upload", () => {
         const _response = await (client1.files as any).httpClient.post("/api/v1/Files/Own", makeUploadRequest({ file: null }));
         const response = (client1.files as any).makeResult(_response);
 
-        expectError(response, "file content is empty", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("file content is empty", "error.runtime.validation.invalidPropertyValue");
     });
     test("can upload same file twice", async () => {
         const request = await makeUploadRequest({ file: await fs.promises.readFile(`${__dirname}/__assets__/test.txt`) });
 
         const response1 = await client1.files.uploadOwnFile(request);
         const response2 = await client1.files.uploadOwnFile(request);
-        expectSuccess(response1, ValidationSchema.File);
-        expectSuccess(response2, ValidationSchema.File);
+        expect(response1).toBeSuccessful(ValidationSchema.File);
+        expect(response2).toBeSuccessful(ValidationSchema.File);
     });
 
     test("file description is optional", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest({ description: "" }));
-        expectSuccess(response, ValidationSchema.File);
+        expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
     test("cannot upload a file with expiry date in the past", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "1970" }));
-        expectError(response, "'expiresAt' must be in the future.", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("'expiresAt' must be in the future.", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("cannot upload a file with empty expiry date", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "" }));
-        expectError(response, "expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("cannot upload a file with undefined expiry date", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "" }));
-        expectError(response, "expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 });
 
@@ -104,14 +104,14 @@ describe("Get file", () => {
         const file = await uploadFile(client1);
         const response = await client1.files.getFile(file.id);
 
-        expectSuccess(response, ValidationSchema.File);
+        expect(response).toBeSuccessful(ValidationSchema.File);
         expect(response.result).toMatchObject(file);
     });
 
     test("accessing not existing file id causes an error", async () => {
         const notPresentFileId = "FILXXXXXXXXXXXXXXXXX";
         const response = await client1.files.getFile(notPresentFileId);
-        expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+        expect(response).toBeAnError("File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 });
 
@@ -186,7 +186,7 @@ describe("Load peer file with token reference", () => {
         expect(file).toBeDefined();
 
         const response = await client2.files.getFile(file.id);
-        expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+        expect(response).toBeAnError("File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 
     test("peer file can be loaded with truncated token reference", async () => {
@@ -195,7 +195,7 @@ describe("Load peer file with token reference", () => {
         const token = (await client1.files.createTokenForFile(file.id)).result;
         const response = await client2.files.loadPeerFile({ reference: token.truncatedReference });
 
-        expectSuccess(response, ValidationSchema.File);
+        expect(response).toBeSuccessful(ValidationSchema.File);
         expect(response.result).toMatchObject({ ...file, isOwn: false });
     });
 
@@ -203,7 +203,7 @@ describe("Load peer file with token reference", () => {
         expect(file).toBeDefined();
 
         const response = await client2.files.getFile(file.id);
-        expectSuccess(response, ValidationSchema.File);
+        expect(response).toBeSuccessful(ValidationSchema.File);
         expect(response.result).toMatchObject({ ...file, isOwn: false });
     });
 
@@ -211,7 +211,7 @@ describe("Load peer file with token reference", () => {
         expect(file).toBeDefined();
 
         const response = await client2.files.getFiles({ createdAt: file.createdAt });
-        expectSuccess(response, ValidationSchema.Files);
+        expect(response).toBeSuccessful(ValidationSchema.Files);
         expect(response.result).toContainEqual({ ...file, isOwn: false });
     });
 
@@ -220,14 +220,14 @@ describe("Load peer file with token reference", () => {
         const token = (await client1.files.createTokenForFile(file.id)).result;
 
         const response = await client2.files.loadPeerFile({ reference: token.id });
-        expectError(response, "token reference invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("token reference invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("passing file id as truncated token reference causes an error", async () => {
         const file = await uploadFile(client1);
 
         const response = await client2.files.loadPeerFile({ reference: file.id });
-        expectError(response, "token reference invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("token reference invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test.each([
@@ -235,12 +235,12 @@ describe("Load peer file with token reference", () => {
         ["", "token reference invalid"]
     ])("passing %p as truncated token reference causes an error", async (tokenReference, expectedMessage) => {
         const response = await client2.files.loadPeerFile({ reference: tokenReference as any });
-        expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError(expectedMessage, "error.runtime.validation.invalidPropertyValue");
     });
 
     test("passing undefined as truncated token reference causes an error", async () => {
         const response = await client2.files.loadPeerFile({ reference: undefined as any });
-        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+        expect(response).toBeAnError("The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
     });
 });
 
@@ -255,7 +255,7 @@ describe("Load peer file with file id and secret", () => {
         expect(file).toBeDefined();
 
         const response = await client2.files.getFile(file.id);
-        expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+        expect(response).toBeAnError("File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 
     test("peer file can be loaded with file id and secret key", async () => {
@@ -263,7 +263,7 @@ describe("Load peer file with file id and secret", () => {
 
         const response = await client2.files.loadPeerFile({ id: file.id, secretKey: file.secretKey });
 
-        expectSuccess(response, ValidationSchema.File);
+        expect(response).toBeSuccessful(ValidationSchema.File);
         expect(response.result).toMatchObject({ ...file, isOwn: false });
     });
 
@@ -271,7 +271,7 @@ describe("Load peer file with file id and secret", () => {
         expect(file).toBeDefined();
 
         const response = await client2.files.getFile(file.id);
-        expectSuccess(response, ValidationSchema.File);
+        expect(response).toBeSuccessful(ValidationSchema.File);
         expect(response.result).toMatchObject({ ...file, isOwn: false });
     });
 
@@ -279,7 +279,7 @@ describe("Load peer file with file id and secret", () => {
         expect(file).toBeDefined();
 
         const response = await client2.files.getFiles({ createdAt: file.createdAt });
-        expectSuccess(response, ValidationSchema.Files);
+        expect(response).toBeSuccessful(ValidationSchema.Files);
         expect(response.result).toContainEqual({ ...file, isOwn: false });
     });
 
@@ -288,7 +288,7 @@ describe("Load peer file with file id and secret", () => {
 
         const response = await client2.files.loadPeerFile({ id: UNKOWN_FILE_ID, secretKey: file.secretKey });
 
-        expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+        expect(response).toBeAnError("File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 
     test("passing an unkown token id as file id causes an error", async () => {
@@ -296,7 +296,7 @@ describe("Load peer file with file id and secret", () => {
 
         const response = await client2.files.loadPeerFile({ id: UNKOWN_TOKEN_ID, secretKey: file.secretKey });
 
-        expectError(response, "id must match format fileId", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("id must match format fileId", "error.runtime.validation.invalidPropertyValue");
     });
 
     test.each([
@@ -305,13 +305,13 @@ describe("Load peer file with file id and secret", () => {
     ])("cannot pass %p as secret key", async (secretKey, expectedMessage) => {
         const response = await client2.files.loadPeerFile({ id: file.id, secretKey: secretKey as any });
 
-        expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError(expectedMessage, "error.runtime.validation.invalidPropertyValue");
     });
 
     test("cannot pass undefined as secret key", async () => {
         const response = await client2.files.loadPeerFile({ id: file.id, secretKey: undefined as any });
 
-        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+        expect(response).toBeAnError("The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
     });
 
     test.each([
@@ -320,12 +320,12 @@ describe("Load peer file with file id and secret", () => {
     ])("cannot pass %p as file id", async (fileId, expectedMessage) => {
         const response = await client2.files.loadPeerFile({ id: fileId as any, secretKey: file.secretKey });
 
-        expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError(expectedMessage, "error.runtime.validation.invalidPropertyValue");
     });
 
     test("cannot pass undefined as file id", async () => {
         const response = await client2.files.loadPeerFile({ id: undefined as any, secretKey: file.secretKey });
 
-        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+        expect(response).toBeAnError("The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
     });
 });

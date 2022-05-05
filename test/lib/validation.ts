@@ -1,4 +1,5 @@
 import { ConnectorResponse, getJSONSchemaDefinition } from "@nmshd/connector-sdk";
+import ajv from "ajv";
 import { matchersWithOptions } from "jest-json-schema";
 
 expect.extend(
@@ -39,14 +40,74 @@ export function validateSchema(schemaName: ValidationSchema, obj: any): void {
     expect(obj).toMatchSchema(expectedSchema);
 }
 
-export function expectSuccess<T>(response: ConnectorResponse<T>, schema: ValidationSchema): void {
-    expect(response.isSuccess, JSON.stringify(response.error)).toBeTruthy();
-    validateSchema(schema, response.result);
-}
+const schemaDefinition = getJSONSchemaDefinition();
+const ajvInstance = new ajv({ schemas: [schemaDefinition] });
 
-export function expectError<T>(response: ConnectorResponse<T>, message: string, code: string): void {
-    expect(response.isSuccess).toBeFalsy();
-    expect(response.isError).toBeTruthy();
-    expect(response.error.code).toStrictEqual(code);
-    expect(response.error.message).toStrictEqual(message);
+expect.extend({
+    toBeSuccessful(actual: ConnectorResponse<unknown>, schemaName: ValidationSchema) {
+        if (!(actual instanceof ConnectorResponse)) {
+            return { pass: false, message: () => "expected an instance of Result." };
+        }
+
+        if (!actual.isSuccess) {
+            const message = `expected a successful result; got an error result with the error message '${actual.error.message}'.`;
+            return { pass: false, message: () => message };
+        }
+
+        const expectedSchema = {
+            $ref: `https://enmeshed.eu/schemas/connector-api#/definitions/${schemaName}`
+        };
+        const validate = ajvInstance.compile(expectedSchema);
+        const valid = validate(actual.result);
+
+        if (!valid) {
+            return {
+                pass: false,
+                message: () => `expected a successful result to match the schema '${schemaName}'`
+            };
+        }
+
+        return { pass: actual.isSuccess, message: () => "" };
+    },
+
+    toBeAnError(actual: ConnectorResponse<unknown>, expectedMessage: string | RegExp, expectedCode: string | RegExp) {
+        if (!(actual instanceof ConnectorResponse)) {
+            return {
+                pass: false,
+                message: () => "expected an instance of Result."
+            };
+        }
+
+        if (!actual.isError) {
+            return {
+                pass: false,
+                message: () => "expected an error result, but it was successful."
+            };
+        }
+
+        if (actual.error.message.match(new RegExp(expectedMessage)) === null) {
+            return {
+                pass: false,
+                message: () => `expected the error message of the result to match '${expectedMessage}', but received '${actual.error.message}'.`
+            };
+        }
+
+        if (actual.error.code.match(new RegExp(expectedCode)) === null) {
+            return {
+                pass: false,
+                message: () => `expected the error code of the result to match '${expectedCode}', but received '${actual.error.code}'.`
+            };
+        }
+
+        return { pass: true, message: () => "" };
+    }
+});
+
+declare global {
+    namespace jest {
+        interface Matchers<R> {
+            toBeSuccessful(schema: ValidationSchema): R;
+            toBeAnError(expectedMessage: string | RegExp, expectedCode: string | RegExp): R;
+        }
+    }
 }

@@ -2,7 +2,7 @@ import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getRelationship, getTemplateToken, syncUntilHasRelationships } from "./lib/testUtils";
-import { expectSuccess, ValidationSchema } from "./lib/validation";
+import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -20,7 +20,7 @@ describe("Create Relationship", () => {
         const token = await getTemplateToken(client1);
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.truncatedReference });
-        expectSuccess(response, ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
         templateId = response.result.id;
     });
 
@@ -28,7 +28,7 @@ describe("Create Relationship", () => {
         expect(templateId).toBeDefined();
 
         const response = await client2.relationships.createRelationship({ templateId, content: { a: "b" } });
-        expectSuccess(response, ValidationSchema.Relationship);
+        expect(response).toBeSuccessful(ValidationSchema.Relationship);
     });
 
     test("sync relationships", async () => {
@@ -46,14 +46,14 @@ describe("Create Relationship", () => {
         expect(relationshipChangeId).toBeDefined();
 
         const response = await client1.relationships.acceptRelationshipChange(relationshipId, relationshipChangeId, { content: { a: "b" } });
-        expectSuccess(response, ValidationSchema.Relationship);
+        expect(response).toBeSuccessful(ValidationSchema.Relationship);
     });
 
     test("it should exist a relationship on bc1", async () => {
         expect(relationshipId).toBeDefined();
 
         const response = await client1.relationships.getRelationships();
-        expectSuccess(response, ValidationSchema.Relationships);
+        expect(response).toBeSuccessful(ValidationSchema.Relationships);
         expect(response.result).toHaveLength(1);
     });
 
@@ -68,7 +68,7 @@ describe("Create Relationship", () => {
         expect(relationshipId).toBeDefined();
 
         const response = await client2.relationships.getRelationships();
-        expectSuccess(response, ValidationSchema.Relationships);
+        expect(response).toBeSuccessful(ValidationSchema.Relationships);
         expect(response.result).toHaveLength(1);
     });
 
@@ -76,7 +76,7 @@ describe("Create Relationship", () => {
         expect(relationshipId).toBeDefined();
 
         const response = await client1.relationships.getRelationship(relationshipId);
-        expectSuccess(response, ValidationSchema.Relationship);
+        expect(response).toBeSuccessful(ValidationSchema.Relationship);
         expect(response.result.status).toBe("Active");
     });
 
@@ -84,7 +84,7 @@ describe("Create Relationship", () => {
         expect(relationshipId).toBeDefined();
 
         const response = await client2.relationships.getRelationship(relationshipId);
-        expectSuccess(response, ValidationSchema.Relationship);
+        expect(response).toBeSuccessful(ValidationSchema.Relationship);
         expect(response.result.status).toBe("Active");
     });
 });
