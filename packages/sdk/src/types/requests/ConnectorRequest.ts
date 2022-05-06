@@ -9,7 +9,7 @@ export interface ConnectorRequest {
     response?: ConnectorRequestResponse;
 }
 
-export declare enum ConnectorRequestStatus {
+export enum ConnectorRequestStatus {
     Draft = "Draft",
     Open = "Open",
     DecisionRequired = "DecisionRequired",

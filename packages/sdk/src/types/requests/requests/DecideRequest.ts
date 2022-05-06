@@ -6,7 +6,7 @@ export interface DecideRequestItemGroup {
     items: DecideRequestItem[];
 }
 
-export declare type DecideRequestItem = AcceptRequestItem | RejectRequestItem;
+export type DecideRequestItem = AcceptRequestItem | RejectRequestItem;
 
 export interface AcceptRequestItem {
     accept: true;
