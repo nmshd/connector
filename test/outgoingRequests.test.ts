@@ -1,6 +1,7 @@
 import { ConnectorClient, ConnectorRequestStatus } from "@nmshd/connector-sdk";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
+import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -15,7 +16,7 @@ describe("Outgoing Requests", () => {
             content: {
                 items: [
                     {
-                        // "@type": "TestRequestItem",
+                        "@type": "TestRequestItem",
                         mustBeAccepted: false
                     }
                 ],
@@ -24,12 +25,12 @@ describe("Outgoing Requests", () => {
             peer: (await client1.account.getIdentityInfo()).result.address
         });
 
-        expect(result.isSuccess).toBeTruthy();
+        expect(result).toBeSuccessful(ValidationSchema.ConnectorRequest);
 
         const sConsumptionRequest = (await client2.outgoingRequests.getRequest(result.result.id)).result;
         expect(sConsumptionRequest.status).toBe(ConnectorRequestStatus.Draft);
         expect(sConsumptionRequest.content.items).toHaveLength(1);
-        expect(sConsumptionRequest.content.items[0]["@type"]).toBe("RequestItem");
+        expect(sConsumptionRequest.content.items[0]["@type"]).toBe("TestRequestItem");
         expect(sConsumptionRequest.content.items[0].mustBeAccepted).toBe(false);
     });
 });
