@@ -17,6 +17,7 @@ export interface CreateOutgoingRequestRequestItemContentGroup {
 }
 
 export interface CreateOutgoingRequestRequestContentItem {
+    "@type"?: string;
     title?: string;
     description?: string;
     responseMetadata?: object;
