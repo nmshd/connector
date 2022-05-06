@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.4
+
+-   bugfix: add missing axios dependency
+
 ## 2.3.3
 
 -   upgrade the runtime to version 1.4.2
