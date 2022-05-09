@@ -12,7 +12,7 @@ info:
 
     You can retrieve the [yaml](/docs/yaml) or [json](/docs/json) representation of this specification by following the corresponding links.
 
-    You can also view this documenation in [rapidoc](/docs/rapidoc).
+    View this documenation in [rapidoc](/docs/rapidoc) or [swagger](/docs/swagger).
 
   license:
     name: MIT
