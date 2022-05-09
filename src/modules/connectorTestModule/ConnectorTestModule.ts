@@ -19,7 +19,6 @@ export default class ConnectorTestModule extends ConnectorRuntimeModule {
 
     public start(): void {
         const consumptionController = this.runtime["_consumptionController"] as ConsumptionController;
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         const processorRegistry = consumptionController.outgoingRequests["processorRegistry"] as RequestItemProcessorRegistry;
         processorRegistry.registerProcessor(GenericRequestItemProcessor, TestRequestItem);
     }
