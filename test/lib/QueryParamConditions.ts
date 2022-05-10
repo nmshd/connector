@@ -160,6 +160,7 @@ export class QueryParamConditions {
         const keyParts = key.split(".");
         let value = this.object;
         for (const keyPart of keyParts) {
+            if (!value) return;
             value = value[keyPart];
         }
 
