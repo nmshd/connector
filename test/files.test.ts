@@ -296,7 +296,7 @@ describe("Load peer file with file id and secret", () => {
 
         const response = await client2.files.loadPeerFile({ id: UNKOWN_TOKEN_ID, secretKey: file.secretKey });
 
-        expect(response).toBeAnError("id must match pattern FIL[A-z0-9]{17}", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("id must match pattern FIL.*", "error.runtime.validation.invalidPropertyValue");
     });
 
     test.each([
@@ -316,7 +316,7 @@ describe("Load peer file with file id and secret", () => {
 
     test.each([
         [null, "id must be string"],
-        ["", "id must match pattern FIL[A-z0-9]{17}"]
+        ["", "id must match pattern FIL.*"]
     ])("cannot pass %p as file id", async (fileId, expectedMessage) => {
         const response = await client2.files.loadPeerFile({ id: fileId as any, secretKey: file.secretKey });
 
