@@ -88,7 +88,7 @@ describe("Serialization Errors", () => {
             content: { a: "A", "@type": "Hugo" },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
-        expect(response).toBeAnError("Type 'Hugo' was not found within reflection classes. You might have to install a module first.", "error.runtime.unknownType");
+        expect(response).toBeAnError("Type 'Hugo' with version 1 was not found within reflection classes. You might have to install a module first.", "error.runtime.unknownType");
     });
 });
 
