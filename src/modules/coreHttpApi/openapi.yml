@@ -2152,8 +2152,8 @@ paths:
 
   /api/v1/Requests/Outgoing:
     get:
-      operationId: getIncomingRequests
-      description: Queries incoming `Requests`.
+      operationId: getOutgoingRequests
+      description: Queries outgoing `Requests`.
       tags:
         - Requests
       parameters:
