@@ -1834,14 +1834,71 @@ paths:
           $ref: "#/components/responses/NotFound"
 
   # ------------------- Requests -------------------
+
   /api/v1/Requests/Incoming:
     get:
       operationId: getIncomingRequests
       description: Queries incoming `Requests`.
       tags:
         - Requests
-      # TODO: query parameters
-      # parameters:
+      parameters:
+        - in: query
+          name: id
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: peer
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: status
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+          example: "Draft"
+        - in: query
+          name: content.expiresAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: content.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: source.type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: source.reference
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: response.source.type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.source.reference
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.content.result
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.content.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.content.items.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
       responses:
         200:
           description: Success
@@ -2094,6 +2151,96 @@ paths:
           $ref: "#/components/responses/NotFound"
 
   /api/v1/Requests/Outgoing:
+    get:
+      operationId: getIncomingRequests
+      description: Queries incoming `Requests`.
+      tags:
+        - Requests
+      parameters:
+        - in: query
+          name: id
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: peer
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: status
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+          example: "Draft"
+        - in: query
+          name: content.expiresAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: content.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: source.type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: source.reference
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: response.source.type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.source.reference
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.content.result
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
+        - in: query
+          name: response.content.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.content.items.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Request"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
     post:
       operationId: createOutgoingRequest
       description: Creates a new outgoing `Request`.
