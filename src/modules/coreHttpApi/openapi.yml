@@ -2946,7 +2946,7 @@ components:
       format: RequestID
       minLength: 20
       maxLength: 20
-      example: CNSREQ______________
+      example: REQ_________________
       description: The ID of a message.
 
     # ------------------- Entities -------------------
