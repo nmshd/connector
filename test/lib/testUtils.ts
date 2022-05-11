@@ -24,6 +24,8 @@ export async function syncUntil(client: ConnectorClient, until: (syncResult: Con
         iterationNumber++;
         await sleep(iterationNumber * 50);
 
+        console.warn(`re-requesting - retry number ${iterationNumber}`); // eslint-disable-line no-console
+
         const newSyncResponse = await client.account.sync();
         expect(newSyncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
 
