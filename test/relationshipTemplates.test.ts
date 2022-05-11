@@ -85,10 +85,13 @@ describe("Serialization Errors", () => {
 
     test("create a template with wrong content : not existent type", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
-            content: { a: "A", "@type": "Hugo" },
+            content: { a: "A", "@type": "NonExistentType" },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
-        expect(response).toBeAnError("Type 'Hugo' with version 1 was not found within reflection classes. You might have to install a module first.", "error.runtime.unknownType");
+        expect(response).toBeAnError(
+            "Type 'NonExistentType' with version 1 was not found within reflection classes. You might have to install a module first.",
+            "error.runtime.unknownType"
+        );
     });
 });
 

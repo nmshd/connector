@@ -1874,7 +1874,7 @@ paths:
         - in: query
           name: source.reference
           schema:
-            $ref: "#/components/schemas/TextFilter"
+            $ref: "#/components/schemas/IdFilter"
         - in: query
           name: response.createdAt
           schema:
@@ -1886,7 +1886,7 @@ paths:
         - in: query
           name: response.source.reference
           schema:
-            $ref: "#/components/schemas/TextFilter"
+            $ref: "#/components/schemas/IdFilter"
         - in: query
           name: response.content.result
           schema:
@@ -1966,52 +1966,6 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v1/Requests/Incoming/{id}/Accept:
-    put:
-      operationId: acceptIncomingRequest
-      description: Accepts the incoming `Request` with the given `id`.
-      tags:
-        - Requests
-      parameters:
-        - in: path
-          name: id
-          description: The ID of the Request.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RequestID"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              $ref: "#/components/schemas/DecideRequestRequest"
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    nullable: false
-                    $ref: "#/components/schemas/Request"
-                required:
-                  - result
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
   /api/v1/Requests/Incoming/{id}/CanAccept:
     put:
       operationId: canAcceptIncomingRequest
@@ -2058,10 +2012,10 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v1/Requests/Incoming/{id}/Reject:
+  /api/v1/Requests/Incoming/{id}/Accept:
     put:
-      operationId: rejectIncomingRequest
-      description: Rejects the incoming `Request` with the given `id`.
+      operationId: acceptIncomingRequest
+      description: Accepts the incoming `Request` with the given `id`.
       tags:
         - Requests
       parameters:
@@ -2150,6 +2104,52 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
+  /api/v1/Requests/Incoming/{id}/Reject:
+    put:
+      operationId: rejectIncomingRequest
+      description: Rejects the incoming `Request` with the given `id`.
+      tags:
+        - Requests
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Request.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RequestID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/DecideRequestRequest"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Request"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
   /api/v1/Requests/Outgoing:
     get:
       operationId: getOutgoingRequests
@@ -2189,7 +2189,7 @@ paths:
         - in: query
           name: source.reference
           schema:
-            $ref: "#/components/schemas/TextFilter"
+            $ref: "#/components/schemas/IdFilter"
         - in: query
           name: response.createdAt
           schema:
@@ -2201,7 +2201,7 @@ paths:
         - in: query
           name: response.source.reference
           schema:
-            $ref: "#/components/schemas/TextFilter"
+            $ref: "#/components/schemas/IdFilter"
         - in: query
           name: response.content.result
           schema:
@@ -2277,45 +2277,6 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v1/Requests/Outgoing/Validate:
-    post:
-      operationId: validateOutgoingRequest
-      description: Validates the given `OutgoingRequest` before creating it via POST `/api/v1/Requests/Outgoing`.
-      tags:
-        - Requests
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              $ref: "#/components/schemas/CreateOutgoingRequestRequest"
-      responses:
-        201:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    nullable: false
-                    $ref: "#/components/schemas/RequestValidationResult"
-                required:
-                  - result
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
   /api/v1/Requests/Outgoing/{id}:
     get:
       operationId: getOutgoingRequest
@@ -2340,6 +2301,45 @@ paths:
                   result:
                     nullable: false
                     $ref: "#/components/schemas/Request"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Requests/Outgoing/Validate:
+    post:
+      operationId: validateOutgoingRequest
+      description: Validates the given `OutgoingRequest` before creating it via POST `/api/v1/Requests/Outgoing`.
+      tags:
+        - Requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/CreateOutgoingRequestRequest"
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/RequestValidationResult"
                 required:
                   - result
           headers:
@@ -3172,6 +3172,7 @@ components:
         isOwn:
           type: boolean
           nullable: false
+          description: Whether this request is owned by the current identity (`OutgoingRequest`) or not (`IncomingRequest`).
         peer:
           allOf:
             - $ref: "#/components/schemas/Address"
@@ -3194,14 +3195,17 @@ components:
         source:
           type: object
           nullable: true
+          description: The source of this request. Can be a `Message` or a `RelationshipTemplate`.
           properties:
             type:
               type: string
               enum: ["Message", "RelationshipTemplate"]
               nullable: false
+              description: The type of the source of this request.
             reference:
               type: string
               nullable: false
+              description: The id of the `Message` or the `RelationshipTemplate`.
           required:
             - type
             - reference
@@ -3221,14 +3225,17 @@ components:
             source:
               type: object
               nullable: true
+              description: The source of this response. Can be a `Message` or a `RelationshipChange`.
               properties:
                 type:
                   type: string
-                  enum: ["Message", "RelationshipTemplate"]
+                  enum: ["Message", "RelationshipChange"]
                   nullable: false
+                  description: The type of the source of this response.
                 reference:
                   type: string
                   nullable: false
+                  description: The id of the `Message` or the `RelationshipChange`.
               required:
                 - type
                 - reference
@@ -3251,6 +3258,9 @@ components:
               type: boolean
               default: true
               nullable: false
+          description: Accept the request item.
+          required:
+            - accept
         - type: object
           properties:
             accept:
@@ -3263,6 +3273,7 @@ components:
             message:
               type: string
               nullable: true
+          description: Reject the request item and add an optional code and message.
           required:
             - accept
       example: { "accept": true }
@@ -3285,24 +3296,39 @@ components:
             oneOf:
               - $ref: "#/components/schemas/DecideRequestRequestItem"
               - $ref: "#/components/schemas/DecideRequestRequestItemGroup"
+      example:
+        {
+          "items":
+            [
+              { "accept": true },
+              { "accept": false, "code": "an.error.code", "message": "Error Message" },
+              { items: [{ "accept: true" }, { "accept": false, "code": "an.error.code", "message": "Error Message" }] }
+            ]
+        }
 
     CreateOutgoingRequestRequestContentItem:
       type: object
       properties:
-        description:
-          type: string
-        mustBeAccepted:
-          type: boolean
-        responseMetadata:
-          type: object
         title:
           type: string
+          description: Will be rendered as title of the request.
+        description:
+          type: string
+          description: Will be rendered as description of the request.
+        mustBeAccepted:
+          type: boolean
+          description: Whether the request must be accepted by the peer.
+        responseMetadata:
+          type: object
+          description: The metadata will be sent back in the response.
       required:
         - mustBeAccepted
 
     CreateOutgoingRequestRequestItemContentGroup:
       type: object
       properties:
+        title:
+          type: string
         description:
           type: string
         items:
@@ -3314,8 +3340,6 @@ components:
           type: boolean
         responseMetadata:
           type: object
-        title:
-          type: string
       required:
         - mustBeAccepted
         - items

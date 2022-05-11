@@ -49,7 +49,7 @@ export interface ConnectorRequestSource {
 
 export interface ConnectorRequestResponse {
     createdAt: string;
-    content: unknown;
+    content: ConnectorRequestResponseContent;
     source?: ConnectorRequestResponseSource;
 }
 
@@ -58,7 +58,7 @@ export interface ConnectorRequestResponseSource {
     reference: string;
 }
 
-export interface ConnectorRequestResponse {
+export interface ConnectorRequestResponseContent {
     result: ConnectorRequestResponseResult;
     requestId: string;
     items: (ConnectorRequestResponseItemGroup | ConnectorRequestResponseItem)[];
