@@ -3188,7 +3188,9 @@ components:
           nullable: false
           description: The status of this request.
         content:
+          # TODO: Add content schema
           type: object
+          nullable: false
         source:
           type: object
           nullable: true
@@ -3213,6 +3215,7 @@ components:
               nullable: false
               description: A timestamp that describes when this response was created.
             content:
+              # TODO: Add content schema
               type: object
               nullable: false
             source:
@@ -3336,7 +3339,6 @@ components:
         peer:
           allOf:
             - $ref: "#/components/schemas/Address"
-      # example: { "content": { "items": [{ "@type": "TestRequestItem", "mustBeAccepted": false }], "expiresAt": "2023" }, "peer": "id1" }
 
     RequestValidationResult:
       type: object

@@ -4,7 +4,7 @@ export interface ConnectorRequest {
     peer: string;
     createdAt: string;
     status: ConnectorRequestStatus;
-    content: any;
+    content: ConnectorRequestContent;
     source?: ConnectorRequestSource;
     response?: ConnectorRequestResponse;
 }
@@ -18,6 +18,30 @@ export enum ConnectorRequestStatus {
     Completed = "Completed"
 }
 
+export interface ConnectorRequestContent {
+    "@type": string;
+    "@context"?: string;
+    "@version"?: string;
+    id?: string;
+    expiresAt?: string;
+    items: (ConnectorRequestContentItem | ConnectorRequestContentItemGroup)[];
+}
+
+export interface ConnectorRequestContentItem {
+    title?: string;
+    description?: string;
+    responseMetadata?: object;
+    mustBeAccepted: boolean;
+}
+
+export interface ConnectorRequestContentItemGroup {
+    title?: string;
+    description?: string;
+    mustBeAccepted: boolean;
+    responseMetadata?: object;
+    items: ConnectorRequestContentItem[];
+}
+
 export interface ConnectorRequestSource {
     type: "Message" | "RelationshipTemplate";
     reference: string;
@@ -25,11 +49,38 @@ export interface ConnectorRequestSource {
 
 export interface ConnectorRequestResponse {
     createdAt: string;
-    content: any;
+    content: unknown;
     source?: ConnectorRequestResponseSource;
 }
 
 export interface ConnectorRequestResponseSource {
     type: "Message" | "RelationshipChange";
     reference: string;
+}
+
+export interface ConnectorRequestResponse {
+    result: ConnectorRequestResponseResult;
+    requestId: string;
+    items: (ConnectorRequestResponseItemGroup | ConnectorRequestResponseItem)[];
+}
+
+export enum ConnectorRequestResponseResult {
+    Accepted = "Accepted",
+    Rejected = "Rejected"
+}
+
+export interface ConnectorRequestResponseItem {
+    result: ConnectorRequestResponseItemResult;
+    metadata?: object;
+}
+
+export enum ConnectorRequestResponseItemResult {
+    Accepted = "Accepted",
+    Rejected = "Rejected",
+    Failed = "Error"
+}
+
+export interface ConnectorRequestResponseItemGroup {
+    items: ConnectorRequestResponseItem[];
+    metadata?: object;
 }
