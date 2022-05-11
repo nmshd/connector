@@ -5,6 +5,6 @@ import { ConnectorVersionInfo } from "./VersionInfo";
 export interface ConnectorSupportInformation {
     version: ConnectorVersionInfo;
     health: ConnectorHealth;
-    configuration: Record<string, any>;
+    configuration: Record<string, string | number | object | unknown[] | boolean | null>;
     identityInfo: IdentityInfo;
 }

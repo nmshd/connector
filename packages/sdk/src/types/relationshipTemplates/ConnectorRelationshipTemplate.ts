@@ -5,6 +5,6 @@ export interface ConnectorRelationshipTemplate {
     createdBy: string;
     createdByDevice: string;
     createdAt: string;
-    content: any;
+    content: unknown;
     expiresAt?: string;
 }

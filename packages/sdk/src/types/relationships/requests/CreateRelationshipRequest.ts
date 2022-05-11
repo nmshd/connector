@@ -1,4 +1,4 @@
 export interface CreateRelationshipRequest {
     templateId: string;
-    content: any;
+    content: unknown;
 }

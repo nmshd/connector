@@ -2,7 +2,7 @@ import { ConnectorMessageRecipient } from "./ConnectorMessageRecipient";
 
 export interface ConnectorMessage {
     id: string;
-    content: any;
+    content: unknown;
     createdBy: string;
     createdByDevice: string;
     recipients: ConnectorMessageRecipient[];

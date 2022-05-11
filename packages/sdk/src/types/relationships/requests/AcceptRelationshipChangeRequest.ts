@@ -1,3 +1,3 @@
 export interface AcceptRelationshipChangeRequest {
-    content: any;
+    content: unknown;
 }
