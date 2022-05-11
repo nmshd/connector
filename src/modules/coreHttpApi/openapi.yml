@@ -3302,7 +3302,7 @@ components:
             [
               { "accept": true },
               { "accept": false, "code": "an.error.code", "message": "Error Message" },
-              { items: [{ "accept: true" }, { "accept": false, "code": "an.error.code", "message": "Error Message" }] }
+              { "items": [{ "accept": "true" }, { "accept": false, "code": "an.error.code", "message": "Error Message" }] }
             ]
         }
 
