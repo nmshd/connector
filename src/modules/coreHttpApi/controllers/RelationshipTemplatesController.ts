@@ -42,9 +42,7 @@ export class RelationshipTemplatesController extends BaseController {
     @Path(":id")
     @GET
     public async getRelationshipTemplate(@PathParam("id") id: string): Promise<Envelope> {
-        const result = await this.transportServices.relationshipTemplates.getRelationshipTemplate({
-            id: id
-        });
+        const result = await this.transportServices.relationshipTemplates.getRelationshipTemplate({ id });
         return this.ok(result);
     }
 

@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { createTemplate, exchangeTemplate } from "./lib/testUtils";
-import { expectError, expectSuccess, ValidationSchema } from "./lib/validation";
+import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -23,7 +23,7 @@ describe("Template Tests", () => {
             content: { a: "b" }
         });
 
-        expectSuccess(response, ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
 
         template = response.result;
     });
@@ -36,14 +36,14 @@ describe("Template Tests", () => {
 
         templateWithUndefinedMaxNumberOfRelationships = response.result;
 
-        expectSuccess(response, ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
         expect(templateWithUndefinedMaxNumberOfRelationships.maxNumberOfRelationships).toBeUndefined();
     });
 
     test("read a template with undefined maxNumberOfRelationships", async () => {
         const response = await client1.relationshipTemplates.getRelationshipTemplate(templateWithUndefinedMaxNumberOfRelationships.id);
 
-        expectSuccess(response, ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
         expect(templateWithUndefinedMaxNumberOfRelationships.maxNumberOfRelationships).toBeUndefined();
     });
 
@@ -51,7 +51,7 @@ describe("Template Tests", () => {
         expect(template).toBeDefined();
 
         const response = await client1.relationshipTemplates.getOwnRelationshipTemplates();
-        expectSuccess(response, ValidationSchema.RelationshipTemplates);
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplates);
         expect(response.result).toContainEqual(template);
     });
 
@@ -59,7 +59,7 @@ describe("Template Tests", () => {
         expect(template).toBeDefined();
 
         const response = await client1.relationshipTemplates.getRelationshipTemplate(template.id);
-        expectSuccess(response, ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
     });
 
     test("expect a validation error for sending maxNumberOfRelationships 0", async () => {
@@ -80,15 +80,18 @@ describe("Serialization Errors", () => {
             content: { a: "A", "@type": "Message" },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
-        expectError(response, "Message.secretKey :: Value is not defined", "error.runtime.requestDeserialization");
+        expect(response).toBeAnError("Message.secretKey :: Value is not defined", "error.runtime.requestDeserialization");
     });
 
     test("create a template with wrong content : not existent type", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
-            content: { a: "A", "@type": "Hugo" },
+            content: { a: "A", "@type": "NonExistentType" },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
-        expectError(response, "Type 'Hugo' was not found within reflection classes. You might have to install a module first.", "error.runtime.unknownType");
+        expect(response).toBeAnError(
+            "Type 'NonExistentType' with version 1 was not found within reflection classes. You might have to install a module first.",
+            "error.runtime.unknownType"
+        );
     });
 });
 

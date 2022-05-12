@@ -29,20 +29,14 @@ export class MessagesController extends BaseController {
     @Path(":id")
     @GET
     public async getMessage(@PathParam("id") id: string): Promise<Envelope> {
-        const result = await this.transportServices.messages.getMessage({
-            id: id
-        });
+        const result = await this.transportServices.messages.getMessage({ id });
         return this.ok(result);
     }
 
     @Path(":id/Attachments/:attachmentId")
     @GET
     public async getMessageAttachmentMetadata(@PathParam("id") id: string, @PathParam("attachmentId") attachmentId: string): Promise<Envelope> {
-        const result = await this.transportServices.messages.getAttachmentMetadata({
-            id: id,
-            attachmentId: attachmentId
-        });
-
+        const result = await this.transportServices.messages.getAttachmentMetadata({ id, attachmentId });
         return this.ok(result);
     }
 
@@ -53,10 +47,7 @@ export class MessagesController extends BaseController {
         @PathParam("attachmentId") attachmentId: string,
         @ContextResponse response: express.Response
     ): Promise<void> {
-        const result = await this.transportServices.messages.downloadAttachment({
-            id: id,
-            attachmentId: attachmentId
-        });
+        const result = await this.transportServices.messages.downloadAttachment({ id, attachmentId });
 
         return this.file(
             result,

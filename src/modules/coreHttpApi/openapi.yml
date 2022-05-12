@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.3
 
 servers:
   - url: /
@@ -12,7 +12,7 @@ info:
 
     You can retrieve the [yaml](/docs/yaml) or [json](/docs/json) representation of this specification by following the corresponding links.
 
-    You can also view this documenation in [rapidoc](/docs/rapidoc).
+    View this documenation in [rapidoc](/docs/rapidoc) or [swagger](/docs/swagger).
 
   license:
     name: MIT
@@ -1833,6 +1833,529 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
+  # ------------------- Requests -------------------
+
+  /api/v1/Requests/Incoming:
+    get:
+      operationId: getIncomingRequests
+      description: Queries incoming `Requests`.
+      tags:
+        - Requests
+      parameters:
+        - in: query
+          name: id
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: peer
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: status
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+          example: "Draft"
+        - in: query
+          name: content.expiresAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: content.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: source.type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: source.reference
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: response.createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: response.source.type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.source.reference
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: response.content.result
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.content.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.content.items.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Request"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Requests/Incoming/{id}:
+    get:
+      operationId: getIncomingRequest
+      description: Fetches the incoming `Request` with the given `id`.
+      tags:
+        - Requests
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Request.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RequestID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Request"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Requests/Incoming/{id}/CanAccept:
+    put:
+      operationId: canAcceptIncomingRequest
+      description: Checks if the `Request` with the given `id` can be accepted.
+      tags:
+        - Requests
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Request.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RequestID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/DecideRequestRequest"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/RequestValidationResult"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Requests/Incoming/{id}/Accept:
+    put:
+      operationId: acceptIncomingRequest
+      description: Accepts the incoming `Request` with the given `id`.
+      tags:
+        - Requests
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Request.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RequestID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/DecideRequestRequest"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Request"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Requests/Incoming/{id}/CanReject:
+    put:
+      operationId: canRejectIncomingRequest
+      description: Checks if the `Request` with the given `id` can be rejected.
+      tags:
+        - Requests
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Request.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RequestID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/DecideRequestRequest"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/RequestValidationResult"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Requests/Incoming/{id}/Reject:
+    put:
+      operationId: rejectIncomingRequest
+      description: Rejects the incoming `Request` with the given `id`.
+      tags:
+        - Requests
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Request.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RequestID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/DecideRequestRequest"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Request"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Requests/Outgoing:
+    get:
+      operationId: getOutgoingRequests
+      description: Queries outgoing `Requests`.
+      tags:
+        - Requests
+      parameters:
+        - in: query
+          name: id
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: peer
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: status
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+          example: "Draft"
+        - in: query
+          name: content.expiresAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: content.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: source.type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: source.reference
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: response.createdAt
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: response.source.type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.source.reference
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: response.content.result
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
+        - in: query
+          name: response.content.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: response.content.items.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Request"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+    post:
+      operationId: createOutgoingRequest
+      description: Creates a new outgoing `Request`.
+      tags:
+        - Requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/CreateOutgoingRequestRequest"
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Request"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Requests/Outgoing/{id}:
+    get:
+      operationId: getOutgoingRequest
+      description: Fetches the `Request` with the given `id`.
+      tags:
+        - Requests
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Request.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RequestID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Request"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Requests/Outgoing/Validate:
+    post:
+      operationId: validateOutgoingRequest
+      description: Validates the given `OutgoingRequest` before creating it via POST `/api/v1/Requests/Outgoing`.
+      tags:
+        - Requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/CreateOutgoingRequestRequest"
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/RequestValidationResult"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
   # ------------------- Tokens -------------------
 
   /api/v1/Tokens/Own:
@@ -2418,6 +2941,14 @@ components:
       example: TOK_________________
       description: The ID of a message.
 
+    RequestID:
+      type: string
+      format: RequestID
+      minLength: 20
+      maxLength: 20
+      example: REQ_________________
+      description: The ID of a message.
+
     # ------------------- Entities -------------------
 
     IdentityInfo:
@@ -2630,6 +3161,325 @@ components:
           description: The address of this recipient.
       required:
         - address
+
+    RequestItem:
+      type: object
+      properties:
+        "@type":
+          type: string
+        "@version":
+          type: string
+        title:
+          type: string
+          description: Will be rendered as title of the request.
+        description:
+          type: string
+          description: Will be rendered as description of the request.
+        mustBeAccepted:
+          type: boolean
+          description: Whether the request must be accepted by the peer.
+        responseMetadata:
+          type: object
+          description: The metadata will be sent back in the response.
+      required:
+        - "@type"
+        - mustBeAccepted
+
+    RequestItemGroup:
+      type: object
+      properties:
+        "@type":
+          type: string
+        "@version":
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        items:
+          items:
+            allOf:
+              - $ref: "#/components/schemas/RequestItem"
+          type: array
+        mustBeAccepted:
+          type: boolean
+        responseMetadata:
+          type: object
+      required:
+        - "@type"
+        - mustBeAccepted
+        - items
+
+    RequestContent:
+      type: object
+      properties:
+        "@type":
+          type: string
+          enum: ["Request"]
+        "@version":
+          type: string
+        expiresAt:
+          type: string
+        id:
+          allOf:
+            - $ref: "#/components/schemas/RequestID"
+        items:
+          type: array
+          items:
+            anyOf:
+              - $ref: "#/components/schemas/RequestItem"
+              - $ref: "#/components/schemas/RequestItemGroup"
+      required:
+        - "@type"
+        - items
+
+    RequestResponseContentItem:
+      properties:
+        "@type":
+          type: string
+        "@version":
+          type: string
+        result:
+          type: string
+          enum: [Accepted, Rejected, Failed]
+        metadata:
+          type: object
+          description: The metadata that was sent with the `RequestItem`.
+      required:
+        - "@type"
+        - result
+        - metadata
+
+    RequestResponseContentItemGroup:
+      properties:
+        "@type":
+          type: string
+        "@version":
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/RequestResponseContentItem"
+        metadata:
+          type: object
+          description: The metadata that was sent with the `RequestItemGroup`.
+      required:
+        - "@type"
+        - items
+        - metadata
+
+    RequestResponseContent:
+      type: object
+      properties:
+        "@type":
+          type: string
+          enum: [Response]
+        "@version":
+          type: string
+        result:
+          type: string
+          enum: [Accepted, Rejected]
+        requestId:
+          allOf:
+            - $ref: "#/components/schemas/RequestID"
+        items:
+          type: array
+          items:
+            anyOf:
+              - $ref: "#/components/schemas/RequestResponseContentItem"
+              - $ref: "#/components/schemas/RequestResponseContentItemGroup"
+      required:
+        - "@type"
+        - result
+        - requestId
+        - items
+
+    Request:
+      type: object
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/RequestID"
+          nullable: false
+        isOwn:
+          type: boolean
+          nullable: false
+          description: Whether this request is owned by the current identity (`OutgoingRequest`) or not (`IncomingRequest`).
+        peer:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+          description: The address of the peer that sent / received this request.
+        createdAt:
+          type: string
+          format: date-time
+          nullable: false
+          description: A timestamp that describes when this request was created.
+        status:
+          type: string
+          enum: ["Draft", "Open", "DecisionRequired", "ManualDecisionRequired", "Decided", "Completed"]
+          nullable: false
+          description: The status of this request.
+        content:
+          allOf:
+            - $ref: "#/components/schemas/RequestContent"
+          nullable: false
+        source:
+          type: object
+          nullable: true
+          description: The source of this request. Can be a `Message` or a `RelationshipTemplate`.
+          properties:
+            type:
+              type: string
+              enum: ["Message", "RelationshipTemplate"]
+              nullable: false
+              description: The type of the source of this request.
+            reference:
+              type: string
+              nullable: false
+              description: The id of the `Message` or the `RelationshipTemplate`.
+          required:
+            - type
+            - reference
+        response:
+          type: object
+          nullable: true
+          properties:
+            createdAt:
+              type: string
+              format: date-time
+              nullable: false
+              description: A timestamp that describes when this response was created.
+            content:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/RequestResponseContent"
+              nullable: false
+            source:
+              type: object
+              nullable: true
+              description: The source of this response. Can be a `Message` or a `RelationshipChange`.
+              properties:
+                type:
+                  type: string
+                  enum: ["Message", "RelationshipChange"]
+                  nullable: false
+                  description: The type of the source of this response.
+                reference:
+                  type: string
+                  nullable: false
+                  description: The id of the `Message` or the `RelationshipChange`.
+              required:
+                - type
+                - reference
+          required:
+            - createdAt
+            - content
+      required:
+        - id
+        - isOwn
+        - peer
+        - createdAt
+        - status
+        - content
+
+    DecideRequestRequestItem:
+      oneOf:
+        - type: object
+          properties:
+            accept:
+              type: boolean
+              enum: [true]
+              nullable: false
+          description: Accept the request item.
+          required:
+            - accept
+        - type: object
+          properties:
+            accept:
+              type: boolean
+              enum: [false]
+              nullable: false
+            code:
+              type: string
+              nullable: true
+            message:
+              type: string
+              nullable: true
+          description: Reject the request item and add an optional code and message.
+          required:
+            - accept
+      example: { "accept": true }
+
+    DecideRequestRequestItemGroup:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/DecideRequestRequestItem"
+
+    DecideRequestRequest:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/DecideRequestRequestItem"
+              - $ref: "#/components/schemas/DecideRequestRequestItemGroup"
+      example:
+        {
+          "items":
+            [
+              { "accept": true },
+              { "accept": false, "code": "an.error.code", "message": "Error Message" },
+              { "items": [{ "accept": "true" }, { "accept": false, "code": "an.error.code", "message": "Error Message" }] }
+            ]
+        }
+
+    CreateOutgoingRequestRequest:
+      type: object
+      properties:
+        content:
+          type: object
+          properties:
+            expiresAt:
+              type: string
+              format: date-time
+              nullable: true
+            items:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/RequestItemGroup"
+                  - $ref: "#/components/schemas/RequestItem"
+        peer:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+
+    RequestValidationResult:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          nullable: false
+        code:
+          type: string
+          nullable: true
+        message:
+          type: string
+          nullable: true
+        items:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/components/schemas/RequestValidationResult"
+          example: [{ "isSuccess": true, "code": "string", "message": "string", "items": [] }]
+      required:
+        - isSuccess
+        - items
 
     Message:
       type: object

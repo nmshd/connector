@@ -11,11 +11,11 @@ import {
 } from "@nmshd/connector-sdk";
 import fs from "fs";
 import { DateTime } from "luxon";
-import { expectSuccess, ValidationSchema } from "./validation";
+import { ValidationSchema } from "./validation";
 
 export async function syncUntil(client: ConnectorClient, until: (syncResult: ConnectorSyncResult) => boolean): Promise<ConnectorSyncResult> {
     const syncResponse = await client.account.sync();
-    expectSuccess(syncResponse, ValidationSchema.ConnectorSyncResult);
+    expect(syncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
 
     const connectorSyncResult: ConnectorSyncResult = { messages: [...syncResponse.result.messages], relationships: [...syncResponse.result.relationships] };
 
@@ -24,8 +24,10 @@ export async function syncUntil(client: ConnectorClient, until: (syncResult: Con
         iterationNumber++;
         await sleep(iterationNumber * 50);
 
+        console.warn(`re-requesting - retry number ${iterationNumber}`); // eslint-disable-line no-console
+
         const newSyncResponse = await client.account.sync();
-        expectSuccess(newSyncResponse, ValidationSchema.ConnectorSyncResult);
+        expect(newSyncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
 
         const newConnectorSyncResult = syncResponse.result;
 
@@ -58,17 +60,15 @@ export async function uploadOwnToken(client: ConnectorClient): Promise<Connector
         expiresAt: DateTime.utc().plus({ days: 1 }).toString()
     });
 
-    expectSuccess(response, ValidationSchema.Token);
+    expect(response).toBeSuccessful(ValidationSchema.Token);
 
     return response.result;
 }
 
 export async function uploadPeerToken(client: ConnectorClient, reference: string): Promise<ConnectorToken> {
-    const response = await client.tokens.loadPeerToken({
-        reference: reference
-    });
+    const response = await client.tokens.loadPeerToken({ reference });
 
-    expectSuccess(response, ValidationSchema.RelationshipTemplate);
+    expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
 
     return response.result;
 }
@@ -76,7 +76,7 @@ export async function uploadPeerToken(client: ConnectorClient, reference: string
 export async function uploadFile(client: ConnectorClient): Promise<ConnectorFile> {
     const response = await client.files.uploadOwnFile(await makeUploadRequest());
 
-    expectSuccess(response, ValidationSchema.File);
+    expect(response).toBeSuccessful(ValidationSchema.File);
 
     return response.result;
 }
@@ -99,7 +99,7 @@ export async function createTemplate(client: ConnectorClient): Promise<Connector
         content: { a: "b" }
     });
 
-    expectSuccess(response, ValidationSchema.RelationshipTemplate);
+    expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
 
     return response.result;
 }
@@ -108,7 +108,7 @@ export async function getTemplateToken(client: ConnectorClient): Promise<Connect
     const template = await createTemplate(client);
 
     const response = await client.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id);
-    expectSuccess(response, ValidationSchema.Token);
+    expect(response).toBeSuccessful(ValidationSchema.Token);
 
     return response.result;
 }
@@ -117,7 +117,7 @@ export async function getFileToken(client: ConnectorClient): Promise<ConnectorTo
     const file = await uploadFile(client);
 
     const response = await client.files.createTokenForFile(file.id);
-    expectSuccess(response, ValidationSchema.Token);
+    expect(response).toBeSuccessful(ValidationSchema.Token);
 
     return response.result;
 }
@@ -128,7 +128,7 @@ export async function exchangeTemplate(clientCreator: ConnectorClient, clientRec
     const response = await clientRecpipient.relationshipTemplates.loadPeerRelationshipTemplate({
         reference: templateToken.truncatedReference
     });
-    expectSuccess(response, ValidationSchema.RelationshipTemplate);
+    expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
 
     return response.result;
 }
@@ -137,7 +137,7 @@ export async function exchangeFile(clientCreator: ConnectorClient, clientRecpipi
     const fileToken = await getFileToken(clientCreator);
 
     const response = await clientRecpipient.files.loadPeerFile({ reference: fileToken.truncatedReference });
-    expectSuccess(response, ValidationSchema.File);
+    expect(response).toBeSuccessful(ValidationSchema.File);
 
     return response.result;
 }
@@ -146,7 +146,7 @@ export async function exchangeToken(clientCreator: ConnectorClient, clientRecpip
     const token = await uploadOwnToken(clientCreator);
 
     const response = await clientRecpipient.tokens.loadPeerToken({ reference: token.truncatedReference });
-    expectSuccess(response, ValidationSchema.Token);
+    expect(response).toBeSuccessful(ValidationSchema.Token);
 
     return response.result;
 }
@@ -162,7 +162,7 @@ export async function sendMessage(client: ConnectorClient, recipient: string): P
             to: [recipient]
         }
     });
-    expectSuccess(response, ValidationSchema.Message);
+    expect(response).toBeSuccessful(ValidationSchema.Message);
 
     return response.result;
 }
@@ -181,7 +181,7 @@ export async function exchangeMessage(sender: ConnectorClient, recipient: Connec
 
 export async function getMessageInMessages(client: ConnectorClient, messageId: string): Promise<ConnectorMessage> {
     const response = await client.messages.getMessages();
-    expectSuccess(response, ValidationSchema.Messages);
+    expect(response).toBeSuccessful(ValidationSchema.Messages);
 
     return response.result.find((m) => m.id === messageId)!;
 }
@@ -189,7 +189,7 @@ export async function getMessageInMessages(client: ConnectorClient, messageId: s
 export async function getRelationship(client: ConnectorClient): Promise<ConnectorRelationship> {
     const response = await client.relationships.getRelationships();
 
-    expectSuccess(response, ValidationSchema.Relationships);
+    expect(response).toBeSuccessful(ValidationSchema.Relationships);
     expect(response.result).toHaveLength(1);
 
     return response.result[0];
@@ -199,13 +199,13 @@ export async function establishRelationship(client1: ConnectorClient, client2: C
     const template = await exchangeTemplate(client1, client2);
 
     const createRelationshipResponse = await client2.relationships.createRelationship({ templateId: template.id, content: { a: "b" } });
-    expectSuccess(createRelationshipResponse, ValidationSchema.Relationship);
+    expect(createRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
     const relationships = await syncUntilHasRelationships(client1);
     expect(relationships).toHaveLength(1);
 
     const acceptResponse = await client1.relationships.acceptRelationshipChange(relationships[0].id, relationships[0].changes[0].id, { content: { a: "b" } });
-    expectSuccess(acceptResponse, ValidationSchema.Relationship);
+    expect(acceptResponse).toBeSuccessful(ValidationSchema.Relationship);
 
     const relationships2 = await syncUntilHasRelationships(client2);
     expect(relationships2).toHaveLength(1);
