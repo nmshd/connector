@@ -3162,6 +3162,138 @@ components:
       required:
         - address
 
+    RequestItem:
+      type: object
+      properties:
+        "@type":
+          type: string
+        "@version":
+          type: string
+        title:
+          type: string
+          description: Will be rendered as title of the request.
+        description:
+          type: string
+          description: Will be rendered as description of the request.
+        mustBeAccepted:
+          type: boolean
+          description: Whether the request must be accepted by the peer.
+        responseMetadata:
+          type: object
+          description: The metadata will be sent back in the response.
+      required:
+        - "@type"
+        - mustBeAccepted
+
+    RequestItemGroup:
+      type: object
+      properties:
+        "@type":
+          type: string
+        "@version":
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        items:
+          items:
+            allOf:
+              - $ref: "#/components/schemas/RequestItem"
+          type: array
+        mustBeAccepted:
+          type: boolean
+        responseMetadata:
+          type: object
+      required:
+        - "@type"
+        - mustBeAccepted
+        - items
+
+    RequestContent:
+      type: object
+      properties:
+        "@type":
+          type: string
+          enum: ["Request"]
+        "@version":
+          type: string
+        expiresAt:
+          type: string
+        id:
+          allOf:
+            - $ref: "#/components/schemas/RequestID"
+        items:
+          type: array
+          items:
+            anyOf:
+              - $ref: "#/components/schemas/RequestItem"
+              - $ref: "#/components/schemas/RequestItemGroup"
+      required:
+        - "@type"
+        - items
+
+    RequestResponseContentItem:
+      properties:
+        "@type":
+          type: string
+        "@version":
+          type: string
+        result:
+          type: string
+          enum: [Accepted, Rejected, Failed]
+        metadata:
+          type: object
+          description: The metadata that was sent with the `RequestItem`.
+      required:
+        - "@type"
+        - result
+        - metadata
+
+    RequestResponseContentItemGroup:
+      properties:
+        "@type":
+          type: string
+        "@version":
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/RequestResponseContentItem"
+        metadata:
+          type: object
+          description: The metadata that was sent with the `RequestItemGroup`.
+      required:
+        - "@type"
+        - items
+        - metadata
+
+    RequestResponseContent:
+      type: object
+      properties:
+        "@type":
+          type: string
+          enum: [Response]
+        "@version":
+          type: string
+        result:
+          type: string
+          enum: [Accepted, Rejected]
+        requestId:
+          allOf:
+            - $ref: "#/components/schemas/RequestID"
+        items:
+          type: array
+          items:
+            anyOf:
+              - $ref: "#/components/schemas/RequestResponseContentItem"
+              - $ref: "#/components/schemas/RequestResponseContentItemGroup"
+      required:
+        - "@type"
+        - result
+        - requestId
+        - items
+
     Request:
       type: object
       properties:
@@ -3189,8 +3321,8 @@ components:
           nullable: false
           description: The status of this request.
         content:
-          # TODO: Add content schema
-          type: object
+          allOf:
+            - $ref: "#/components/schemas/RequestContent"
           nullable: false
         source:
           type: object
@@ -3219,8 +3351,9 @@ components:
               nullable: false
               description: A timestamp that describes when this response was created.
             content:
-              # TODO: Add content schema
               type: object
+              allOf:
+                - $ref: "#/components/schemas/RequestResponseContent"
               nullable: false
             source:
               type: object
@@ -3256,7 +3389,7 @@ components:
           properties:
             accept:
               type: boolean
-              default: true
+              enum: [true]
               nullable: false
           description: Accept the request item.
           required:
@@ -3265,7 +3398,7 @@ components:
           properties:
             accept:
               type: boolean
-              default: false
+              enum: [false]
               nullable: false
             code:
               type: string
@@ -3306,44 +3439,6 @@ components:
             ]
         }
 
-    CreateOutgoingRequestRequestContentItem:
-      type: object
-      properties:
-        title:
-          type: string
-          description: Will be rendered as title of the request.
-        description:
-          type: string
-          description: Will be rendered as description of the request.
-        mustBeAccepted:
-          type: boolean
-          description: Whether the request must be accepted by the peer.
-        responseMetadata:
-          type: object
-          description: The metadata will be sent back in the response.
-      required:
-        - mustBeAccepted
-
-    CreateOutgoingRequestRequestItemContentGroup:
-      type: object
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        items:
-          items:
-            allOf:
-              - $ref: "#/components/schemas/CreateOutgoingRequestRequestContentItem"
-          type: array
-        mustBeAccepted:
-          type: boolean
-        responseMetadata:
-          type: object
-      required:
-        - mustBeAccepted
-        - items
-
     CreateOutgoingRequestRequest:
       type: object
       properties:
@@ -3358,8 +3453,8 @@ components:
               type: array
               items:
                 allOf:
-                  - $ref: "#/components/schemas/CreateOutgoingRequestRequestItemContentGroup"
-                  - $ref: "#/components/schemas/CreateOutgoingRequestRequestContentItem"
+                  - $ref: "#/components/schemas/RequestItemGroup"
+                  - $ref: "#/components/schemas/RequestItem"
         peer:
           allOf:
             - $ref: "#/components/schemas/Address"
