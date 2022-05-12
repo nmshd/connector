@@ -102,6 +102,14 @@
             "presentation": {
                 "reveal": "always"
             }
+        },
+        {
+            "label": "Sync",
+            "command": "curl -H \"X-API-KEY: xxx\" -X POST http://localhost:3000/api/v1/Account/Sync",
+            "type": "shell",
+            "presentation": {
+                "reveal": "silent"
+            }
         }
     ]
 }
