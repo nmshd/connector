@@ -20,7 +20,6 @@ export enum ConnectorRequestStatus {
 
 export interface ConnectorRequestContent {
     "@type": string;
-    "@context"?: string;
     "@version"?: string;
     id?: string;
     expiresAt?: string;
@@ -29,7 +28,6 @@ export interface ConnectorRequestContent {
 
 export interface ConnectorRequestContentItem {
     "@type": string;
-    "@context"?: string;
     "@version"?: string;
     title?: string;
     description?: string;
@@ -39,7 +37,6 @@ export interface ConnectorRequestContentItem {
 
 export interface ConnectorRequestContentItemGroup {
     "@type": string;
-    "@context"?: string;
     "@version"?: string;
     title?: string;
     description?: string;
@@ -66,7 +63,6 @@ export interface ConnectorRequestResponseSource {
 
 export interface ConnectorRequestResponseContent {
     "@type": string;
-    "@context"?: string;
     "@version"?: string;
     result: ConnectorRequestResponseResult;
     requestId: string;
@@ -80,7 +76,6 @@ export enum ConnectorRequestResponseResult {
 
 export interface ConnectorRequestResponseItem {
     "@type": string;
-    "@context"?: string;
     "@version"?: string;
     result: ConnectorRequestResponseItemResult;
     metadata?: object;
@@ -94,7 +89,6 @@ export enum ConnectorRequestResponseItemResult {
 
 export interface ConnectorRequestResponseItemGroup {
     "@type": string;
-    "@context"?: string;
     "@version"?: string;
     items: ConnectorRequestResponseItem[];
     metadata?: object;
