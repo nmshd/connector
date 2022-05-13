@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.0-alpha.2
+
+-   amqpPublisher module
+
+## 3.0.0-alpha.1
+
+-   `/api/v1/Requests/Incoming(/...)` and `/api/v1/Requests/Outgoing(/...)` routes.
+
 ## 2.3.4
 
 -   bugfix: add missing axios dependency
