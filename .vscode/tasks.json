@@ -36,6 +36,29 @@
                 }
             ],
             "default": "false"
+        },
+        {
+            "id": "moreTasks",
+            "type": "pickString",
+            "description": "Select a task",
+            "options": [
+                {
+                    "label": "Restart",
+                    "value": "./.dev/scripts/restartContainers.sh"
+                },
+                {
+                    "label": "Drop Databases",
+                    "value": "./.dev/scripts/clearDb.ts"
+                },
+                {
+                    "label": "Sync bc1",
+                    "value": "./.dev/scripts/syncBC1.sh"
+                },
+                {
+                    "label": "Sync bc2",
+                    "value": "./.dev/scripts/syncBC2.sh"
+                }
+            ]
         }
     ],
     "tasks": [
@@ -80,22 +103,6 @@
             }
         },
         {
-            "label": "Restart",
-            "command": "./scripts/restartContainers.sh",
-            "type": "shell",
-            "presentation": {
-                "reveal": "silent"
-            }
-        },
-        {
-            "label": "DropDbs",
-            "command": "./scripts/clearDb.ts",
-            "type": "shell",
-            "presentation": {
-                "reveal": "silent"
-            }
-        },
-        {
             "label": "Tests",
             "command": "npm run test:local",
             "type": "shell",
@@ -104,8 +111,8 @@
             }
         },
         {
-            "label": "Sync",
-            "command": "curl -H \"X-API-KEY: xxx\" -X POST http://localhost:3000/api/v1/Account/Sync",
+            "label": "More Tasks",
+            "command": "${input:moreTasks}",
             "type": "shell",
             "presentation": {
                 "reveal": "silent"

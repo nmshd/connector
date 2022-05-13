@@ -19,7 +19,7 @@
         "tsc": "tsc",
         "tsc:watch": "tsc -w",
         "test:ci": "npm run build && jest -i",
-        "test:local": "npm run build && . scripts/testSetup.sh && jest",
+        "test:local": "npm run build && . .dev/scripts/testSetup.sh && jest",
         "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json"
     },
     "jest": {
