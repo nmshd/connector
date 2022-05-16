@@ -5,10 +5,7 @@ import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../
 
 export interface AMQPPublisherModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     url?: string;
-    exchange?: {
-        name: string;
-        type?: "direct" | "topic" | "headers" | "fanout" | "match";
-    };
+    exchange?: string;
 }
 
 export default class AMQPPublisherModule extends ConnectorRuntimeModule<AMQPPublisherModuleConfiguration> {
@@ -28,10 +25,8 @@ export default class AMQPPublisherModule extends ConnectorRuntimeModule<AMQPPubl
         this.connection = await amqp.connect(url);
         this.channel = await this.connection.createChannel();
 
-        const exchange = this.configuration.exchange;
-        if (exchange) {
-            await this.channel.assertExchange(exchange.name, exchange.type ?? "fanout");
-        }
+        const exchange = this.configuration.exchange ?? "";
+        await this.channel.checkExchange(exchange);
 
         const trigger = "**";
         const subscriptionId = this.runtime.eventBus.subscribe(trigger, this.handleEvent.bind(this));
@@ -42,7 +37,7 @@ export default class AMQPPublisherModule extends ConnectorRuntimeModule<AMQPPubl
         const data = event instanceof DataEvent ? event.data : {};
         const buffer = Buffer.from(JSON.stringify(data));
 
-        const exchangeName = this.configuration.exchange?.name ?? "";
+        const exchangeName = this.configuration.exchange ?? "";
 
         const sent = this.channel!.publish(exchangeName, event.namespace, buffer);
         if (!sent) {
