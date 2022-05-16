@@ -92,9 +92,7 @@
         "amqpPublisher": {
             "enabled": false,
             "displayName": "AMQP Publisher",
-            "location": "amqpPublisher/AMQPPublisherModule",
-
-            "triggers": []
+            "location": "amqpPublisher/AMQPPublisherModule"
         }
     }
 }
