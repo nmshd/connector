@@ -57,45 +57,6 @@ If you're running on Linux (or wsl), every time you save a file, the server is r
 
 If you're running on Windows you have to execute the `Restart` task after you saved a file. This is because when mounting a folder from the Windows file system into a Linux Docker container, the file system events are not being mapped properly.
 
-## Deploy an image to the "public" registry
-
-### Prerequisites
-
-install zx with `npm i -g zx` and make sure it is in your path
-
-### How to run
-
-1. on linux run `./scripts/publishVersionToPublic.mjs` on windows you can run `zx ./scripts/publishVersionToPublic.mjs`
-2. answer the questions (specify a **source** and **target** tag and **verify** the images)
-
-### e.g. Deploying tag "2.2.2" to tag 2.2.2
-
-```
-> ./scripts/publishVersionToPublic.mjs
-What source image tag should be deployed? 2.2.2
-What target image tag should be deployed (leave empty for "2.2.2")?
-Deploying "dockerhub.js-soft.com/nmshd-connector:2.2.2" to "registry.enmeshed.eu/nmshd-connector:2.2.2"
-Continue? y/n y
-$ docker pull dockerhub.js-soft.com/nmshd-connector:2.2.2
-latest: Pulling from bc
-cbdbe7a5bc2a: Pulling fs layer
-....
-```
-
-### e.g. Deploying tag "2.2.5" to tag "latest"
-
-```
-> ./scripts/publishVersionToPublic.mjs
-What source image tag should be deployed? 2.2.5
-What target image tag should be deployed (leave empty for "2.2.2")? latest
-Deploying "dockerhub.js-soft.com/nmshd-connector:2.2.5" to "registry.enmeshed.eu/nmshd-connector:latest"
-Continue? y/n y
-$ docker pull dockerhub.js-soft.com/nmshd-connector:2.2.5
-latest: Pulling from bc
-cbdbe7a5bc2a: Pulling fs layer
-....
-```
-
 # Connector SDK development
 
 ## Build
