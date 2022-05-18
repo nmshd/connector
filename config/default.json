@@ -45,6 +45,16 @@
         }
     },
     "modules": {
+        "decider": {
+            "enabled": true,
+            "displayName": "Decider Module",
+            "location": "@nmshd/runtime:DeciderModule"
+        },
+        "request": {
+            "enabled": true,
+            "displayName": "Request Module",
+            "location": "@nmshd/runtime:RequestModule"
+        },
         "sync": {
             "displayName": "Sync",
             "location": "sync/SyncModule",

@@ -77,7 +77,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             throw new Error(errorMessage);
         }
 
-        this.addMandatoryModulesConfiguration(connectorConfig);
+        this.forceEnableMandatoryModules(connectorConfig);
         const runtime = new ConnectorRuntime(connectorConfig);
         await runtime.init();
 
@@ -87,20 +87,9 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         return runtime;
     }
 
-    private static addMandatoryModulesConfiguration(connectorConfig: ConnectorRuntimeConfig) {
-        connectorConfig.modules.decider = {
-            enabled: true,
-            displayName: "Decider Module",
-            name: "DeciderModule",
-            location: "@nmshd/runtime:DeciderModule"
-        };
-
-        connectorConfig.modules.request = {
-            enabled: true,
-            displayName: "Request Module",
-            name: "RequestModule",
-            location: "@nmshd/runtime:RequestModule"
-        };
+    private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
+        connectorConfig.modules.decider.enabled = true;
+        connectorConfig.modules.request.enabled = true;
     }
 
     protected createLoggerFactory(): ILoggerFactory {
