@@ -15,9 +15,6 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
     private readonly unpublishedMessages: MessageDTO[] = [];
     private publishAllInterval: NodeJS.Timeout;
 
-    private messageReceivedSubscriptionId: number | undefined;
-    private relationshipChangedSubscriptionId: number | undefined;
-
     public init(): void {
         this.axios = axios.create({
             httpAgent: new AgentKeepAlive(),
@@ -26,15 +23,15 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
 
         this.logger.warn("The 'webhooks' module is deprecated. Please use the 'webhooksV2' module instead. Read more at https://enmeshed.eu/blog/webhooks-v2-connector-module/");
 
-        this.messageReceivedSubscriptionId = this.runtime.eventBus.subscribe<MessageReceivedEvent>(MessageReceivedEvent, (e) => this.messageReceived(e));
-        this.relationshipChangedSubscriptionId = this.runtime.eventBus.subscribe<RelationshipChangedEvent>(RelationshipChangedEvent, (e) => this.relationshipChanged(e));
+        this.subscribeToEvent(MessageReceivedEvent, (e) => this.handleMessageReceived(e));
+        this.subscribeToEvent(RelationshipChangedEvent, (e) => this.handleRelationshipChanged(e));
     }
 
-    private messageReceived(event: MessageReceivedEvent) {
+    private handleMessageReceived(event: MessageReceivedEvent) {
         this.unpublishedMessages.push(event.data);
     }
 
-    private relationshipChanged(event: RelationshipChangedEvent) {
+    private handleRelationshipChanged(event: RelationshipChangedEvent) {
         this.unpublishedRelationships.push(event.data);
     }
 
@@ -78,13 +75,7 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
     public async stop(): Promise<void> {
         clearInterval(this.publishAllInterval);
 
-        if (this.messageReceivedSubscriptionId) {
-            this.runtime.eventBus.unsubscribe(MessageReceivedEvent, this.messageReceivedSubscriptionId);
-        }
-
-        if (this.relationshipChangedSubscriptionId) {
-            this.runtime.eventBus.unsubscribe(RelationshipChangedEvent, this.relationshipChangedSubscriptionId);
-        }
+        this.unsubscribeFromAllEvents();
 
         await this.publishAll();
     }

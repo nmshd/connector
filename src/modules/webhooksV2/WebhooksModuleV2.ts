@@ -1,4 +1,3 @@
-import { SubscriptionTarget } from "@js-soft/ts-utils";
 import { DataEvent, Event } from "@nmshd/runtime";
 import AgentKeepAlive, { HttpsAgent as AgentKeepAliveHttps } from "agentkeepalive";
 import axios, { AxiosInstance } from "axios";
@@ -8,7 +7,6 @@ import { ConfigParser } from "./ConfigParser";
 import { WebhooksModuleConfiguration } from "./WebhooksModuleConfiguration";
 
 export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksModuleConfiguration> {
-    private readonly eventSubscriptions: { target: SubscriptionTarget<unknown>; subscriptionId: number }[] = [];
     private axios: AxiosInstance;
     private configModel: ConfigModel;
 
@@ -25,8 +23,7 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
 
     public start(): void {
         for (const trigger of this.configModel.webhooks.getDistinctTriggers()) {
-            const subscriptionId = this.runtime.eventBus.subscribe(trigger, this.handleEvent.bind(this));
-            this.eventSubscriptions.push({ target: trigger, subscriptionId });
+            this.subscribeToEvent(trigger, this.handleEvent.bind(this));
         }
     }
 
@@ -66,9 +63,7 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
     }
 
     public stop(): void {
-        for (const subscription of this.eventSubscriptions) {
-            this.runtime.eventBus.unsubscribe(subscription.target, subscription.subscriptionId);
-        }
+        this.unsubscribeFromAllEvents();
     }
 }
 

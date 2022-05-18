@@ -1,10 +1,20 @@
 import { IDatabaseConnection } from "@js-soft/docdb-access-abstractions";
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
-import { ILoggerFactory } from "@js-soft/logging-abstractions";
+import { ILogger, ILoggerFactory } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionController } from "@nmshd/consumption";
-import { GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeErrors, RuntimeHealth } from "@nmshd/runtime";
+import {
+    ConsumptionServices,
+    DataViewExpander,
+    GetIdentityInfoResponse,
+    ModuleConfiguration,
+    Runtime,
+    RuntimeErrors,
+    RuntimeHealth,
+    RuntimeServices,
+    TransportServices
+} from "@nmshd/runtime";
 import { AccountController, TransportErrors } from "@nmshd/transport";
 import axios from "axios";
 import fs from "fs";
@@ -31,6 +41,26 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private mongodbConnection?: MongoDbConnection;
     private accountController: AccountController;
 
+    private _transportServices: TransportServices;
+    public get transportServices(): TransportServices {
+        return this._transportServices;
+    }
+
+    private _consumptionServices: ConsumptionServices;
+    public get consumptionServices(): ConsumptionServices {
+        return this._consumptionServices;
+    }
+
+    private _dataViewExpander: DataViewExpander;
+
+    public override getServices(): RuntimeServices {
+        return {
+            transportServices: this._transportServices,
+            consumptionServices: this._consumptionServices,
+            dataViewExpander: this._dataViewExpander
+        };
+    }
+
     public readonly infrastructure = new ConnectorInfrastructureRegistry();
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
@@ -47,6 +77,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             throw new Error(errorMessage);
         }
 
+        this.forceEnableMandatoryModules(connectorConfig);
         const runtime = new ConnectorRuntime(connectorConfig);
         await runtime.init();
 
@@ -54,6 +85,11 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         runtime.setupGlobalExceptionHandling();
 
         return runtime;
+    }
+
+    private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
+        connectorConfig.modules.decider.enabled = true;
+        connectorConfig.modules.request.enabled = true;
     }
 
     protected createLoggerFactory(): ILoggerFactory {
@@ -102,7 +138,11 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         await this.checkDeviceCredentials(this.accountController);
 
-        await this.login(this.accountController, consumptionController);
+        ({
+            transportServices: this._transportServices,
+            consumptionServices: this._consumptionServices,
+            dataViewExpander: this._dataViewExpander
+        } = await this.login(this.accountController, consumptionController));
     }
 
     private async checkDeviceCredentials(accountController: AccountController) {
@@ -187,7 +227,9 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             return;
         }
 
-        const moduleConstructor = nodeModule.default;
+        const moduleConstructor = nodeModule.default as
+            | (new (runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger) => ConnectorRuntimeModule)
+            | undefined;
 
         if (!moduleConstructor) {
             this.logger.error(
@@ -198,11 +240,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             return;
         }
 
-        const module = new moduleConstructor() as ConnectorRuntimeModule;
-
-        module.runtime = this;
-        module.configuration = connectorModuleConfiguration;
-        module.logger = this.loggerFactory.getLogger(moduleConstructor);
+        const module = new moduleConstructor(this, connectorModuleConfiguration, this.loggerFactory.getLogger(moduleConstructor));
 
         this.modules.add(module);
 

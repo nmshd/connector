@@ -1,4 +1,3 @@
-import { SubscriptionTarget } from "@js-soft/ts-utils";
 import { DataEvent, Event } from "@nmshd/runtime";
 import amqp from "amqplib";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
@@ -9,8 +8,6 @@ export interface AMQPPublisherModuleConfiguration extends ConnectorRuntimeModule
 }
 
 export default class AMQPPublisherModule extends ConnectorRuntimeModule<AMQPPublisherModuleConfiguration> {
-    private readonly eventSubscriptions: { target: SubscriptionTarget<unknown>; subscriptionId: number }[] = [];
-
     private connection?: amqp.Connection;
     private channel?: amqp.Channel;
 
@@ -29,8 +26,7 @@ export default class AMQPPublisherModule extends ConnectorRuntimeModule<AMQPPubl
         await this.channel.checkExchange(exchange);
 
         const trigger = "**";
-        const subscriptionId = this.runtime.eventBus.subscribe(trigger, this.handleEvent.bind(this));
-        this.eventSubscriptions.push({ target: trigger, subscriptionId });
+        this.subscribeToEvent(trigger, this.handleEvent.bind(this));
     }
 
     private handleEvent(event: Event) {
@@ -46,9 +42,7 @@ export default class AMQPPublisherModule extends ConnectorRuntimeModule<AMQPPubl
     }
 
     public async stop(): Promise<void> {
-        for (const subscription of this.eventSubscriptions) {
-            this.runtime.eventBus.unsubscribe(subscription.target, subscription.subscriptionId);
-        }
+        this.unsubscribeFromAllEvents();
 
         await this.channel?.close().catch((e) => this.logger.error("Could not close the RabbitMQ channel", e));
         await this.connection?.close().catch((e) => this.logger.error("Could not close the RabbitMQ connection", e));
