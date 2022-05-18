@@ -2,11 +2,17 @@
 
 ## 3.0.0-alpha.2
 
+-   two mandatory new modules: `RequestModule` and `DeciderModule`
+-   upgrade the runtime to version 2.0.0-alpha.7
+
+## 3.0.0-alpha.2
+
 -   amqpPublisher module
 
 ## 3.0.0-alpha.1
 
 -   `/api/v1/Requests/Incoming(/...)` and `/api/v1/Requests/Outgoing(/...)` routes.
+-   upgrade the runtime to version 2.0.0-alpha.4
 
 ## 2.3.4
 
