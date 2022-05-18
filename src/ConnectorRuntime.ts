@@ -76,7 +76,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             console.error(errorMessage); // eslint-disable-line no-console
             throw new Error(errorMessage);
         }
-
+        this.addMandatoryModulesConfiguration(connectorConfig);
         const runtime = new ConnectorRuntime(connectorConfig);
         await runtime.init();
 
@@ -84,6 +84,22 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         runtime.setupGlobalExceptionHandling();
 
         return runtime;
+    }
+
+    private static addMandatoryModulesConfiguration(connectorConfig: ConnectorRuntimeConfig) {
+        connectorConfig.modules.decider = {
+            enabled: true,
+            displayName: "Decider Module",
+            name: "DeciderModule",
+            location: "@nmshd/runtime:DeciderModule"
+        };
+
+        connectorConfig.modules.request = {
+            enabled: true,
+            displayName: "Request Module",
+            name: "RequestModule",
+            location: "@nmshd/runtime:RequestModule"
+        };
     }
 
     protected createLoggerFactory(): ILoggerFactory {
