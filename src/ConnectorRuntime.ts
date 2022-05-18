@@ -76,6 +76,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             console.error(errorMessage); // eslint-disable-line no-console
             throw new Error(errorMessage);
         }
+
         this.addMandatoryModulesConfiguration(connectorConfig);
         const runtime = new ConnectorRuntime(connectorConfig);
         await runtime.init();
