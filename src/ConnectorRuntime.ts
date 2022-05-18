@@ -15,7 +15,7 @@ import {
     RuntimeServices,
     TransportServices
 } from "@nmshd/runtime";
-import { AccountController, ICoreAddress, TransportErrors } from "@nmshd/transport";
+import { AccountController, TransportErrors } from "@nmshd/transport";
 import axios from "axios";
 import fs from "fs";
 import { validate as validateSchema } from "jsonschema";
@@ -53,7 +53,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     private _dataViewExpander: DataViewExpander;
 
-    public getServices(_address: string | ICoreAddress): RuntimeServices {
+    public override getServices(): RuntimeServices {
         return {
             transportServices: this._transportServices,
             consumptionServices: this._consumptionServices,
