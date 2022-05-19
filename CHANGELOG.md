@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0-alpha.4
+
+-   upgrade the runtime to version 2.0.0-alpha.10
+
 ## 3.0.0-alpha.3
 
 -   two mandatory new modules: `RequestModule` and `DeciderModule`
