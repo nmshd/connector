@@ -45,6 +45,11 @@
         }
     },
     "modules": {
+        "ConnectorTestModule": {
+            "enabled": true,
+            "displayName": "ConnectorTestModule",
+            "location": "connectorTestModule/ConnectorTestModule"
+        },
         "decider": {
             "enabled": true,
             "displayName": "Decider Module",

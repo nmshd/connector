@@ -3,11 +3,6 @@
         "baseUrl": "https://stage.enmeshed.eu"
     },
     "modules": {
-        "ConnectorTestModule": {
-            "enabled": true,
-            "displayName": "ConnectorTestModule",
-            "location": "connectorTestModule/ConnectorTestModule"
-        },
         "amqpPublisher": { "url": "amqp://rabbitmq", "exchange": "nmshd" }
     }
 }
