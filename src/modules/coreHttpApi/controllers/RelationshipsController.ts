@@ -74,4 +74,11 @@ export class RelationshipsController extends BaseController {
         const result = await this.transportServices.relationships.getRelationship({ id });
         return this.ok(result);
     }
+
+    @GET
+    @Path(":id/Attributes")
+    public async getAttributesForRelationship(@PathParam("id") id: string): Promise<Envelope> {
+        const result = await this.transportServices.relationships.getAttributesForRelationship({ id });
+        return this.ok(result);
+    }
 }
