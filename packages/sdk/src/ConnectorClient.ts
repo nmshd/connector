@@ -17,7 +17,7 @@ import {
 
 export class ConnectorClient {
     public readonly account: AccountEndpoint;
-    public readonly attributesEndpoint: AttributesEndpoint;
+    public readonly attributes: AttributesEndpoint;
     public readonly challenges: ChallengesEndpoint;
     public readonly files: FilesEndpoint;
     public readonly incomingRequests: IncomingRequestsEndpoint;
@@ -46,7 +46,7 @@ export class ConnectorClient {
         });
 
         this.account = new AccountEndpoint(axiosInstance);
-        this.attributesEndpoint = new AttributesEndpoint(axiosInstance);
+        this.attributes = new AttributesEndpoint(axiosInstance);
         this.challenges = new ChallengesEndpoint(axiosInstance);
         this.files = new FilesEndpoint(axiosInstance);
         this.incomingRequests = new IncomingRequestsEndpoint(axiosInstance);
