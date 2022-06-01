@@ -14,6 +14,9 @@ export interface ConnectorAttributeShareInfo {
 }
 
 export interface ConnectorBaseAttribute {
+    "@type": string;
+    "@context"?: string;
+    "@version"?: string;
     owner: string;
     validFrom?: string;
     validTo?: string;
