@@ -23,17 +23,17 @@
         "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json"
     },
     "jest": {
+        "globals": {
+            "ts-jest": {
+                "tsconfig": "test/tsconfig.json"
+            }
+        },
         "maxWorkers": 2,
         "preset": "ts-jest",
         "setupFilesAfterEnv": [
             "@alex_neo/jest-expect-message",
             "./test/lib/validation.ts"
         ],
-        "globals": {
-            "ts-jest": {
-                "tsconfig": "test/tsconfig.json"
-            }
-        },
         "testEnvironment": "node",
         "testTimeout": 60000
     },
