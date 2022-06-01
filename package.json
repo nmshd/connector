@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/connector",
-    "version": "3.0.0-alpha.4",
+    "version": "3.0.0-alpha.5",
     "private": true,
     "description": "The Enmeshed Business Connector",
     "homepage": "https://enmeshed.eu/integrate",
@@ -94,5 +94,10 @@
         "ts-jest": "^28.0.3",
         "ts-node": "^10.8.0",
         "wait-on": "^6.0.1"
+    },
+    "overrides": {
+        "multer": {
+            "busboy": "1.0.0"
+        }
     }
 }
