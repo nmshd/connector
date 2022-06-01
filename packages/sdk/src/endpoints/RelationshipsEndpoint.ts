@@ -1,6 +1,7 @@
 import { AxiosInstance } from "axios";
 import {
     AcceptRelationshipChangeRequest,
+    ConnectorAttribute,
     ConnectorRelationship,
     ConnectorRelationships,
     ConnectorResponse,
@@ -50,5 +51,9 @@ export class RelationshipsEndpoint extends Endpoint {
         request: RevokeRelationshipChangeRequest = { content: {} }
     ): Promise<ConnectorResponse<ConnectorRelationship>> {
         return await this.put(`/api/v1/Relationships/${relationshipId}/Changes/${changeId}/Revoke`, request);
+    }
+
+    public async getAttributesForRelationship(relationshipId: string): Promise<ConnectorResponse<ConnectorAttribute>> {
+        return await this.get(`/api/v1/Relationships/${relationshipId}/Attributes`);
     }
 }
