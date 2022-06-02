@@ -2,7 +2,7 @@
 
 import { ConnectorClient, ConnectorResponse } from "@nmshd/connector-sdk";
 import { DateTime } from "luxon";
-import { validateSchema, ValidationSchema } from "./validation";
+import { ValidationSchema } from "./validation";
 
 type QueryFunction = (client: ConnectorClient, params: any) => Promise<any>;
 
@@ -175,15 +175,13 @@ export class QueryParamConditions {
         for (const condition of this._conditions) {
             const response: ConnectorResponse<any> = await queryFunction(this.connectorClient, { [condition.key]: condition.value });
 
-            expect(response.isSuccess).toBeTruthy();
+            expect(response).toBeSuccessful(schema);
 
             if (condition.expectedResult) {
                 expect(response.result, `Positive match failed for key "${condition.key}" and value "${condition.value}".`).toContainEqual(this.object);
             } else {
                 expect(response.result, `Negative match failed for key "${condition.key}" and value "${condition.value}".`).not.toContainEqual(this.object);
             }
-
-            validateSchema(schema, response.result);
         }
     }
 }
