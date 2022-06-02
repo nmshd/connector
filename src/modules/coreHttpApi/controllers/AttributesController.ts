@@ -26,16 +26,16 @@ export class AttributesController extends BaseController {
     }
 
     @GET
-    @Path("/:id")
-    public async getAttribute(@PathParam("id") id: string): Promise<Envelope> {
-        const result = await this.consumptionServices.attributes.getAttribute({ id });
+    @Path("/Valid")
+    public async getValidAttributes(@Context context: ServiceContext): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.getValidAttributes({ query: context.request.query });
         return this.ok(result);
     }
 
     @GET
-    @Path("/Valid")
-    public async getValidAttributes(@Context context: ServiceContext): Promise<Envelope> {
-        const result = await this.consumptionServices.attributes.getValidAttributes({ query: context.request.query });
+    @Path("/:id")
+    public async getAttribute(@PathParam("id") id: string): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.getAttribute({ id });
         return this.ok(result);
     }
 }
