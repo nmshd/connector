@@ -3199,6 +3199,14 @@ components:
       maxLength: 36
       example: id_________________________________
 
+    AttributeID:
+      type: string
+      format: AttributeID
+      minLength: 20
+      maxLength: 20
+      example: ATT_________________
+      description: The ID of an attribute.
+
     ChallengeID:
       type: string
       format: ChallengeID
@@ -3286,8 +3294,162 @@ components:
       required:
         - address
         - publicKey
-
-    ConnectorHealth:
+    CreateAttributeRequest:
+      additionalProperties: false
+      properties:
+        content:
+          anyOf:
+            - "$ref": "#/components/schemas/IdentityAttribute"
+            - "$ref": "#/components/schemas/RelationshipAttribute"
+      required:
+        - content
+      type: object
+    IdentityAttribute:
+      additionalProperties: false
+      properties:
+        "@context":
+          type: string
+        "@type":
+          type: string
+        "@version":
+          type: string
+        owner:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          description: The address of the identity that owns the attribute.
+        tags:
+          type: array
+          items:
+            type: string
+          description: The tags of the attribute.
+        validFrom:
+          type: string
+          format: date-time
+          description: The date and time when the attribute becomes valid.
+        validTo:
+          type: string
+          format: date-time
+          description: The date and time when the attribute expires.
+        value:
+          "$ref": "#/components/schemas/AttributeValue"
+      required:
+        - "@type"
+        - owner
+        - value
+      type: object
+    RelationshipAttribute:
+      additionalProperties: false
+      properties:
+        "@context":
+          type: string
+        "@type":
+          type: string
+        "@version":
+          type: string
+        confidentiality:
+          enum:
+            - public
+            - private
+            - protected
+          type: string
+          description: The confidentiality of the attribute.
+        isTechnical:
+          type: boolean
+          description: Whether the attribute is technical or not.
+        key:
+          type: string
+          description: The key of the attribute.
+        owner:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          description: The address of the identity that owns the attribute.
+        validFrom:
+          type: string
+          format: date-time
+          description: The date and time when the attribute becomes valid.
+        validTo:
+          type: string
+          format: date-time
+          description: The date and time when the attribute expires.
+        value:
+          "$ref": "#/components/schemas/AttributeValue"
+      required:
+        - "@type"
+        - confidentiality
+        - key
+        - owner
+        - value
+      type: object
+    Attribute:
+      additionalProperties: false
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/AttributeID"
+          nullable: false
+          description: The ID of the attribute.
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time when the attribute was created.
+        shareInfo:
+          "$ref": "#/components/schemas/AttributeShareInfo"
+        succeededBy:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/AttributeID"
+          description: The ID of the attribute that was used to succeed this attribute.
+        succeeds:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/AttributeID"
+          description: The ID of the attribute that this attribute succeeds.
+        content:
+          anyOf:
+            - "$ref": "#/components/schemas/IdentityAttribute"
+            - "$ref": "#/components/schemas/RelationshipAttribute"
+      required:
+        - id
+        - createdAt
+        - content
+      type: object
+    AttributeShareInfo:
+      additionalProperties: false
+      properties:
+        peer:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          description: The address of the peer that received the attribute.
+        requestReference:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/RequestID"
+          description: The ID of the request that was used to share the attribute.
+        sourceAttribute:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/AttributeID"
+          description: The ID of the attribute that was copied for sharing.
+      required:
+        - requestReference
+        - peer
+      type: object
+    AttributeValue:
+      additionalProperties: {}
+      properties:
+        "@context":
+          type: string
+        "@type":
+          type: string
+        "@version":
+          type: string
+      required:
+        - "@type"
+      type: object
+    Health:
       type: object
       properties:
         isHealthy:
