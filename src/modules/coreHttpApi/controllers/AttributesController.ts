@@ -34,8 +34,8 @@ export class AttributesController extends BaseController {
 
     @GET
     @Path("/Valid")
-    public async getValidAttributes(): Promise<Envelope> {
-        const result = await this.consumptionServices.attributes.getAllValid();
+    public async getValidAttributes(@Context context: ServiceContext): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.getValidAttributes({ query: context.request.query });
         return this.ok(result);
     }
 }

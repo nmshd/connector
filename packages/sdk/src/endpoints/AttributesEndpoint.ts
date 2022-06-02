@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import { ConnectorAttribute, ConnectorAttributes, ConnectorResponse, CreateAttributeRequest, GetAttributesRequest } from "../types";
+import { ConnectorAttribute, ConnectorAttributes, ConnectorResponse, CreateAttributeRequest, GetAttributesRequest, GetValidAttributesRequest } from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
@@ -19,7 +19,7 @@ export class AttributesEndpoint extends Endpoint {
         return await this.get(`/api/v1/Attributes/${attributeId}`);
     }
 
-    public async getValidAttributes(): Promise<ConnectorResponse<ConnectorAttribute>> {
-        return await this.get("/api/v1/Attributes/Valid");
+    public async getValidAttributes(request: GetValidAttributesRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
+        return await this.get("/api/v1/Attributes/Valid", request);
     }
 }
