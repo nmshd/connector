@@ -94,10 +94,5 @@
         "ts-jest": "^28.0.3",
         "ts-node": "^10.8.0",
         "wait-on": "^6.0.1"
-    },
-    "overrides": {
-        "multer": {
-            "busboy": "1.0.0"
-        }
     }
 }
