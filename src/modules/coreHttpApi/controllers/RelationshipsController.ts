@@ -21,7 +21,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @POST
-    @Path("/Relationships/:id/Changes")
+    @Path(":id/Changes")
     public async createRelationshipChange(@PathParam("id") id: string): Promise<Return.NewResource<Envelope>> {
         const result = await this.transportServices.relationships.createRelationshipChange({ id });
         return this.created(result);
@@ -72,6 +72,13 @@ export class RelationshipsController extends BaseController {
     @Path(":id")
     public async getRelationship(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.getRelationship({ id });
+        return this.ok(result);
+    }
+
+    @GET
+    @Path(":id/Attributes")
+    public async getAttributesForRelationship(@PathParam("id") id: string): Promise<Envelope> {
+        const result = await this.transportServices.relationships.getAttributesForRelationship({ id });
         return this.ok(result);
     }
 }

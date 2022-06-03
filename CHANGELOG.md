@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0-alpha.5
+
+-   upgrade the runtime to version 2.0.0-alpha.16
+-   add attribute routes
+
 ## 3.0.0-alpha.4
 
 -   upgrade the runtime to version 2.0.0-alpha.10
