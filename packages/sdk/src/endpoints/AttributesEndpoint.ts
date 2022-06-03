@@ -3,10 +3,6 @@ import { ConnectorAttribute, ConnectorAttributes, ConnectorResponse, CreateAttri
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
-    public constructor(axiosInstance: AxiosInstance) {
-        super(axiosInstance);
-    }
-
     public async createAttribute(request: CreateAttributeRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
         return await this.post("/api/v1/Attributes", request);
     }
