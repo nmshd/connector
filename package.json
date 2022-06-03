@@ -66,7 +66,7 @@
         "@alex_neo/jest-expect-message": "^1.0.5",
         "@js-soft/eslint-config-ts": "1.5.2",
         "@js-soft/license-check": "1.0.4",
-        "@nmshd/connector-sdk": "2.0.0-alpha.2",
+        "@nmshd/connector-sdk": "2.0.0-alpha.3",
         "@types/amqplib": "^0.8.2",
         "@types/compression": "^1.7.2",
         "@types/cors": "^2.8.12",
