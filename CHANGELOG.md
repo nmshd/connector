@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0-alpha.6
+
+-   upgrade NodeJS to version 16.15.1 (LTS)
+-   add routes for executing `IdentityAttributeQuery` and `RelationshipAttributeQuery`
+
 ## 3.0.0-alpha.5
 
 -   upgrade the runtime to version 2.0.0-alpha.16
