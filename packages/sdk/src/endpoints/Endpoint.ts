@@ -3,7 +3,7 @@ import FormData from "form-data";
 import { ConnectorResponse } from "../types/ConnectorResponse";
 
 export abstract class Endpoint {
-    protected constructor(private readonly httpClient: AxiosInstance) {}
+    public constructor(private readonly httpClient: AxiosInstance) {}
 
     protected async getPlain<T>(path: string): Promise<T> {
         const reponse = await this.httpClient.get<T>(path, { validateStatus: (status) => status === 200 });
