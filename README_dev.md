@@ -61,8 +61,8 @@ If you're running on Windows you have to execute the `Restart` task after you sa
 
 ## Build
 
--   run `npx lerna bootstrap` (this will symlink the SDK in the node_modules of the BC)
--   run `lerna run build` to build the changes for the BC
+-   run `npm ci` (this will symlink the SDK in the node_modules of the BC)
+-   run `npm run build --workspaces` to build the changes for the BC and it's packages
 
 ## Publish
 

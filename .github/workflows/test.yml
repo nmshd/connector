@@ -19,10 +19,10 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
-      - run: npx lerna bootstrap
-      - run: npx lerna run build:ci
+      - run: npm ci
+      - run: npm run build --workspaces --if-present
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.6.0
-      - run: npx lerna run test:ci
+      - run: npm run test:ci --workspaces --if-present
         env:
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017/?readPreference=primary&appname=transport&ssl=false

@@ -25,9 +25,7 @@
     ],
     "scripts": {
         "build": "tsc && npm run generateSchemas",
-        "build:ci": "npm run build",
-        "generateSchemas": "npx ts-json-schema-generator --path './src/types/**/*.ts' -o schemas.json --id https://enmeshed.eu/schemas/connector-api",
-        "test": "echo \"no test specified\""
+        "generateSchemas": "npx ts-json-schema-generator --path './src/types/**/*.ts' -o schemas.json --id https://enmeshed.eu/schemas/connector-api"
     },
     "dependencies": {
         "axios": "^0.27.2",
