@@ -7,11 +7,15 @@
     "repository": "github:nmshd/cns-connector",
     "license": "MIT",
     "author": "j&s-soft GmbH",
+    "workspaces": [
+        ".",
+        "packages/sdk"
+    ],
     "scripts": {
         "lint": "npm run lint:tsc && npm run lint:prettier && npm run lint:eslint",
         "lint:prettier": "prettier --check ./src ./test ./packages/*/src",
         "lint:eslint": "eslint --ext .ts ./src ./test ./packages/*/src",
-        "lint:tsc": "lerna run build:ci && tsc --noEmit && tsc -p test/tsconfig.json --noEmit",
+        "lint:tsc": "npm run build --workspaces && tsc -p test/tsconfig.json --noEmit",
         "build": "run-p tsc copy-additional-files",
         "build:watch": "run-p -r tsc:watch copy-additional-files:watch",
         "copy-additional-files": "npx cpx \"src/**/*.{json,yml,ico}\" dist",
