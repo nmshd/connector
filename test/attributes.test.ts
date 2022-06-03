@@ -9,7 +9,7 @@ let client1: ConnectorClient;
 beforeAll(async () => ([client1] = await launcher.launch(1)), 30000);
 afterAll(() => launcher.stop());
 
-describe("Create Attribute", () => {
+describe("Attributes", () => {
     let attributeId: string;
 
     test("should create an attribute", async () => {
@@ -36,12 +36,13 @@ describe("Create Attribute", () => {
         expect(getAttributeResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
     });
 
-    test("should get the attribute in the list of attributes", async () => {
+    test("should get the created attribute in the list of attributes", async () => {
         const getAttributesResponse = await client1.attributes.getAttributes({});
         expect(getAttributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
     });
-    test("should get the attribute in the list of valid attributes", async () => {
-        const getAttributesResponse = await client1.attributes.getAttributes({});
+
+    test("should get the created attribute in the list of valid attributes", async () => {
+        const getAttributesResponse = await client1.attributes.getValidAttributes({});
         expect(getAttributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
     });
 });
