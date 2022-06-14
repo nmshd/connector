@@ -157,7 +157,7 @@ describe("Execute AttributeQueries", () => {
             valueType: "GivenName",
             key: "AKey",
             owner: client1Address,
-            attributeHints: { title: "A title", confidentiality: "public" }
+            attributeCreationHints: { title: "A title", confidentiality: "public" }
         });
         expect(executeIdentityAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttributes);
         const attributes = executeIdentityAttributeQueryResult.result;
