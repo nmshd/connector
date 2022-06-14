@@ -1,4 +1,3 @@
-import { AxiosInstance } from "axios";
 import {
     AcceptIncomingRequestRequest,
     CanAcceptIncomingRequestRequest,
@@ -13,10 +12,6 @@ import {
 import { Endpoint } from "./Endpoint";
 
 export class IncomingRequestsEndpoint extends Endpoint {
-    public constructor(axiosInstance: AxiosInstance) {
-        super(axiosInstance);
-    }
-
     public async canAccept(requestId: string, request: CanAcceptIncomingRequestRequest): Promise<ConnectorResponse<ConnectorRequestValidationResult>> {
         return await this.put(`/api/v1/Requests/Incoming/${requestId}/CanAccept`, request);
     }

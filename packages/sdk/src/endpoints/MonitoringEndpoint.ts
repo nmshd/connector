@@ -1,12 +1,7 @@
-import { AxiosInstance } from "axios";
 import { ConnectorHealth, ConnectorRequestCount, ConnectorSupportInformation, ConnectorVersionInfo } from "../types/monitoring";
 import { Endpoint } from "./Endpoint";
 
 export class MonitoringEndpoint extends Endpoint {
-    public constructor(axiosInstance: AxiosInstance) {
-        super(axiosInstance);
-    }
-
     public async getHealth(): Promise<ConnectorHealth> {
         return await this.getPlain("/health");
     }

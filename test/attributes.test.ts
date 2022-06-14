@@ -1,20 +1,23 @@
 import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
+import { createAttribute } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
+let client1Address: string;
 
-beforeAll(async () => ([client1] = await launcher.launch(1)), 30000);
+beforeAll(async () => {
+    [client1] = await launcher.launch(1);
+    client1Address = (await client1.account.getIdentityInfo()).result.address;
+}, 30000);
 afterAll(() => launcher.stop());
 
 describe("Attributes", () => {
     let attributeId: string;
 
     test("should create an attribute", async () => {
-        const client1Address = (await client1.account.getIdentityInfo()).result.address;
-
         const createAttributeResponse = await client1.attributes.createAttribute({
             content: {
                 "@type": "IdentityAttribute",
@@ -113,5 +116,52 @@ describe("Attributes Query", () => {
             .addStringSet("shareInfo.sourceAttribute");
 
         await conditions.executeTests((c, q) => c.attributes.getValidAttributes(q), ValidationSchema.ConnectorAttributes);
+    });
+});
+
+describe("Execute AttributeQueries", () => {
+    test("should execute an IdentityAttributeQuery", async () => {
+        const attribute = await createAttribute(client1, {
+            content: {
+                "@type": "IdentityAttribute",
+                owner: client1Address,
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
+                }
+            }
+        });
+
+        const executeIdentityAttributeQueryResult = await client1.attributes.executeIdentityAttributeQuery({ valueType: "GivenName" });
+        expect(executeIdentityAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+        const attributes = executeIdentityAttributeQueryResult.result;
+
+        expect(attributes).toContainEqual(attribute);
+    });
+
+    test("should execute a RelationshipAttributeQuery", async () => {
+        const attribute = await createAttribute(client1, {
+            content: {
+                "@type": "RelationshipAttribute",
+                owner: client1Address,
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
+                },
+                key: "AKey",
+                confidentiality: "public"
+            }
+        });
+
+        const executeIdentityAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
+            valueType: "GivenName",
+            key: "AKey",
+            owner: client1Address,
+            attributeCreationHints: { title: "A title", confidentiality: "public" }
+        });
+        expect(executeIdentityAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+        const attributes = executeIdentityAttributeQueryResult.result;
+
+        expect(attributes).toContainEqual(attribute);
     });
 });

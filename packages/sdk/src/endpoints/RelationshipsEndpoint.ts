@@ -1,4 +1,3 @@
-import { AxiosInstance } from "axios";
 import {
     AcceptRelationshipChangeRequest,
     ConnectorAttribute,
@@ -13,10 +12,6 @@ import {
 import { Endpoint } from "./Endpoint";
 
 export class RelationshipsEndpoint extends Endpoint {
-    public constructor(axiosInstance: AxiosInstance) {
-        super(axiosInstance);
-    }
-
     public async createRelationship(request: CreateRelationshipRequest): Promise<ConnectorResponse<ConnectorRelationship>> {
         return await this.post("/api/v1/Relationships", request);
     }

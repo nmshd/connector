@@ -1,12 +1,16 @@
-import { AxiosInstance } from "axios";
-import { ConnectorAttribute, ConnectorAttributes, ConnectorResponse, CreateAttributeRequest, GetAttributesRequest, GetValidAttributesRequest } from "../types";
+import {
+    ConnectorAttribute,
+    ConnectorAttributes,
+    ConnectorResponse,
+    CreateAttributeRequest,
+    ExecuteIdentityAttributeQueryRequest,
+    ExecuteRelationshipAttributeQueryRequest,
+    GetAttributesRequest,
+    GetValidAttributesRequest
+} from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
-    public constructor(axiosInstance: AxiosInstance) {
-        super(axiosInstance);
-    }
-
     public async createAttribute(request: CreateAttributeRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
         return await this.post("/api/v1/Attributes", request);
     }
@@ -21,5 +25,13 @@ export class AttributesEndpoint extends Endpoint {
 
     public async getValidAttributes(request: GetValidAttributesRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
         return await this.get("/api/v1/Attributes/Valid", request);
+    }
+
+    public async executeIdentityAttributeQuery(query: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
+        return await this.post("/api/v1/Attributes/ExecuteIdentityQuery", query, 200);
+    }
+
+    public async executeRelationshipAttributeQuery(query: ExecuteRelationshipAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
+        return await this.post("/api/v1/Attributes/ExecuteRelationshipQuery", query, 200);
     }
 }

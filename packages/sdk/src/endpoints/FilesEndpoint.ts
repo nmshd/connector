@@ -1,4 +1,3 @@
-import { AxiosInstance } from "axios";
 import {
     ConnectorFile,
     ConnectorFiles,
@@ -17,10 +16,6 @@ import {
 import { Endpoint } from "./Endpoint";
 
 export class FilesEndpoint extends Endpoint {
-    public constructor(axiosInstance: AxiosInstance) {
-        super(axiosInstance);
-    }
-
     public async getFiles(request?: GetAllFilesRequest): Promise<ConnectorResponse<ConnectorFiles>> {
         return await this.get("/api/v1/Files", request);
     }
