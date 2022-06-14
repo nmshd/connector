@@ -1,5 +1,5 @@
 export interface ExecuteIdentityAttributeQueryRequest {
-    valueType?: string;
+    valueType: string;
     validFrom?: string;
     validTo?: string;
     tags?: string[];

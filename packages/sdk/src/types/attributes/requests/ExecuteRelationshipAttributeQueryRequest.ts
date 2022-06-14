@@ -1,14 +1,14 @@
 export interface ExecuteRelationshipAttributeQueryRequest {
-    valueType?: string;
+    valueType: string;
     validFrom?: string;
     validTo?: string;
     key: string;
     owner: string;
     thirdParty?: string;
-    attributeHints: RelationshipAttributeHints;
+    attributeCreationHints: RelationshipAttributeCreationHints;
 }
 
-export interface RelationshipAttributeHints {
+export interface RelationshipAttributeCreationHints {
     title: string;
     description?: string;
     valueHints?: ValueHints;
