@@ -92,7 +92,7 @@ export async function makeUploadRequest(values: object = {}): Promise<UploadOwnF
 
 export async function createTemplate(client: ConnectorClient): Promise<ConnectorRelationshipTemplate> {
     const response = await client.relationshipTemplates.createOwnRelationshipTemplate({
-        maxNumberOfRelationships: 1,
+        maxNumberOfAllocations: 1,
         expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
         content: { a: "b" }
     });
