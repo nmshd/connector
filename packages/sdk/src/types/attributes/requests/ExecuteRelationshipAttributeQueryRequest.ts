@@ -9,9 +9,6 @@ export interface ExecuteRelationshipAttributeQueryRequest {
 }
 
 export interface RelationshipAttributeCreationHints {
-    "@type": "RelationshipAttributeCreationHints";
-    "@context"?: string;
-    "@version"?: string;
     title: string;
     description?: string;
     valueHints?: ValueHints;
