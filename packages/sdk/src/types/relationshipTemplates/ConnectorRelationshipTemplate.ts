@@ -1,6 +1,7 @@
 export interface ConnectorRelationshipTemplate {
     id: string;
     isOwn: boolean;
+    maxNumberOfAllocations?: number;
     maxNumberOfRelationships?: number;
     createdBy: string;
     createdByDevice: string;

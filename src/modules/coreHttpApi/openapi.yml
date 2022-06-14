@@ -1887,6 +1887,10 @@ paths:
           schema:
             $ref: "#/components/schemas/IdFilter"
         - in: query
+          name: maxNumberOfAllocations
+          schema:
+            $ref: "#/components/schemas/NumberFilter"
+        - in: query
           name: maxNumberOfRelationships
           schema:
             $ref: "#/components/schemas/NumberFilter"
@@ -1933,12 +1937,19 @@ paths:
             schema:
               type: object
               properties:
+                maxNumberOfAllocations:
+                  type: integer
+                  format: int32
+                  nullable: true
+                  description: The maximum number identities that can allocate this template. Omitting this property leads to an infinite number of possible allocations.
+                  example: 1
                 maxNumberOfRelationships:
                   type: integer
                   format: int32
                   nullable: true
-                  description: The maximum number of relationships that can be established with this template. Omitting this property leads to an infinite number of possible relationships.
+                  description: The maximum number of relationships that can be established with this template. Omitting this property leads to an infinite number of possible relationships. This is deprecated in favor of `maxNumberOfAllocations`.
                   example: 1
+                  deprecated: true
                 expiresAt:
                   type: string
                   format: date-time
@@ -1999,6 +2010,10 @@ paths:
           name: createdByDevice
           schema:
             $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: maxNumberOfAllocations
+          schema:
+            $ref: "#/components/schemas/NumberFilter"
         - in: query
           name: maxNumberOfRelationships
           schema:
@@ -2100,6 +2115,10 @@ paths:
           name: createdBy
           schema:
             $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: maxNumberOfAllocations
+          schema:
+            $ref: "#/components/schemas/NumberFilter"
         - in: query
           name: maxNumberOfRelationships
           schema:
@@ -4382,6 +4401,11 @@ components:
             - $ref: "#/components/schemas/RelationshipTemplateID"
           nullable: false
           readOnly: true
+        maxNumberOfAllocations:
+          type: integer
+          format: int32
+          nullable: true
+          description: The maximum number identities that can allocate this template. Omitting this property leads to an infinite number of possible allocations.
         maxNumberOfRelationships:
           type: integer
           format: int32
