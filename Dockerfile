@@ -1,4 +1,4 @@
-FROM node:16.15 as builder
+FROM node:16.15.1 as builder
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
 ARG PACKAGE_VERSION
@@ -14,7 +14,7 @@ RUN npm install -g npm-run-all typescript
 RUN npm run build
 RUN .ci/writeBuildInformation.sh
 
-FROM node:16.15-alpine
+FROM node:16.15.1-alpine
 ENV NODE_CONFIG_ENV=prod
 RUN apk add --no-cache tini
 WORKDIR /usr/app
