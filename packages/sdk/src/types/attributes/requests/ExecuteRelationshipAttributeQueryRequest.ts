@@ -9,6 +9,9 @@ export interface ExecuteRelationshipAttributeQueryRequest {
 }
 
 export interface RelationshipAttributeCreationHints {
+    "@type": "RelationshipAttributeCreationHints";
+    "@context"?: string;
+    "@version"?: string;
     title: string;
     description?: string;
     valueHints?: ValueHints;
@@ -17,7 +20,7 @@ export interface RelationshipAttributeCreationHints {
 }
 
 export interface ValueHints {
-    "@type": string;
+    "@type": "ValueHints";
     "@context"?: string;
     "@version"?: string;
     editHelp?: string;
@@ -29,6 +32,9 @@ export interface ValueHints {
 }
 
 export interface ValueHintsValue {
+    "@type": "ValueHintsValue";
+    "@context"?: string;
+    "@version"?: string;
     key: string | number | boolean;
     displayName: string;
 }
