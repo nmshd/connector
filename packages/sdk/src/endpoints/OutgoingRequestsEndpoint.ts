@@ -1,4 +1,3 @@
-import { AxiosInstance } from "axios";
 import {
     CanCreateOutgoingRequestRequest,
     ConnectorRequest,
@@ -11,10 +10,6 @@ import {
 import { Endpoint } from "./Endpoint";
 
 export class OutgoingRequestsEndpoint extends Endpoint {
-    public constructor(axiosInstance: AxiosInstance) {
-        super(axiosInstance);
-    }
-
     public async canCreateRequest(request: CanCreateOutgoingRequestRequest): Promise<ConnectorResponse<ConnectorRequestValidationResult>> {
         return await this.post("/api/v1/Requests/Outgoing/Validate", request);
     }

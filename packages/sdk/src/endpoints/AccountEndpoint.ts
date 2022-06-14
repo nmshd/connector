@@ -1,12 +1,7 @@
-import { AxiosInstance } from "axios";
 import { ConnectorResponse, ConnectorSyncInfo, ConnectorSyncResult, IdentityInfo } from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class AccountEndpoint extends Endpoint {
-    public constructor(axiosInstance: AxiosInstance) {
-        super(axiosInstance);
-    }
-
     public async getIdentityInfo(): Promise<ConnectorResponse<IdentityInfo>> {
         return await this.get("/api/v1/Account/IdentityInfo");
     }
