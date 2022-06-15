@@ -1,5 +1,6 @@
 import { sleep } from "@js-soft/ts-utils";
 import {
+    ConnectorAttribute,
     ConnectorClient,
     ConnectorFile,
     ConnectorMessage,
@@ -7,6 +8,7 @@ import {
     ConnectorRelationshipTemplate,
     ConnectorSyncResult,
     ConnectorToken,
+    CreateAttributeRequest,
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
 import fs from "fs";
@@ -92,7 +94,7 @@ export async function makeUploadRequest(values: object = {}): Promise<UploadOwnF
 
 export async function createTemplate(client: ConnectorClient): Promise<ConnectorRelationshipTemplate> {
     const response = await client.relationshipTemplates.createOwnRelationshipTemplate({
-        maxNumberOfRelationships: 1,
+        maxNumberOfAllocations: 1,
         expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
         content: { a: "b" }
     });
@@ -207,6 +209,13 @@ export async function establishRelationship(client1: ConnectorClient, client2: C
 
     const relationships2 = await syncUntilHasRelationships(client2);
     expect(relationships2).toHaveLength(1);
+}
+
+export async function createAttribute(client: ConnectorClient, request: CreateAttributeRequest): Promise<ConnectorAttribute> {
+    const response = await client.attributes.createAttribute(request);
+    expect(response).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+
+    return response.result;
 }
 
 /**

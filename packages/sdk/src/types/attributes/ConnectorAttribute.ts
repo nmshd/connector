@@ -23,11 +23,13 @@ export interface ConnectorBaseAttribute {
 }
 
 export interface ConnectorIdentityAttribute extends ConnectorBaseAttribute {
+    "@type": "IdentityAttribute";
     value: ConnectorAttributeValue;
     tags?: string[];
 }
 
 export interface ConnectorRelationshipAttribute extends ConnectorBaseAttribute {
+    "@type": "RelationshipAttribute";
     value: ConnectorAttributeValue;
     key: string;
     isTechnical?: boolean;

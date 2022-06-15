@@ -557,6 +557,82 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  /api/v1/Attributes/ExecuteIdentityQuery:
+    post:
+      operationId: executeIdentityQuery
+      description: Execute an IdentityAttributeQuery
+      tags:
+        - Attributes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/ExecuteIdentityQueryRequest"
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Attribute"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Attributes/ExecuteRelationshipQuery:
+    post:
+      operationId: executeRelationshipQuery
+      description: Execute a RelationshipAttributeQuery
+      tags:
+        - Attributes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/ExecuteRelationshipQueryRequest"
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Attribute"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
   # ------------------- Challenges -------------------
 
   /api/v1/Challenges:
@@ -1811,6 +1887,10 @@ paths:
           schema:
             $ref: "#/components/schemas/IdFilter"
         - in: query
+          name: maxNumberOfAllocations
+          schema:
+            $ref: "#/components/schemas/NumberFilter"
+        - in: query
           name: maxNumberOfRelationships
           schema:
             $ref: "#/components/schemas/NumberFilter"
@@ -1857,12 +1937,19 @@ paths:
             schema:
               type: object
               properties:
+                maxNumberOfAllocations:
+                  type: integer
+                  format: int32
+                  nullable: true
+                  description: The maximum number identities that can allocate this template. Omitting this property leads to an infinite number of possible allocations.
+                  example: 1
                 maxNumberOfRelationships:
                   type: integer
                   format: int32
                   nullable: true
-                  description: The maximum number of relationships that can be established with this template. Omitting this property leads to an infinite number of possible relationships.
+                  description: The maximum number of relationships that can be established with this template. Omitting this property leads to an infinite number of possible relationships. This is deprecated in favor of `maxNumberOfAllocations`.
                   example: 1
+                  deprecated: true
                 expiresAt:
                   type: string
                   format: date-time
@@ -1923,6 +2010,10 @@ paths:
           name: createdByDevice
           schema:
             $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: maxNumberOfAllocations
+          schema:
+            $ref: "#/components/schemas/NumberFilter"
         - in: query
           name: maxNumberOfRelationships
           schema:
@@ -2024,6 +2115,10 @@ paths:
           name: createdBy
           schema:
             $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: maxNumberOfAllocations
+          schema:
+            $ref: "#/components/schemas/NumberFilter"
         - in: query
           name: maxNumberOfRelationships
           schema:
@@ -3294,6 +3389,112 @@ components:
       required:
         - address
         - publicKey
+
+    ExecuteIdentityQueryRequest:
+      type: object
+      properties:
+        tags:
+          description: The tags of the attributes that will be filtered.
+          items:
+            type: string
+          type: array
+        validFrom:
+          description: The date the attribute became valid.
+          type: string
+        validTo:
+          description: The date the attribute becomes invalid.
+          type: string
+        valueType:
+          description: The valueType of the attribute.
+          type: string
+      required:
+        - valueType
+
+    ExecuteRelationshipQueryRequest:
+      type: object
+      properties:
+        key:
+          description: The key of the relationship attribute.
+          type: string
+        owner:
+          description: The owner of the relationship attribute.
+          type: string
+        thirdParty:
+          description: The address of a third party owner of the relationship attribute.
+          type: string
+        validFrom:
+          description: The date the attribute became valid.
+          type: string
+        validTo:
+          description: The date the attribute becomes invalid.
+          type: string
+        valueType:
+          description: The valueType of the attribute.
+          type: string
+        attributeCreationHints:
+          description: This describes how to create an attribute if it does not exist.
+          type: object
+          properties:
+            confidentiality:
+              enum:
+                - public
+                - private
+                - protected
+              type: string
+            description:
+              type: string
+            isTechnical:
+              type: boolean
+            title:
+              type: string
+            valueHints:
+              type: object
+              properties:
+                "@context":
+                  type: string
+                "@type":
+                  type: string
+                "@version":
+                  type: string
+                defaultValue:
+                  oneOf:
+                    - type: string
+                    - type: number
+                    - type: boolean
+                editHelp:
+                  type: string
+                max:
+                  type: number
+                min:
+                  type: number
+                pattern:
+                  type: string
+                values:
+                  items:
+                    type: object
+                    properties:
+                      displayName:
+                        type: string
+                      key:
+                        oneOf:
+                          - type: string
+                          - type: number
+                          - type: boolean
+                    required:
+                      - key
+                      - displayName
+                  type: array
+              required:
+                - "@type"
+          required:
+            - title
+            - confidentiality
+      required:
+        - valueType
+        - key
+        - owner
+        - attributeCreationHints
+
     CreateAttributeRequest:
       additionalProperties: false
       properties:
@@ -4200,6 +4401,11 @@ components:
             - $ref: "#/components/schemas/RelationshipTemplateID"
           nullable: false
           readOnly: true
+        maxNumberOfAllocations:
+          type: integer
+          format: int32
+          nullable: true
+          description: The maximum number identities that can allocate this template. Omitting this property leads to an infinite number of possible allocations.
         maxNumberOfRelationships:
           type: integer
           format: int32
