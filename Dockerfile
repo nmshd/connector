@@ -20,7 +20,7 @@ WORKDIR /usr/app
 COPY config config
 COPY package.json package-lock.json ./
 
-RUN npm ci --production
+RUN npm ci --omit=dev
 
 COPY --from=builder /usr/app/dist/ dist/
 
