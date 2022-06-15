@@ -5,7 +5,7 @@
 1. Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 2. Download and install [Node JS](https://nodejs.org/en/download/)
 3. Download and install [Git](https://git-scm.com/downloads)
-4. Clone the [cns-connector-service](https://bitbucket.org/jssoftgmbh/nmshd-cns-connector-service) repository
+4. Clone the [cns-connector](https://github.com/nmshd/cns-connector) repository
 5. Install the following npm packages **globally**:
     1. typescript
     2. cpx
@@ -14,6 +14,7 @@ Only for Developers:
 
 1. Download and install [VS Code](https://code.visualstudio.com/)
 2. Optional: install the VS Code extension [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks)
+3. run `npm i`
 
 ## How to run
 
@@ -66,4 +67,4 @@ If you're running on Windows you have to execute the `Restart` task after you sa
 
 ## Publish
 
-The SDK is published, when you merge the project to master while having changed the package version.
+The SDK is published, when you merge the project to main while having changed the package version.
