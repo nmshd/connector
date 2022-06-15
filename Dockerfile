@@ -10,7 +10,6 @@ COPY .ci .ci
 RUN npm ci
 COPY src src
 
-RUN npm install -g npm-run-all typescript
 RUN npm run build
 RUN .ci/writeBuildInformation.sh
 
