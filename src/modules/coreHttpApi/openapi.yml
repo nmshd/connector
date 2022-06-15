@@ -3650,7 +3650,7 @@ components:
       required:
         - "@type"
       type: object
-    Health:
+    ConnectorHealth:
       type: object
       properties:
         isHealthy:
