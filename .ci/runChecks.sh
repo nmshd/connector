@@ -2,9 +2,10 @@ set -e
 set -x
 
 npm ci
-npx run build --workspaces
+npm run build --workspaces
 
 # linting
+npm run lint:tsc
 npm run lint:eslint
 npm run lint:prettier
 
