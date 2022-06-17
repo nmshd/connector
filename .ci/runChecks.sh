@@ -2,7 +2,7 @@ set -e
 set -x
 
 npm ci
-npm run build --workspaces
+npm run build --workspaces --if-present
 
 # linting
 npm run lint:tsc
