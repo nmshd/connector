@@ -18,13 +18,13 @@ Only for Developers:
 
 ## How to run
 
-To run a single Business Connector instance, execute the following command:
+To run a single Connector instance, execute the following command:
 
 ```shell
 docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.[env].yml up --build
 ```
 
-(replace `[env]` with `dev`, `stage` or `prod`, depending on which Backbone environment you want the Business Connector to run in)
+(replace `[env]` with `dev`, `stage` or `prod`, depending on which Backbone environment you want the Connector to run in)
 
 After a few seconds you should see the following output:
 
@@ -36,7 +36,7 @@ bc-api-1-stage             | [2021-01-25T11:27:41.241] [INFO] HttpServerModule -
 bc-api-1-stage             | [2021-01-25T11:27:41.241] [INFO] Runtime - Started all modules.
 ```
 
-You can access the Swagger UI of the Business Connector under http://localhost:3000/docs.
+You can access the Swagger UI of the Connector under http://localhost:3000/docs.
 
 ## How to debug
 
@@ -52,7 +52,7 @@ Do NOT execute the steps from the previous chapter.
     ...
     bc-api-1-stage             | [2021-01-25T11:27:41.241] [INFO] Runtime - Started all modules.
     ```
-4. To attach the debugger, switch to the VS Code "Run" view, select the Run configuration "Attach to BC 1" and click the Run button.
+4. To attach the debugger, switch to the VS Code "Run" view, select the Run configuration "Attach to Connector 1" and click the Run button.
 
 If you're running on Linux (or wsl), every time you save a file, the server is restarted, as long as you don't cancel the `Compile` task.
 
@@ -62,8 +62,8 @@ If you're running on Windows you have to execute the `Restart` task after you sa
 
 ## Build
 
--   run `npm ci` (this will symlink the SDK in the node_modules of the BC)
--   run `npm run build --workspaces` to build the changes for the BC and it's packages
+-   run `npm ci` (this will symlink the SDK in the node_modules of the Connector)
+-   run `npm run build --workspaces` to build the changes for the Connector and its packages
 
 ## Publish
 

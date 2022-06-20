@@ -26,7 +26,7 @@ import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./C
 import { HealthChecker } from "./HealthChecker";
 import { HttpServer } from "./infrastructure";
 import { ConnectorInfrastructureRegistry } from "./infrastructure/ConnectorInfrastructureRegistry";
-import { BCLoggerFactory } from "./logging/BCLoggerFactory";
+import { ConnectorLoggerFactory } from "./logging/ConnectorLoggerFactory";
 
 interface SupportInformation {
     health: RuntimeHealth;
@@ -95,7 +95,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     protected createLoggerFactory(): ILoggerFactory {
         const loggerFactory = new NodeLoggerFactory(this.runtimeConfig.logging);
         this.logger = loggerFactory.getLogger(Runtime);
-        BCLoggerFactory.init(loggerFactory);
+        ConnectorLoggerFactory.init(loggerFactory);
 
         return loggerFactory;
     }

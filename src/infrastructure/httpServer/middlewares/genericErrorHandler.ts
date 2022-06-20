@@ -4,13 +4,13 @@ import { RequestError, TransportErrors } from "@nmshd/transport";
 import express from "express";
 import stringify from "json-stringify-safe";
 import { Errors } from "typescript-rest";
-import { BCLoggerFactory } from "../../../logging/BCLoggerFactory";
+import { ConnectorLoggerFactory } from "../../../logging/ConnectorLoggerFactory";
 import { Envelope, HttpError } from "../common";
 
 export class RouteNotFoundError extends Error {}
 
 export function genericErrorHandler(error: any, _req: express.Request, res: express.Response, next: express.NextFunction): void {
-    const logger = BCLoggerFactory.getLogger(genericErrorHandler);
+    const logger = ConnectorLoggerFactory.getLogger(genericErrorHandler);
 
     try {
         if (res.headersSent) {

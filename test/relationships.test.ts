@@ -57,7 +57,7 @@ describe("Create Relationship", () => {
         expect(response.result).toHaveLength(1);
     });
 
-    test("check Open Outgoing Relationships on BC2", async () => {
+    test("check Open Outgoing Relationships on C2", async () => {
         expect(relationshipId).toBeDefined();
 
         const relationships = await syncUntilHasRelationships(client2);
@@ -72,7 +72,7 @@ describe("Create Relationship", () => {
         expect(response.result).toHaveLength(1);
     });
 
-    test("should GET created Relationship on BC1", async () => {
+    test("should GET created Relationship on C1", async () => {
         expect(relationshipId).toBeDefined();
 
         const response = await client1.relationships.getRelationship(relationshipId);
@@ -80,7 +80,7 @@ describe("Create Relationship", () => {
         expect(response.result.status).toBe("Active");
     });
 
-    test("should GET created Relationship on BC2", async () => {
+    test("should GET created Relationship on C2", async () => {
         expect(relationshipId).toBeDefined();
 
         const response = await client2.relationships.getRelationship(relationshipId);

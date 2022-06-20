@@ -51,12 +51,12 @@
                     "value": "./.dev/scripts/clearDb.ts"
                 },
                 {
-                    "label": "Sync bc1",
-                    "value": "./.dev/scripts/syncBC1.sh"
+                    "label": "Sync Connector 1",
+                    "value": "./.dev/scripts/syncConnector1.sh"
                 },
                 {
-                    "label": "Sync bc2",
-                    "value": "./.dev/scripts/syncBC2.sh"
+                    "label": "Sync Connector 2",
+                    "value": "./.dev/scripts/syncConnector2.sh"
                 }
             ]
         }

@@ -2,7 +2,7 @@
     "name": "@nmshd/connector",
     "version": "3.0.0-alpha.9",
     "private": true,
-    "description": "The Enmeshed Business Connector",
+    "description": "The Enmeshed Connector",
     "homepage": "https://enmeshed.eu/integrate",
     "repository": "github:nmshd/cns-connector",
     "license": "MIT",

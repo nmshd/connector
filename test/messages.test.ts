@@ -28,7 +28,7 @@ describe("Messaging", () => {
         fileId = file.id;
     });
 
-    test("send a Message from BC1 to BC2", async () => {
+    test("send a Message from C1 to C2", async () => {
         expect(bc2Address).toBeDefined();
         expect(fileId).toBeDefined();
 
@@ -65,7 +65,7 @@ describe("Messaging", () => {
         });
     });
 
-    test("receive the message on BC2 in /Messages", async () => {
+    test("receive the message on C2 in /Messages", async () => {
         expect(messageId).toBeDefined();
 
         const response = await client2.messages.getMessages();
@@ -83,7 +83,7 @@ describe("Messaging", () => {
         });
     });
 
-    test("receive the message on BC2 in /Messages/{id}", async () => {
+    test("receive the message on C2 in /Messages/{id}", async () => {
         expect(messageId).toBeDefined();
 
         const response = await client2.messages.getMessage(messageId);
