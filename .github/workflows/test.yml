@@ -20,7 +20,7 @@ jobs:
           node-version: 16
           registry-url: https://registry.npmjs.org/
       - run: npm ci
-      - run: npm run build --workspaces --if-present
+      - run: npm run build:ci --workspaces --if-present
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.6.0
       - run: npm run test:ci --workspaces --if-present
