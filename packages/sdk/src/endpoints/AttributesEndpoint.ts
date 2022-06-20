@@ -28,10 +28,10 @@ export class AttributesEndpoint extends Endpoint {
     }
 
     public async executeIdentityAttributeQuery(query: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
-        return await this.post("/api/v1/Attributes/ExecuteIdentityQuery", query, 200);
+        return await this.post("/api/v1/Attributes/ExecuteIdentityAttributesQuery", query, 200);
     }
 
     public async executeRelationshipAttributeQuery(query: ExecuteRelationshipAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
-        return await this.post("/api/v1/Attributes/ExecuteRelationshipQuery", query, 200);
+        return await this.post("/api/v1/Attributes/ExecuteRelationshipAttributesQuery", query, 200);
     }
 }
