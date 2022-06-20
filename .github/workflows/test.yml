@@ -26,3 +26,10 @@ jobs:
       - run: npm run test:ci --workspaces --if-present
         env:
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017/?readPreference=primary&appname=transport&ssl=false
+
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the productive docker image
+        run: bash .dev/scripts/buildProductiveDockerImage.sh
