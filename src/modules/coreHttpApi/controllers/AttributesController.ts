@@ -33,14 +33,14 @@ export class AttributesController extends BaseController {
     }
 
     @POST
-    @Path("/ExecuteIdentityQuery")
+    @Path("/ExecuteIdentityAttributeQuery")
     public async executeIdentityAttributeQuery(query: any): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.executeIdentityAttributeQuery({ query });
         return this.ok(result);
     }
 
     @POST
-    @Path("/ExecuteRelationshipQuery")
+    @Path("/ExecuteRelationshipAttributeQuery")
     public async executeRelationshipAttributeQuery(query: any): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.executeRelationshipAttributeQuery({ query });
         return this.ok(result);

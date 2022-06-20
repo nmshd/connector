@@ -557,7 +557,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v1/Attributes/ExecuteIdentityQuery:
+  /api/v1/Attributes/ExecuteIdentityAttributeQuery:
     post:
       operationId: executeIdentityQuery
       description: Execute an IdentityAttributeQuery
@@ -595,7 +595,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v1/Attributes/ExecuteRelationshipQuery:
+  /api/v1/Attributes/ExecuteRelationshipAttributeQuery:
     post:
       operationId: executeRelationshipQuery
       description: Execute a RelationshipAttributeQuery

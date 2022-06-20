@@ -50,7 +50,7 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
             res.send(`
                 <!doctype html>
                     <head>
-                        <title>Business Connector API</title>
+                        <title>Enmeshed Connector API</title>
                         <link rel="icon" href="/favicon.ico" />
                         <meta charset="utf-8">
                         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&amp;family=Roboto+Mono&amp;display=swap" rel="stylesheet">
@@ -98,7 +98,7 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
         const swaggerUiOptions: SwaggerUiOptions = {
             explorer: true,
             customfavIcon: "/favicon.ico",
-            customSiteTitle: "Business Connector API",
+            customSiteTitle: "Enmeshed Connector API",
             customCss:
                 ".swagger-ui .topbar {background-color: #29235c;}" +
                 ".renderedMarkdown table th {border: 1px solid black; border-collapse: collapse}" +
