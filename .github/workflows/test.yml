@@ -32,4 +32,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the productive docker image
-        run: bash .dev/scripts/buildProductiveDockerImage.sh
+        run: bash .ci/testBuildingProductiveDockerImage.sh
