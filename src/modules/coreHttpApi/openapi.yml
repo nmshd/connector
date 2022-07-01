@@ -3876,6 +3876,11 @@ components:
             - $ref: "#/components/schemas/DeviceID"
           description: The device this file was deleted with.
           nullable: true
+        truncatedReference:
+          type: string
+          format: byte
+          nullable: false
+          description: The base64 encoded truncated reference of the file, which actually consists of the FileId and the secretKey.
       required:
         - id
         - title
@@ -3887,6 +3892,7 @@ components:
         - expiresAt
         - mimetype
         - isOwn
+        - truncatedReference
 
     FileReference:
       type: object
@@ -4520,6 +4526,11 @@ components:
           allOf:
             - $ref: "#/components/schemas/RelationshipTemplateContent"
           nullable: false
+        truncatedReference:
+          type: string
+          format: byte
+          nullable: false
+          description: The base64 encoded truncated reference of the RelationshipTemplate, which actually consists of the RelationshipTemplateId and the secretKey.
       required:
         - id
         - isOwn
@@ -4528,6 +4539,7 @@ components:
         - createdAt
         - expiresAt
         - content
+        - truncatedReference
 
     RelationshipTemplateReference:
       type: object
