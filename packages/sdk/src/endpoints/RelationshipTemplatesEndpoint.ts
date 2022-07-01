@@ -1,5 +1,4 @@
 import { AxiosInstance } from "axios";
-import { RelationshipTemplateReference } from "..";
 import {
     ConnectorRelationshipTemplate,
     ConnectorRelationshipTemplates,
@@ -12,6 +11,7 @@ import {
     GetPeerRelationshipTemplatesRequest,
     GetRelationshipTemplatesRequest,
     LoadPeerRelationshipTemplateRequest,
+    RelationshipTemplateReference,
     TruncatedRelationshipTemplateReference
 } from "../types";
 import { Endpoint } from "./Endpoint";
