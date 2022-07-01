@@ -37,8 +37,8 @@ export class RelationshipTemplatesEndpoint extends Endpoint {
         return await this.post("/api/v1/RelationshipTemplates/Own", request);
     }
 
-    public async getQrCodeForRelationshipTemplate(id: string): Promise<ConnectorResponse<ArrayBuffer>> {
-        return await this.downloadQrCode("GET", `/api/v1/Files/${id}/QrCode`);
+    public async getQrCodeForOwnRelationshipTemplate(id: string): Promise<ConnectorResponse<ArrayBuffer>> {
+        return await this.downloadQrCode("GET", `/api/v1/RelationshipTemplates/Own/${id}/QrCode`);
     }
 
     public async createTokenForOwnRelationshipTemplate(id: string, request?: CreateTokenForOwnRelationshipTemplateRequest): Promise<ConnectorResponse<ConnectorToken>> {
