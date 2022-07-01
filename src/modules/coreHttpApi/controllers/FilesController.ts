@@ -87,6 +87,22 @@ export class FilesController extends BaseController {
         return this.ok(result);
     }
 
+    @Path("/:id/QrCode")
+    @GET
+    @Accept("image/png")
+    public async createQrCodeForOwnFile(@PathParam("id") id: string, @ContextResponse response: express.Response): Promise<Return.NewResource<Envelope> | void> {
+        const qrCodeResult = await this.transportServices.files.createQrCodeForFile({ fileId: id });
+
+        return this.file(
+            qrCodeResult,
+            (r) => r.value.qrCodeBytes,
+            () => `${id}.png`,
+            () => Mimetype.png(),
+            response,
+            200
+        );
+    }
+
     @Path("/:id/Token")
     @POST
     @Accept("application/json", "image/png")

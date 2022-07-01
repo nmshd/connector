@@ -60,6 +60,22 @@ export class RelationshipTemplatesController extends BaseController {
         return this.created(result);
     }
 
+    @Path("/Own/:id/QrCode")
+    @GET
+    @Accept("image/png")
+    public async createQrCodeForOwnTemplate(@PathParam("id") id: string, @ContextResponse response: express.Response): Promise<Return.NewResource<Envelope> | void> {
+        const qrCodeResult = await this.transportServices.relationshipTemplates.createQrCodeForOwnTemplate({ templateId: id });
+
+        return this.file(
+            qrCodeResult,
+            (r) => r.value.qrCodeBytes,
+            () => `${id}.png`,
+            () => Mimetype.png(),
+            response,
+            200
+        );
+    }
+
     @Path("/Own/:id/Token")
     @POST
     @Accept("application/json", "image/png")
