@@ -20,7 +20,7 @@ export default class ConnectorTestModule extends ConnectorRuntimeModule {
     public start(): void {
         const consumptionController = this.runtime["_consumptionController"] as ConsumptionController;
         const processorRegistry = consumptionController.outgoingRequests["processorRegistry"] as RequestItemProcessorRegistry;
-        processorRegistry.registerProcessor(GenericRequestItemProcessor, TestRequestItem);
+        processorRegistry.registerProcessor(TestRequestItem, GenericRequestItemProcessor);
     }
 
     public stop(): void {
