@@ -10,7 +10,7 @@ import {
     GetPeerFilesRequest,
     LoadPeerFileRequest,
     TokenReference,
-    TokenReferenceTruncated,
+    TruncatedFileReference,
     UploadOwnFileRequest
 } from "../types";
 import { Endpoint } from "./Endpoint";
@@ -32,7 +32,7 @@ export class FilesEndpoint extends Endpoint {
         return await this.get("/api/v1/Files/Own", request);
     }
 
-    public async loadPeerFile(request: TokenReferenceTruncated): Promise<ConnectorResponse<ConnectorFile>>;
+    public async loadPeerFile(request: TruncatedFileReference): Promise<ConnectorResponse<ConnectorFile>>;
     public async loadPeerFile(request: TokenReference): Promise<ConnectorResponse<ConnectorFile>>;
     public async loadPeerFile(request: LoadPeerFileRequest): Promise<ConnectorResponse<ConnectorFile>> {
         return await this.post("/api/v1/Files/Peer", request);
@@ -48,6 +48,10 @@ export class FilesEndpoint extends Endpoint {
 
     public async downloadFile(fileId: string): Promise<ConnectorResponse<ArrayBuffer>> {
         return await this.download(`/api/v1/Files/${fileId}/Download`);
+    }
+
+    public async getQrCodeForFile(fileId: string): Promise<ConnectorResponse<ArrayBuffer>> {
+        return await this.downloadQrCode("GET", `/api/v1/Files/${fileId}/QrCode`);
     }
 
     public async createTokenForFile(fileId: string, request?: CreateTokenForFileRequest): Promise<ConnectorResponse<ConnectorToken>> {

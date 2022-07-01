@@ -14,4 +14,5 @@ export interface ConnectorFile {
     deletedBy?: string;
     deletedByDevice?: string;
     secretKey: string;
+    truncatedReference: string;
 }

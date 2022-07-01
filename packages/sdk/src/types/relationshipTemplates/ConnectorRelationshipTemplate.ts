@@ -8,4 +8,5 @@ export interface ConnectorRelationshipTemplate {
     createdAt: string;
     content: unknown;
     expiresAt?: string;
+    truncatedReference: string;
 }
