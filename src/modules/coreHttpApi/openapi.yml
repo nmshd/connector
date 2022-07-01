@@ -970,7 +970,7 @@ paths:
             schema:
               oneOf:
                 - $ref: "#/components/schemas/FileReference"
-                - $ref: "#/components/schemas/TokenReferenceTruncated"
+                - $ref: "#/components/schemas/FileReferenceTruncated"
             examples:
               FileReference:
                 value: |
@@ -978,7 +978,7 @@ paths:
                     "id": "FIL_________________",
                     "secretKey": "YOUR_SECRET_KEY"
                   }
-              TokenReferenceTruncated:
+              FileReferenceTruncated:
                 value: |
                   {
                     "reference": "YOUR_REFERENCE"
@@ -1149,6 +1149,42 @@ paths:
                 type: string
                 format: binary
                 example: binary
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/Files/{id}/QrCode:
+    get:
+      operationId: getQrCodeForFile
+      description: Get the QrCode that contains the reference to the file with the given `id`.
+      tags:
+        - Files
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileID"
+
+      responses:
+        200:
+          description: Success
+          content:
+            image/png:
+              schema:
+                description: A QR Code that contains a reference to the file.
+                type: string
+                format: binary
           headers:
             X-Response-Duration-ms:
               schema:
@@ -2057,7 +2093,7 @@ paths:
             schema:
               oneOf:
                 - $ref: "#/components/schemas/RelationshipTemplateReference"
-                - $ref: "#/components/schemas/TokenReferenceTruncated"
+                - $ref: "#/components/schemas/RelationshipTemplateReferenceTruncated"
             examples:
               RelationshipTemplateReference:
                 value: |
@@ -2065,7 +2101,7 @@ paths:
                     "id": "RLT_________________",
                     "secretKey": "YOUR_SECRET_KEY"
                   }
-              TokenReferenceTruncated:
+              RelationshipTemplateReferenceTruncated:
                 value: |
                   {
                     "reference": "YOUR_REFERENCE"
@@ -2176,6 +2212,42 @@ paths:
                     $ref: "#/components/schemas/RelationshipTemplate"
                 required:
                   - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/RelationshipTemplates/Own/{id}/QrCode:
+    get:
+      operationId: getQrCodeForRelationshipTemplate
+      description: Get the QrCode that contains a reference to the RelationshipTemplate with the given `id`.
+      tags:
+        - Files
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipTemplateID"
+
+      responses:
+        200:
+          description: Success
+          content:
+            image/png:
+              schema:
+                description: A QR Code that contains a reference to the RelationshipTemplate.
+                type: string
+                format: binary
           headers:
             X-Response-Duration-ms:
               schema:
@@ -3833,6 +3905,16 @@ components:
         - id
         - secretKey
 
+    FileReferenceTruncated:
+      type: object
+      properties:
+        reference:
+          type: string
+          nullable: false
+          description: The base64 encoded truncated reference of the File or the reference of a token containing the reference to a File.
+      required:
+        - reference
+
     Recipient:
       type: object
       description: Information about the recipient of a message.
@@ -4463,6 +4545,16 @@ components:
       required:
         - id
         - secretKey
+
+    RelationshipTemplateReferenceTruncated:
+      type: object
+      properties:
+        reference:
+          type: string
+          nullable: false
+          description: The base64 encoded truncated reference of the RelationshipTemplate or the reference of a token containing the reference to a RelationshipTemplate.
+      required:
+        - reference
 
     SignedChallenge:
       type: object
