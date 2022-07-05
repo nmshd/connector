@@ -82,17 +82,14 @@ export class FilesController extends BaseController {
 
     @Path(":id")
     @GET
-    public async getFile(@PathParam("id") id: string): Promise<Envelope> {
-        const result = await this.transportServices.files.getFile({ id });
-        return this.ok(result);
-    }
+    @Accept("application/json", "image/png")
+    public async getFile(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+        if (accept === "application/json") {
+            const result = await this.transportServices.files.getFile({ id });
+            return this.ok(result);
+        }
 
-    @Path("/:id/QrCode")
-    @GET
-    @Accept("image/png")
-    public async createQrCodeForOwnFile(@PathParam("id") id: string, @ContextResponse response: express.Response): Promise<Return.NewResource<Envelope> | void> {
         const qrCodeResult = await this.transportServices.files.createQrCodeForFile({ fileId: id });
-
         return this.file(
             qrCodeResult,
             (r) => r.value.qrCodeBytes,

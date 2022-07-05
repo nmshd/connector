@@ -51,7 +51,7 @@ export class FilesEndpoint extends Endpoint {
     }
 
     public async getQrCodeForFile(fileId: string): Promise<ConnectorResponse<ArrayBuffer>> {
-        return await this.downloadQrCode("GET", `/api/v1/Files/${fileId}/QrCode`);
+        return await this.downloadQrCode("GET", `/api/v1/Files/${fileId}`);
     }
 
     public async createTokenForFile(fileId: string, request?: CreateTokenForFileRequest): Promise<ConnectorResponse<ConnectorToken>> {

@@ -1089,7 +1089,7 @@ paths:
   /api/v1/Files/{id}:
     get:
       operationId: getFileMetadata
-      description: Gets metadata for the file with the given `id`.
+      description: Gets metadata for the file with the given `id` when the accept header is set to `application/json` or a QrCode containing the reference to the file if the accept header it set to `image/png`.
       tags:
         - Files
       parameters:
@@ -1112,6 +1112,11 @@ paths:
                     $ref: "#/components/schemas/FileMetadata"
                 required:
                   - result
+            image/png:
+              schema:
+                description: A QR Code that contains a reference to the file.
+                type: string
+                format: binary
           headers:
             X-Response-Duration-ms:
               schema:
@@ -1149,42 +1154,6 @@ paths:
                 type: string
                 format: binary
                 example: binary
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
-  /api/v1/Files/{id}/QrCode:
-    get:
-      operationId: getQrCodeForFile
-      description: Get the QrCode that contains the reference to the file with the given `id`.
-      tags:
-        - Files
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            $ref: "#/components/schemas/FileID"
-
-      responses:
-        200:
-          description: Success
-          content:
-            image/png:
-              schema:
-                description: A QR Code that contains a reference to the file.
-                type: string
-                format: binary
           headers:
             X-Response-Duration-ms:
               schema:
@@ -2226,7 +2195,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v1/RelationshipTemplates/Own/{id}/QrCode:
+  /api/v1/RelationshipTemplates/Own/{id}:
     get:
       operationId: getQrCodeForRelationshipTemplate
       description: Get the QrCode that contains a reference to the RelationshipTemplate with the given `id`.
