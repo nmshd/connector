@@ -3855,7 +3855,7 @@ components:
         reference:
           type: string
           nullable: false
-          description: The base64 encoded truncated reference of the File or the reference of a token containing the reference to a File.
+          description: The base64 encoded truncated reference of the File or the reference of a Token containing the reference to a File.
       required:
         - reference
 

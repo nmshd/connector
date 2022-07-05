@@ -7,8 +7,6 @@
 
 ## 3.0.0-alpha.9
 
--   npm workspaces
-
 ## 3.0.0-alpha.8
 
 -   bugfix: update misspelled Health in openapidoc to ConnectorHealth
