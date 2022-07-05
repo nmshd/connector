@@ -9,7 +9,7 @@ async function run() {
 
     const createdTemplate = await client.relationshipTemplates.createOwnRelationshipTemplate({
         content: { A: "A" },
-        expiresAt: "2022",
+        expiresAt: "2023",
         maxNumberOfAllocations: 5
     });
 

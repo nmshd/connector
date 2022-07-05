@@ -1,7 +1,7 @@
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import express from "express";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, FileParam, FormParam, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, Errors, FileParam, FormParam, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController, Mimetype } from "../common/BaseController";
 
@@ -82,9 +82,26 @@ export class FilesController extends BaseController {
 
     @Path(":id")
     @GET
-    public async getFile(@PathParam("id") id: string): Promise<Envelope> {
-        const result = await this.transportServices.files.getFile({ id });
-        return this.ok(result);
+    public async getFile(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+        switch (accept) {
+            case "image/png":
+                const qrCodeResult = await this.transportServices.files.createQrCodeForFile({ fileId: id });
+                return this.file(
+                    qrCodeResult,
+                    (r) => r.value.qrCodeBytes,
+                    () => `${id}.png`,
+                    () => Mimetype.png(),
+                    response,
+                    200
+                );
+
+            case "application/json":
+                const result = await this.transportServices.files.getFile({ id });
+                return this.ok(result);
+
+            default:
+                throw new Errors.NotAcceptableError();
+        }
     }
 
     @Path("/:id/Token")

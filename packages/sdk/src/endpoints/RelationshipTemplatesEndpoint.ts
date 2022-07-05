@@ -1,5 +1,4 @@
 import { AxiosInstance } from "axios";
-import { RelationshipTemplateReference, TokenReferenceTruncated } from "..";
 import {
     ConnectorRelationshipTemplate,
     ConnectorRelationshipTemplates,
@@ -11,7 +10,9 @@ import {
     GetOwnTemplatesRequest as GetOwnRelationshipTemplatesRequest,
     GetPeerRelationshipTemplatesRequest,
     GetRelationshipTemplatesRequest,
-    LoadPeerRelationshipTemplateRequest
+    LoadPeerRelationshipTemplateRequest,
+    RelationshipTemplateReference,
+    TruncatedRelationshipTemplateReference
 } from "../types";
 import { Endpoint } from "./Endpoint";
 
@@ -36,6 +37,10 @@ export class RelationshipTemplatesEndpoint extends Endpoint {
         return await this.post("/api/v1/RelationshipTemplates/Own", request);
     }
 
+    public async getQrCodeForOwnRelationshipTemplate(id: string): Promise<ConnectorResponse<ArrayBuffer>> {
+        return await this.downloadQrCode("GET", `/api/v1/RelationshipTemplates/${id}`);
+    }
+
     public async createTokenForOwnRelationshipTemplate(id: string, request?: CreateTokenForOwnRelationshipTemplateRequest): Promise<ConnectorResponse<ConnectorToken>> {
         return await this.post(`/api/v1/RelationshipTemplates/Own/${id}/Token`, request, undefined);
     }
@@ -48,7 +53,7 @@ export class RelationshipTemplatesEndpoint extends Endpoint {
         return await this.get("/api/v1/RelationshipTemplates/Peer", request);
     }
 
-    public async loadPeerRelationshipTemplate(request: TokenReferenceTruncated): Promise<ConnectorResponse<ConnectorRelationshipTemplate>>;
+    public async loadPeerRelationshipTemplate(request: TruncatedRelationshipTemplateReference): Promise<ConnectorResponse<ConnectorRelationshipTemplate>>;
     public async loadPeerRelationshipTemplate(request: RelationshipTemplateReference): Promise<ConnectorResponse<ConnectorRelationshipTemplate>>;
     public async loadPeerRelationshipTemplate(request: LoadPeerRelationshipTemplateRequest): Promise<ConnectorResponse<ConnectorRelationshipTemplate>> {
         return await this.post("/api/v1/RelationshipTemplates/Peer", request);

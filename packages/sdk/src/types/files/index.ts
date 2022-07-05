@@ -8,3 +8,4 @@ export * from "./requests/GetOwnFilesRequest";
 export * from "./requests/GetPeerFilesRequest";
 export * from "./requests/LoadPeerFileRequest";
 export * from "./requests/UploadOwnFileRequest";
+export * from "./TruncatedFileReference";

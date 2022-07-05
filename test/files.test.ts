@@ -220,19 +220,19 @@ describe("Load peer file with token reference", () => {
         const token = (await client1.files.createTokenForFile(file.id)).result;
 
         const response = await client2.files.loadPeerFile({ reference: token.id });
-        expect(response).toBeAnError("token reference invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("token / file reference invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("passing file id as truncated token reference causes an error", async () => {
         const file = await uploadFile(client1);
 
         const response = await client2.files.loadPeerFile({ reference: file.id });
-        expect(response).toBeAnError("token reference invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("token / file reference invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test.each([
-        [null, "token reference invalid"],
-        ["", "token reference invalid"]
+        [null, "token / file reference invalid"],
+        ["", "token / file reference invalid"]
     ])("passing %p as truncated token reference causes an error", async (tokenReference, expectedMessage) => {
         const response = await client2.files.loadPeerFile({ reference: tokenReference as any });
         expect(response).toBeAnError(expectedMessage, "error.runtime.validation.invalidPropertyValue");
@@ -301,7 +301,7 @@ describe("Load peer file with file id and secret", () => {
 
     test.each([
         [null, "secretKey must be string"],
-        ["", "secretKey must NOT have fewer than 100 characters"]
+        ["", "secretKey must NOT have fewer than 10 characters"]
     ])("cannot pass %p as secret key", async (secretKey, expectedMessage) => {
         const response = await client2.files.loadPeerFile({ id: file.id, secretKey: secretKey as any });
 

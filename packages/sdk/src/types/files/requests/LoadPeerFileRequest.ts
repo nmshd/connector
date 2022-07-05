@@ -1,4 +1,4 @@
-import { TokenReferenceTruncated } from "../../tokens/TokenReferenceTruncated";
 import { FileReference } from "../FileReference";
+import { TruncatedFileReference } from "../TruncatedFileReference";
 
-export type LoadPeerFileRequest = TokenReferenceTruncated | FileReference;
+export type LoadPeerFileRequest = TruncatedFileReference | FileReference;
