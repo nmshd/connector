@@ -845,7 +845,7 @@ paths:
                   type: string
                   format: date-time
                   description: A timestamp that describes when this file will expire.
-                  example: 2022-01-01
+                  example: 2023-01-01
                   nullable: false
                 file:
                   type: string
@@ -1958,7 +1958,7 @@ paths:
                 expiresAt:
                   type: string
                   format: date-time
-                  example: 2022-01-01
+                  example: 2023-01-01
                   description: A timestamp that describes when this relationship template expires. Expired templates cannot be used to create relationship requests anymore.
                 content:
                   allOf:
@@ -2836,7 +2836,7 @@ paths:
                 expiresAt:
                   type: string
                   format: date-time
-                  example: 2022-01-01
+                  example: 2023-01-01
                   nullable: false
                   description: A timestamp that describes when this token expires. An expired token cannot be fetched from the platform anymore. However it will still be available for auditing purposes.
                 ephemeral:
