@@ -301,7 +301,7 @@ describe("Load peer file with file id and secret", () => {
 
     test.each([
         [null, "secretKey must be string"],
-        ["", "secretKey must NOT have fewer than 100 characters"]
+        ["", "secretKey must NOT have fewer than 10 characters"]
     ])("cannot pass %p as secret key", async (secretKey, expectedMessage) => {
         const response = await client2.files.loadPeerFile({ id: file.id, secretKey: secretKey as any });
 
