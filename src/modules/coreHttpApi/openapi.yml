@@ -2158,7 +2158,7 @@ paths:
   /api/v1/RelationshipTemplates/{id}:
     get:
       operationId: getRelationshipTemplate
-      description: Fetches the `RelationshipTemplate` with the given `id`.
+      description: Fetches the `RelationshipTemplate` with the given `id` when the accept header is set to `application/json` or a QrCode containing the reference to the RelationshipTemplate if the accept header it set to `image/png`.
       tags:
         - RelationshipTemplates
       parameters:
@@ -2181,37 +2181,6 @@ paths:
                     $ref: "#/components/schemas/RelationshipTemplate"
                 required:
                   - result
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
-  /api/v1/RelationshipTemplates/Own/{id}:
-    get:
-      operationId: getQrCodeForRelationshipTemplate
-      description: Get the QrCode that contains a reference to the RelationshipTemplate with the given `id`.
-      tags:
-        - Files
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            $ref: "#/components/schemas/RelationshipTemplateID"
-
-      responses:
-        200:
-          description: Success
-          content:
             image/png:
               schema:
                 description: A QR Code that contains a reference to the RelationshipTemplate.
