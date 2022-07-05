@@ -971,6 +971,7 @@ paths:
               oneOf:
                 - $ref: "#/components/schemas/FileReference"
                 - $ref: "#/components/schemas/FileReferenceTruncated"
+                - $ref: "#/components/schemas/TokenReferenceTruncated"
             examples:
               FileReference:
                 value: |
@@ -979,6 +980,11 @@ paths:
                     "secretKey": "YOUR_SECRET_KEY"
                   }
               FileReferenceTruncated:
+                value: |
+                  {
+                    "reference": "YOUR_REFERENCE"
+                  }
+              TokenReferenceTruncated:
                 value: |
                   {
                     "reference": "YOUR_REFERENCE"
@@ -2063,6 +2069,7 @@ paths:
               oneOf:
                 - $ref: "#/components/schemas/RelationshipTemplateReference"
                 - $ref: "#/components/schemas/RelationshipTemplateReferenceTruncated"
+                - $ref: "#/components/schemas/TokenReferenceTruncated"
             examples:
               RelationshipTemplateReference:
                 value: |
@@ -2071,6 +2078,11 @@ paths:
                     "secretKey": "YOUR_SECRET_KEY"
                   }
               RelationshipTemplateReferenceTruncated:
+                value: |
+                  {
+                    "reference": "YOUR_REFERENCE"
+                  }
+              TokenReferenceTruncated:
                 value: |
                   {
                     "reference": "YOUR_REFERENCE"
@@ -3855,7 +3867,7 @@ components:
         reference:
           type: string
           nullable: false
-          description: The base64 encoded truncated reference of the File or the reference of a Token containing the reference to a File.
+          description: The base64 encoded truncated reference of the File.
       required:
         - reference
 
@@ -4502,7 +4514,7 @@ components:
         reference:
           type: string
           nullable: false
-          description: The base64 encoded truncated reference of the RelationshipTemplate or the reference of a token containing the reference to a RelationshipTemplate.
+          description: The base64 encoded truncated reference of the RelationshipTemplate.
       required:
         - reference
 
