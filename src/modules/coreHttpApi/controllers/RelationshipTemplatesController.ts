@@ -43,7 +43,6 @@ export class RelationshipTemplatesController extends BaseController {
 
     @GET
     @Path(":id")
-    @Accept("application/json")
     public async getRelationshipTemplate(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         switch (accept) {
             case "image/png":

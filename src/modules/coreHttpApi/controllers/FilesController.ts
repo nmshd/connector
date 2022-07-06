@@ -88,7 +88,6 @@ export class FilesController extends BaseController {
 
     @GET
     @Path(":id")
-    @Accept("application/json")
     public async getFile(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         switch (accept) {
             case "image/png":
