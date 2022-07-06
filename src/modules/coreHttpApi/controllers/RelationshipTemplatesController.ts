@@ -19,8 +19,9 @@ export class RelationshipTemplatesController extends BaseController {
         return this.ok(result);
     }
 
-    @Path("/Own")
     @GET
+    @Path("/Own")
+    @Accept("application/json")
     public async getOwnTemplates(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.transportServices.relationshipTemplates.getRelationshipTemplates({
             query: context.request.query,
@@ -29,8 +30,9 @@ export class RelationshipTemplatesController extends BaseController {
         return this.ok(result);
     }
 
-    @Path("/Peer")
     @GET
+    @Path("/Peer")
+    @Accept("application/json")
     public async getPeerTemplates(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.transportServices.relationshipTemplates.getRelationshipTemplates({
             query: context.request.query,
@@ -39,8 +41,9 @@ export class RelationshipTemplatesController extends BaseController {
         return this.ok(result);
     }
 
-    @Path(":id")
     @GET
+    @Path(":id")
+    // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
     public async getRelationshipTemplate(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         switch (accept) {
             case "image/png":
@@ -64,22 +67,24 @@ export class RelationshipTemplatesController extends BaseController {
         }
     }
 
-    @Path("/Own")
     @POST
+    @Path("/Own")
+    @Accept("application/json")
     public async createOwnTemplate(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.transportServices.relationshipTemplates.createOwnRelationshipTemplate(request);
         return this.created(result);
     }
 
-    @Path("/Peer")
     @POST
+    @Path("/Peer")
+    @Accept("application/json")
     public async loadPeerTemplate(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.transportServices.relationshipTemplates.loadPeerRelationshipTemplate(request);
         return this.created(result);
     }
 
-    @Path("/Own/:id/Token")
     @POST
+    @Path("/Own/:id/Token")
     @Accept("application/json", "image/png")
     public async createTokenForOwnTemplate(
         @PathParam("id") id: string,

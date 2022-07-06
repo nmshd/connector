@@ -11,8 +11,9 @@ export class FilesController extends BaseController {
         super();
     }
 
-    @Path("/Own")
     @POST
+    @Path("/Own")
+    @Accept("application/json")
     public async uploadOwnFile(
         @FormParam("expiresAt") expiresAt: string,
         @FormParam("title") title: string,
@@ -30,15 +31,16 @@ export class FilesController extends BaseController {
         return this.created(result);
     }
 
-    @Path("/Peer")
     @POST
+    @Path("/Peer")
+    @Accept("application/json")
     public async loadPeerFile(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.transportServices.files.loadPeerFile(request);
         return this.created(result);
     }
 
-    @Path(":id/Download")
     @GET
+    @Path(":id/Download")
     public async downloadFile(@PathParam("id") id: string, @ContextResponse response: express.Response): Promise<void> {
         const result = await this.transportServices.files.downloadFile({ id });
 
@@ -53,6 +55,7 @@ export class FilesController extends BaseController {
     }
 
     @GET
+    @Accept("application/json")
     public async getFiles(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.transportServices.files.getFiles({
             query: context.request.query
@@ -60,8 +63,9 @@ export class FilesController extends BaseController {
         return this.ok(result);
     }
 
-    @Path("/Own")
     @GET
+    @Path("/Own")
+    @Accept("application/json")
     public async getOwnFiles(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.transportServices.files.getFiles({
             query: context.request.query,
@@ -70,8 +74,9 @@ export class FilesController extends BaseController {
         return this.ok(result);
     }
 
-    @Path("/Peer")
     @GET
+    @Path("/Peer")
+    @Accept("application/json")
     public async getPeerFiles(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.transportServices.files.getFiles({
             query: context.request.query,
@@ -80,8 +85,9 @@ export class FilesController extends BaseController {
         return this.ok(result);
     }
 
-    @Path(":id")
     @GET
+    @Path(":id")
+    // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
     public async getFile(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         switch (accept) {
             case "image/png":
@@ -104,8 +110,8 @@ export class FilesController extends BaseController {
         }
     }
 
-    @Path("/:id/Token")
     @POST
+    @Path("/:id/Token")
     @Accept("application/json", "image/png")
     public async createTokenForFile(
         @PathParam("id") id: string,

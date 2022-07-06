@@ -1,6 +1,6 @@
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
-import { Context, GET, Path, PathParam, POST, PUT, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, GET, Path, PathParam, POST, PUT, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -15,6 +15,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @POST
+    @Accept("application/json")
     public async createRelationship(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.transportServices.relationships.createRelationship(request);
         return this.created(result);
@@ -22,6 +23,7 @@ export class RelationshipsController extends BaseController {
 
     @POST
     @Path(":id/Changes")
+    @Accept("application/json")
     public async createRelationshipChange(@PathParam("id") id: string): Promise<Return.NewResource<Envelope>> {
         const result = await this.transportServices.relationships.createRelationshipChange({ id });
         return this.created(result);
@@ -29,6 +31,7 @@ export class RelationshipsController extends BaseController {
 
     @PUT
     @Path(":id/Changes/:changeId/Accept")
+    @Accept("application/json")
     public async acceptRelationshipChange(@PathParam("id") id: string, @PathParam("changeId") changeId: string, body?: RelationshipChangeAnswer): Promise<Envelope> {
         const result = await this.transportServices.relationships.acceptRelationshipChange({
             relationshipId: id,
@@ -40,6 +43,7 @@ export class RelationshipsController extends BaseController {
 
     @PUT
     @Path(":id/Changes/:changeId/Reject")
+    @Accept("application/json")
     public async rejectRelationshipChange(@PathParam("id") id: string, @PathParam("changeId") changeId: string, body?: RelationshipChangeAnswer): Promise<Envelope> {
         const result = await this.transportServices.relationships.rejectRelationshipChange({
             relationshipId: id,
@@ -51,6 +55,7 @@ export class RelationshipsController extends BaseController {
 
     @PUT
     @Path(":id/Changes/:changeId/Revoke")
+    @Accept("application/json")
     public async revokeRelationshipChange(@PathParam("id") id: string, @PathParam("changeId") changeId: string, body?: RelationshipChangeAnswer): Promise<Envelope> {
         const result = await this.transportServices.relationships.revokeRelationshipChange({
             relationshipId: id,
@@ -61,6 +66,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @GET
+    @Accept("application/json")
     public async getRelationships(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.transportServices.relationships.getRelationships({
             query: context.request.query
@@ -70,6 +76,7 @@ export class RelationshipsController extends BaseController {
 
     @GET
     @Path(":id")
+    @Accept("application/json")
     public async getRelationship(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.getRelationship({ id });
         return this.ok(result);
@@ -77,6 +84,7 @@ export class RelationshipsController extends BaseController {
 
     @GET
     @Path(":id/Attributes")
+    @Accept("application/json")
     public async getAttributesForRelationship(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.getAttributesForRelationship({ id });
         return this.ok(result);
