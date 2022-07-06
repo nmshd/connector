@@ -1,7 +1,7 @@
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import express from "express";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, Errors, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController, Mimetype } from "../common/BaseController";
 
@@ -53,22 +53,26 @@ export class TokensController extends BaseController {
 
     @GET
     @Path(":id")
-    @Accept("application/json", "image/png")
+    // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
     public async getToken(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
-        if (accept === "image/png") {
-            const result = await this.transportServices.tokens.getQRCodeForToken({ id });
+        switch (accept) {
+            case "image/png":
+                const qrCodeResult = await this.transportServices.tokens.getQRCodeForToken({ id });
+                return this.file(
+                    qrCodeResult,
+                    (r) => r.value.qrCodeBytes,
+                    () => `${id}.png`,
+                    () => Mimetype.png(),
+                    response,
+                    200
+                );
 
-            return this.file(
-                result,
-                (r) => r.value.qrCodeBytes,
-                () => `${id}.png`,
-                () => Mimetype.png(),
-                response,
-                200
-            );
+            case "application/json":
+                const result = await this.transportServices.tokens.getToken({ id });
+                return this.ok(result);
+
+            default:
+                throw new Errors.NotAcceptableError();
         }
-
-        const result = await this.transportServices.tokens.getToken({ id });
-        return this.ok(result);
     }
 }

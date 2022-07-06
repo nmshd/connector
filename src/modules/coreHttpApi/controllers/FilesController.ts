@@ -41,7 +41,6 @@ export class FilesController extends BaseController {
 
     @GET
     @Path(":id/Download")
-    @Accept("application/json")
     public async downloadFile(@PathParam("id") id: string, @ContextResponse response: express.Response): Promise<void> {
         const result = await this.transportServices.files.downloadFile({ id });
 
@@ -88,6 +87,7 @@ export class FilesController extends BaseController {
 
     @GET
     @Path(":id")
+    // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
     public async getFile(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         switch (accept) {
             case "image/png":
