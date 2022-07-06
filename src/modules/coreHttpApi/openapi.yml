@@ -2823,6 +2823,7 @@ paths:
                 ephemeral:
                   description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the id and secretKey of the token. Defaults to false.
                   type: boolean
+                  example: false
               required:
                 - content
                 - expiresAt
