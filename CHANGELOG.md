@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0-alpha.11
+
+-   the Connector now validates the Accept header correctly on every route
+
 ## 3.0.0-alpha.10
 
 -   upgrade the runtime to version 2.0.0-alpha.26
