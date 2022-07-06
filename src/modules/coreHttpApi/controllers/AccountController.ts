@@ -1,6 +1,6 @@
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
-import { GET, Path, POST } from "typescript-rest";
+import { Accept, GET, Path, POST } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -12,6 +12,7 @@ export class AccountController extends BaseController {
 
     @GET
     @Path("/IdentityInfo")
+    @Accept("application/json")
     public async getIdentityInfo(): Promise<Envelope> {
         const result = await this.transportServices.account.getIdentityInfo();
         return this.ok(result);
@@ -19,6 +20,7 @@ export class AccountController extends BaseController {
 
     @POST
     @Path("/Sync")
+    @Accept("application/json")
     public async sync(): Promise<Envelope> {
         const result = await this.transportServices.account.syncEverything();
         return this.ok(result);
@@ -26,6 +28,7 @@ export class AccountController extends BaseController {
 
     @GET
     @Path("/SyncInfo")
+    @Accept("application/json")
     public async getSyncInfo(): Promise<Envelope> {
         const result = await this.transportServices.account.getSyncInfo();
         return this.ok(result);

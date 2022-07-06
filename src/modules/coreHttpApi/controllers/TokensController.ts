@@ -11,24 +11,27 @@ export class TokensController extends BaseController {
         super();
     }
 
-    @Path("/Own")
     @POST
+    @Path("/Own")
+    @Accept("application/json")
     public async createOwnToken(request: any): Promise<Return.NewResource<Envelope>> {
         request.ephemeral ??= false;
         const result = await this.transportServices.tokens.createOwnToken(request);
         return this.created(result);
     }
 
-    @Path("/Peer")
     @POST
+    @Path("/Peer")
+    @Accept("application/json")
     public async loadPeerToken(request: any): Promise<Return.NewResource<Envelope>> {
         request.ephemeral ??= false;
         const result = await this.transportServices.tokens.loadPeerToken(request);
         return this.created(result);
     }
 
-    @Path("/Own")
     @GET
+    @Path("/Own")
+    @Accept("application/json")
     public async getOwnTokens(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.transportServices.tokens.getTokens({
             query: context.request.query,
@@ -37,8 +40,9 @@ export class TokensController extends BaseController {
         return this.ok(result);
     }
 
-    @Path("/Peer")
     @GET
+    @Path("/Peer")
+    @Accept("application/json")
     public async getPeerTokens(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.transportServices.tokens.getTokens({
             query: context.request.query,
@@ -47,8 +51,8 @@ export class TokensController extends BaseController {
         return this.ok(result);
     }
 
-    @Path(":id")
     @GET
+    @Path(":id")
     @Accept("application/json", "image/png")
     public async getToken(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         if (accept === "image/png") {

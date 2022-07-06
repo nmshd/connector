@@ -1,6 +1,6 @@
 import { ConsumptionServices, TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
-import { Context, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -11,6 +11,7 @@ export class AttributesController extends BaseController {
     }
 
     @POST
+    @Accept("application/json")
     public async createAttribute(request: any): Promise<Return.NewResource<Envelope>> {
         const selfAddress = (await this.transportServices.account.getIdentityInfo()).value.address;
         if (request?.content?.owner !== selfAddress) throw new Error("You are not allowed to create an attribute that is not owned by yourself");
@@ -20,6 +21,7 @@ export class AttributesController extends BaseController {
     }
 
     @GET
+    @Accept("application/json")
     public async getAttributes(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.getAttributes({ query: context.request.query });
         return this.ok(result);
@@ -27,6 +29,7 @@ export class AttributesController extends BaseController {
 
     @GET
     @Path("/Valid")
+    @Accept("application/json")
     public async getValidAttributes(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.getValidAttributes({ query: context.request.query });
         return this.ok(result);
@@ -34,6 +37,7 @@ export class AttributesController extends BaseController {
 
     @POST
     @Path("/ExecuteIdentityAttributeQuery")
+    @Accept("application/json")
     public async executeIdentityAttributeQuery(query: any): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.executeIdentityAttributeQuery({ query });
         return this.ok(result);
@@ -41,6 +45,7 @@ export class AttributesController extends BaseController {
 
     @POST
     @Path("/ExecuteRelationshipAttributeQuery")
+    @Accept("application/json")
     public async executeRelationshipAttributeQuery(query: any): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.executeRelationshipAttributeQuery({ query });
         return this.ok(result);
@@ -48,6 +53,7 @@ export class AttributesController extends BaseController {
 
     @GET
     @Path("/:id")
+    @Accept("application/json")
     public async getAttribute(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.getAttribute({ id });
         return this.ok(result);
