@@ -10,4 +10,4 @@ npm run lint:prettier
 
 # auditing
 npx license-check --ignoreRegex @nmshd/connector
-npx better-lerna-audit
+npx better-lerna-audit --exclude 1070480,1080923
