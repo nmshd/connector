@@ -48,6 +48,10 @@
 -   `/api/v1/Requests/Incoming(/...)` and `/api/v1/Requests/Outgoing(/...)` routes.
 -   upgrade the runtime to version 2.0.0-alpha.4
 
+## 2.3.5
+
+-   upgrade nodejs to 16.16.0
+
 ## 2.3.4
 
 -   bugfix: add missing axios dependency
