@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.6
+
+-   upgrade nodejs to 16.16.0
+
 ## 2.3.4
 
 -   bugfix: add missing axios dependency
