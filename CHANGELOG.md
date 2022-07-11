@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0-alpha.12
+
+-   upgrade nodejs to 16.16.0
+-   upgrade the runtime to version 2.0.0-alpha.30
+
 ## 3.0.0-alpha.11
 
 -   the Connector now validates the Accept header correctly on every route
