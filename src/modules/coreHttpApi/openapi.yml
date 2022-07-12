@@ -3879,6 +3879,11 @@ components:
             - $ref: "#/components/schemas/Address"
           nullable: false
           description: The address of this recipient.
+        relationshipId:
+          allOf:
+            - $ref: "#/components/schemas/RelationshipID"
+          nullable: false
+          description: The id of the relationship to the recipient.
       required:
         - address
 
