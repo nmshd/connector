@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0-alpha.14
+
+-   upgrade the runtime to version 2.0.0-alpha.32
+-   remove unused properties from the DTOs
+
 ## 3.0.0-alpha.13
 
 -   upgrade the runtime to version 2.0.0-alpha.31
