@@ -1322,6 +1322,10 @@ paths:
           schema:
             $ref: "#/components/schemas/IdFilter"
         - in: query
+          name: recipients.relationshipId
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
           name: participant
           description: Either `createdBy` or one of the recipients should be equal to this ID.
           schema:
@@ -1340,10 +1344,6 @@ paths:
             $ref: "#/components/schemas/TextFilter"
         - in: query
           name: content.body
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - in: query
-          name: relationshipIds
           schema:
             $ref: "#/components/schemas/TextFilter"
 
@@ -2295,7 +2295,6 @@ paths:
           name: status
           schema:
             $ref: "#/components/schemas/TextFilter"
-          example: "Draft"
         - in: query
           name: content.expiresAt
           schema:
@@ -2610,7 +2609,6 @@ paths:
           name: status
           schema:
             $ref: "#/components/schemas/TextFilter"
-          example: "Draft"
         - in: query
           name: content.expiresAt
           schema:
@@ -3881,6 +3879,11 @@ components:
             - $ref: "#/components/schemas/Address"
           nullable: false
           description: The address of this recipient.
+        relationshipId:
+          allOf:
+            - $ref: "#/components/schemas/RelationshipID"
+          nullable: false
+          description: The id of the relationship to the recipient.
       required:
         - address
 
@@ -4230,11 +4233,6 @@ components:
           description: Information about the recipients of this message.
           items:
             $ref: "#/components/schemas/Recipient"
-        relationshipIds:
-          type: array
-          description: If you are the sender of this message, the array will contain the IDs of the `Relationship`s to all recipients. If you are a recipient, the array will only contain the ID of the `Relationship` to the sender.
-          items:
-            type: string
         content:
           allOf:
             - $ref: "#/components/schemas/MessageContent"
@@ -4249,7 +4247,6 @@ components:
         - createdByDevice
         - createdAt
         - recipients
-        - relationshipIds
         - content
 
     MessageWithAttachments:
@@ -4279,11 +4276,6 @@ components:
           description: Information about the recipients of this message.
           items:
             $ref: "#/components/schemas/Recipient"
-        relationshipIds:
-          type: array
-          description: If you are the sender of this message, the array will contain the IDs of the `Relationship`s to all recipients. If you are a recipient, the array will only contain the ID of the `Relationship` to the sender.
-          items:
-            type: string
         content:
           allOf:
             - $ref: "#/components/schemas/MessageContent"
@@ -4298,7 +4290,6 @@ components:
         - createdByDevice
         - createdAt
         - recipients
-        - relationshipIds
         - content
 
     MessageContent:

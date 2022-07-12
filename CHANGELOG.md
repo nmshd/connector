@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0-alpha.13
+
+-   upgrade the runtime to version 2.0.0-alpha.31
+-   remove Message.relationshipIds
+-   add Message.recipients.relationshipId
+
 ## 3.0.0-alpha.12
 
 -   upgrade nodejs to 16.16.0
