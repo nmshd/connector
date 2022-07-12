@@ -124,7 +124,6 @@ describe("Message query", () => {
         const message = await exchangeMessage(client1, client2);
         const conditions = new QueryParamConditions(message, client2)
             .addDateSet("createdAt")
-            .addDateSet("lastMessageSentAt")
             .addStringSet("createdBy")
             .addStringSet("recipients.address", message.recipients[0].address)
             .addStringSet("content.@type")
