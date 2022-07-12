@@ -6,7 +6,6 @@ export interface ConnectorMessage {
     createdBy: string;
     createdByDevice: string;
     recipients: ConnectorMessageRecipient[];
-    relationshipIds: string[];
     createdAt: string;
     attachments: string[];
 }

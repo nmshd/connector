@@ -7,7 +7,6 @@ export interface ConnectorMessageWithAttachments {
     createdBy: string;
     createdByDevice: string;
     recipients: ConnectorMessageRecipient[];
-    relationshipIds: string[];
     createdAt: string;
     attachments: ConnectorFile[];
 }
