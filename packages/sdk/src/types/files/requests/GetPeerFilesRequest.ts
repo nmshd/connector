@@ -1,9 +1,6 @@
 export interface GetPeerFilesRequest {
     createdAt?: string | string[];
     createdBy?: string | string[];
-    deletedAt?: string | string[];
-    deletedBy?: string | string[];
-    deletedByDevice?: string | string[];
     description?: string | string[];
     expiresAt?: string | string[];
     filename?: string | string[];

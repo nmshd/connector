@@ -10,9 +10,6 @@ export interface ConnectorFile {
     isOwn: boolean;
     title: string;
     description?: string;
-    deletedAt?: string;
-    deletedBy?: string;
-    deletedByDevice?: string;
     secretKey: string;
     truncatedReference: string;
 }

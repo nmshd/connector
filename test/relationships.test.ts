@@ -92,12 +92,7 @@ describe("Create Relationship", () => {
 describe("Relationships query", () => {
     test("query relationships", async () => {
         const relationship = await getRelationship(client1);
-        const conditions = new QueryParamConditions(relationship, client1)
-            .addDateSet("lastMessageReceivedAt")
-            .addDateSet("lastMessageSentAt")
-            .addStringSet("peer")
-            .addStringSet("status")
-            .addStringSet("template.id");
+        const conditions = new QueryParamConditions(relationship, client1).addStringSet("peer").addStringSet("status").addStringSet("template.id");
 
         await conditions.executeTests((c, q) => c.relationships.getRelationships(q), ValidationSchema.Relationships);
     });
