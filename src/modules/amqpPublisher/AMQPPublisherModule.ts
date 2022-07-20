@@ -1,4 +1,5 @@
-import { DataEvent, Event } from "@nmshd/runtime";
+import { Event } from "@js-soft/ts-utils";
+import { DataEvent } from "@nmshd/runtime";
 import amqp from "amqplib";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
