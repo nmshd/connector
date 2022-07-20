@@ -1,4 +1,5 @@
-import { DataEvent, Event } from "@nmshd/runtime";
+import { Event } from "@js-soft/ts-utils";
+import { DataEvent } from "@nmshd/runtime";
 import AgentKeepAlive, { HttpsAgent as AgentKeepAliveHttps } from "agentkeepalive";
 import axios, { AxiosInstance } from "axios";
 import { ConnectorRuntimeModule } from "../../ConnectorRuntimeModule";
