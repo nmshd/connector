@@ -1,6 +1,6 @@
 import { IDatabaseConnection } from "@js-soft/docdb-access-abstractions";
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
-import { ILogger, ILoggerFactory } from "@js-soft/logging-abstractions";
+import { ILogger } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionController } from "@nmshd/consumption";
@@ -78,7 +78,10 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         }
 
         this.forceEnableMandatoryModules(connectorConfig);
-        const runtime = new ConnectorRuntime(connectorConfig);
+
+        const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
+        ConnectorLoggerFactory.init(loggerFactory);
+        const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
         await runtime.init();
 
         runtime.scheduleKillTask();
@@ -90,14 +93,6 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
         connectorConfig.modules.decider.enabled = true;
         connectorConfig.modules.request.enabled = true;
-    }
-
-    protected createLoggerFactory(): ILoggerFactory {
-        const loggerFactory = new NodeLoggerFactory(this.runtimeConfig.logging);
-        this.logger = loggerFactory.getLogger(Runtime);
-        ConnectorLoggerFactory.init(loggerFactory);
-
-        return loggerFactory;
     }
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
