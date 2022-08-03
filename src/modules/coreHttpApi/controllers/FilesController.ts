@@ -35,7 +35,7 @@ export class FilesController extends BaseController {
     @Path("/Peer")
     @Accept("application/json")
     public async loadPeerFile(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.transportServices.files.loadPeerFile(request);
+        const result = await this.transportServices.files.getOrLoadFile(request);
         return this.created(result);
     }
 
