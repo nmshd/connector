@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0-beta.3
+
+-   upgrade the runtime to version 2.0.0-beta.15
+
 ## 3.0.0-beta.2
 
 -   upgrade the runtime to version 2.0.0-beta.12
