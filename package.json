@@ -46,7 +46,7 @@
         "@js-soft/docdb-access-mongo": "1.1.1",
         "@js-soft/node-logger": "1.0.2",
         "@js-soft/ts-utils": "^2.2.2",
-        "@nmshd/runtime": "2.0.0-beta.12",
+        "@nmshd/runtime": "2.0.0-beta.15",
         "agentkeepalive": "4.2.1",
         "amqplib": "^0.10.1",
         "axios": "^0.27.2",
