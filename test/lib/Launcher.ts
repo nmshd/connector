@@ -1,8 +1,8 @@
 import { ConnectorClient } from "@nmshd/connector-sdk";
 import { ChildProcess, spawn } from "child_process";
-import getPort from "get-port";
 import path from "path";
 import waitOn from "wait-on";
+import getPort from "./getPort";
 
 export class Launcher {
     private readonly _processes: ChildProcess[] = [];
