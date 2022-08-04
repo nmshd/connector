@@ -42,8 +42,8 @@ export class FilesEndpoint extends Endpoint {
         return await this.get("/api/v1/Files/Peer", request);
     }
 
-    public async getFile(fileId: string): Promise<ConnectorResponse<ConnectorFile>> {
-        return await this.get(`/api/v1/Files/${fileId}`);
+    public async getFile(fileIdOrReference: string): Promise<ConnectorResponse<ConnectorFile>> {
+        return await this.get(`/api/v1/Files/${fileIdOrReference}`);
     }
 
     public async downloadFile(fileId: string): Promise<ConnectorResponse<ArrayBuffer>> {
