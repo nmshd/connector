@@ -1,4 +1,5 @@
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
+import { FileReference } from "@nmshd/transport";
 import express from "express";
 import { Inject } from "typescript-ioc";
 import { Accept, Context, ContextAccept, ContextResponse, Errors, FileParam, FormParam, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
@@ -89,7 +90,7 @@ export class FilesController extends BaseController {
     @Path(":idOrReference")
     // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
     public async getFile(@PathParam("idOrReference") idOrReference: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
-        const fileId = idOrReference.startsWith("FIL") ? idOrReference : Buffer.from(idOrReference, "base64").toString().split("|")[0];
+        const fileId = idOrReference.startsWith("FIL") ? idOrReference : FileReference.fromTruncated(idOrReference).id.toString();
 
         switch (accept) {
             case "image/png":
@@ -97,7 +98,7 @@ export class FilesController extends BaseController {
                 return this.file(
                     qrCodeResult,
                     (r) => r.value.qrCodeBytes,
-                    () => `${idOrReference}.png`,
+                    () => `${fileId}.png`,
                     () => Mimetype.png(),
                     response,
                     200
