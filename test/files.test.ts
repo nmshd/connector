@@ -314,4 +314,12 @@ describe("Load peer file with file id and secret", () => {
 
         expect(response).toBeAnError("The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
     });
+
+    test("get the File via the truncatedReference", async () => {
+        expect(file).toBeDefined();
+
+        const response = await client2.files.getFile(file.truncatedReference);
+        expect(response).toBeSuccessful(ValidationSchema.File);
+        expect(response.result).toMatchObject({ ...file, isOwn: false });
+    });
 });
