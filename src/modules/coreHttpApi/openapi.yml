@@ -1056,18 +1056,23 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v1/Files/{id}:
+  /api/v1/Files/{idOrReference}:
     get:
       operationId: getFileMetadata
-      description: Gets metadata for the file with the given `id` when the accept header is set to `application/json` or a QrCode containing the reference to the file if the accept header it set to `image/png`.
+      description: |
+        Gets metadata for the file with the given `idOrReference` when the accept header is set to `application/json` or a QrCode containing the reference to the file if the accept header it set to `image/png`.
+
+        `idOrReference` can either be a FileId (starting with `FIL`) or a FileReference (starting with `RklM`).
       tags:
         - Files
       parameters:
         - in: path
-          name: id
+          name: idOrReference
           required: true
           schema:
-            $ref: "#/components/schemas/FileID"
+            oneOf:
+              - $ref: "#/components/schemas/FileID"
+              - $ref: "#/components/schemas/FileReferenceTruncated"
 
       responses:
         200:

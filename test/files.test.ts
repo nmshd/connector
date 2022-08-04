@@ -59,7 +59,7 @@ describe("File Upload", () => {
 
     test("cannot upload an empty file", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest({ file: Buffer.of() }));
-        expect(response).toBeAnError("file content is empty", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("'content' is empty", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("cannot upload a file that is null", async () => {
@@ -67,7 +67,7 @@ describe("File Upload", () => {
         const _response = await (client1.files as any).httpClient.post("/api/v1/Files/Own", makeUploadRequest({ file: null }));
         const response = (client1.files as any).makeResult(_response);
 
-        expect(response).toBeAnError("file content is empty", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("must have required property 'content'", "error.runtime.validation.invalidPropertyValue");
     });
     test("can upload same file twice", async () => {
         const request = await makeUploadRequest({ file: await fs.promises.readFile(`${__dirname}/__assets__/test.txt`) });
@@ -84,18 +84,13 @@ describe("File Upload", () => {
     });
 
     test("cannot upload a file with expiry date in the past", async () => {
-        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "1970" }));
-        expect(response).toBeAnError("'expiresAt' must be in the future.", "error.runtime.validation.invalidPropertyValue");
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "1970-01-01T00:00:00.000Z" }));
+        expect(response).toBeAnError("'expiresAt' must be in the future", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("cannot upload a file with empty expiry date", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "" }));
-        expect(response).toBeAnError("expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
-    });
-
-    test("cannot upload a file with undefined expiry date", async () => {
-        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "" }));
-        expect(response).toBeAnError("expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("expiresAt must match format date-time", "error.runtime.validation.invalidPropertyValue");
     });
 });
 
@@ -318,5 +313,13 @@ describe("Load peer file with file id and secret", () => {
         const response = await client2.files.loadPeerFile({ id: undefined as any, secretKey: file.secretKey });
 
         expect(response).toBeAnError("The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+    });
+
+    test("get the File via the truncatedReference", async () => {
+        expect(file).toBeDefined();
+
+        const response = await client2.files.getFile(file.truncatedReference);
+        expect(response).toBeSuccessful(ValidationSchema.File);
+        expect(response.result).toMatchObject({ ...file, isOwn: false });
     });
 });

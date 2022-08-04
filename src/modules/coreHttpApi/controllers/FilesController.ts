@@ -1,4 +1,5 @@
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
+import { Reference } from "@nmshd/transport";
 import express from "express";
 import { Inject } from "typescript-ioc";
 import { Accept, Context, ContextAccept, ContextResponse, Errors, FileParam, FormParam, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
@@ -35,7 +36,7 @@ export class FilesController extends BaseController {
     @Path("/Peer")
     @Accept("application/json")
     public async loadPeerFile(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.transportServices.files.loadPeerFile(request);
+        const result = await this.transportServices.files.getOrLoadFile(request);
         return this.created(result);
     }
 
@@ -86,23 +87,25 @@ export class FilesController extends BaseController {
     }
 
     @GET
-    @Path(":id")
+    @Path(":idOrReference")
     // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
-    public async getFile(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+    public async getFile(@PathParam("idOrReference") idOrReference: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+        const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.fromTruncated(idOrReference).id.toString();
+
         switch (accept) {
             case "image/png":
-                const qrCodeResult = await this.transportServices.files.createQrCodeForFile({ fileId: id });
+                const qrCodeResult = await this.transportServices.files.createQrCodeForFile({ fileId });
                 return this.file(
                     qrCodeResult,
                     (r) => r.value.qrCodeBytes,
-                    () => `${id}.png`,
+                    () => `${fileId}.png`,
                     () => Mimetype.png(),
                     response,
                     200
                 );
 
             case "application/json":
-                const result = await this.transportServices.files.getFile({ id });
+                const result = await this.transportServices.files.getFile({ id: fileId });
                 return this.ok(result);
 
             default:
