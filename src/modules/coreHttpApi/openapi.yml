@@ -2724,7 +2724,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: "#/components/schemas/CreateOutgoingRequestRequest"
+              $ref: "#/components/schemas/CanCreateOutgoingRequestRequest"
       responses:
         201:
           description: Success
@@ -4109,6 +4109,28 @@ components:
             ]
         }
 
+    CanCreateOutgoingRequestRequest:
+      type: object
+      properties:
+        content:
+          type: object
+          properties:
+            expiresAt:
+              type: string
+              format: date-time
+              nullable: true
+            items:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/RequestItemGroup"
+                  - $ref: "#/components/schemas/RequestItem"
+        peer:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+      required:
+        - content
+
     CreateOutgoingRequestRequest:
       type: object
       properties:
@@ -4128,6 +4150,9 @@ components:
         peer:
           allOf:
             - $ref: "#/components/schemas/Address"
+      required:
+        - content
+        - peer
 
     RequestValidationResult:
       type: object
