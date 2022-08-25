@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0-beta.4
+
+-> SDK 2.0.0-beta.3
+
+-   upgrade the runtime to version 2.0.0-beta.20
+-   `peer` is now optional for validating outgoing requests using the `/api/v1/Requests/Outgoing/Validate` route
+
 ## 3.0.0-beta.3
 
 -> SDK 2.0.0-beta.2

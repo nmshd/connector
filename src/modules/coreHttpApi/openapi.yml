@@ -2724,7 +2724,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: "#/components/schemas/CreateOutgoingRequestRequest"
+              $ref: "#/components/schemas/CanCreateOutgoingRequestRequest"
       responses:
         201:
           description: Success
@@ -4109,6 +4109,29 @@ components:
             ]
         }
 
+    CanCreateOutgoingRequestRequest:
+      type: object
+      properties:
+        content:
+          type: object
+          properties:
+            expiresAt:
+              type: string
+              format: date-time
+              nullable: true
+            items:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/RequestItemGroup"
+                  - $ref: "#/components/schemas/RequestItem"
+        peer:
+          description: The address of the peer that will receive the request. This is optional because in case of a RelationshipTemplate you do not know the peer address yet. For better results you should specify `peer` whenever you know it.
+          allOf:
+            - $ref: "#/components/schemas/Address"
+      required:
+        - content
+
     CreateOutgoingRequestRequest:
       type: object
       properties:
@@ -4128,6 +4151,9 @@ components:
         peer:
           allOf:
             - $ref: "#/components/schemas/Address"
+      required:
+        - content
+        - peer
 
     RequestValidationResult:
       type: object
