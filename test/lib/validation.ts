@@ -45,7 +45,7 @@ export function validateSchema(schemaName: ValidationSchema, obj: any): void {
 }
 
 const schemaDefinition = getJSONSchemaDefinition();
-const ajvInstance = new ajv({ schemas: [schemaDefinition] });
+const ajvInstance = new ajv({ schemas: [schemaDefinition], allowUnionTypes: true });
 
 expect.extend({
     toBeSuccessful(actual: ConnectorResponse<unknown>, schemaName: ValidationSchema) {
@@ -67,7 +67,7 @@ expect.extend({
         if (!valid) {
             return {
                 pass: false,
-                message: () => `expected a successful result to match the schema '${schemaName}'`
+                message: () => `expected a successful result to match the schema '${schemaName}', but got the following errors: ${JSON.stringify(validate.errors)}`
             };
         }
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0-beta.5
+
+-> SDK 2.0.0-beta.4
+
+-   upgrade nodejs to 16.17.0
+-   upgrade the runtime to version 2.0.0-alpha.30
+
 ## 3.0.0-beta.4
 
 -> SDK 2.0.0-beta.3

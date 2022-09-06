@@ -1,6 +1,3 @@
-export interface ExecuteIdentityAttributeQueryRequest {
-    valueType: string;
-    validFrom?: string;
-    validTo?: string;
-    tags?: string[];
-}
+import { IdentityAttributeQuery } from "../IdentityAttributeQuery";
+
+export interface ExecuteIdentityAttributeQueryRequest extends IdentityAttributeQuery {}

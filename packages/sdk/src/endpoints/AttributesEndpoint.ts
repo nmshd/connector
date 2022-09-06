@@ -23,15 +23,15 @@ export class AttributesEndpoint extends Endpoint {
         return await this.get(`/api/v1/Attributes/${attributeId}`);
     }
 
-    public async getValidAttributes(request: GetValidAttributesRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
+    public async getValidAttributes(request: GetValidAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get("/api/v1/Attributes/Valid", request);
     }
 
-    public async executeIdentityAttributeQuery(query: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
+    public async executeIdentityAttributeQuery(query: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.post("/api/v1/Attributes/ExecuteIdentityAttributeQuery", query, 200);
     }
 
-    public async executeRelationshipAttributeQuery(query: ExecuteRelationshipAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
+    public async executeRelationshipAttributeQuery(query: ExecuteRelationshipAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.post("/api/v1/Attributes/ExecuteRelationshipAttributeQuery", query, 200);
     }
 }
