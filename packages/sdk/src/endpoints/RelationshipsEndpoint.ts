@@ -1,6 +1,6 @@
 import {
     AcceptRelationshipChangeRequest,
-    ConnectorAttribute,
+    ConnectorAttributes,
     ConnectorRelationship,
     ConnectorRelationships,
     ConnectorResponse,
@@ -48,7 +48,7 @@ export class RelationshipsEndpoint extends Endpoint {
         return await this.put(`/api/v1/Relationships/${relationshipId}/Changes/${changeId}/Revoke`, request);
     }
 
-    public async getAttributesForRelationship(relationshipId: string): Promise<ConnectorResponse<ConnectorAttribute>> {
+    public async getAttributesForRelationship(relationshipId: string): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get(`/api/v1/Relationships/${relationshipId}/Attributes`);
     }
 }
