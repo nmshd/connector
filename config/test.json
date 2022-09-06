@@ -29,12 +29,5 @@
         "httpServer": {
             "apiKey": "xxx"
         }
-    },
-    "modules": {
-        "ConnectorTestModule": {
-            "enabled": true,
-            "displayName": "ConnectorTestModule",
-            "location": "connectorTestModule/ConnectorTestModule"
-        }
     }
 }
