@@ -56,7 +56,7 @@ export interface ProposeAttributeRequestItem extends ConnectorRequestContentItem
 
 export interface ReadAttributeRequestItem extends ConnectorRequestContentItem {
     "@type": "ReadAttributeRequestItem";
-    query: IdentityAttributeQuery;
+    query: IdentityAttributeQuery | RelationshipAttributeQuery;
 }
 
 export interface ConsentRequestItem extends ConnectorRequestContentItem {
