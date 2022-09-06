@@ -3375,107 +3375,117 @@ components:
     ExecuteIdentityQueryRequest:
       type: object
       properties:
-        tags:
-          description: The tags of the attributes that will be filtered.
-          items:
-            type: string
-          type: array
-        validFrom:
-          description: The date the attribute became valid.
-          type: string
-        validTo:
-          description: The date the attribute becomes invalid.
-          type: string
-        valueType:
-          description: The valueType of the attribute.
-          type: string
+        query:
+          type: object
+          properties:
+            tags:
+              description: The tags of the attributes that will be filtered.
+              items:
+                type: string
+              type: array
+            validFrom:
+              description: The date the attribute became valid.
+              type: string
+            validTo:
+              description: The date the attribute becomes invalid.
+              type: string
+            valueType:
+              description: The valueType of the attribute.
+              type: string
+          required:
+            - valueType
       required:
-        - valueType
+        - query
 
     ExecuteRelationshipQueryRequest:
       type: object
       properties:
-        key:
-          description: The key of the relationship attribute.
-          type: string
-        owner:
-          description: The owner of the relationship attribute.
-          type: string
-        thirdParty:
-          description: The address of a third party owner of the relationship attribute.
-          type: string
-        validFrom:
-          description: The date the attribute became valid.
-          type: string
-        validTo:
-          description: The date the attribute becomes invalid.
-          type: string
-        valueType:
-          description: The valueType of the attribute.
-          type: string
-        attributeCreationHints:
-          description: This describes how to create an attribute if it does not exist.
+        query:
           type: object
           properties:
-            confidentiality:
-              enum:
-                - public
-                - private
-                - protected
+            key:
+              description: The key of the relationship attribute.
               type: string
-            description:
+            owner:
+              description: The owner of the relationship attribute.
               type: string
-            isTechnical:
-              type: boolean
-            title:
+            thirdParty:
+              description: The address of a third party owner of the relationship attribute.
               type: string
-            valueHints:
+            validFrom:
+              description: The date the attribute became valid.
+              type: string
+            validTo:
+              description: The date the attribute becomes invalid.
+              type: string
+            valueType:
+              description: The valueType of the attribute.
+              type: string
+            attributeCreationHints:
+              description: This describes how to create an attribute if it does not exist.
               type: object
               properties:
-                "@context":
+                confidentiality:
+                  enum:
+                    - public
+                    - private
+                    - protected
                   type: string
-                "@type":
+                description:
                   type: string
-                "@version":
+                isTechnical:
+                  type: boolean
+                title:
                   type: string
-                defaultValue:
-                  oneOf:
-                    - type: string
-                    - type: number
-                    - type: boolean
-                editHelp:
-                  type: string
-                max:
-                  type: number
-                min:
-                  type: number
-                pattern:
-                  type: string
-                values:
-                  items:
-                    type: object
-                    properties:
-                      displayName:
-                        type: string
-                      key:
-                        oneOf:
-                          - type: string
-                          - type: number
-                          - type: boolean
-                    required:
-                      - key
-                      - displayName
-                  type: array
+                valueHints:
+                  type: object
+                  properties:
+                    "@context":
+                      type: string
+                    "@type":
+                      type: string
+                    "@version":
+                      type: string
+                    defaultValue:
+                      oneOf:
+                        - type: string
+                        - type: number
+                        - type: boolean
+                    editHelp:
+                      type: string
+                    max:
+                      type: number
+                    min:
+                      type: number
+                    pattern:
+                      type: string
+                    values:
+                      items:
+                        type: object
+                        properties:
+                          displayName:
+                            type: string
+                          key:
+                            oneOf:
+                              - type: string
+                              - type: number
+                              - type: boolean
+                        required:
+                          - key
+                          - displayName
+                      type: array
+                  required:
+                    - "@type"
               required:
-                - "@type"
+                - title
+                - confidentiality
           required:
-            - title
-            - confidentiality
+            - valueType
+            - key
+            - owner
+            - attributeCreationHints
       required:
-        - valueType
-        - key
-        - owner
-        - attributeCreationHints
+        - query
 
     CreateAttributeRequest:
       additionalProperties: false

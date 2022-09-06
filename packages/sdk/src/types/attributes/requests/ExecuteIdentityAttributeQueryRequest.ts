@@ -1,3 +1,5 @@
 import { IdentityAttributeQuery } from "../IdentityAttributeQuery";
 
-export interface ExecuteIdentityAttributeQueryRequest extends IdentityAttributeQuery {}
+export interface ExecuteIdentityAttributeQueryRequest {
+    query: IdentityAttributeQuery;
+}

@@ -38,16 +38,16 @@ export class AttributesController extends BaseController {
     @POST
     @Path("/ExecuteIdentityAttributeQuery")
     @Accept("application/json")
-    public async executeIdentityAttributeQuery(query: any): Promise<Envelope> {
-        const result = await this.consumptionServices.attributes.executeIdentityAttributeQuery({ query });
+    public async executeIdentityAttributeQuery(request: any): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.executeIdentityAttributeQuery(request);
         return this.ok(result);
     }
 
     @POST
     @Path("/ExecuteRelationshipAttributeQuery")
     @Accept("application/json")
-    public async executeRelationshipAttributeQuery(query: any): Promise<Envelope> {
-        const result = await this.consumptionServices.attributes.executeRelationshipAttributeQuery({ query });
+    public async executeRelationshipAttributeQuery(request: any): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.executeRelationshipAttributeQuery(request);
         return this.ok(result);
     }
 
