@@ -1,3 +1,5 @@
 import { RelationshipAttributeQuery } from "../RelationshipAttributeQuery";
 
-export interface ExecuteRelationshipAttributeQueryRequest extends RelationshipAttributeQuery {}
+export interface ExecuteRelationshipAttributeQueryRequest {
+    query: RelationshipAttributeQuery;
+}

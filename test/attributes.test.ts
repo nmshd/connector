@@ -132,7 +132,7 @@ describe("Execute AttributeQueries", () => {
             }
         });
 
-        const executeIdentityAttributeQueryResult = await client1.attributes.executeIdentityAttributeQuery({ valueType: "GivenName" });
+        const executeIdentityAttributeQueryResult = await client1.attributes.executeIdentityAttributeQuery({ query: { valueType: "GivenName" } });
         expect(executeIdentityAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttributes);
         const attributes = executeIdentityAttributeQueryResult.result;
 
@@ -154,10 +154,12 @@ describe("Execute AttributeQueries", () => {
         });
 
         const executeIdentityAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
-            valueType: "GivenName",
-            key: "AKey",
-            owner: client1Address,
-            attributeCreationHints: { title: "A title", confidentiality: "public" }
+            query: {
+                valueType: "GivenName",
+                key: "AKey",
+                owner: client1Address,
+                attributeCreationHints: { title: "A title", confidentiality: "public" }
+            }
         });
         expect(executeIdentityAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttributes);
         const attributes = executeIdentityAttributeQueryResult.result;
