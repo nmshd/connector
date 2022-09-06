@@ -1,3 +1,5 @@
+import { ConnectorRequestContent } from "./ConnectorRequestContent";
+
 export interface ConnectorRequest {
     id: string;
     isOwn: boolean;
@@ -16,33 +18,6 @@ export enum ConnectorRequestStatus {
     ManualDecisionRequired = "ManualDecisionRequired",
     Decided = "Decided",
     Completed = "Completed"
-}
-
-export interface ConnectorRequestContent {
-    "@type": string;
-    "@version"?: string;
-    id?: string;
-    expiresAt?: string;
-    items: (ConnectorRequestContentItem | ConnectorRequestContentItemGroup)[];
-}
-
-export interface ConnectorRequestContentItem {
-    "@type": string;
-    "@version"?: string;
-    title?: string;
-    description?: string;
-    responseMetadata?: object;
-    mustBeAccepted: boolean;
-}
-
-export interface ConnectorRequestContentItemGroup {
-    "@type": string;
-    "@version"?: string;
-    title?: string;
-    description?: string;
-    mustBeAccepted: boolean;
-    responseMetadata?: object;
-    items: ConnectorRequestContentItem[];
 }
 
 export interface ConnectorRequestSource {
