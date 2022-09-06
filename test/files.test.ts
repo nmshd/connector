@@ -90,7 +90,7 @@ describe("File Upload", () => {
 
     test("cannot upload a file with empty expiry date", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "" }));
-        expect(response).toBeAnError("expiresAt must match format date-time", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("expiresAt must match ISO8601 datetime format", "error.runtime.validation.invalidPropertyValue");
     });
 });
 
