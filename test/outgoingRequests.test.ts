@@ -15,12 +15,7 @@ describe("Outgoing Requests", () => {
     test("sender: create an outgoing Request in status Draft", async () => {
         const response = await client2.outgoingRequests.createRequest({
             content: {
-                items: [
-                    {
-                        "@type": "TestRequestItem",
-                        mustBeAccepted: false
-                    }
-                ],
+                items: [{ "@type": "ReadAttributeRequestItem", mustBeAccepted: false, query: { "@type": "IdentityAttributeQuery", valueType: "Surname" } }],
                 expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
             },
             peer: (await client1.account.getIdentityInfo()).result.address
@@ -31,19 +26,14 @@ describe("Outgoing Requests", () => {
         const sConsumptionRequest = (await client2.outgoingRequests.getRequest(response.result.id)).result;
         expect(sConsumptionRequest.status).toBe(ConnectorRequestStatus.Draft);
         expect(sConsumptionRequest.content.items).toHaveLength(1);
-        expect(sConsumptionRequest.content.items[0]["@type"]).toBe("TestRequestItem");
+        expect(sConsumptionRequest.content.items[0]["@type"]).toBe("ReadAttributeRequestItem");
         expect(sConsumptionRequest.content.items[0].mustBeAccepted).toBe(false);
     });
 
     test("should query outgoing requests", async () => {
         const response = await client1.outgoingRequests.createRequest({
             content: {
-                items: [
-                    {
-                        "@type": "TestRequestItem",
-                        mustBeAccepted: false
-                    }
-                ],
+                items: [{ "@type": "ReadAttributeRequestItem", mustBeAccepted: false, query: { "@type": "IdentityAttributeQuery", valueType: "Surname" } }],
                 expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
             },
             peer: (await client2.account.getIdentityInfo()).result.address
