@@ -2,7 +2,7 @@
 
 ## 3.0.0-beta.6
 
--> SDK 2.0.0-beta.6
+-> SDK 2.0.0-beta.7
 
 -   update AttributeQuery requests (`POST /api/v1/Attributes/ExecuteIdentityAttributeQuery` & `POST /api/v1/Attributes/ExecuteRelationshipAttributeQuery`) to match the Runtime API
 
