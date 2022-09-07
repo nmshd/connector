@@ -2,29 +2,7 @@ import { Result } from "@js-soft/ts-utils";
 import { WebhooksModuleApplicationErrors } from "./WebhooksModuleApplicationErrors";
 
 export class ConfigModel {
-    public constructor(public readonly webhooks: WebhookArray) {}
-}
-
-export class WebhookArray extends Array<Webhook> {
-    public constructor(...webhooks: Webhook[]) {
-        super(...webhooks);
-    }
-
-    public getWebhooksForTrigger(trigger: string): Webhook[] {
-        return this.filter((w) => w.triggers.includes(trigger));
-    }
-
-    public getDistinctTriggers(): string[] {
-        const triggers: Record<string, boolean> = {};
-
-        for (const webhook of this) {
-            for (const trigger of webhook.triggers) {
-                triggers[trigger] = true;
-            }
-        }
-
-        return Object.keys(triggers);
-    }
+    public constructor(public readonly webhooks: Webhook[]) {}
 }
 
 export class Webhook {
