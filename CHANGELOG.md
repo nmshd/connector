@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0-beta.7
+
+-   bugfix(webhooksV2): events are now correctly triggered for triggers with wildcards
+
 ## 3.0.0-beta.6
 
 -> SDK 2.0.0-beta.7

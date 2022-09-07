@@ -23,21 +23,15 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
     }
 
     public start(): void {
-        for (const trigger of this.configModel.webhooks.getDistinctTriggers()) {
-            this.subscribeToEvent(trigger, this.handleEvent.bind(this));
+        for (const webhook of this.configModel.webhooks) {
+            for (const trigger of webhook.triggers) {
+                this.subscribeToEvent(trigger, async (event: Event) => await this.handleEvent(event, webhook));
+            }
         }
     }
 
-    private async handleEvent(event: Event) {
-        await this.triggerWebhooks(event.namespace, event instanceof DataEvent ? event.data : undefined);
-    }
-
-    private async triggerWebhooks(trigger: string, data?: unknown) {
-        const webhooksForTrigger = this.configModel.webhooks.getWebhooksForTrigger(trigger);
-
-        const promises = webhooksForTrigger.map((webhook) => this.triggerWebhook(webhook, trigger, data));
-
-        await Promise.all(promises);
+    private async handleEvent(event: Event, webhook: Webhook) {
+        await this.triggerWebhook(webhook, event.namespace, event instanceof DataEvent ? event.data : undefined);
     }
 
     private async triggerWebhook(webhook: Webhook, trigger: string, data: unknown) {
