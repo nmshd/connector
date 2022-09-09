@@ -155,10 +155,13 @@ describe("Execute AttributeQueries", () => {
 
         const executeIdentityAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
             query: {
-                valueType: "GivenName",
                 key: "AKey",
                 owner: client1Address,
-                attributeCreationHints: { title: "A title", confidentiality: "public" }
+                attributeCreationHints: {
+                    valueType: "GivenName",
+                    title: "A title",
+                    confidentiality: "public"
+                }
             }
         });
         expect(executeIdentityAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttributes);
