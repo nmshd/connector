@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0-beta.8
+
+-> SDK 2.0.0-beta.8
+
+-   upgrade the runtime to version 2.0.0-beta-23
+-   new `POST /api/v1/Attributes/ExecuteThirdPartyAttributeQuery` route for executing third party attribute queries
+
 ## 3.0.0-beta.7
 
 -   bugfix(webhooksV2): events are now correctly triggered for triggers with wildcards
@@ -15,7 +22,7 @@
 -> SDK 2.0.0-beta.4
 
 -   upgrade nodejs to 16.17.0
--   upgrade the runtime to version 2.0.0-alpha.30
+-   upgrade the runtime to version 2.0.0-beta.22
 
 ## 3.0.0-beta.4
 
