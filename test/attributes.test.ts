@@ -140,7 +140,7 @@ describe("Execute AttributeQueries", () => {
     });
 
     test("should execute a RelationshipAttributeQuery", async () => {
-        const attribute = await createAttribute(client1, {
+        await createAttribute(client1, {
             content: {
                 "@type": "RelationshipAttribute",
                 owner: client1Address,
@@ -165,8 +165,7 @@ describe("Execute AttributeQueries", () => {
             }
         });
         expect(executeRelationshipAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttribute);
-        const attributes = executeRelationshipAttributeQueryResult.result;
 
-        expect(attributes).toContainEqual(attribute);
+        expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AGivenName");
     });
 });
