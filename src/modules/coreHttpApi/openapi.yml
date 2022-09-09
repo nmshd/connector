@@ -568,7 +568,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: "#/components/schemas/ExecuteIdentityQueryRequest"
+              $ref: "#/components/schemas/ExecuteIdentityAttributeQueryRequest"
       responses:
         201:
           description: Success
@@ -606,7 +606,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: "#/components/schemas/ExecuteRelationshipQueryRequest"
+              $ref: "#/components/schemas/ExecuteRelationshipAttributeQueryRequest"
       responses:
         201:
           description: Success
@@ -616,9 +616,45 @@ paths:
                 type: object
                 properties:
                   result:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Attribute"
+                    type: object
+                    $ref: "#/components/schemas/Attribute"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v1/Attributes/ExecuteThirdPartyRelationshipAttributeQuery:
+    post:
+      operationId: executeRelationshipQuery
+      description: Execute a ThirdPartyAttributeQuery
+      tags:
+        - Attributes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/ExecuteThirdPartyRelationshipAttributeQueryRequest"
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    $ref: "#/components/schemas/Attribute"
                 required:
                   - result
           headers:
@@ -3372,7 +3408,7 @@ components:
         - address
         - publicKey
 
-    ExecuteIdentityQueryRequest:
+    ExecuteIdentityAttributeQueryRequest:
       type: object
       properties:
         query:
@@ -3397,7 +3433,7 @@ components:
       required:
         - query
 
-    ExecuteRelationshipQueryRequest:
+    ExecuteRelationshipAttributeQueryRequest:
       type: object
       properties:
         query:
@@ -3409,17 +3445,11 @@ components:
             owner:
               description: The owner of the relationship attribute.
               type: string
-            thirdParty:
-              description: The address of a third party owner of the relationship attribute.
-              type: string
             validFrom:
               description: The date the attribute became valid.
               type: string
             validTo:
               description: The date the attribute becomes invalid.
-              type: string
-            valueType:
-              description: The valueType of the attribute.
               type: string
             attributeCreationHints:
               description: This describes how to create an attribute if it does not exist.
@@ -3436,6 +3466,9 @@ components:
                 isTechnical:
                   type: boolean
                 title:
+                  type: string
+                valueType:
+                  description: The valueType of the attribute that will be created.
                   type: string
                 valueHints:
                   type: object
@@ -3478,12 +3511,40 @@ components:
                     - "@type"
               required:
                 - title
+                - valueType
                 - confidentiality
           required:
-            - valueType
             - key
             - owner
             - attributeCreationHints
+      required:
+        - query
+
+    ExecuteThirdPartyRelationshipAttributeQueryRequest:
+      type: object
+      properties:
+        query:
+          type: object
+          properties:
+            key:
+              description: The key of the relationship attribute.
+              type: string
+            owner:
+              description: The owner of the relationship attribute.
+              type: string
+            thirdParty:
+              description: The third party of the relationship attribute.
+              type: string
+            validFrom:
+              description: The date the attribute became valid.
+              type: string
+            validTo:
+              description: The date the attribute becomes invalid.
+              type: string
+          required:
+            - key
+            - owner
+            - thirdParty
       required:
         - query
 

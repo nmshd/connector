@@ -5,7 +5,7 @@
 -> SDK 2.0.0-beta.8
 
 -   upgrade the runtime to version 2.0.0-beta-23
--   new `POST /api/v1/Attributes/ExecuteThirdPartyAttributeQuery` route for executing third party attribute queries
+-   new `POST /api/v1/Attributes/ExecuteThirdPartyRelationshipAttributeQuery` route for executing ThirdPartyRelationshipAttribute queries
 
 ## 3.0.0-beta.7
 
