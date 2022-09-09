@@ -153,7 +153,7 @@ describe("Execute AttributeQueries", () => {
             }
         });
 
-        const executeIdentityAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
+        const executeRelationshipAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
             query: {
                 key: "AKey",
                 owner: client1Address,
@@ -164,8 +164,8 @@ describe("Execute AttributeQueries", () => {
                 }
             }
         });
-        expect(executeIdentityAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttributes);
-        const attributes = executeIdentityAttributeQueryResult.result;
+        expect(executeRelationshipAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+        const attributes = executeRelationshipAttributeQueryResult.result;
 
         expect(attributes).toContainEqual(attribute);
     });
