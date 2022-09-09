@@ -1,3 +1,4 @@
+import { ThirdPartyAttributeQuery } from "../attributes";
 import { ConnectorIdentityAttribute, ConnectorRelationshipAttribute } from "../attributes/ConnectorAttribute";
 import { IdentityAttributeQuery } from "../attributes/IdentityAttributeQuery";
 import { RelationshipAttributeQuery } from "../attributes/RelationshipAttributeQuery";
@@ -22,7 +23,7 @@ export interface ConnectorRequestContentItemGroup {
 }
 
 export type CreateOutgoingRequestRequestContentItemDerivations =
-    | CreateRelationshipAttributeRequestItem
+    | CreateAttributeRequestItem
     | ShareAttributeRequestItem
     | ProposeAttributeRequestItem
     | ReadAttributeRequestItem
@@ -37,9 +38,9 @@ export interface ConnectorRequestContentItem {
     mustBeAccepted: boolean;
 }
 
-export interface CreateRelationshipAttributeRequestItem extends ConnectorRequestContentItem {
-    "@type": "CreateRelationshipAttributeRequestItem";
-    attribute: ConnectorRelationshipAttribute;
+export interface CreateAttributeRequestItem extends ConnectorRequestContentItem {
+    "@type": "CreateAttributeRequestItem";
+    attribute: ConnectorIdentityAttribute | ConnectorRelationshipAttribute;
 }
 
 export interface ShareAttributeRequestItem extends ConnectorRequestContentItem {
@@ -56,7 +57,7 @@ export interface ProposeAttributeRequestItem extends ConnectorRequestContentItem
 
 export interface ReadAttributeRequestItem extends ConnectorRequestContentItem {
     "@type": "ReadAttributeRequestItem";
-    query: IdentityAttributeQuery | RelationshipAttributeQuery;
+    query: IdentityAttributeQuery | RelationshipAttributeQuery | ThirdPartyAttributeQuery;
 }
 
 export interface ConsentRequestItem extends ConnectorRequestContentItem {
