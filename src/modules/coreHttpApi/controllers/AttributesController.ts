@@ -51,6 +51,14 @@ export class AttributesController extends BaseController {
         return this.ok(result);
     }
 
+    @POST
+    @Path("/ExecuteThirdPartyRelationshipAttributeQuery")
+    @Accept("application/json")
+    public async executeThirdPartyRelationshipAttributeQuery(request: any): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.executeThirdPartyRelationshipAttributeQuery(request);
+        return this.ok(result);
+    }
+
     @GET
     @Path("/:id")
     @Accept("application/json")

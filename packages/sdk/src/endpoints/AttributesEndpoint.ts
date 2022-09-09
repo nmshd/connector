@@ -5,6 +5,7 @@ import {
     CreateAttributeRequest,
     ExecuteIdentityAttributeQueryRequest,
     ExecuteRelationshipAttributeQueryRequest,
+    ExecuteThirdPartyRelationshipAttributeQueryRequest,
     GetAttributesRequest,
     GetValidAttributesRequest
 } from "../types";
@@ -31,7 +32,11 @@ export class AttributesEndpoint extends Endpoint {
         return await this.post("/api/v1/Attributes/ExecuteIdentityAttributeQuery", request, 200);
     }
 
-    public async executeRelationshipAttributeQuery(request: ExecuteRelationshipAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
+    public async executeRelationshipAttributeQuery(request: ExecuteRelationshipAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
         return await this.post("/api/v1/Attributes/ExecuteRelationshipAttributeQuery", request, 200);
+    }
+
+    public async executeThirdPartyRelationshipAttributeQuery(request: ExecuteThirdPartyRelationshipAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
+        return await this.post("/api/v1/Attributes/ExecuteThirdPartyRelationshipAttributeQuery", request, 200);
     }
 }

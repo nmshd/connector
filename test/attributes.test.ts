@@ -140,7 +140,7 @@ describe("Execute AttributeQueries", () => {
     });
 
     test("should execute a RelationshipAttributeQuery", async () => {
-        const attribute = await createAttribute(client1, {
+        await createAttribute(client1, {
             content: {
                 "@type": "RelationshipAttribute",
                 owner: client1Address,
@@ -153,17 +153,19 @@ describe("Execute AttributeQueries", () => {
             }
         });
 
-        const executeIdentityAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
+        const executeRelationshipAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
             query: {
-                valueType: "GivenName",
                 key: "AKey",
                 owner: client1Address,
-                attributeCreationHints: { title: "A title", confidentiality: "public" }
+                attributeCreationHints: {
+                    valueType: "GivenName",
+                    title: "A title",
+                    confidentiality: "public"
+                }
             }
         });
-        expect(executeIdentityAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttributes);
-        const attributes = executeIdentityAttributeQueryResult.result;
+        expect(executeRelationshipAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttribute);
 
-        expect(attributes).toContainEqual(attribute);
+        expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AGivenName");
     });
 });

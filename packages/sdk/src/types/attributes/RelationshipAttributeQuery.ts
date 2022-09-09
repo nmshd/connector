@@ -1,16 +1,15 @@
 export interface RelationshipAttributeQuery {
     "@type"?: "RelationshipAttributeQuery";
-    valueType: string;
     validFrom?: string;
     validTo?: string;
     key: string;
     owner: string;
-    thirdParty?: string;
     attributeCreationHints: RelationshipAttributeCreationHints;
 }
 
 export interface RelationshipAttributeCreationHints {
     title: string;
+    valueType: string;
     description?: string;
     valueHints?: ValueHints;
     isTechnical?: boolean;
