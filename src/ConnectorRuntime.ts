@@ -93,6 +93,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
         connectorConfig.modules.decider.enabled = true;
         connectorConfig.modules.request.enabled = true;
+        connectorConfig.modules.attributeListener.enabled = true;
     }
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
