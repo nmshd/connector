@@ -55,6 +55,11 @@
             "displayName": "Request Module",
             "location": "@nmshd/runtime:RequestModule"
         },
+        "attributeListener": {
+            "enabled": true,
+            "displayName": "Attribute Listener",
+            "location": "@nmshd/runtime:AttributeListenerModule"
+        },
         "sync": {
             "displayName": "Sync",
             "location": "sync/SyncModule",
