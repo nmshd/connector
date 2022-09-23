@@ -53,18 +53,6 @@ export class RelationshipsController extends BaseController {
         return this.ok(result);
     }
 
-    @PUT
-    @Path(":id/Changes/:changeId/Revoke")
-    @Accept("application/json")
-    public async revokeRelationshipChange(@PathParam("id") id: string, @PathParam("changeId") changeId: string, body?: RelationshipChangeAnswer): Promise<Envelope> {
-        const result = await this.transportServices.relationships.revokeRelationshipChange({
-            relationshipId: id,
-            changeId,
-            content: body?.content
-        });
-        return this.ok(result);
-    }
-
     @GET
     @Accept("application/json")
     public async getRelationships(@Context context: ServiceContext): Promise<Envelope> {
