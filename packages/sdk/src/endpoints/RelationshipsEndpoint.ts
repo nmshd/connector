@@ -6,8 +6,7 @@ import {
     ConnectorResponse,
     CreateRelationshipRequest,
     GetRelationshipsRequest,
-    RejectRelationshipChangeRequest,
-    RevokeRelationshipChangeRequest
+    RejectRelationshipChangeRequest
 } from "../types";
 import { Endpoint } from "./Endpoint";
 
@@ -38,14 +37,6 @@ export class RelationshipsEndpoint extends Endpoint {
         request: RejectRelationshipChangeRequest = { content: {} }
     ): Promise<ConnectorResponse<ConnectorRelationship>> {
         return await this.put(`/api/v1/Relationships/${relationshipId}/Changes/${changeId}/Reject`, request);
-    }
-
-    public async revokeRelationshipChange(
-        relationshipId: string,
-        changeId: string,
-        request: RevokeRelationshipChangeRequest = { content: {} }
-    ): Promise<ConnectorResponse<ConnectorRelationship>> {
-        return await this.put(`/api/v1/Relationships/${relationshipId}/Changes/${changeId}/Revoke`, request);
     }
 
     public async getAttributesForRelationship(relationshipId: string): Promise<ConnectorResponse<ConnectorAttributes>> {
