@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0-beta.10
+
+-> SDK 2.0.0-beta.10
+
+-   remove support for revoke of Relationship Changes
+
 ## 3.0.0-beta.9
 
 -> SDK 2.0.0-beta.9
