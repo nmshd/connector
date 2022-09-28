@@ -9,8 +9,7 @@
     "logging": {
         "appenders": {
             "fileAppender": {
-                "type": "dateFile",
-                "filename": "/var/log/enmeshed-connector/latest.log"
+                "type": "dateFile"
             },
             "consoleAppender": {
                 "type": "stdout",

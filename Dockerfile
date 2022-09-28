@@ -24,10 +24,6 @@ RUN npm ci --omit=dev
 
 COPY --from=builder /usr/app/dist/ dist/
 
-RUN mkdir -p /var/log/enmeshed-connector && chmod 700 /var/log/enmeshed-connector && chown -R node:node /var/log/enmeshed-connector
-
-USER node
-
 LABEL org.opencontainers.image.source = "https://github.com/nmshd/cns-connector"
 
 ENTRYPOINT ["/sbin/tini", "--"]
