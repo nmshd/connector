@@ -9,7 +9,8 @@
     "logging": {
         "appenders": {
             "fileAppender": {
-                "type": "dateFile"
+                "type": "dateFile",
+                "filename": "./logs/latest.log"
             },
             "consoleAppender": {
                 "type": "stdout",
