@@ -6,7 +6,7 @@ import { Accept, Context, ContextAccept, ContextResponse, Errors, FileParam, For
 import { Envelope } from "../../../infrastructure";
 import { BaseController, Mimetype } from "../common/BaseController";
 
-@Path("/api/v1/Files")
+@Path("/api/v2/Files")
 export class FilesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();

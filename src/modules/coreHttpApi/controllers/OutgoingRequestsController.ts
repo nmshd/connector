@@ -4,7 +4,7 @@ import { Accept, Context, GET, Path, PathParam, POST, Return, ServiceContext } f
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
-@Path("/api/v1/Requests/Outgoing")
+@Path("/api/v2/Requests/Outgoing")
 export class OutgoingRequestsController extends BaseController {
     public constructor(@Inject private readonly consumptionServices: ConsumptionServices) {
         super();

@@ -64,7 +64,7 @@ describe("File Upload", () => {
 
     test("cannot upload a file that is null", async () => {
         // Cannot use client1.files.uploadOwn because it cannot deal with null values
-        const _response = await (client1.files as any).httpClient.post("/api/v1/Files/Own", makeUploadRequest({ file: null }));
+        const _response = await (client1.files as any).httpClient.post("/api/v2/Files/Own", makeUploadRequest({ file: null }));
         const response = (client1.files as any).makeResult(_response);
 
         expect(response).toBeAnError("must have required property 'content'", "error.runtime.validation.invalidPropertyValue");
