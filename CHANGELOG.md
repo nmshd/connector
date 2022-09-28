@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0-beta.11
+
+-> SDK 2.0.0-beta.11
+
+-   change API version to v2 (-> route prefix changes from /api/v1 to /api/v2)
+
 ## 3.0.0-beta.10
 
 -> SDK 2.0.0-beta.10

@@ -5,7 +5,7 @@ import { Accept, Context, ContextAccept, ContextResponse, Errors, GET, Path, Pat
 import { Envelope } from "../../../infrastructure";
 import { BaseController, Mimetype } from "../common/BaseController";
 
-@Path("/api/v1/Tokens")
+@Path("/api/v2/Tokens")
 export class TokensController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();

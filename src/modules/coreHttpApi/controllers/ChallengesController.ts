@@ -4,7 +4,7 @@ import { Accept, Path, POST, Return } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
-@Path("/api/v1/Challenges")
+@Path("/api/v2/Challenges")
 export class ChallengesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();
