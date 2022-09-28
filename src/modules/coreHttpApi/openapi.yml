@@ -5,7 +5,7 @@ servers:
     description: Local Connector API
 
 info:
-  version: "0.4"
+  version: "2.0"
   title: Connector
   description: |
     This API is work in progress and might be changed without further notice on any time.
