@@ -15,7 +15,7 @@ import {
     RuntimeServices,
     TransportServices
 } from "@nmshd/runtime";
-import { AccountController, TransportErrors } from "@nmshd/transport";
+import { AccountController, CoreErrors as TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import fs from "fs";
 import { validate as validateSchema } from "jsonschema";
@@ -124,7 +124,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         this.accountController = await new AccountController(this.transport, db, this.transport.config).init().catch((e) => {
             if (e instanceof ApplicationError && e.code === "error.transport.general.platformClientInvalid") {
-                this.logger.error(TransportErrors.general.platformClientInvalid().message);
+                this.logger.error(TransportCoreErrors.general.platformClientInvalid().message);
                 process.exit(1);
             }
 
@@ -146,7 +146,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             await accountController.authenticator.getToken();
         } catch (e) {
             if (e instanceof ApplicationError && e.code === "error.transport.request.noAuthGrant") {
-                this.logger.error(TransportErrors.general.platformClientInvalid().message);
+                this.logger.error(TransportCoreErrors.general.platformClientInvalid().message);
                 process.exit(1);
             }
         }

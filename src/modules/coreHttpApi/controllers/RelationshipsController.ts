@@ -21,14 +21,6 @@ export class RelationshipsController extends BaseController {
         return this.created(result);
     }
 
-    @POST
-    @Path(":id/Changes")
-    @Accept("application/json")
-    public async createRelationshipChange(@PathParam("id") id: string): Promise<Return.NewResource<Envelope>> {
-        const result = await this.transportServices.relationships.createRelationshipChange({ id });
-        return this.created(result);
-    }
-
     @PUT
     @Path(":id/Changes/:changeId/Accept")
     @Accept("application/json")
