@@ -18,28 +18,28 @@ export class TokensEndpoint extends Endpoint {
     }
 
     public async getToken(tokenId: string): Promise<ConnectorResponse<ConnectorToken>> {
-        return await this.get(`/api/v1/Tokens/${tokenId}`);
+        return await this.get(`/api/v2/Tokens/${tokenId}`);
     }
 
     public async getQrCodeForToken(tokenId: string): Promise<ConnectorResponse<ArrayBuffer>> {
-        return await this.downloadQrCode("GET", `/api/v1/Tokens/${tokenId}`);
+        return await this.downloadQrCode("GET", `/api/v2/Tokens/${tokenId}`);
     }
 
     public async getOwnTokens(request?: GetOwnTokensRequest): Promise<ConnectorResponse<ConnectorTokens>> {
-        return await this.get("/api/v1/Tokens/Own", request);
+        return await this.get("/api/v2/Tokens/Own", request);
     }
 
     public async createOwnToken(request: CreateOwnTokenRequest): Promise<ConnectorResponse<ConnectorToken>> {
-        return await this.post("/api/v1/Tokens/Own", request);
+        return await this.post("/api/v2/Tokens/Own", request);
     }
 
     public async getPeerTokens(request?: GetPeerTokensRequest): Promise<ConnectorResponse<ConnectorTokens>> {
-        return await this.get("/api/v1/Tokens/Peer", request);
+        return await this.get("/api/v2/Tokens/Peer", request);
     }
 
     public async loadPeerToken(request: LoadPeerTokenByReferenceRequest): Promise<ConnectorResponse<ConnectorToken>>;
     public async loadPeerToken(request: LoadPeerTokenByTruncatedReferenceRequest): Promise<ConnectorResponse<ConnectorToken>>;
     public async loadPeerToken(request: LoadPeerTokenRequest): Promise<ConnectorResponse<ConnectorToken>> {
-        return await this.post("/api/v1/Tokens/Peer", request);
+        return await this.post("/api/v2/Tokens/Peer", request);
     }
 }

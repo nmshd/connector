@@ -8,7 +8,7 @@ class RelationshipChangeAnswer {
     public content: any;
 }
 
-@Path("/api/v1/Relationships")
+@Path("/api/v2/Relationships")
 export class RelationshipsController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();
