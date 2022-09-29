@@ -140,18 +140,20 @@ describe("Execute AttributeQueries", () => {
     });
 
     test("should execute a RelationshipAttributeQuery", async () => {
-        await createAttribute(client1, {
+        const createAttributeResult = await createAttribute(client1, {
             content: {
                 "@type": "RelationshipAttribute",
                 owner: client1Address,
                 value: {
-                    "@type": "GivenName",
-                    value: "AGivenName"
+                    "@type": "ProprietaryString",
+                    title: "ATitle",
+                    value: "AString"
                 },
                 key: "AKey",
                 confidentiality: "public"
             }
         });
+        expect(createAttributeResult).toBeSuccessful(ValidationSchema.ConnectorAttribute);
 
         const executeRelationshipAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
             query: {
