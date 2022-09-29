@@ -4,17 +4,7 @@ import { ILogger } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionController } from "@nmshd/consumption";
-import {
-    ConsumptionServices,
-    DataViewExpander,
-    GetIdentityInfoResponse,
-    ModuleConfiguration,
-    Runtime,
-    RuntimeErrors,
-    RuntimeHealth,
-    RuntimeServices,
-    TransportServices
-} from "@nmshd/runtime";
+import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
 import { AccountController, CoreErrors as TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import fs from "fs";
@@ -98,7 +88,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
         if (!this.runtimeConfig.database.connectionString) {
-            this.logger.error(RuntimeErrors.startup.noDatabaseDefined());
+            this.logger.error("No database connection string provided.");
             process.exit(1);
         }
 
@@ -111,7 +101,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         try {
             await this.mongodbConnection.connect();
         } catch (e) {
-            this.logger.error(RuntimeErrors.database.connectionError());
+            this.logger.error("Could not connect to the configured database.");
             process.exit(1);
         }
         this.logger.debug("Finished initialization of Mongo DB connection.");

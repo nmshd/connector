@@ -5,7 +5,7 @@ import express from "express";
 import stringify from "json-stringify-safe";
 import { Errors } from "typescript-rest";
 import { ConnectorLoggerFactory } from "../../../logging/ConnectorLoggerFactory";
-import { Envelope, HttpError } from "../common";
+import { Envelope, HttpError, HttpErrors } from "../common";
 
 export class RouteNotFoundError extends Error {}
 
@@ -21,16 +21,17 @@ export function genericErrorHandler(error: any, _req: express.Request, res: expr
         if (error instanceof SyntaxError) {
             logger.debug(`Handling ${SyntaxError.name}...`);
 
-            const payload = Envelope.error(HttpError.forProd("error.connector.validation.invalidJsonInPayload", "The given payload is not a valid json object."));
+            const payload = Envelope.error(HttpErrors.invalidJsonInPayload());
 
             res.status(400).json(payload);
+
             return;
         }
 
         if (error instanceof RouteNotFoundError) {
             logger.debug(`Handling ${RouteNotFoundError.name}...`);
 
-            const payload = Envelope.error(HttpError.forProd("error.connector.routeDoesNotExist", "This route does not exist."));
+            const payload = Envelope.error(HttpErrors.routeDoesNotExist());
             res.status(404).json(payload);
             return;
         }
@@ -38,7 +39,7 @@ export function genericErrorHandler(error: any, _req: express.Request, res: expr
         if (error instanceof Errors.MethodNotAllowedError) {
             logger.debug(`Handling ${Errors.MethodNotAllowedError.name}...`);
 
-            const payload = Envelope.error(HttpError.forProd("error.connector.http.methodNotAllowed", "The request method is not supported for the requested resource."));
+            const payload = Envelope.error(HttpErrors.methodNotAllowed());
             res.status(405).json(payload);
             return;
         }
@@ -46,12 +47,7 @@ export function genericErrorHandler(error: any, _req: express.Request, res: expr
         if (error instanceof Errors.NotAcceptableError) {
             logger.debug(`Handling ${Errors.NotAcceptableError.name}...`);
 
-            const payload = Envelope.error(
-                HttpError.forProd(
-                    "error.connector.http.notAcceptable",
-                    "The requested resource is capable of generating only content not acceptable according to the Accept headers sent in the request."
-                )
-            );
+            const payload = Envelope.error(HttpErrors.notAcceptable());
             res.status(406).json(payload);
             return;
         }
