@@ -3,5 +3,4 @@ export interface GetOwnTemplatesRequest {
     expiresAt?: string | string[];
     createdByDevice?: string | string[];
     maxNumberOfAllocations?: number | number[];
-    maxNumberOfRelationships?: number | number[];
 }

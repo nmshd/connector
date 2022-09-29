@@ -3,5 +3,4 @@ export interface GetPeerRelationshipTemplatesRequest {
     expiresAt?: string | string[];
     createdBy?: string | string[];
     maxNumberOfAllocations?: number | number[];
-    maxNumberOfRelationships?: number | number[];
 }
