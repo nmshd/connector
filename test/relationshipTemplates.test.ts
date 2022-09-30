@@ -14,12 +14,11 @@ afterAll(() => launcher.stop());
 
 describe("Template Tests", () => {
     let template: ConnectorRelationshipTemplate;
-    let templateWithUndefinedMaxNumberOfRelationships: ConnectorRelationshipTemplate;
     let templateWithUndefinedMaxNumberOfAllocations: ConnectorRelationshipTemplate;
 
     test("create a template", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
-            maxNumberOfRelationships: 1,
+            maxNumberOfAllocations: 1,
             expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
             content: { a: "b" }
         });
@@ -27,25 +26,6 @@ describe("Template Tests", () => {
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
 
         template = response.result;
-    });
-
-    test("create a template with undefined maxNumberOfRelationships", async () => {
-        const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
-            content: { a: "A" },
-            expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
-        });
-
-        templateWithUndefinedMaxNumberOfRelationships = response.result;
-
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
-        expect(templateWithUndefinedMaxNumberOfRelationships.maxNumberOfRelationships).toBeUndefined();
-    });
-
-    test("read a template with undefined maxNumberOfRelationships", async () => {
-        const response = await client1.relationshipTemplates.getRelationshipTemplate(templateWithUndefinedMaxNumberOfRelationships.id);
-
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
-        expect(templateWithUndefinedMaxNumberOfRelationships.maxNumberOfRelationships).toBeUndefined();
     });
 
     test("create a template with undefined maxNumberOfAllocations", async () => {
@@ -64,7 +44,7 @@ describe("Template Tests", () => {
         const response = await client1.relationshipTemplates.getRelationshipTemplate(templateWithUndefinedMaxNumberOfAllocations.id);
 
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
-        expect(templateWithUndefinedMaxNumberOfAllocations.maxNumberOfAllocations).toBeUndefined();
+        expect(response.result.maxNumberOfAllocations).toBeUndefined();
     });
 
     test("see If template exists in /RelationshipTemplates/Own", async () => {
@@ -82,17 +62,6 @@ describe("Template Tests", () => {
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
     });
 
-    test("expect a validation error for sending maxNumberOfRelationships 0", async () => {
-        const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
-            content: { a: "A" },
-            expiresAt: DateTime.utc().plus({ minutes: 1 }).toString(),
-            maxNumberOfRelationships: 0
-        });
-
-        expect(response.isError).toBeTruthy();
-        expect(response.error.code).toBe("error.runtime.validation.invalidPropertyValue");
-    });
-
     test("expect a validation error for sending maxNumberOfAllocations 0", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
             content: { a: "A" },
@@ -102,18 +71,6 @@ describe("Template Tests", () => {
 
         expect(response.isError).toBeTruthy();
         expect(response.error.code).toBe("error.runtime.validation.invalidPropertyValue");
-    });
-
-    test("expect a validation error for sending maxNumberOfAllocations and maxNumberOfRelationships", async () => {
-        const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
-            content: { a: "A" },
-            expiresAt: DateTime.utc().plus({ minutes: 1 }).toString(),
-            maxNumberOfAllocations: 1,
-            maxNumberOfRelationships: 1
-        });
-
-        expect(response.isError).toBeTruthy();
-        expect(response.error.code).toBe("error.runtime.requestDeserialization");
     });
 });
 
@@ -147,8 +104,7 @@ describe("RelationshipTemplates Query", () => {
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
             .addStringSet("createdByDevice")
-            .addNumberSet("maxNumberOfAllocations")
-            .addNumberSet("maxNumberOfRelationships");
+            .addNumberSet("maxNumberOfAllocations");
 
         await conditions.executeTests((c, q) => c.relationshipTemplates.getRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
     });
@@ -160,8 +116,7 @@ describe("RelationshipTemplates Query", () => {
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
             .addStringSet("createdByDevice")
-            .addNumberSet("maxNumberOfAllocations")
-            .addNumberSet("maxNumberOfRelationships");
+            .addNumberSet("maxNumberOfAllocations");
         await conditions.executeTests((c, q) => c.relationshipTemplates.getOwnRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
     });
 
@@ -172,8 +127,7 @@ describe("RelationshipTemplates Query", () => {
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
             .addStringSet("createdByDevice")
-            .addNumberSet("maxNumberOfAllocations")
-            .addNumberSet("maxNumberOfRelationships");
+            .addNumberSet("maxNumberOfAllocations");
 
         await conditions.executeTests((c, q) => c.relationshipTemplates.getPeerRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
     });

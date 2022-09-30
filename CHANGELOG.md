@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0-beta.12
+
+-> SDK 2.0.0-beta.12
+
+-   upgrade the runtime to version 2.0.0-beta-29
+-   the deprecated webhooks module has been removed
+
 ## 3.0.0-beta.11
 
 -> SDK 2.0.0-beta.11

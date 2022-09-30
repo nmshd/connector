@@ -109,32 +109,6 @@
                     },
                     "type": "object"
                 },
-                "webhooks": {
-                    "additionalProperties": false,
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean",
-                            "default": false
-                        },
-                        "url": {
-                            "type": "string",
-                            "format": "url"
-                        },
-                        "headers": {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        },
-                        "publishInterval": {
-                            "type": "integer",
-                            "default": 60,
-                            "minimum": 1
-                        }
-                    },
-                    "required": ["url"],
-                    "type": "object"
-                },
                 "webhooksV2": {
                     "type": "object",
                     "properties": {

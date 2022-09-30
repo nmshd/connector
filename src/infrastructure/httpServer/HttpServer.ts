@@ -1,5 +1,4 @@
 import { sleep } from "@js-soft/ts-utils";
-import { RuntimeErrors } from "@nmshd/runtime";
 import compression from "compression";
 import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
@@ -9,7 +8,7 @@ import { Server } from "typescript-rest";
 import TypescriptRestIOC from "typescript-rest-ioc";
 import { buildInformation } from "../../buildInformation";
 import { ConnectorInfrastructure, InfrastructureConfiguration } from "../ConnectorInfastructure";
-import { Envelope, HttpError } from "./common";
+import { Envelope, HttpErrors } from "./common";
 import { HttpMethod } from "./HttpMethod";
 import { csrfErrorHandler } from "./middlewares/csrfErrorHandler";
 import { genericErrorHandler, RouteNotFoundError } from "./middlewares/genericErrorHandler";
@@ -97,8 +96,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 const apiKeyFromHeader = req.headers["x-api-key"];
                 if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
                     await sleep(1000);
-                    const error = RuntimeErrors.general.unauthorized();
-                    res.status(401).send(Envelope.error(HttpError.forProd(error.code, error.message)));
+                    res.status(401).send(Envelope.error(HttpErrors.unauthorized()));
                     return;
                 }
 

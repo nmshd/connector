@@ -145,8 +145,9 @@ describe("Execute AttributeQueries", () => {
                 "@type": "RelationshipAttribute",
                 owner: client1Address,
                 value: {
-                    "@type": "GivenName",
-                    value: "AGivenName"
+                    "@type": "ProprietaryString",
+                    title: "ATitle",
+                    value: "AString"
                 },
                 key: "AKey",
                 confidentiality: "public"
@@ -158,7 +159,7 @@ describe("Execute AttributeQueries", () => {
                 key: "AKey",
                 owner: client1Address,
                 attributeCreationHints: {
-                    valueType: "GivenName",
+                    valueType: "ProprietaryString",
                     title: "A title",
                     confidentiality: "public"
                 }
@@ -166,6 +167,6 @@ describe("Execute AttributeQueries", () => {
         });
         expect(executeRelationshipAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttribute);
 
-        expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AGivenName");
+        expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AString");
     });
 });

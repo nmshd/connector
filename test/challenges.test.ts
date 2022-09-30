@@ -111,6 +111,6 @@ describe("Validate Challenge", () => {
             challengeString: response.result.challengeString,
             signature: response.result.signature
         });
-        expect(validationResult).toBeAnError("Validating challenges of the type 'Device' is not yet implemented.", "error.runtime.featureNotImplemented");
+        expect(validationResult).toBeAnError("Validating challenges of the type 'Device' is not yet supported.", "error.runtime.notSupported");
     });
 });

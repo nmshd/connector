@@ -4,18 +4,8 @@ import { ILogger } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionController } from "@nmshd/consumption";
-import {
-    ConsumptionServices,
-    DataViewExpander,
-    GetIdentityInfoResponse,
-    ModuleConfiguration,
-    Runtime,
-    RuntimeErrors,
-    RuntimeHealth,
-    RuntimeServices,
-    TransportServices
-} from "@nmshd/runtime";
-import { AccountController, TransportErrors } from "@nmshd/transport";
+import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
+import { AccountController, CoreErrors as TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import fs from "fs";
 import { validate as validateSchema } from "jsonschema";
@@ -23,6 +13,7 @@ import path from "path";
 import { buildInformation } from "./buildInformation";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
+import { DocumentationLink } from "./DocumentationLink";
 import { HealthChecker } from "./HealthChecker";
 import { HttpServer } from "./infrastructure";
 import { ConnectorInfrastructureRegistry } from "./infrastructure/ConnectorInfrastructureRegistry";
@@ -98,7 +89,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
         if (!this.runtimeConfig.database.connectionString) {
-            this.logger.error(RuntimeErrors.startup.noDatabaseDefined());
+            this.logger.error(`No database connection string provided. See ${DocumentationLink.integrate__configuration("database")} on how to configure the database connection.`);
             process.exit(1);
         }
 
@@ -111,7 +102,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         try {
             await this.mongodbConnection.connect();
         } catch (e) {
-            this.logger.error(RuntimeErrors.database.connectionError());
+            this.logger.error("Could not connect to the configured database. Try to check the connection string and the database status. Root error: ", e);
+
             process.exit(1);
         }
         this.logger.debug("Finished initialization of Mongo DB connection.");
@@ -124,7 +116,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         this.accountController = await new AccountController(this.transport, db, this.transport.config).init().catch((e) => {
             if (e instanceof ApplicationError && e.code === "error.transport.general.platformClientInvalid") {
-                this.logger.error(TransportErrors.general.platformClientInvalid().message);
+                this.logger.error(TransportCoreErrors.general.platformClientInvalid().message);
                 process.exit(1);
             }
 
@@ -146,7 +138,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             await accountController.authenticator.getToken();
         } catch (e) {
             if (e instanceof ApplicationError && e.code === "error.transport.request.noAuthGrant") {
-                this.logger.error(TransportErrors.general.platformClientInvalid().message);
+                this.logger.error(TransportCoreErrors.general.platformClientInvalid().message);
                 process.exit(1);
             }
         }
