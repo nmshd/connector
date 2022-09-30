@@ -140,7 +140,7 @@ describe("Execute AttributeQueries", () => {
     });
 
     test("should execute a RelationshipAttributeQuery", async () => {
-        const createAttributeResult = await createAttribute(client1, {
+        await createAttribute(client1, {
             content: {
                 "@type": "RelationshipAttribute",
                 owner: client1Address,
@@ -153,14 +153,13 @@ describe("Execute AttributeQueries", () => {
                 confidentiality: "public"
             }
         });
-        expect(createAttributeResult).toBeSuccessful(ValidationSchema.ConnectorAttribute);
 
         const executeRelationshipAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
             query: {
                 key: "AKey",
                 owner: client1Address,
                 attributeCreationHints: {
-                    valueType: "GivenName",
+                    valueType: "ProprietaryString",
                     title: "A title",
                     confidentiality: "public"
                 }
@@ -168,6 +167,6 @@ describe("Execute AttributeQueries", () => {
         });
         expect(executeRelationshipAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttribute);
 
-        expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AGivenName");
+        expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AString");
     });
 });
