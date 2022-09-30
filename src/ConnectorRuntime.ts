@@ -13,6 +13,7 @@ import path from "path";
 import { buildInformation } from "./buildInformation";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
+import { DocumentationLink } from "./DocumentationLink";
 import { HealthChecker } from "./HealthChecker";
 import { HttpServer } from "./infrastructure";
 import { ConnectorInfrastructureRegistry } from "./infrastructure/ConnectorInfrastructureRegistry";
@@ -88,7 +89,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
         if (!this.runtimeConfig.database.connectionString) {
-            this.logger.error("No database connection string provided.");
+            this.logger.error(`No database connection string provided. See ${DocumentationLink.integrate__configuration("database")} on how to configure the database connection.`);
             process.exit(1);
         }
 
@@ -101,7 +102,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         try {
             await this.mongodbConnection.connect();
         } catch (e) {
-            this.logger.error("Could not connect to the configured database.");
+            this.logger.error("Could not connect to the configured database. Try to check the connection string and the database status. Root error: ", e);
+
             process.exit(1);
         }
         this.logger.debug("Finished initialization of Mongo DB connection.");
