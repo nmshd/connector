@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0-beta.14
+
+-> SDK 2.0.0-beta.13
+
+-   upgrade the runtime to version 2.0.0-beta.34
+
 ## 3.0.0-beta.13
 
 -   upgrade nodejs to 18.10.0

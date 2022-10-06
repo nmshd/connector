@@ -1,5 +1,4 @@
 import axios from "axios";
-import qs from "qs";
 import { ConnectorConfig } from "./ConnectorConfig";
 import {
     AccountEndpoint,
@@ -37,12 +36,7 @@ export class ConnectorClient {
             httpAgent: config.httpAgent,
             httpsAgent: config.httpsAgent,
             validateStatus: (_) => true,
-            paramsSerializer: (params) => {
-                return qs.stringify(params, {
-                    arrayFormat: "repeat",
-                    allowDots: true
-                });
-            }
+            paramsSerializer: { dots: true, indexes: null }
         });
 
         this.account = new AccountEndpoint(axiosInstance);
