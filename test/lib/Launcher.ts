@@ -1,8 +1,8 @@
 import { ConnectorClient } from "@nmshd/connector-sdk";
 import { ChildProcess, spawn } from "child_process";
 import path from "path";
-import waitOn from "wait-on";
 import getPort from "./getPort";
+import simpleWaitOn from "./simpleWaitOn";
 
 export class Launcher {
     private readonly _processes: ChildProcess[] = [];
@@ -25,26 +25,25 @@ export class Launcher {
 
         this._processes.push(this.spawnConnector(port, accountName));
 
-        await waitOn({ resources: [`tcp:localhost:${port}`] });
+        await simpleWaitOn(port);
 
         return `http://localhost:${port}`;
     }
 
     public async launch(count: number): Promise<ConnectorClient[]> {
-        const clients = [];
-        const resources = [];
+        const clients: ConnectorClient[] = [];
+        const ports: number[] = [];
 
         for (let i = 0; i < count; i++) {
             const port = await getPort();
             clients.push(ConnectorClient.create({ baseUrl: `http://localhost:${port}`, apiKey: "xxx" }));
-            resources.push(`tcp:localhost:${port}`);
+            ports.push(port);
 
             const accountName = this.randomString();
             this._processes.push(this.spawnConnector(port, accountName));
         }
 
-        await waitOn({ resources });
-
+        await Promise.all(ports.map(simpleWaitOn));
         return clients;
     }
 
