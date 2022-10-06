@@ -5,12 +5,8 @@ const launcher = new Launcher();
 let axiosClient: AxiosInstance;
 
 beforeAll(async () => {
-    const baseUrl = await launcher.launchSimple();
-    axiosClient = axios.create({
-        baseURL: baseUrl,
-        maxRedirects: 0,
-        validateStatus: (_) => true
-    });
+    const baseURL = await launcher.launchSimple();
+    axiosClient = axios.create({ baseURL, maxRedirects: 0, validateStatus: (_) => true });
 }, 30000);
 
 afterAll(() => launcher.stop());
