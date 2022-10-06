@@ -1,7 +1,7 @@
 import { sleep } from "@js-soft/ts-utils";
 import axios from "axios";
 
-export default async function simpleWaitOn(port: number): Promise<void> {
+export default async function waitForConnector(port: number): Promise<void> {
     const maxRetries = 10;
     const timeout = 1000;
 
