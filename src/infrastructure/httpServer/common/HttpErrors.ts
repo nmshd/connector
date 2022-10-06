@@ -10,7 +10,7 @@ export class HttpErrors {
     }
 
     public static routeDoesNotExist(): HttpError {
-        return HttpError.forProd("error.connector.routeDoesNotExist", "This route does not exist.");
+        return HttpError.forProd("error.connector.http.routeDoesNotExist", "The requested route does not exist.");
     }
 
     public static methodNotAllowed(): HttpError {
