@@ -17,24 +17,20 @@ FROM node:18.10.0-alpine
 ENV NODE_CONFIG_ENV=prod
 RUN apk add --no-cache tini
 
-RUN mkdir -p /var/log/connector
-RUN chown -R node:node /var/log/connector
-
-RUN mkdir -p /usr/app
-RUN chown -R node:node /usr/app
-
-USER node
+RUN mkdir -p /var/log/connector && chown -R node:node /var/log/connector
 
 WORKDIR /usr/app
 
-COPY --chown=node:node config config
-COPY --chown=node:node package.json package-lock.json ./
+COPY config config
+COPY package.json package-lock.json ./
 
 RUN npm ci --omit=dev
 
-COPY --chown=node:node --from=builder /usr/app/dist/ dist/
+COPY --from=builder /usr/app/dist/ dist/
 
 LABEL org.opencontainers.image.source = "https://github.com/nmshd/cns-connector"
+
+USER node
 
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["node", "/usr/app/dist/index.js"]
