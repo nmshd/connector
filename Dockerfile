@@ -20,6 +20,9 @@ RUN apk add --no-cache tini
 RUN mkdir -p /var/log/connector
 RUN chown -R node:node /var/log/connector
 
+RUN mkdir -p /usr/app
+RUN chown -R node:node /usr/app
+
 USER node
 
 WORKDIR /usr/app
