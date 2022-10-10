@@ -17,7 +17,7 @@ FROM node:18.10.0-alpine
 ENV NODE_CONFIG_ENV=prod
 RUN apk add --no-cache tini
 
-RUN mkdir -p /var/log/connector && chown -R node:node /var/log/connector
+RUN mkdir -p /var/log/enmeshed-connector && chown -R node:node /var/log/enmeshed-connector
 
 WORKDIR /usr/app
 
