@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0-beta.16
+
+-   upgrade the runtime to version 2.0.0-beta.38
+
 ## 3.0.0-beta.15
 
 -   switch from `root` user to the `node` user in the Docker image
