@@ -3511,6 +3511,7 @@ components:
         - owner
         - value
       type: object
+
     RelationshipAttribute:
       additionalProperties: false
       properties:
@@ -3555,6 +3556,7 @@ components:
         - owner
         - value
       type: object
+
     Attribute:
       additionalProperties: false
       properties:
@@ -3588,6 +3590,7 @@ components:
         - createdAt
         - content
       type: object
+
     AttributeShareInfo:
       additionalProperties: false
       properties:
@@ -3610,6 +3613,7 @@ components:
         - requestReference
         - peer
       type: object
+
     AttributeValue:
       additionalProperties: {}
       properties:
@@ -3622,6 +3626,7 @@ components:
       required:
         - "@type"
       type: object
+
     ConnectorHealth:
       type: object
       properties:
