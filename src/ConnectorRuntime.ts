@@ -56,6 +56,14 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         return runtime;
     }
 
+    public override async start(): Promise<void> {
+        await super.start();
+        this.logger.warn(
+            "The current version of the Connector is deprecated and will only be supported until 27-11-2022. Please update to the latest version of the Connector (3.*.*) (https://enmeshed.eu/integrate/connector-migration-v2)."
+        );
+        return;
+    }
+
     protected createLoggerFactory(): ILoggerFactory {
         const loggerFactory = new NodeLoggerFactory(this.runtimeConfig.logging);
         this.logger = loggerFactory.getLogger(Runtime);
