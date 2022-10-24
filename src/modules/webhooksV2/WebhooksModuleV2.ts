@@ -1,4 +1,5 @@
-import { DataEvent, Event } from "@nmshd/runtime";
+import { Event } from "@js-soft/ts-utils";
+import { DataEvent } from "@nmshd/runtime";
 import AgentKeepAlive, { HttpsAgent as AgentKeepAliveHttps } from "agentkeepalive";
 import axios, { AxiosInstance } from "axios";
 import { ConnectorRuntimeModule } from "../../ConnectorRuntimeModule";
@@ -7,7 +8,6 @@ import { ConfigParser } from "./ConfigParser";
 import { WebhooksModuleConfiguration } from "./WebhooksModuleConfiguration";
 
 export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksModuleConfiguration> {
-    private readonly eventSubscriptionIds: number[] = [];
     private axios: AxiosInstance;
     private configModel: ConfigModel;
 
@@ -23,22 +23,15 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
     }
 
     public start(): void {
-        for (const trigger of this.configModel.webhooks.getDistinctTriggers()) {
-            const subscriptionId = this.runtime.eventBus.subscribe(trigger, this.handleEvent.bind(this));
-            this.eventSubscriptionIds.push(subscriptionId);
+        for (const webhook of this.configModel.webhooks) {
+            for (const trigger of webhook.triggers) {
+                this.subscribeToEvent(trigger, async (event: Event) => await this.handleEvent(event, webhook));
+            }
         }
     }
 
-    private async handleEvent(event: Event) {
-        await this.triggerWebhooks(event.namespace, event instanceof DataEvent ? event.data : undefined);
-    }
-
-    private async triggerWebhooks(trigger: string, data?: unknown) {
-        const webhooksForTrigger = this.configModel.webhooks.getWebhooksForTrigger(trigger);
-
-        const promises = webhooksForTrigger.map((webhook) => this.triggerWebhook(webhook, trigger, data));
-
-        await Promise.all(promises);
+    private async handleEvent(event: Event, webhook: Webhook) {
+        await this.triggerWebhook(webhook, event.namespace, event instanceof DataEvent ? event.data : undefined);
     }
 
     private async triggerWebhook(webhook: Webhook, trigger: string, data: unknown) {
@@ -65,9 +58,7 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
     }
 
     public stop(): void {
-        for (const subscriptionId of this.eventSubscriptionIds) {
-            this.runtime.eventBus.unsubscribe(this.handleEvent.bind(this), subscriptionId);
-        }
+        this.unsubscribeFromAllEvents();
     }
 }
 

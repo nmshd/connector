@@ -17,13 +17,13 @@ afterAll(() => launcher.stop());
 
 describe("Errors", () => {
     test("http error 401", async () => {
-        const response = await axiosClient.get<any>("/api/v1/Files");
+        const response = await axiosClient.get<any>("/api/v2/Files");
         expect(response.status).toBe(401);
         validateSchema(ValidationSchema.Error, response.data.error);
     });
 
     test("http error 404", async () => {
-        const response = await axiosClient.get<any>("/apii/v1/Files", {
+        const response = await axiosClient.get<any>("/apii/v2/Files", {
             headers: {
                 "X-API-KEY": "xxx" // eslint-disable-line @typescript-eslint/naming-convention
             }
@@ -33,7 +33,7 @@ describe("Errors", () => {
     });
 
     test("http error 405", async () => {
-        const response = await axiosClient.patch<any>("/api/v1/Files", undefined, {
+        const response = await axiosClient.patch<any>("/api/v2/Files", undefined, {
             headers: {
                 "X-API-KEY": "xxx" // eslint-disable-line @typescript-eslint/naming-convention
             }
@@ -43,7 +43,7 @@ describe("Errors", () => {
     });
 
     test("http error 400", async () => {
-        const response = await axiosClient.post<any>("/api/v1/Files/Own", undefined, {
+        const response = await axiosClient.post<any>("/api/v2/Files/Own", undefined, {
             headers: {
                 "X-API-KEY": "xxx" // eslint-disable-line @typescript-eslint/naming-convention
             }

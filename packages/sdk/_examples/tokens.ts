@@ -9,7 +9,7 @@ async function run() {
 
     const createdToken = (
         await client.tokens.createOwnToken({
-            expiresAt: "2022",
+            expiresAt: "2023",
             content: { a: "a" }
         })
     ).result!;

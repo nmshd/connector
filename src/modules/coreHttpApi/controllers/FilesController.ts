@@ -1,18 +1,20 @@
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
+import { Reference } from "@nmshd/transport";
 import express from "express";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, FileParam, FormParam, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, Errors, FileParam, FormParam, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController, Mimetype } from "../common/BaseController";
 
-@Path("/api/v1/Files")
+@Path("/api/v2/Files")
 export class FilesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();
     }
 
-    @Path("/Own")
     @POST
+    @Path("/Own")
+    @Accept("application/json")
     public async uploadOwnFile(
         @FormParam("expiresAt") expiresAt: string,
         @FormParam("title") title: string,
@@ -21,28 +23,27 @@ export class FilesController extends BaseController {
     ): Promise<Return.NewResource<Envelope>> {
         const result = await this.transportServices.files.uploadOwnFile({
             content: file?.buffer,
-            expiresAt: expiresAt,
+            expiresAt,
             filename: file?.originalname,
             mimetype: file?.mimetype,
-            title: title,
-            description: description
+            title,
+            description
         } as any);
         return this.created(result);
     }
 
-    @Path("/Peer")
     @POST
+    @Path("/Peer")
+    @Accept("application/json")
     public async loadPeerFile(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.transportServices.files.loadPeerFile(request);
+        const result = await this.transportServices.files.getOrLoadFile(request);
         return this.created(result);
     }
 
-    @Path(":id/Download")
     @GET
+    @Path(":id/Download")
     public async downloadFile(@PathParam("id") id: string, @ContextResponse response: express.Response): Promise<void> {
-        const result = await this.transportServices.files.downloadFile({
-            id: id
-        });
+        const result = await this.transportServices.files.downloadFile({ id });
 
         return this.file(
             result,
@@ -55,6 +56,7 @@ export class FilesController extends BaseController {
     }
 
     @GET
+    @Accept("application/json")
     public async getFiles(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.transportServices.files.getFiles({
             query: context.request.query
@@ -62,8 +64,9 @@ export class FilesController extends BaseController {
         return this.ok(result);
     }
 
-    @Path("/Own")
     @GET
+    @Path("/Own")
+    @Accept("application/json")
     public async getOwnFiles(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.transportServices.files.getFiles({
             query: context.request.query,
@@ -72,8 +75,9 @@ export class FilesController extends BaseController {
         return this.ok(result);
     }
 
-    @Path("/Peer")
     @GET
+    @Path("/Peer")
+    @Accept("application/json")
     public async getPeerFiles(@Context context: ServiceContext): Promise<Envelope> {
         const result = await this.transportServices.files.getFiles({
             query: context.request.query,
@@ -82,17 +86,35 @@ export class FilesController extends BaseController {
         return this.ok(result);
     }
 
-    @Path(":id")
     @GET
-    public async getFile(@PathParam("id") id: string): Promise<Envelope> {
-        const result = await this.transportServices.files.getFile({
-            id: id
-        });
-        return this.ok(result);
+    @Path(":idOrReference")
+    // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
+    public async getFile(@PathParam("idOrReference") idOrReference: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+        const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.fromTruncated(idOrReference).id.toString();
+
+        switch (accept) {
+            case "image/png":
+                const qrCodeResult = await this.transportServices.files.createQrCodeForFile({ fileId });
+                return this.file(
+                    qrCodeResult,
+                    (r) => r.value.qrCodeBytes,
+                    () => `${fileId}.png`,
+                    () => Mimetype.png(),
+                    response,
+                    200
+                );
+
+            case "application/json":
+                const result = await this.transportServices.files.getFile({ id: fileId });
+                return this.ok(result);
+
+            default:
+                throw new Errors.NotAcceptableError();
+        }
     }
 
-    @Path("/:id/Token")
     @POST
+    @Path("/:id/Token")
     @Accept("application/json", "image/png")
     public async createTokenForFile(
         @PathParam("id") id: string,

@@ -22,7 +22,7 @@ npm i @nmshd/connector-sdk
     const uploadOwnFileResponse = await client.files.uploadOwnFile({
         title: "My awesome file",
         description: "Test file",
-        expiresAt: "2022-01-01T00:00:00Z",
+        expiresAt: "2023-01-01T00:00:00Z",
         file: await fs.promises.readFile(FILE_PATH),
         filename: "my-awesome-file.txt"
     });

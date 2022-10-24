@@ -1,13 +1,14 @@
 set -e
 set -x
 
-npx lerna bootstrap
-npx lerna run build:ci
+npm ci
+npm run build:ci --workspaces --if-present
 
 # linting
+npm run lint:tsc
 npm run lint:eslint
 npm run lint:prettier
 
 # auditing
 npx license-check --ignoreRegex @nmshd/connector
-npx better-lerna-audit --exclude 1070480,1081004,1084485,1084488,1081673,1084765
+npx better-npm-audit audit --exclude 1081673,1081673

@@ -1,5 +1,5 @@
 import { Result } from "@js-soft/ts-utils";
-import { ConfigModel, Target, Webhook, WebhookArray, WebhookUrlTemplate } from "./ConfigModel";
+import { ConfigModel, Target, Webhook, WebhookUrlTemplate } from "./ConfigModel";
 import { WebhooksModuleApplicationErrors } from "./WebhooksModuleApplicationErrors";
 import { WebhooksModuleConfiguration, WebhooksModuleConfigurationWebhook } from "./WebhooksModuleConfiguration";
 
@@ -41,12 +41,12 @@ export class ConfigParser {
         return Result.ok(target);
     }
 
-    private static parseWebhooks(configJson: WebhooksModuleConfiguration, namedTargets: Record<string, Target | undefined>): Result<WebhookArray> {
+    private static parseWebhooks(configJson: WebhooksModuleConfiguration, namedTargets: Record<string, Target | undefined>): Result<Webhook[]> {
         if (!configJson.webhooks) {
-            return Result.ok(new WebhookArray());
+            return Result.ok([]);
         }
 
-        const webhooks = new WebhookArray();
+        const webhooks: Webhook[] = [];
 
         for (const webhookJson of configJson.webhooks) {
             const result = this.parseWebhook(webhookJson, namedTargets);

@@ -10,6 +10,4 @@ export interface ConnectorRelationship {
     peer: string;
     peerIdentity: ConnectorIdentity;
     changes: ConnectorRelationshipChanges;
-    lastMessageSentAt?: string;
-    lastMessageReceivedAt?: string;
 }

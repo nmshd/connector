@@ -17,12 +17,18 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
-          registry-url: https://registry.npmjs.org/
-      - run: npx lerna bootstrap
-      - run: npx lerna run build:ci
+          node-version: 18
+      - run: npm ci
+      - run: npm run build:ci --workspaces --if-present
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.6.0
-      - run: npx lerna run test:ci
+      - run: npm run test:ci --workspaces --if-present
         env:
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017/?readPreference=primary&appname=transport&ssl=false
+
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the productive docker image
+        run: bash .ci/testBuildingProductiveDockerImage.sh

@@ -2,7 +2,7 @@ export interface ConnectorToken {
     id: string;
     createdBy: string;
     createdByDevice: string;
-    content: any;
+    content: unknown;
     createdAt: string;
     expiresAt: string;
     secretKey: string;

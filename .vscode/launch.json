@@ -4,7 +4,7 @@
         {
             "type": "node",
             "request": "attach",
-            "name": "Attach to BC 1",
+            "name": "Attach to Connector 1",
             "protocol": "auto",
             "port": 9229,
             "sourceMaps": true,
@@ -17,7 +17,7 @@
         {
             "type": "node",
             "request": "attach",
-            "name": "Attach to BC 2",
+            "name": "Attach to Connector 2",
             "protocol": "auto",
             "port": 9231,
             "sourceMaps": true,

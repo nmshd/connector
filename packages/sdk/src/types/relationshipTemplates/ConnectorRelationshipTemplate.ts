@@ -1,10 +1,11 @@
 export interface ConnectorRelationshipTemplate {
     id: string;
     isOwn: boolean;
-    maxNumberOfRelationships?: number;
+    maxNumberOfAllocations?: number;
     createdBy: string;
     createdByDevice: string;
     createdAt: string;
-    content: any;
+    content: unknown;
     expiresAt?: string;
+    truncatedReference: string;
 }

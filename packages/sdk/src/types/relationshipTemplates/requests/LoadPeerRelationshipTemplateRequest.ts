@@ -1,4 +1,4 @@
-import { TokenReferenceTruncated } from "../../tokens/TokenReferenceTruncated";
 import { RelationshipTemplateReference } from "../RelationshipTemplateReference";
+import { TruncatedRelationshipTemplateReference } from "../TruncatedRelationshipTemplateReference";
 
-export type LoadPeerRelationshipTemplateRequest = TokenReferenceTruncated | RelationshipTemplateReference;
+export type LoadPeerRelationshipTemplateRequest = TruncatedRelationshipTemplateReference | RelationshipTemplateReference;

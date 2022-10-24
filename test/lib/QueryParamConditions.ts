@@ -2,7 +2,7 @@
 
 import { ConnectorClient, ConnectorResponse } from "@nmshd/connector-sdk";
 import { DateTime } from "luxon";
-import { validateSchema, ValidationSchema } from "./validation";
+import { ValidationSchema } from "./validation";
 
 type QueryFunction = (client: ConnectorClient, params: any) => Promise<any>;
 
@@ -29,7 +29,7 @@ export class QueryParamConditions {
         }
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue,
             expectedResult: true
         });
@@ -37,13 +37,13 @@ export class QueryParamConditions {
         const positiveValueAsDate = DateTime.fromISO(positiveValue);
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValueAsDate.plus({ hours: 24 }).toString(),
             expectedResult: false
         });
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValueAsDate.minus({ hours: 24 }).toString(),
             expectedResult: false
         });
@@ -61,13 +61,13 @@ export class QueryParamConditions {
         }
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue,
             expectedResult: true
         });
 
         this._conditions.push({
-            key: key,
+            key,
             value: !positiveValue,
             expectedResult: false
         });
@@ -85,19 +85,19 @@ export class QueryParamConditions {
         }
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue,
             expectedResult: true
         });
 
         this._conditions.push({
-            key: key,
+            key,
             value: (positiveValue + 1).toString(),
             expectedResult: false
         });
 
         this._conditions.push({
-            key: key,
+            key,
             value: (positiveValue - 1).toString(),
             expectedResult: false
         });
@@ -115,13 +115,13 @@ export class QueryParamConditions {
         }
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue,
             expectedResult: true
         });
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue.replace(/....$/, "XXXX"),
             expectedResult: false
         });
@@ -142,13 +142,13 @@ export class QueryParamConditions {
         const positiveValue = positiveValueArray[0];
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue,
             expectedResult: true
         });
 
         this._conditions.push({
-            key: key,
+            key,
             value: positiveValue.replace(/....$/, "XXXX"),
             expectedResult: false
         });
@@ -160,6 +160,7 @@ export class QueryParamConditions {
         const keyParts = key.split(".");
         let value = this.object;
         for (const keyPart of keyParts) {
+            if (!value) return;
             value = value[keyPart];
         }
 
@@ -174,15 +175,13 @@ export class QueryParamConditions {
         for (const condition of this._conditions) {
             const response: ConnectorResponse<any> = await queryFunction(this.connectorClient, { [condition.key]: condition.value });
 
-            expect(response.isSuccess).toBeTruthy();
+            expect(response).toBeSuccessful(schema);
 
             if (condition.expectedResult) {
                 expect(response.result, `Positive match failed for key "${condition.key}" and value "${condition.value}".`).toContainEqual(this.object);
             } else {
                 expect(response.result, `Negative match failed for key "${condition.key}" and value "${condition.value}".`).not.toContainEqual(this.object);
             }
-
-            validateSchema(schema, response.result);
         }
     }
 }
