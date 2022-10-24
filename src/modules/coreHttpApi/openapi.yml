@@ -4270,7 +4270,7 @@ components:
           nullable: false
         status:
           type: string
-          enum: [Pending, Active, Rejected]
+          enum: [Pending, Active, Rejected, Revoked]
           nullable: false
           description: The status of the relationship
         peer:
