@@ -15,8 +15,6 @@ export interface ConnectorAttributeShareInfo {
 
 export interface ConnectorBaseAttribute {
     "@type": string;
-    "@context"?: string;
-    "@version"?: string;
     owner: string;
     validFrom?: string;
     validTo?: string;
@@ -38,7 +36,5 @@ export interface ConnectorRelationshipAttribute extends ConnectorBaseAttribute {
 
 export interface ConnectorAttributeValue {
     "@type": string;
-    "@context"?: string;
-    "@version"?: string;
     [key: string]: unknown;
 }

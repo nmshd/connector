@@ -18,8 +18,6 @@ export interface RelationshipAttributeCreationHints {
 
 export interface ValueHints {
     "@type": "ValueHints";
-    "@context"?: string;
-    "@version"?: string;
     editHelp?: string;
     min?: number;
     max?: number;
@@ -30,8 +28,6 @@ export interface ValueHints {
 
 export interface ValueHintsValue {
     "@type": "ValueHintsValue";
-    "@context"?: string;
-    "@version"?: string;
     key: string | number | boolean;
     displayName: string;
 }

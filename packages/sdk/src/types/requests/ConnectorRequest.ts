@@ -38,7 +38,6 @@ export interface ConnectorRequestResponseSource {
 
 export interface ConnectorRequestResponseContent {
     "@type": string;
-    "@version"?: string;
     result: ConnectorRequestResponseResult;
     requestId: string;
     items: (ConnectorRequestResponseItemGroup | ConnectorRequestResponseItem)[];
@@ -51,7 +50,6 @@ export enum ConnectorRequestResponseResult {
 
 export interface ConnectorRequestResponseItem {
     "@type": string;
-    "@version"?: string;
     result: ConnectorRequestResponseItemResult;
     metadata?: object;
 }
@@ -64,7 +62,6 @@ export enum ConnectorRequestResponseItemResult {
 
 export interface ConnectorRequestResponseItemGroup {
     "@type": string;
-    "@version"?: string;
     items: ConnectorRequestResponseItem[];
     metadata?: object;
 }
