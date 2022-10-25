@@ -672,11 +672,7 @@ paths:
                         valueHints:
                           type: object
                           properties:
-                            "@context":
-                              type: string
                             "@type":
-                              type: string
-                            "@version":
                               type: string
                             defaultValue:
                               oneOf:
@@ -3465,11 +3461,7 @@ components:
     IdentityAttribute:
       additionalProperties: false
       properties:
-        "@context":
-          type: string
         "@type":
-          type: string
-        "@version":
           type: string
         owner:
           type: string
@@ -3500,11 +3492,7 @@ components:
     RelationshipAttribute:
       additionalProperties: false
       properties:
-        "@context":
-          type: string
         "@type":
-          type: string
-        "@version":
           type: string
         confidentiality:
           enum:
@@ -3602,11 +3590,7 @@ components:
     AttributeValue:
       additionalProperties: {}
       properties:
-        "@context":
-          type: string
         "@type":
-          type: string
-        "@version":
           type: string
       required:
         - "@type"
@@ -3817,8 +3801,6 @@ components:
       properties:
         "@type":
           type: string
-        "@version":
-          type: string
         title:
           type: string
           description: Will be rendered as title of the request.
@@ -3839,8 +3821,6 @@ components:
       type: object
       properties:
         "@type":
-          type: string
-        "@version":
           type: string
         title:
           type: string
@@ -3866,8 +3846,6 @@ components:
         "@type":
           type: string
           enum: ["Request"]
-        "@version":
-          type: string
         expiresAt:
           type: string
         id:
@@ -3887,8 +3865,6 @@ components:
       properties:
         "@type":
           type: string
-        "@version":
-          type: string
         result:
           type: string
           enum: [Accepted, Rejected, Failed]
@@ -3903,8 +3879,6 @@ components:
     RequestResponseContentItemGroup:
       properties:
         "@type":
-          type: string
-        "@version":
           type: string
         items:
           type: array
@@ -3924,8 +3898,6 @@ components:
         "@type":
           type: string
           enum: [Response]
-        "@version":
-          type: string
         result:
           type: string
           enum: [Accepted, Rejected]
