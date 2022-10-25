@@ -289,8 +289,15 @@ paths:
         content:
           application/json:
             schema:
+              additionalProperties: false
+              properties:
+                content:
+                  anyOf:
+                    - "$ref": "#/components/schemas/IdentityAttribute"
+                    - "$ref": "#/components/schemas/RelationshipAttribute"
+              required:
+                - content
               type: object
-              $ref: "#/components/schemas/CreateAttributeRequest"
       responses:
         201:
           description: Success
@@ -568,7 +575,28 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: "#/components/schemas/ExecuteIdentityAttributeQueryRequest"
+              properties:
+                query:
+                  type: object
+                  properties:
+                    tags:
+                      description: The tags of the attributes that will be filtered.
+                      items:
+                        type: string
+                      type: array
+                    validFrom:
+                      description: The date the attribute became valid.
+                      type: string
+                    validTo:
+                      description: The date the attribute becomes invalid.
+                      type: string
+                    valueType:
+                      description: The valueType of the attribute.
+                      type: string
+                  required:
+                    - valueType
+              required:
+                - query
       responses:
         201:
           description: Success
@@ -606,7 +634,90 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: "#/components/schemas/ExecuteRelationshipAttributeQueryRequest"
+              properties:
+                query:
+                  type: object
+                  properties:
+                    key:
+                      description: The key of the relationship attribute.
+                      type: string
+                    owner:
+                      description: The owner of the relationship attribute.
+                      type: string
+                    validFrom:
+                      description: The date the attribute became valid.
+                      type: string
+                    validTo:
+                      description: The date the attribute becomes invalid.
+                      type: string
+                    attributeCreationHints:
+                      description: This describes how to create an attribute if it does not exist.
+                      type: object
+                      properties:
+                        confidentiality:
+                          enum:
+                            - public
+                            - private
+                            - protected
+                          type: string
+                        description:
+                          type: string
+                        isTechnical:
+                          type: boolean
+                        title:
+                          type: string
+                        valueType:
+                          description: The valueType of the attribute that will be created.
+                          type: string
+                        valueHints:
+                          type: object
+                          properties:
+                            "@context":
+                              type: string
+                            "@type":
+                              type: string
+                            "@version":
+                              type: string
+                            defaultValue:
+                              oneOf:
+                                - type: string
+                                - type: number
+                                - type: boolean
+                            editHelp:
+                              type: string
+                            max:
+                              type: number
+                            min:
+                              type: number
+                            pattern:
+                              type: string
+                            values:
+                              items:
+                                type: object
+                                properties:
+                                  displayName:
+                                    type: string
+                                  key:
+                                    oneOf:
+                                      - type: string
+                                      - type: number
+                                      - type: boolean
+                                required:
+                                  - key
+                                  - displayName
+                              type: array
+                          required:
+                            - "@type"
+                      required:
+                        - title
+                        - valueType
+                        - confidentiality
+                  required:
+                    - key
+                    - owner
+                    - attributeCreationHints
+              required:
+                - query
       responses:
         201:
           description: Success
@@ -643,7 +754,31 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: "#/components/schemas/ExecuteThirdPartyRelationshipAttributeQueryRequest"
+              properties:
+                query:
+                  type: object
+                  properties:
+                    key:
+                      description: The key of the relationship attribute.
+                      type: string
+                    owner:
+                      description: The owner of the relationship attribute.
+                      type: string
+                    thirdParty:
+                      description: The third party of the relationship attribute.
+                      type: string
+                    validFrom:
+                      description: The date the attribute became valid.
+                      type: string
+                    validTo:
+                      description: The date the attribute becomes invalid.
+                      type: string
+                  required:
+                    - key
+                    - owner
+                    - thirdParty
+              required:
+                - query
       responses:
         201:
           description: Success
@@ -3327,156 +3462,6 @@ components:
         - address
         - publicKey
 
-    ExecuteIdentityAttributeQueryRequest:
-      type: object
-      properties:
-        query:
-          type: object
-          properties:
-            tags:
-              description: The tags of the attributes that will be filtered.
-              items:
-                type: string
-              type: array
-            validFrom:
-              description: The date the attribute became valid.
-              type: string
-            validTo:
-              description: The date the attribute becomes invalid.
-              type: string
-            valueType:
-              description: The valueType of the attribute.
-              type: string
-          required:
-            - valueType
-      required:
-        - query
-
-    ExecuteRelationshipAttributeQueryRequest:
-      type: object
-      properties:
-        query:
-          type: object
-          properties:
-            key:
-              description: The key of the relationship attribute.
-              type: string
-            owner:
-              description: The owner of the relationship attribute.
-              type: string
-            validFrom:
-              description: The date the attribute became valid.
-              type: string
-            validTo:
-              description: The date the attribute becomes invalid.
-              type: string
-            attributeCreationHints:
-              description: This describes how to create an attribute if it does not exist.
-              type: object
-              properties:
-                confidentiality:
-                  enum:
-                    - public
-                    - private
-                    - protected
-                  type: string
-                description:
-                  type: string
-                isTechnical:
-                  type: boolean
-                title:
-                  type: string
-                valueType:
-                  description: The valueType of the attribute that will be created.
-                  type: string
-                valueHints:
-                  type: object
-                  properties:
-                    "@context":
-                      type: string
-                    "@type":
-                      type: string
-                    "@version":
-                      type: string
-                    defaultValue:
-                      oneOf:
-                        - type: string
-                        - type: number
-                        - type: boolean
-                    editHelp:
-                      type: string
-                    max:
-                      type: number
-                    min:
-                      type: number
-                    pattern:
-                      type: string
-                    values:
-                      items:
-                        type: object
-                        properties:
-                          displayName:
-                            type: string
-                          key:
-                            oneOf:
-                              - type: string
-                              - type: number
-                              - type: boolean
-                        required:
-                          - key
-                          - displayName
-                      type: array
-                  required:
-                    - "@type"
-              required:
-                - title
-                - valueType
-                - confidentiality
-          required:
-            - key
-            - owner
-            - attributeCreationHints
-      required:
-        - query
-
-    ExecuteThirdPartyRelationshipAttributeQueryRequest:
-      type: object
-      properties:
-        query:
-          type: object
-          properties:
-            key:
-              description: The key of the relationship attribute.
-              type: string
-            owner:
-              description: The owner of the relationship attribute.
-              type: string
-            thirdParty:
-              description: The third party of the relationship attribute.
-              type: string
-            validFrom:
-              description: The date the attribute became valid.
-              type: string
-            validTo:
-              description: The date the attribute becomes invalid.
-              type: string
-          required:
-            - key
-            - owner
-            - thirdParty
-      required:
-        - query
-
-    CreateAttributeRequest:
-      additionalProperties: false
-      properties:
-        content:
-          anyOf:
-            - "$ref": "#/components/schemas/IdentityAttribute"
-            - "$ref": "#/components/schemas/RelationshipAttribute"
-      required:
-        - content
-      type: object
     IdentityAttribute:
       additionalProperties: false
       properties:
@@ -3511,6 +3496,7 @@ components:
         - owner
         - value
       type: object
+
     RelationshipAttribute:
       additionalProperties: false
       properties:
@@ -3555,6 +3541,7 @@ components:
         - owner
         - value
       type: object
+
     Attribute:
       additionalProperties: false
       properties:
@@ -3588,6 +3575,7 @@ components:
         - createdAt
         - content
       type: object
+
     AttributeShareInfo:
       additionalProperties: false
       properties:
@@ -3610,6 +3598,7 @@ components:
         - requestReference
         - peer
       type: object
+
     AttributeValue:
       additionalProperties: {}
       properties:
@@ -3622,6 +3611,7 @@ components:
       required:
         - "@type"
       type: object
+
     ConnectorHealth:
       type: object
       properties:
@@ -4270,7 +4260,7 @@ components:
           nullable: false
         status:
           type: string
-          enum: [Pending, Active, Rejected]
+          enum: [Pending, Active, Rejected, Revoked]
           nullable: false
           description: The status of the relationship
         peer:
