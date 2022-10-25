@@ -672,11 +672,7 @@ paths:
                         valueHints:
                           type: object
                           properties:
-                            "@context":
-                              type: string
                             "@type":
-                              type: string
-                            "@version":
                               type: string
                             defaultValue:
                               oneOf:
