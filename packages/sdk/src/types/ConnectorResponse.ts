@@ -34,7 +34,7 @@ export class ConnectorResponse<T> {
 
     public get result(): T {
         if (!this.isSuccess) {
-            throw new Error("Can't get the value of an error result. Use 'error' instead.");
+            throw new Error(`Can't get the value of an error Response. Use 'error' instead. Root error: ${this.error.code} - ${this.error.message}`);
         }
 
         return this._result!;
