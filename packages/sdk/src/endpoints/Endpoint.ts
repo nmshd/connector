@@ -3,7 +3,7 @@ import FormData from "form-data";
 import { ConnectorResponse } from "../types/ConnectorResponse";
 
 export abstract class Endpoint {
-    protected constructor(private readonly httpClient: AxiosInstance) {}
+    public constructor(private readonly httpClient: AxiosInstance) {}
 
     protected async getPlain<T>(path: string): Promise<T> {
         const reponse = await this.httpClient.get<T>(path, { validateStatus: (status) => status === 200 });
@@ -19,7 +19,7 @@ export abstract class Endpoint {
     }
 
     protected async post<T>(path: string, data?: any, expectedStatus?: number, params?: any): Promise<ConnectorResponse<T>> {
-        const response = await this.httpClient.post(path, data, { params: params });
+        const response = await this.httpClient.post(path, data, { params });
         return this.makeResult(response, expectedStatus);
     }
 
@@ -120,9 +120,7 @@ export abstract class Endpoint {
             const value = data[key];
 
             if (value instanceof Buffer) {
-                formData.append(key, value, {
-                    filename: filename
-                });
+                formData.append(key, value, { filename });
             } else {
                 formData.append(key, value);
             }

@@ -1,11 +1,11 @@
 import { IDatabaseConnection } from "@js-soft/docdb-access-abstractions";
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
-import { ILoggerFactory } from "@js-soft/logging-abstractions";
+import { ILogger } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionController } from "@nmshd/consumption";
-import { GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeErrors, RuntimeHealth } from "@nmshd/runtime";
-import { AccountController, TransportErrors } from "@nmshd/transport";
+import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
+import { AccountController, CoreErrors as TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import fs from "fs";
 import { validate as validateSchema } from "jsonschema";
@@ -13,10 +13,11 @@ import path from "path";
 import { buildInformation } from "./buildInformation";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
+import { DocumentationLink } from "./DocumentationLink";
 import { HealthChecker } from "./HealthChecker";
 import { HttpServer } from "./infrastructure";
 import { ConnectorInfrastructureRegistry } from "./infrastructure/ConnectorInfrastructureRegistry";
-import { BCLoggerFactory } from "./logging/BCLoggerFactory";
+import { ConnectorLoggerFactory } from "./logging/ConnectorLoggerFactory";
 
 interface SupportInformation {
     health: RuntimeHealth;
@@ -30,6 +31,26 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     private mongodbConnection?: MongoDbConnection;
     private accountController: AccountController;
+
+    private _transportServices: TransportServices;
+    public get transportServices(): TransportServices {
+        return this._transportServices;
+    }
+
+    private _consumptionServices: ConsumptionServices;
+    public get consumptionServices(): ConsumptionServices {
+        return this._consumptionServices;
+    }
+
+    private _dataViewExpander: DataViewExpander;
+
+    public override getServices(): RuntimeServices {
+        return {
+            transportServices: this._transportServices,
+            consumptionServices: this._consumptionServices,
+            dataViewExpander: this._dataViewExpander
+        };
+    }
 
     public readonly infrastructure = new ConnectorInfrastructureRegistry();
 
@@ -47,7 +68,11 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             throw new Error(errorMessage);
         }
 
-        const runtime = new ConnectorRuntime(connectorConfig);
+        this.forceEnableMandatoryModules(connectorConfig);
+
+        const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
+        ConnectorLoggerFactory.init(loggerFactory);
+        const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
         await runtime.init();
 
         runtime.scheduleKillTask();
@@ -56,17 +81,15 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         return runtime;
     }
 
-    protected createLoggerFactory(): ILoggerFactory {
-        const loggerFactory = new NodeLoggerFactory(this.runtimeConfig.logging);
-        this.logger = loggerFactory.getLogger(Runtime);
-        BCLoggerFactory.init(loggerFactory);
-
-        return loggerFactory;
+    private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
+        connectorConfig.modules.decider.enabled = true;
+        connectorConfig.modules.request.enabled = true;
+        connectorConfig.modules.attributeListener.enabled = true;
     }
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
         if (!this.runtimeConfig.database.connectionString) {
-            this.logger.error(RuntimeErrors.startup.noDatabaseDefined());
+            this.logger.error(`No database connection string provided. See ${DocumentationLink.integrate__configuration("database")} on how to configure the database connection.`);
             process.exit(1);
         }
 
@@ -79,7 +102,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         try {
             await this.mongodbConnection.connect();
         } catch (e) {
-            this.logger.error(RuntimeErrors.database.connectionError());
+            this.logger.error("Could not connect to the configured database. Try to check the connection string and the database status. Root error: ", e);
+
             process.exit(1);
         }
         this.logger.debug("Finished initialization of Mongo DB connection.");
@@ -92,7 +116,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         this.accountController = await new AccountController(this.transport, db, this.transport.config).init().catch((e) => {
             if (e instanceof ApplicationError && e.code === "error.transport.general.platformClientInvalid") {
-                this.logger.error(TransportErrors.general.platformClientInvalid().message);
+                this.logger.error(TransportCoreErrors.general.platformClientInvalid().message);
                 process.exit(1);
             }
 
@@ -102,7 +126,11 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         await this.checkDeviceCredentials(this.accountController);
 
-        this.login(this.accountController, consumptionController);
+        ({
+            transportServices: this._transportServices,
+            consumptionServices: this._consumptionServices,
+            dataViewExpander: this._dataViewExpander
+        } = await this.login(this.accountController, consumptionController));
     }
 
     private async checkDeviceCredentials(accountController: AccountController) {
@@ -110,7 +138,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             await accountController.authenticator.getToken();
         } catch (e) {
             if (e instanceof ApplicationError && e.code === "error.transport.request.noAuthGrant") {
-                this.logger.error(TransportErrors.general.platformClientInvalid().message);
+                this.logger.error(TransportCoreErrors.general.platformClientInvalid().message);
                 process.exit(1);
             }
         }
@@ -160,7 +188,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             version: buildInformation,
             health: supportInformation.health,
             configuration: this.sanitizeConfig(supportInformation.configuration),
-            identityInfo: identityInfo
+            identityInfo
         };
     }
 
@@ -171,7 +199,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             const infrastructureConfiguration = (this.runtimeConfig.infrastructure as any)[requiredInfrastructure];
             if (!infrastructureConfiguration?.enabled) {
                 this.logger.error(
-                    `Module '${connectorModuleConfiguration.displayName}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`
+                    `Module '${this.getModuleName(connectorModuleConfiguration)}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`
                 );
                 process.exit(1);
             }
@@ -187,7 +215,9 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             return;
         }
 
-        const moduleConstructor = nodeModule.default;
+        const moduleConstructor = nodeModule.default as
+            | (new (runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger) => ConnectorRuntimeModule)
+            | undefined;
 
         if (!moduleConstructor) {
             this.logger.error(
@@ -198,12 +228,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             return;
         }
 
-        const module = new moduleConstructor() as ConnectorRuntimeModule;
-
-        module.runtime = this;
-        module.configuration = connectorModuleConfiguration;
-        module.baseDirectory = modulePath.replace(path.basename(modulePath), "");
-        module.logger = this.loggerFactory.getLogger(moduleConstructor);
+        const module = new moduleConstructor(this, connectorModuleConfiguration, this.loggerFactory.getLogger(moduleConstructor));
 
         this.modules.add(module);
 

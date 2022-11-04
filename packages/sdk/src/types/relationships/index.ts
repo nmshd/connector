@@ -11,4 +11,3 @@ export * from "./requests/AcceptRelationshipChangeRequest";
 export * from "./requests/CreateRelationshipRequest";
 export * from "./requests/GetRelationshipsRequest";
 export * from "./requests/RejectRelationshipChangeRequest";
-export * from "./requests/RevokeRelationshipChangeRequest";

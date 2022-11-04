@@ -2,27 +2,26 @@ name: Publish
 
 on:
   push:
-    branches:
-      - main
+    branches: [main, release/**]
 
 jobs:
   run-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: bash .ci/runChecks.sh
 
   publish-npm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 18
           registry-url: https://registry.npmjs.org/
-      - run: npx lerna bootstrap
-      - run: npx lerna run build:ci
-      - run: npx lerna publish from-package --yes --no-verify-access
+      - run: npm ci
+      - run: npm run build:ci --workspaces --if-present
+      - run: bash .ci/publishNpm.sh
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     needs: ["run-checks"]
@@ -33,15 +32,14 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v2
-      - run: sudo apt update && sudo apt upgrade -y && sudo apt install jq -y
+      - uses: actions/checkout@v3
       - name: Docker Login
         uses: docker/login-action@v1.10.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - run: /bin/bash .ci/buildAndPush.sh
+      - run: bash .ci/buildAndPush.sh
         env:
           BUILD_NUMBER: ${{ github.run_number }}
           COMMIT_HASH: ${{ github.sha }}

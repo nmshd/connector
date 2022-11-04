@@ -3,6 +3,6 @@ export interface GetRelationshipTemplatesRequest {
     expiresAt?: string | string[];
     createdBy?: string | string[];
     createdByDevice?: string | string[];
-    maxNumberOfRelationships?: number | number[];
+    maxNumberOfAllocations?: number | number[];
     isOwn?: boolean | boolean[];
 }

@@ -109,31 +109,72 @@
                     },
                     "type": "object"
                 },
-                "webhooks": {
-                    "additionalProperties": false,
+                "webhooksV2": {
+                    "type": "object",
                     "properties": {
                         "enabled": {
                             "type": "boolean",
                             "default": false
                         },
-                        "url": {
-                            "type": "string",
-                            "format": "url"
-                        },
-                        "headers": {
+                        "targets": {
+                            "type": "object",
                             "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
+                                "type": "object",
+                                "properties": {
+                                    "url": {
+                                        "type": "string",
+                                        "format": "url"
+                                    },
+                                    "headers": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "required": ["url"]
+                            }
                         },
-                        "publishInterval": {
-                            "type": "integer",
-                            "default": 60,
-                            "minimum": 1
+                        "webhooks": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "triggers": {
+                                        "type": "array",
+                                        "minItems": 1,
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "target": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "url": {
+                                                        "type": "string",
+                                                        "format": "url"
+                                                    },
+                                                    "headers": {
+                                                        "type": "object",
+                                                        "additionalProperties": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "required": ["url"]
+                                            }
+                                        ]
+                                    }
+                                },
+                                "required": ["triggers", "target"]
+                            }
                         }
-                    },
-                    "required": ["url"],
-                    "type": "object"
+                    }
                 }
             },
             "type": "object"

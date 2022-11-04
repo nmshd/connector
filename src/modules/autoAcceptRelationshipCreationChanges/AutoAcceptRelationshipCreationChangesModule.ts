@@ -6,7 +6,6 @@ export interface AutoAcceptRelationshipCreationChangesModuleConfiguration extend
 }
 
 export default class AutoAcceptRelationshipCreationChangesModule extends ConnectorRuntimeModule<AutoAcceptRelationshipCreationChangesModuleConfiguration> {
-    private subscriptionId: number;
     private currentIdentity: string;
 
     public init(): void {
@@ -17,23 +16,25 @@ export default class AutoAcceptRelationshipCreationChangesModule extends Connect
         const currentIdentityResult = await this.runtime.transportServices.account.getIdentityInfo();
         this.currentIdentity = currentIdentityResult.value.address;
 
-        this.subscriptionId = this.runtime.eventBus.subscribe<RelationshipChangedEvent>(RelationshipChangedEvent, async (event) => {
-            if (!this.isIncomingPendingRelationshipCreationChange(event)) return;
+        this.subscribeToEvent(RelationshipChangedEvent, this.handleRelationshipChanged.bind(this));
+    }
 
-            this.logger.info("Incoming relationship creation change detected.");
+    private async handleRelationshipChanged(event: RelationshipChangedEvent) {
+        if (!this.isIncomingPendingRelationshipCreationChange(event)) return;
 
-            const result = await this.runtime.transportServices.relationships.acceptRelationshipChange({
-                changeId: event.data.changes[0].id,
-                content: this.configuration.responseContent || {},
-                relationshipId: event.data.id
-            });
+        this.logger.info("Incoming relationship creation change detected.");
 
-            if (result.isSuccess) {
-                this.logger.info("Incoming relationship creation change was accepted successfully.");
-            } else {
-                this.logger.error("Error while accepting relationship creation change:", result.error);
-            }
+        const result = await this.runtime.transportServices.relationships.acceptRelationshipChange({
+            changeId: event.data.changes[0].id,
+            content: this.configuration.responseContent || {},
+            relationshipId: event.data.id
         });
+
+        if (result.isSuccess) {
+            this.logger.info("Incoming relationship creation change was accepted successfully.");
+        } else {
+            this.logger.error("Error while accepting relationship creation change:", result.error);
+        }
     }
 
     private isIncomingPendingRelationshipCreationChange(event: RelationshipChangedEvent) {
@@ -45,6 +46,6 @@ export default class AutoAcceptRelationshipCreationChangesModule extends Connect
     }
 
     public stop(): void {
-        this.runtime.eventBus.unsubscribe(RelationshipChangedEvent, this.subscriptionId);
+        this.unsubscribeFromAllEvents();
     }
 }

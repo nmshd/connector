@@ -10,7 +10,7 @@ export class DocumentationLink {
         return this.build("integrate", "connector-configuration", anchor);
     }
 
-    private static build(site: string, subSite = "", anchor = "") {
+    private static build(site: string, subSite: string, anchor = "") {
         return `${DocumentationLink.baseUrl}/${site}/${subSite}#${anchor.toLowerCase()}`;
     }
 }

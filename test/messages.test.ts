@@ -2,7 +2,7 @@ import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { establishRelationship, exchangeMessage, getRelationship, syncUntilHasMessages, uploadFile } from "./lib/testUtils";
-import { expectError, expectSuccess, ValidationSchema } from "./lib/validation";
+import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -28,7 +28,7 @@ describe("Messaging", () => {
         fileId = file.id;
     });
 
-    test("send a Message from BC1 to BC2", async () => {
+    test("send a Message from C1 to C2", async () => {
         expect(bc2Address).toBeDefined();
         expect(fileId).toBeDefined();
 
@@ -43,7 +43,7 @@ describe("Messaging", () => {
             },
             attachments: [fileId]
         });
-        expectSuccess(response, ValidationSchema.Message);
+        expect(response).toBeSuccessful(ValidationSchema.Message);
 
         messageId = response.result.id;
     });
@@ -65,11 +65,11 @@ describe("Messaging", () => {
         });
     });
 
-    test("receive the message on BC2 in /Messages", async () => {
+    test("receive the message on C2 in /Messages", async () => {
         expect(messageId).toBeDefined();
 
         const response = await client2.messages.getMessages();
-        expectSuccess(response, ValidationSchema.Messages);
+        expect(response).toBeSuccessful(ValidationSchema.Messages);
         expect(response.result).toHaveLength(1);
 
         const message = response.result[0];
@@ -83,11 +83,11 @@ describe("Messaging", () => {
         });
     });
 
-    test("receive the message on BC2 in /Messages/{id}", async () => {
+    test("receive the message on C2 in /Messages/{id}", async () => {
         expect(messageId).toBeDefined();
 
         const response = await client2.messages.getMessage(messageId);
-        expectSuccess(response, ValidationSchema.MessageWithAttachments);
+        expect(response).toBeSuccessful(ValidationSchema.MessageWithAttachments);
     });
 });
 
@@ -103,7 +103,7 @@ describe("Message errors", () => {
                 body: "A Body"
             }
         });
-        expectError(result, "Mail.to:Array :: may not be empty", "error.runtime.requestDeserialization");
+        expect(result).toBeAnError("Mail.to:Array :: may not be empty", "error.runtime.requestDeserialization");
     });
 
     test("should throw correct error for missing 'to' in the Message", async () => {
@@ -115,7 +115,7 @@ describe("Message errors", () => {
                 body: "A Body"
             }
         });
-        expectError(result, "Mail.to :: Value is not defined", "error.runtime.requestDeserialization");
+        expect(result).toBeAnError("Mail.to :: Value is not defined", "error.runtime.requestDeserialization");
     });
 });
 
@@ -124,7 +124,6 @@ describe("Message query", () => {
         const message = await exchangeMessage(client1, client2);
         const conditions = new QueryParamConditions(message, client2)
             .addDateSet("createdAt")
-            .addDateSet("lastMessageSentAt")
             .addStringSet("createdBy")
             .addStringSet("recipients.address", message.recipients[0].address)
             .addStringSet("content.@type")

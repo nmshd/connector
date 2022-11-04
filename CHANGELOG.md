@@ -1,12 +1,77 @@
 # Changelog
 
+## 3.0.0
+
+-> SDK 2.0.0
+
+-   upgrade the runtime to version 2.0.0
+-   switch from `root` user to the `node` user in the Docker image
+-   upgrade nodejs to 18.11.0
+-   the deprecated webhooks module has been removed
+-   change API version to v2 (-> route prefix changes from /api/v1 to /api/v2)
+-   remove support for revoke of Relationship Changes
+-   enable the new Runtime-builtin Module AttributeListenerModule
+-   new `POST /api/v1/Attributes/ExecuteThirdPartyRelationshipAttributeQuery` route for executing ThirdPartyRelationshipAttribute queries
+-   bugfix(webhooksV2): events are now correctly triggered for triggers with wildcards
+-   update AttributeQuery requests (`POST /api/v2/Attributes/ExecuteIdentityAttributeQuery` & `POST /api/v2/Attributes/ExecuteRelationshipAttributeQuery`) to match the Runtime API
+-   `peer` is now optional for validating outgoing requests using the `/api/v2/Requests/Outgoing/Validate` route
+-   enable GET of Files via truncated reference
+-   remove unused properties from the DTOs
+-   remove Message.relationshipIds
+-   add Message.recipients.relationshipId
+-   the Connector now validates the Accept header correctly on every route
+-   routes for generating QrCodes for Files and RelationshipTemplates without Tokens
+-   bugfix: update misspelled Health in openapidoc to ConnectorHealth
+-   add documentation and update SDK for `maxNumberOfAllocations`
+-   add routes for executing `IdentityAttributeQuery` and `RelationshipAttributeQuery`
+-   add attribute routes
+-   two mandatory new modules: `RequestModule` and `DeciderModule`
+-   amqpPublisher module
+-   add `/api/v2/Requests/Incoming(/...)` and `/api/v2/Requests/Outgoing(/...)` routes.
+
+## 2.3.5
+
+-   upgrade nodejs to 16.16.0
+
+## 2.3.4
+
+-   bugfix: add missing axios dependency
+
+## 2.3.3
+
+-   upgrade the runtime to version 1.4.2
+
+## 2.3.2
+
+-   upgrade the runtime to version 1.4.1
+
+## 2.3.1
+
+-> SDK 1.2.2
+
+-   upgrade the runtime to version 1.4.0
+
+## 2.3.0
+
+-   new module: 'webhooksV2' (see https://enmeshed.eu/integrate/connector-configuration#webhooksV2 for more details on how to configure it)
+-   the 'webhooks' module is now deprecated
+
+## 2.2.1
+
+-   format number strings (e.g. "1.9" and "1") to their number representations in the environment variable parsing
+
 ## 2.2.0
 
 -> SDK 1.2.0
 
--   upgrade the runtime to version 1.3.3
+-   upgrade the runtime to version 1.3.4
 -   add routes to create and validate challenges
 -   upgrade NodeJS to version 16.14.0 (LTS)
+-   add a possibility to configure the Connector using environment variables
+
+    nested fields can now be separated by a colon (`:`) or a double underscore (`__`), casing in the property names will not be changed (no more conversion to UPPER_CASE neccessary)
+
+    e.g. `INFRASTRUCTURE__HTTP_SERVER__API_KEY` (the old representation of `{ "infrastructure": { "httpServer": { "apiKey": "y" } } }`) will now be configured as `infrastructure:httpServer:apiKey`
 
 ## 2.1.10
 

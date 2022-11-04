@@ -36,6 +36,29 @@
                 }
             ],
             "default": "false"
+        },
+        {
+            "id": "moreTasks",
+            "type": "pickString",
+            "description": "Select a task",
+            "options": [
+                {
+                    "label": "Restart",
+                    "value": "./.dev/scripts/restartContainers.sh"
+                },
+                {
+                    "label": "Drop Databases",
+                    "value": "./.dev/scripts/clearDb.ts"
+                },
+                {
+                    "label": "Sync Connector 1",
+                    "value": "./.dev/scripts/syncConnector1.sh"
+                },
+                {
+                    "label": "Sync Connector 2",
+                    "value": "./.dev/scripts/syncConnector2.sh"
+                }
+            ]
         }
     ],
     "tasks": [
@@ -63,7 +86,7 @@
         },
         {
             "label": "Run 1",
-            "command": "export SYNC_ENABLED=${input:enableSync} && docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.${input:backboneEnvironment}.yml up --build bc-1",
+            "command": "export SYNC_ENABLED=${input:enableSync} && docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.${input:backboneEnvironment}.yml up bc-1",
             "type": "shell",
             "isBackground": true,
             "presentation": {
@@ -72,27 +95,11 @@
         },
         {
             "label": "Run 2",
-            "command": "export SYNC_ENABLED=${input:enableSync} && docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.${input:backboneEnvironment}.yml up --build bc-1 bc-2",
+            "command": "export SYNC_ENABLED=${input:enableSync} && docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.${input:backboneEnvironment}.yml up bc-1 bc-2",
             "type": "shell",
             "isBackground": true,
             "presentation": {
                 "reveal": "always"
-            }
-        },
-        {
-            "label": "Restart",
-            "command": "./scripts/restartContainers.sh",
-            "type": "shell",
-            "presentation": {
-                "reveal": "silent"
-            }
-        },
-        {
-            "label": "DropDbs",
-            "command": "./scripts/clearDb.ts",
-            "type": "shell",
-            "presentation": {
-                "reveal": "silent"
             }
         },
         {
@@ -101,6 +108,14 @@
             "type": "shell",
             "presentation": {
                 "reveal": "always"
+            }
+        },
+        {
+            "label": "More Tasks",
+            "command": "${input:moreTasks}",
+            "type": "shell",
+            "presentation": {
+                "reveal": "silent"
             }
         }
     ]

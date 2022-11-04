@@ -1,5 +1,5 @@
 export interface CreateOwnTokenRequest {
     expiresAt: string;
-    content: any;
+    content: unknown;
     ephemeral?: boolean;
 }

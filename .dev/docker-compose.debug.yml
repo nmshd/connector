@@ -60,5 +60,13 @@ services:
     depends_on:
       - mongo
 
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: rabbitmq
+    image: rabbitmq:management
+    ports:
+      - 15672:15672
+      - 5672:5672
+
 volumes:
   mongo_data:

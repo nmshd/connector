@@ -1,5 +1,5 @@
 export interface CreateOwnRelationshipTemplateRequest {
-    maxNumberOfRelationships?: number;
+    maxNumberOfAllocations?: number;
     expiresAt: string;
-    content: any;
+    content: unknown;
 }

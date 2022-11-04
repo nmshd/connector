@@ -10,7 +10,7 @@
         "appenders": {
             "fileAppender": {
                 "type": "dateFile",
-                "filename": "./logs/latest.log"
+                "filename": "/var/log/enmeshed-connector/latest.log"
             },
             "consoleAppender": {
                 "type": "stdout",
@@ -45,6 +45,21 @@
         }
     },
     "modules": {
+        "decider": {
+            "enabled": true,
+            "displayName": "Decider Module",
+            "location": "@nmshd/runtime:DeciderModule"
+        },
+        "request": {
+            "enabled": true,
+            "displayName": "Request Module",
+            "location": "@nmshd/runtime:RequestModule"
+        },
+        "attributeListener": {
+            "enabled": true,
+            "displayName": "Attribute Listener",
+            "location": "@nmshd/runtime:AttributeListenerModule"
+        },
         "sync": {
             "displayName": "Sync",
             "location": "sync/SyncModule",
@@ -73,14 +88,17 @@
                 }
             }
         },
-        "webhooks": {
+        "webhooksV2": {
             "displayName": "Webhooks",
             "enabled": false,
-            "location": "webhooks/WebhooksModule",
-
-            "url": "",
-            "headers": {},
-            "publishInterval": 60
+            "location": "webhooksV2/WebhooksModuleV2",
+            "targets": {},
+            "webhooks": []
+        },
+        "amqpPublisher": {
+            "enabled": false,
+            "displayName": "AMQP Publisher",
+            "location": "amqpPublisher/AMQPPublisherModule"
         }
     }
 }

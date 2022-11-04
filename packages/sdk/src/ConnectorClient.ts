@@ -1,12 +1,14 @@
 import axios from "axios";
-import qs from "qs";
 import { ConnectorConfig } from "./ConnectorConfig";
 import {
     AccountEndpoint,
+    AttributesEndpoint,
     ChallengesEndpoint,
     FilesEndpoint,
+    IncomingRequestsEndpoint,
     MessagesEndpoint,
     MonitoringEndpoint,
+    OutgoingRequestsEndpoint,
     RelationshipsEndpoint,
     RelationshipTemplatesEndpoint,
     TokensEndpoint
@@ -14,10 +16,13 @@ import {
 
 export class ConnectorClient {
     public readonly account: AccountEndpoint;
+    public readonly attributes: AttributesEndpoint;
     public readonly challenges: ChallengesEndpoint;
     public readonly files: FilesEndpoint;
+    public readonly incomingRequests: IncomingRequestsEndpoint;
     public readonly messages: MessagesEndpoint;
     public readonly monitoring: MonitoringEndpoint;
+    public readonly outgoingRequests: OutgoingRequestsEndpoint;
     public readonly relationships: RelationshipsEndpoint;
     public readonly relationshipTemplates: RelationshipTemplatesEndpoint;
     public readonly tokens: TokensEndpoint;
@@ -31,19 +36,17 @@ export class ConnectorClient {
             httpAgent: config.httpAgent,
             httpsAgent: config.httpsAgent,
             validateStatus: (_) => true,
-            paramsSerializer: (params) => {
-                return qs.stringify(params, {
-                    arrayFormat: "repeat",
-                    allowDots: true
-                });
-            }
+            paramsSerializer: { dots: true, indexes: null }
         });
 
         this.account = new AccountEndpoint(axiosInstance);
+        this.attributes = new AttributesEndpoint(axiosInstance);
         this.challenges = new ChallengesEndpoint(axiosInstance);
         this.files = new FilesEndpoint(axiosInstance);
+        this.incomingRequests = new IncomingRequestsEndpoint(axiosInstance);
         this.messages = new MessagesEndpoint(axiosInstance);
         this.monitoring = new MonitoringEndpoint(axiosInstance);
+        this.outgoingRequests = new OutgoingRequestsEndpoint(axiosInstance);
         this.relationships = new RelationshipsEndpoint(axiosInstance);
         this.relationshipTemplates = new RelationshipTemplatesEndpoint(axiosInstance);
         this.tokens = new TokensEndpoint(axiosInstance);

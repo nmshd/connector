@@ -4,26 +4,6 @@ import { ConnectorRuntime } from "./ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 
 export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRuntimeConfig {
-    function upperCaseToCamelCase(value: string): string {
-        const words = value.split("_");
-        let newValue = "";
-        let i = 0;
-        for (let word of words) {
-            word = word.toLowerCase();
-            const firstLetter = word.substr(0, 1);
-
-            if (i > 0) {
-                word = word.replace(firstLetter, firstLetter.toUpperCase());
-            }
-
-            newValue += word;
-
-            i++;
-        }
-
-        return newValue;
-    }
-
     nconf
         .overrides(overrides)
         .env({
@@ -38,13 +18,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
                 }
 
                 variable.key = variable.key.replace(/__/g, ":");
-                variable.key = upperCaseToCamelCase(variable.key);
-
-                if (variable.value === "true") {
-                    variable.value = true;
-                } else if (variable.value === "false") {
-                    variable.value = false;
-                }
+                variable.value = parseString(variable.value);
 
                 return variable;
             }
@@ -59,20 +33,38 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
 
 const envKeyMapping: Record<string, string> = {
     // The DATABASE__DB_NAME env variable was called ACCOUNT in the past - we need to keep an alias for backwards compatibility.
-    ACCOUNT: "DATABASE__DB_NAME", // eslint-disable-line @typescript-eslint/naming-convention
+    ACCOUNT: "database:dbName", // eslint-disable-line @typescript-eslint/naming-convention
 
-    DATABASE_NAME: "DATABASE__DB_NAME", // eslint-disable-line @typescript-eslint/naming-convention
-    API_KEY: "INFRASTRUCTURE__HTTP_SERVER__API_KEY", // eslint-disable-line @typescript-eslint/naming-convention
-    DATABASE_CONNECTION_STRING: "DATABASE__CONNECTION_STRING", // eslint-disable-line @typescript-eslint/naming-convention
-    SYNC_ENABLED: "MODULES__SYNC__ENABLED", // eslint-disable-line @typescript-eslint/naming-convention
-    PLATFORM_CLIENT_ID: "TRANSPORT_LIBRARY__PLATFORM_CLIENT_ID", // eslint-disable-line @typescript-eslint/naming-convention
-    PLATFORM_CLIENT_SECRET: "TRANSPORT_LIBRARY__PLATFORM_CLIENT_SECRET" // eslint-disable-line @typescript-eslint/naming-convention
+    DATABASE_NAME: "database:dbName", // eslint-disable-line @typescript-eslint/naming-convention
+    API_KEY: "infrastructure:httpServer:apiKey", // eslint-disable-line @typescript-eslint/naming-convention
+    DATABASE_CONNECTION_STRING: "database:connectionString", // eslint-disable-line @typescript-eslint/naming-convention
+    SYNC_ENABLED: "modules:sync:enabled", // eslint-disable-line @typescript-eslint/naming-convention
+    PLATFORM_CLIENT_ID: "transportLibrary:platformClientId", // eslint-disable-line @typescript-eslint/naming-convention
+    PLATFORM_CLIENT_SECRET: "transportLibrary:platformClientSecret" // eslint-disable-line @typescript-eslint/naming-convention
 };
 
 function applyAlias(variable: { key: string; value: any }) {
     if (envKeyMapping[variable.key]) {
         variable.key = envKeyMapping[variable.key];
     }
+}
+
+function isNumeric(value: string) {
+    if (typeof value !== "string") return false;
+
+    return !isNaN(value as any) && !isNaN(parseFloat(value));
+}
+
+function parseString(value: string) {
+    if (value === "true") {
+        return true;
+    } else if (value === "false") {
+        return false;
+    } else if (isNumeric(value)) {
+        return parseFloat(value);
+    }
+
+    return value;
 }
 
 async function run() {

@@ -8,3 +8,4 @@ export * from "./requests/GetOwnRelationshipTemplatesRequest";
 export * from "./requests/GetPeerRelationshipTemplatesRequest";
 export * from "./requests/GetRelationshipTemplatesRequest";
 export * from "./requests/LoadPeerRelationshipTemplateRequest";
+export * from "./TruncatedRelationshipTemplateReference";
