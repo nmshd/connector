@@ -1,5 +1,27 @@
 # Changelog
 
+## 3.0.4
+
+-   upgrade the runtime to version 2.0.1 (ProprietaryJSON AttributeValueType)
+
+## 3.0.3
+
+-> SDK 2.0.3
+
+-   remove `@context` and `@version` from documentations
+
+## 3.0.2
+
+-> SDK 2.0.2
+
+-   remove RelationshipStatus `Revoked`
+
+## 3.0.1
+
+-> SDK 2.0.1
+
+-   add RelationshipStatus `Revoked`
+
 ## 3.0.0
 
 -> SDK 2.0.0
