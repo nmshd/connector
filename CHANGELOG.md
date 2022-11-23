@@ -1,8 +1,14 @@
 # Changelog
 
+## 3.1.0
+
+-> SDK 2.1.0
+
+-   upgrade the runtime to version 2.1.0 (possibility to send `ThirdPartyRelationshipAttributeQuery`s with more than one `thirdParty` by passing an array of strings instead of a single string)
+
 ## 3.0.4
 
--   upgrade the runtime to version 2.0.1 (ProprietaryJSON AttributeValueType)
+-   upgrade the runtime to version 2.0.1 ([`ProprietaryJSON`](https://enmeshed.eu/explore/attribute-values#proprietaryjson) AttributeValueType)
 
 ## 3.0.3
 
