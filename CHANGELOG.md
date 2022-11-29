@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.1
+
+-> SDK 2.1.1
+
+-   upgrade the runtime to version 2.1.1 (additional validations for Request Items)
+
 ## 3.1.0
 
 -> SDK 2.1.0
