@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.2
+
+-   upgrade the runtime to version 2.2.1
+
 ## 3.1.1
 
 -> SDK 2.1.1
