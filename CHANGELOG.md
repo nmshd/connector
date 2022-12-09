@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.0
+
+-   upgrade the runtime to version 2.3.0 (RequestModule full onExistingRelationship support)
+
 ## 3.1.2
 
 -   upgrade the runtime to version 2.2.1
