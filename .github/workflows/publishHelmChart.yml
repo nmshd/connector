@@ -4,16 +4,17 @@ on:
   push:
     branches:
       - main
-    paths:
-      - helmChart
 
 jobs:
   publish-helm:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - uses: actions/checkout@v2
-      - uses: azure/setup-helm@v1
-      - run: echo "$PASSWORD" | helm registry login -u jkoenig134 --password-stdin https://ghcr.io
+      - uses: actions/checkout@v3
+      - uses: azure/setup-helm@v3
+      - run: echo "$PASSWORD" | helm registry login -u $USER --password-stdin https://ghcr.io
         env:
           USER: ${{ github.actor }}
           PASSWORD: ${{ secrets.GITHUB_TOKEN }}

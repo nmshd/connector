@@ -1,9 +1,8 @@
-export HELM_EXPERIMENTAL_OCI=1
+PACKAGE_VERSION=$(jq .version -r package.json)
 
-cd helmChart
+helm package --app-version $PACKAGE_VERSION --version $PACKAGE_VERSION ./helmChart
 
-output=$(helm package . -d charts)
-path=${output##*:}
+path="./enmeshed-connector-$PACKAGE_VERSION.tgz"
 registry="oci://ghcr.io/nmshd"
 
 echo "deploying '$path' to oci registry '$registry'"
