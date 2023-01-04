@@ -1,0 +1,50 @@
+image:
+  pullPolicy: IfNotPresent
+  tag: ""
+
+# a json or yaml config
+# see https://enmeshed.eu/integrate/connector-configuration for configuration options
+config: {}
+
+pod:
+  # a list of environment variables
+  # see https://enmeshed.eu/integrate/connector-configuration for configuration options
+  # can be used for secrets
+  # see https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#environment-variables
+  environment: []
+
+  # annotations for the pod
+  # https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+  annotations: {}
+
+  # securityContext for the pod
+  # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context
+  securityContext: {}
+
+  # securityContext for the container in the pod
+  # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context-1
+  containerSecurityContext: {}
+
+  # the resources for the pod
+  # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources
+  resources: {}
+
+  # the nodeSelector for the pod
+  # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+  nodeSelector: {}
+
+  # the tolerations for the pod
+  # https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+  tolerations: []
+
+  # the affinity for the pod
+  # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#NodeAffinity
+  affinity: {}
+
+service:
+  # the service type
+  # https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+  type: ClusterIP
+
+  # the service port
+  port: 80

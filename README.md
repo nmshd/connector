@@ -5,7 +5,8 @@
 This monorepo consolidates the following packages / applications:
 | Component | Version(s) |
 | -- | -- |
-| [The Connector itself](./) | [see ghcr.io](https://github.com/nmshd/cns-connector/pkgs/container/connector) |
+| [The Connector docker images](./) | [see ghcr.io](https://github.com/nmshd/cns-connector/pkgs/container/connector) |
+| [The Connector helm charts](./) | [see ghcr.io](https://github.com/nmshd/cns-connector/pkgs/container/connector-helm-chart) |
 | [TypeScript Connector SDK](packages/sdk/) | [![npm version](https://badge.fury.io/js/@nmshd%2fconnector-sdk.svg)](https://www.npmjs.com/package/@nmshd/connector-sdk) |
 
 ## Documentation
