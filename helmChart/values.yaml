@@ -3,10 +3,6 @@ image:
     pullPolicy: IfNotPresent
     tag: ""
 
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
 config: "" # a json config file as string. | can be used for a newline string
 
 podAnnotations: {}
@@ -27,24 +23,6 @@ securityContext:
 service:
     type: ClusterIP
     port: 80
-
-ingress:
-    enabled: false
-    className: ""
-    annotations:
-        {}
-        # kubernetes.io/ingress.class: nginx
-        # kubernetes.io/tls-acme: "true"
-    hosts:
-        - host: enmeshed-connector.local
-          paths:
-              - path: /
-              - path: /api/v1/*
-                pathType: Prefix
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
 
 resources:
     {}
