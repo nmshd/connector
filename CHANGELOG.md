@@ -1,5 +1,47 @@
 # Changelog
 
+## 3.2.0
+
+-   upgrade the runtime to version 2.3.0 (RequestModule full onExistingRelationship support)
+
+## 3.1.2
+
+-   upgrade the runtime to version 2.2.1
+
+## 3.1.1
+
+-> SDK 2.1.1
+
+-   upgrade the runtime to version 2.1.1 (additional validations for Request Items)
+
+## 3.1.0
+
+-> SDK 2.1.0
+
+-   upgrade the runtime to version 2.1.0 (possibility to send `ThirdPartyRelationshipAttributeQuery`s with more than one `thirdParty` by passing an array of strings instead of a single string)
+
+## 3.0.4
+
+-   upgrade the runtime to version 2.0.1 ([`ProprietaryJSON`](https://enmeshed.eu/explore/attribute-values#proprietaryjson) AttributeValueType)
+
+## 3.0.3
+
+-> SDK 2.0.3
+
+-   remove `@context` and `@version` from documentations
+
+## 3.0.2
+
+-> SDK 2.0.2
+
+-   remove RelationshipStatus `Revoked`
+
+## 3.0.1
+
+-> SDK 2.0.1
+
+-   add RelationshipStatus `Revoked`
+
 ## 3.0.0
 
 -> SDK 2.0.0

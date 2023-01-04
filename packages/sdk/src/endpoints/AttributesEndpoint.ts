@@ -36,7 +36,7 @@ export class AttributesEndpoint extends Endpoint {
         return await this.post("/api/v2/Attributes/ExecuteRelationshipAttributeQuery", request, 200);
     }
 
-    public async executeThirdPartyRelationshipAttributeQuery(request: ExecuteThirdPartyRelationshipAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
+    public async executeThirdPartyRelationshipAttributeQuery(request: ExecuteThirdPartyRelationshipAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttribute[]>> {
         return await this.post("/api/v2/Attributes/ExecuteThirdPartyRelationshipAttributeQuery", request, 200);
     }
 }

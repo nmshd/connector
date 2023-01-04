@@ -10,7 +10,7 @@ export abstract class Endpoint {
         return reponse.data;
     }
 
-    protected async get<T>(path: string, query?: any): Promise<ConnectorResponse<T>> {
+    protected async get<T>(path: string, query?: unknown): Promise<ConnectorResponse<T>> {
         const response = await this.httpClient.get(path, {
             params: query
         });
@@ -18,12 +18,12 @@ export abstract class Endpoint {
         return this.makeResult(response);
     }
 
-    protected async post<T>(path: string, data?: any, expectedStatus?: number, params?: any): Promise<ConnectorResponse<T>> {
+    protected async post<T>(path: string, data?: unknown, expectedStatus?: number, params?: unknown): Promise<ConnectorResponse<T>> {
         const response = await this.httpClient.post(path, data, { params });
         return this.makeResult(response, expectedStatus);
     }
 
-    protected async put<T>(path: string, data?: any): Promise<ConnectorResponse<T>> {
+    protected async put<T>(path: string, data?: unknown): Promise<ConnectorResponse<T>> {
         const response = await this.httpClient.put(path, data);
         return this.makeResult(response);
     }
@@ -76,7 +76,7 @@ export abstract class Endpoint {
         return ConnectorResponse.success(httpResponse.data as ArrayBuffer);
     }
 
-    protected async downloadQrCode(method: "GET" | "POST", url: string, request?: any): Promise<ConnectorResponse<ArrayBuffer>> {
+    protected async downloadQrCode(method: "GET" | "POST", url: string, request?: unknown): Promise<ConnectorResponse<ArrayBuffer>> {
         const config: AxiosRequestConfig = {
             responseType: "arraybuffer",
             headers: {
@@ -111,7 +111,7 @@ export abstract class Endpoint {
         return ConnectorResponse.success(httpResponse.data as ArrayBuffer);
     }
 
-    protected async postMultipart(url: string, data: any, filename: string): Promise<AxiosResponse<any>> {
+    protected async postMultipart(url: string, data: Record<string, unknown>, filename: string): Promise<AxiosResponse<unknown>> {
         const formData = new FormData();
         for (const key in data) {
             if (!data.hasOwnProperty(key)) {

@@ -741,7 +741,7 @@ paths:
 
   /api/v2/Attributes/ExecuteThirdPartyRelationshipAttributeQuery:
     post:
-      operationId: executeRelationshipQuery
+      operationId: executeThirdPartyRelationshipQuery
       description: Execute a ThirdPartyAttributeQuery
       tags:
         - Attributes
@@ -759,10 +759,12 @@ paths:
                       type: string
                     owner:
                       description: The owner of the relationship attribute.
-                      type: string
+                      $ref: "#/components/schemas/Address"
                     thirdParty:
-                      description: The third party of the relationship attribute.
-                      type: string
+                      description: An array of third party addresses the relationship attribute should be searched in. If the given `key` is found in multiple relationships, the user can decide which one to send.
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/Address"
                     validFrom:
                       description: The date the attribute became valid.
                       type: string
@@ -784,8 +786,9 @@ paths:
                 type: object
                 properties:
                   result:
-                    type: object
-                    $ref: "#/components/schemas/Attribute"
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Attribute"
                 required:
                   - result
           headers:
@@ -3459,6 +3462,7 @@ components:
         - publicKey
 
     IdentityAttribute:
+      type: object
       additionalProperties: false
       properties:
         "@type":
@@ -3487,9 +3491,9 @@ components:
         - "@type"
         - owner
         - value
-      type: object
 
     RelationshipAttribute:
+      type: object
       additionalProperties: false
       properties:
         "@type":
@@ -3528,9 +3532,9 @@ components:
         - key
         - owner
         - value
-      type: object
 
     Attribute:
+      type: object
       additionalProperties: false
       properties:
         id:
@@ -3562,9 +3566,9 @@ components:
         - id
         - createdAt
         - content
-      type: object
 
     AttributeShareInfo:
+      type: object
       additionalProperties: false
       properties:
         peer:
@@ -3585,16 +3589,15 @@ components:
       required:
         - requestReference
         - peer
-      type: object
 
     AttributeValue:
+      type: object
       additionalProperties: {}
       properties:
         "@type":
           type: string
       required:
         - "@type"
-      type: object
 
     ConnectorHealth:
       type: object
