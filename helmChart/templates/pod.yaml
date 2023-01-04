@@ -31,9 +31,7 @@ spec:
           port: http
       resources:
         {{- toYaml .Values.resources | nindent 12 }}
-      env:
-        - name: CUSTOM_CONFIG_LOCATION
-          value: "/config.json"
+      env: {{ append .Values.environment (dict "name" "CUSTOM_CONFIG_LOCATION" "value" "/config.json") | toYaml | nindent 8 }}
       volumeMounts:
         - name: config-volume
           mountPath: /config.json
