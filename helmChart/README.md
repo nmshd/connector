@@ -2,13 +2,13 @@
 
 ## Usage
 
-### login to the registry
+### Login to the registry
 
 ```sh
 helm registry login -u <username> https://ghcr.io
 ```
 
-### create a config file
+### Create a config file
 
 1. create a config file, e.g. `config.yaml`
 2. write the following config into the file and replace the placeholders with your values:
@@ -25,7 +25,7 @@ helm registry login -u <username> https://ghcr.io
                 apiKey: "<api-key>"
     ```
 
-### install the chart
+### Install the chart
 
 > you can list available versions [here](https://github.com/nmshd/cns-connector/pkgs/container/connector-helm-chart)
 
