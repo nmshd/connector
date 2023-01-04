@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "enmeshed_connector.fullname" . }}
+  name: {{ include "enmeshed_connector.name" . }}
   labels:
     {{- include "enmeshed_connector.labels" . | nindent 4 }}
 spec:
