@@ -1,45 +1,49 @@
 image:
-  repository: ghcr.io/nmshd/connector
   pullPolicy: IfNotPresent
   tag: ""
 
-config: {} # a json or yaml config
-environment: [] # a list of environment variables
+# a json or yaml config
+# see https://enmeshed.eu/integrate/connector-configuration for configuration options
+config: {}
 
+# a list of environment variables
+# see https://enmeshed.eu/integrate/connector-configuration for configuration options
+# can be used for secrets
+# see https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#environment-variables
+environment: []
+
+# annotations for the pod
+# https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 podAnnotations: {}
 
-podSecurityContext:
-  {}
-  # fsGroup: 2000
+# securityContext for the pod
+# https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context
+podSecurityContext: {}
 
-securityContext:
-  {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+# securityContext for the container in the pod
+# https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context-1
+containerSecurityContext: {}
 
 service:
+  # the service type
+  # https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: ClusterIP
+
+  # the service port
   port: 80
 
-resources:
-  {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+# the resources for the pod
+# https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources
+resources: {}
 
+# the nodeSelector for the pod
+# https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
 nodeSelector: {}
 
+# the tolerations for the pod
+# https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 tolerations: []
 
+# the affinity for the pod
+# https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#NodeAffinity
 affinity: {}
