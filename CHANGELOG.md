@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.2.2
+
+-> SDK 2.1.2
+
+-   upgrade the runtime to version 2.3.1
+
+## 3.2.1
+
+-   add a helm chart for the connector
+
 ## 3.2.0
 
 -   upgrade the runtime to version 2.3.0 (RequestModule full onExistingRelationship support)
