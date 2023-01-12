@@ -32,7 +32,7 @@
 
 ## 3.0.4
 
--   upgrade the runtime to version 2.0.1 ([`ProprietaryJSON`](https://enmeshed.eu/explore/attribute-values#proprietaryjson) AttributeValueType)
+-   upgrade the runtime to version 2.0.1 ([`ProprietaryJSON`](https://enmeshed.eu/integrate/data-model-attribute-values#proprietaryjson) AttributeValueType)
 
 ## 3.0.3
 
