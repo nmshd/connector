@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.3
+
+-   update the favicon used in the openapi docs
+
 ## 3.2.2
 
 -> SDK 2.1.2
