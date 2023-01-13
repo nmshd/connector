@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.3
+
+-   update the favicon used in the openapi docs
+
 ## 3.2.2
 
 -> SDK 2.1.2
@@ -32,7 +36,7 @@
 
 ## 3.0.4
 
--   upgrade the runtime to version 2.0.1 ([`ProprietaryJSON`](https://enmeshed.eu/explore/attribute-values#proprietaryjson) AttributeValueType)
+-   upgrade the runtime to version 2.0.1 ([`ProprietaryJSON`](https://enmeshed.eu/integrate/data-model-attribute-values#proprietaryjson) AttributeValueType)
 
 ## 3.0.3
 
