@@ -52,14 +52,14 @@ config:
 pod:
     containerPort: 80
 
-ferretdb:
-    enabled: true
-    tag: 0.8.1
-    environment:
-        - name: FERRETDB_POSTGRESQL_URL
-          value: "postgres://user:pass@host:5432/db?pool_max_conns=20"
-        - name: FERRETDB_TELEMETRY
-          value: disable
-        - name: FERRETDB_LOG_LEVEL
-          value: debug
+    ferretdb:
+        enabled: true
+        tag: 0.8.1
+        environment:
+            - name: FERRETDB_POSTGRESQL_URL
+            value: "postgres://user:pass@host:5432/db?pool_max_conns=20"
+            - name: FERRETDB_TELEMETRY
+            value: disable
+            - name: FERRETDB_LOG_LEVEL
+            value: debug
 ```
