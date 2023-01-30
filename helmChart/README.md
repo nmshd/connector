@@ -32,3 +32,34 @@ helm registry login -u <username> https://ghcr.io
 ```sh
 helm install connector oci://ghcr.io/nmshd/connector-helm-chart --version <version> -f <your-config-file>.yaml
 ```
+
+## FerretDB Sidecar
+
+The chart can be configured to deploy a sidecar container with FerretDB. This is useful if you want to connect the Connector to a PostgreSQL database.
+
+```yaml
+config:
+    database:
+        connectionString: "mongodb://localhost:27017"
+    transportLibrary:
+        platformClientId: "<client-id>"
+        platformClientSecret: "<client-secret>"
+    infrastructure:
+        httpServer:
+            apiKey: "<api-key>"
+            port: 80
+
+pod:
+    containerPort: 80
+
+ferretdb:
+    enabled: true
+    tag: 0.8.1
+    environment:
+        - name: FERRETDB_POSTGRESQL_URL
+          value: "postgres://user:pass@host:5432/db?pool_max_conns=20"
+        - name: FERRETDB_TELEMETRY
+          value: disable
+        - name: FERRETDB_LOG_LEVEL
+          value: debug
+```
