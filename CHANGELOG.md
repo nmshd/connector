@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.5
+
+-> SDK 2.1.4
+
+-   upgrade the runtime to version 2.3.4
+
 ## 3.2.4
 
 -> SDK 2.1.3

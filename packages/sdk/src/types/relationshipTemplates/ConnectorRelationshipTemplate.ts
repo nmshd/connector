@@ -1,4 +1,4 @@
-import { ConnectorRequest } from "../requests/ConnectorRequest";
+import { ConnectorRequestContent } from "../requests/ConnectorRequestContent";
 
 export interface ConnectorRelationshipTemplate {
     id: string;
@@ -16,6 +16,6 @@ export interface ConnectorRelationshipTemplateContent {
     "@type": "RelationshipTemplateContent";
     title?: string;
     metadata?: object;
-    onNewRelationship: ConnectorRequest;
-    onExistingRelationship?: ConnectorRequest;
+    onNewRelationship: ConnectorRequestContent;
+    onExistingRelationship?: ConnectorRequestContent;
 }
