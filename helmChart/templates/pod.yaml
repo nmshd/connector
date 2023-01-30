@@ -19,7 +19,7 @@ spec:
       imagePullPolicy: {{ .Values.image.pullPolicy }}
       ports:
         - name: http
-          containerPort: 80
+          containerPort: {{ .Values.pod.containerPort }}
           protocol: TCP
       livenessProbe:
         httpGet:
@@ -37,6 +37,12 @@ spec:
           mountPath: /config.json
           subPath: config.json
           readOnly: true
+    {{ if .Values.ferretdb.enabled }}
+    - name: ferretdb
+      image: "ghcr.io/ferretdb/ferretdb:{{ .Values.ferretdb.tag }}"
+      imagePullPolicy: IfNotPresent
+      env: {{ .Values.ferretdb.environment | toYaml | nindent 8 }}
+    {{ end }}
   volumes:
     - name: config-volume
       configMap:
