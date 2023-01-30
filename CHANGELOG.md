@@ -5,6 +5,7 @@
 -> SDK 2.1.3
 
 -   \[helm-chart\] add a `ferretdb` sidecar container to the helm chart to connect to PostgreSQL databases
+-   upgrade the runtime to version 2.3.3
 
 ## 3.2.3
 
