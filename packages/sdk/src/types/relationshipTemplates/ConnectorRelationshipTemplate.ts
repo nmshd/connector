@@ -1,4 +1,4 @@
-import { ConnectorRequestContent } from "../requests";
+import { ConnectorRequestContent } from "../requests/ConnectorRequestContent";
 
 export interface ConnectorRelationshipTemplate {
     id: string;
