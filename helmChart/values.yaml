@@ -41,7 +41,7 @@ pod:
   # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#NodeAffinity
   affinity: {}
 
-  containerPort: 8080
+  containerPort: 80
 
   # configuration for the FerretDB (https://docs.ferretdb.io) sidecar
   ferretdb:
