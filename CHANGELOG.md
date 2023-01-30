@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.2.4
+
+-> SDK 2.1.3
+
+-   \[helm-chart\] add a `ferretdb` sidecar container to the helm chart to connect to PostgreSQL databases
+-   upgrade the runtime to version 2.3.3
+-   upgrade nodejs to 18.13.0
+
 ## 3.2.3
 
 -   update the favicon used in the openapi docs

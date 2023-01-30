@@ -1,3 +1,5 @@
+import { ConnectorRequest } from "../requests/ConnectorRequest";
+
 export interface ConnectorRelationshipTemplate {
     id: string;
     isOwn: boolean;
@@ -5,7 +7,15 @@ export interface ConnectorRelationshipTemplate {
     createdBy: string;
     createdByDevice: string;
     createdAt: string;
-    content: unknown;
+    content: ConnectorRelationshipTemplateContent | unknown;
     expiresAt?: string;
     truncatedReference: string;
+}
+
+export interface ConnectorRelationshipTemplateContent {
+    "@type": "RelationshipTemplateContent";
+    title?: string;
+    metadata?: object;
+    onNewRelationship: ConnectorRequest;
+    onExistingRelationship?: ConnectorRequest;
 }

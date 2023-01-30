@@ -41,6 +41,21 @@ pod:
   # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#NodeAffinity
   affinity: {}
 
+  containerPort: 80
+
+  # configuration for the FerretDB (https://docs.ferretdb.io) sidecar
+  ferretdb:
+    enabled: false
+
+    # see https://github.com/ferretdb/FerretDB/pkgs/container/ferretdb for available tags
+    tag: "latest"
+
+    # a list of environment variables
+    # see https://docs.ferretdb.io/flags/ for configuration options
+    # can be used for secrets
+    # see https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#environment-variables
+    environment: []
+
 service:
   # the service type
   # https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
