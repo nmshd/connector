@@ -2354,6 +2354,10 @@ paths:
           schema:
             $ref: "#/components/schemas/TextFilter"
         - in: query
+          name: content.items.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
           name: source.type
           schema:
             $ref: "#/components/schemas/TextFilter"
@@ -2665,6 +2669,10 @@ paths:
             $ref: "#/components/schemas/DateFilter"
         - in: query
           name: content.items.@type
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: content.items.items.@type
           schema:
             $ref: "#/components/schemas/TextFilter"
         - in: query
