@@ -11,7 +11,7 @@
             "localRoot": "${workspaceFolder}/dist",
             "remoteRoot": "/usr/app/dist",
             "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-            "skipFiles": ["<node_internals>/**/*.js"]
+            "skipFiles": ["<node_internals>/**"]
         },
         {
             "type": "node",
@@ -23,7 +23,7 @@
             "localRoot": "${workspaceFolder}/dist",
             "remoteRoot": "/usr/app/dist",
             "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-            "skipFiles": ["<node_internals>/**/*.js"]
+            "skipFiles": ["<node_internals>/**"]
         }
     ]
 }
