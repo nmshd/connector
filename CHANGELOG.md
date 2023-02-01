@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.6
+
+-> SDK 2.1.5
+
+-   upgrade the runtime to version 2.3.5 (fixes a bug that forbids querying for Requests by their Request item's `@type`)
+
 ## 3.2.5
 
 -> SDK 2.1.4
