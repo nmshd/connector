@@ -4,7 +4,7 @@
 
 -> SDK 2.1.5
 
--   upgrade the runtime to version 2.3.5 (fixes a bug that forbids querying for Requests by their Request item's `@type`)
+-   upgrade the runtime to version 2.3.6 (fixes a bug that forbids querying for Requests by their Request item's `@type`)
 
 ## 3.2.5
 
