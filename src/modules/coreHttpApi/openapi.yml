@@ -4175,6 +4175,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FileID"
+        isOwn:
+          type: boolean
+          nullable: false
+          description: Indicates if the message was sent by the current user.
       required:
         - id
         - createdBy
@@ -4182,6 +4186,7 @@ components:
         - createdAt
         - recipients
         - content
+        - isOwn
 
     MessageWithAttachments:
       type: object
@@ -4218,6 +4223,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FileMetadata"
+        isOwn:
+          type: boolean
+          nullable: false
+          description: Indicates if the message was sent by the current user.
       required:
         - id
         - createdBy
@@ -4225,6 +4234,7 @@ components:
         - createdAt
         - recipients
         - content
+        - isOwn
 
     MessageContent:
       type: object

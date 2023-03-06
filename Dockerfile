@@ -1,4 +1,4 @@
-FROM node:18.13.0 as builder
+FROM node:18.14.2 as builder
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
 ARG PACKAGE_VERSION
@@ -13,7 +13,7 @@ COPY src src
 RUN npm run build
 RUN .ci/writeBuildInformation.sh
 
-FROM node:18.13.0-alpine
+FROM node:18.14.2-alpine
 ENV NODE_CONFIG_ENV=prod
 RUN apk add --no-cache tini
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.2.7
+
+-> SDK 2.1.6
+
+-   upgrade nodejs to 18.14.2
+-   upgrade the runtime to version 2.4.4
+
 ## 3.2.6
 
 -> SDK 2.1.5

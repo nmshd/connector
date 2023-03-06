@@ -8,4 +8,5 @@ export interface ConnectorMessage {
     recipients: ConnectorMessageRecipient[];
     createdAt: string;
     attachments: string[];
+    isOwn: boolean;
 }

@@ -296,7 +296,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         }
     }
 
-    public setupGlobalExceptionHandling(): void {
+    private setupGlobalExceptionHandling(): void {
         process.on("unhandledRejection", (reason, _p) => {
             this.logger.error("Unhandled rejection occured: ", reason);
         });

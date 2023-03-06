@@ -9,4 +9,5 @@ export interface ConnectorMessageWithAttachments {
     recipients: ConnectorMessageRecipient[];
     createdAt: string;
     attachments: ConnectorFile[];
+    isOwn: boolean;
 }
