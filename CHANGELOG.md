@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.7
+
+-   upgrade nodejs to 18.14.2
+
 ## 3.2.6
 
 -> SDK 2.1.5
