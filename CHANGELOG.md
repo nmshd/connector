@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.8
+
+-   better error handling in the `amqpPublisher` module
+
 ## 3.2.7
 
 -> SDK 2.1.6
