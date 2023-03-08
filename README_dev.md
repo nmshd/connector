@@ -1,20 +1,10 @@
-# Setup on new machine
+## Setup
 
-## Prerequisites:
-
-1. Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop)
-2. Download and install [Node JS](https://nodejs.org/en/download/)
-3. Download and install [Git](https://git-scm.com/downloads)
-4. Clone the [cns-connector](https://github.com/nmshd/cns-connector) repository
-5. Install the following npm packages **globally**:
-    1. typescript
-    2. cpx
-
-Only for Developers:
-
-1. Download and install [VS Code](https://code.visualstudio.com/)
-2. Optional: install the VS Code extension [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks)
-3. run `npm i`
+1. download and install [Docker Desktop](https://www.docker.com/products/docker-desktop)
+2. download and install [Node JS](https://nodejs.org/en/download/)
+3. install the npm packages `typescript` and `cpx` **globally**
+4. Optional: install the VS Code extension [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks)
+5. run `npm i`
 
 ## How to run
 
