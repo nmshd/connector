@@ -4,8 +4,9 @@ import amqp from "amqplib";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
 export interface AMQPPublisherModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
-    url?: string;
+    url: string;
     exchange?: string;
+    timeout?: number;
 }
 
 export default class AMQPPublisherModule extends ConnectorRuntimeModule<AMQPPublisherModuleConfiguration> {
@@ -13,21 +14,25 @@ export default class AMQPPublisherModule extends ConnectorRuntimeModule<AMQPPubl
     private channel?: amqp.Channel;
 
     public init(): void {
-        // Nothing to do here
+        if (!this.configuration.url) throw new Error("Cannot start the module, the ampq url is not defined.");
     }
 
     public async start(): Promise<void> {
         const url = this.configuration.url;
-        if (!url) throw new Error("Cannot start the module, the ampq url is not defined.");
+        this.connection = await amqp.connect(url, { timeout: this.configuration.timeout ?? 2000 }).catch((e) => {
+            throw new Error(`Could not connect to RabbitMQ at '${url}' (${e.message})`);
+        });
 
-        this.connection = await amqp.connect(url);
-        this.channel = await this.connection.createChannel();
+        this.channel = await this.connection.createChannel().catch((e) => {
+            throw new Error(`Could not create a channel for RabbitMQ' (${e.message})`);
+        });
 
         const exchange = this.configuration.exchange ?? "";
-        await this.channel.checkExchange(exchange);
+        await this.channel.checkExchange(exchange).catch(() => {
+            throw new Error(`The configured exchange '${exchange}' does not exist.`);
+        });
 
-        const trigger = "**";
-        this.subscribeToEvent(trigger, this.handleEvent.bind(this));
+        this.subscribeToEvent("**", this.handleEvent.bind(this));
     }
 
     private handleEvent(event: Event) {
