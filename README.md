@@ -13,6 +13,8 @@ This monorepo consolidates the following packages / applications:
 
 The documentation for this project is available at https://enmeshed.eu/integrate.
 
+To get started developing in this repository, see the [developer's guide](README_dev.md).
+
 ## Feedback
 
 Please file any bugs or feature requests by creating an [issue](https://github.com/nmshd/feedback/issues).
