@@ -49,7 +49,7 @@ describe("Create Relationship", () => {
         expect(response).toBeSuccessful(ValidationSchema.Relationship);
     });
 
-    test("it should exist a relationship on bc1", async () => {
+    test("it should exist a relationship on C1", async () => {
         expect(relationshipId).toBeDefined();
 
         const response = await client1.relationships.getRelationships();
@@ -64,7 +64,7 @@ describe("Create Relationship", () => {
         expect(relationships).toHaveLength(1);
     });
 
-    test("it should exist a relationship on bc2", async () => {
+    test("it should exist a relationship on C2", async () => {
         expect(relationshipId).toBeDefined();
 
         const response = await client2.relationships.getRelationships();

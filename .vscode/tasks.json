@@ -2,40 +2,10 @@
     "version": "2.0.0",
     "inputs": [
         {
-            "id": "backboneEnvironment",
-            "type": "pickString",
-            "description": "Pick a backbone environment for the business connector to run in.",
-            "options": [
-                {
-                    "label": "Development",
-                    "value": "dev"
-                },
-                {
-                    "label": "Staging",
-                    "value": "stage"
-                },
-                {
-                    "label": "Production",
-                    "value": "prod"
-                }
-            ],
-            "default": "stage"
-        },
-        {
-            "id": "enableSync",
-            "type": "pickString",
-            "description": "Enable Sync?",
-            "options": [
-                {
-                    "label": "Yes",
-                    "value": "true"
-                },
-                {
-                    "label": "No",
-                    "value": "false"
-                }
-            ],
-            "default": "false"
+            "id": "envFilePostfix",
+            "type": "promptString",
+            "description": "Enter the postfix of the env file to use (e.g. '.dev' if you want to use '.env.dev')",
+            "default": ""
         },
         {
             "id": "moreTasks",
@@ -77,7 +47,7 @@
         },
         {
             "label": "Clear",
-            "command": "docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.${input:backboneEnvironment}.yml down -v",
+            "command": "docker compose -f .dev/docker-compose.debug.yml down -v",
             "type": "shell",
             "isBackground": true,
             "presentation": {
@@ -86,7 +56,7 @@
         },
         {
             "label": "Run 1",
-            "command": "export SYNC_ENABLED=${input:enableSync} && docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.${input:backboneEnvironment}.yml up bc-1",
+            "command": "docker compose -f .dev/docker-compose.debug.yml --env-file .dev/.env${input:envFilePostfix} up connector-1",
             "type": "shell",
             "isBackground": true,
             "presentation": {
@@ -95,7 +65,7 @@
         },
         {
             "label": "Run 2",
-            "command": "export SYNC_ENABLED=${input:enableSync} && docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.${input:backboneEnvironment}.yml up bc-1 bc-2",
+            "command": "docker compose -f .dev/docker-compose.debug.yml --env-file .dev/.env${input:envFilePostfix} up connector-1 connector-2",
             "type": "shell",
             "isBackground": true,
             "presentation": {

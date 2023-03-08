@@ -1,8 +1,0 @@
-{
-    "transportLibrary": {
-        "baseUrl": "https://stage.enmeshed.eu"
-    },
-    "modules": {
-        "amqpPublisher": { "url": "amqp://rabbitmq", "exchange": "nmshd" }
-    }
-}

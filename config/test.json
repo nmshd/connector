@@ -1,8 +1,5 @@
 {
     "transportLibrary": {
-        "baseUrl": "https://stage.enmeshed.eu",
-        "platformClientId": "test",
-        "platformClientSecret": "a6owPRo8c98Ue8Z6mHoNgg5viF5teD",
         "debug": true
     },
     "logging": {
@@ -23,11 +20,6 @@
                 "appenders": ["console"],
                 "level": "TRACE"
             }
-        }
-    },
-    "infrastructure": {
-        "httpServer": {
-            "apiKey": "xxx"
         }
     }
 }

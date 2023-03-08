@@ -7,14 +7,14 @@ import { ValidationSchema } from "./lib/validation";
 const launcher = new Launcher();
 let client1: ConnectorClient;
 let client2: ConnectorClient;
-let bc2Address: string;
+let connector2Address: string;
 
 beforeAll(async () => {
     [client1, client2] = await launcher.launch(2);
     await establishRelationship(client1, client2);
 
     const relationship = await getRelationship(client1);
-    bc2Address = relationship.peer;
+    connector2Address = relationship.peer;
 }, 30000);
 
 afterAll(() => launcher.stop());
@@ -29,17 +29,17 @@ describe("Messaging", () => {
     });
 
     test("send a Message from C1 to C2", async () => {
-        expect(bc2Address).toBeDefined();
+        expect(connector2Address).toBeDefined();
         expect(fileId).toBeDefined();
 
         const response = await client1.messages.sendMessage({
-            recipients: [bc2Address],
+            recipients: [connector2Address],
             content: {
                 "@type": "Mail",
                 body: "b",
                 cc: [],
                 subject: "a",
-                to: [bc2Address]
+                to: [connector2Address]
             },
             attachments: [fileId]
         });
@@ -61,7 +61,7 @@ describe("Messaging", () => {
             body: "b",
             cc: [],
             subject: "a",
-            to: [bc2Address]
+            to: [connector2Address]
         });
     });
 
@@ -79,7 +79,7 @@ describe("Messaging", () => {
             body: "b",
             cc: [],
             subject: "a",
-            to: [bc2Address]
+            to: [connector2Address]
         });
     });
 

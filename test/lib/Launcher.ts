@@ -6,14 +6,27 @@ import waitForConnector from "./waitForConnector";
 
 export class Launcher {
     private readonly _processes: ChildProcess[] = [];
+    private readonly apiKey = "xxx";
 
     private spawnConnector(port: number, accountName: string) {
         const env = process.env;
         env["infrastructure:httpServer:port"] = port.toString();
+        env["infrastructure:httpServer:apiKey"] = this.apiKey;
+
+        const notDefinedEnvironmentVariables = ["NMSHD_TEST_BASEURL", "NMSHD_TEST_CLIENTID", "NMSHD_TEST_CLIENTSECRET"].filter((env) => !process.env[env]);
+        if (notDefinedEnvironmentVariables.length > 0) {
+            throw new Error(`Missing environment variable(s): ${notDefinedEnvironmentVariables.join(", ")}}`);
+        }
+
+        env["transportLibrary:baseUrl"] = process.env["NMSHD_TEST_BASEURL"];
+        env["transportLibrary:platformClientId"] = process.env["NMSHD_TEST_CLIENTID"];
+        env["transportLibrary:platformClientSecret"] = process.env["NMSHD_TEST_CLIENTSECRET"];
+
         env.NODE_CONFIG_ENV = "test";
         env.DATABASE_NAME = accountName;
+
         return spawn("node", ["dist/index.js"], {
-            env,
+            env: { ...process.env, ...env },
             cwd: path.resolve(`${__dirname}/../..`),
             stdio: "inherit"
         });
@@ -36,7 +49,7 @@ export class Launcher {
 
         for (let i = 0; i < count; i++) {
             const port = await getPort();
-            clients.push(ConnectorClient.create({ baseUrl: `http://localhost:${port}`, apiKey: "xxx" }));
+            clients.push(ConnectorClient.create({ baseUrl: `http://localhost:${port}`, apiKey: this.apiKey }));
             ports.push(port);
 
             const accountName = this.randomString();

@@ -1,8 +1,5 @@
 {
     "transportLibrary": {
         "baseUrl": "https://prod.enmeshed.eu"
-    },
-    "modules": {
-        "amqpPublisher": { "url": "amqp://rabbitmq", "exchange": "nmshd" }
     }
 }
