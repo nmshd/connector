@@ -18,13 +18,25 @@ Only for Developers:
 
 ## How to run
 
+> To configure the Connector for development you have to create an `.env` file in the `.dev` folder.
+>
+> You can use the `.env.example` file as a template. The file can be named anything you want (it should be prefixed with `.env`), but we recommend to use `.env` as the name. If you want to use multiple `.env` files for different environments, you can postfix the file name with the environment name (e.g. `.env.stage`).
+
 To run a single Connector instance, execute the following command:
 
 ```shell
-docker compose -f .dev/docker-compose.debug.yml -f .dev/docker-compose.debug.[env].yml up --build
+docker compose -f .dev/docker-compose.debug.yml --env-file [path_to_your_env_file] up --build bc-1
 ```
 
-(replace `[env]` with `dev`, `stage` or `prod`, depending on which Backbone environment you want the Connector to run in)
+To run two Connector instances, execute the following command:
+
+```shell
+docker compose -f .dev/docker-compose.debug.yml --env-file [path_to_your_env_file] up --build bc-1 bc-2
+```
+
+> ⚠️ Replace `[path_to_your_env_file]` with e.g. `.dev/.env`, depending on where your env file is located.
+
+> ℹ️ You can also use the VS Code task `Run 1` or `Run 2` and configure the appropriate env file to start your connector instances.
 
 After a few seconds you should see the following output:
 
@@ -43,20 +55,34 @@ You can access the Swagger UI of the Connector under http://localhost:3000/docs.
 Do NOT execute the steps from the previous chapter.
 
 1. Execute the VS Code task `Compile`
-2. Execute the VS Code task `Run 1` and select the appropriate Backbone environment and components to start.
-3. Wait until you see the following output on the console:
-    ```console
-    bc-api-1-stage             | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transport initialized
-    ...
-    bc-api-1-stage             | [2021-01-25T11:27:41.241] [INFO] HttpServerModule - Listening on port 80
-    ...
-    bc-api-1-stage             | [2021-01-25T11:27:41.241] [INFO] Runtime - Started all modules.
-    ```
-4. To attach the debugger, switch to the VS Code "Run" view, select the Run configuration "Attach to Connector 1" and click the Run button.
+2. Run the Connector as described in the previous chapter.
+3. To attach the debugger, switch to the VS Code "Run" view, select the Run configuration `Attach to Connector 1` or `Attach to Connector 2` and click the Run button.
 
 If you're running on Linux (or wsl), every time you save a file, the server is restarted, as long as you don't cancel the `Compile` task.
 
 If you're running on Windows you have to execute the `Restart` task after you saved a file. This is because when mounting a folder from the Windows file system into a Linux Docker container, the file system events are not being mapped properly.
+
+## How to test
+
+To configure the Connector for testing you have to fill the following environment variables:
+
+-   NMSHD_TEST_BASEURL (the backbone baseUrl to test against)
+-   NMSHD_TEST_CLIENTID (the backbone clientId to for the configured baseUrl)
+-   NMSHD_TEST_CLIENTSECRET (the backbone clientSecret to for the configured baseUrl)
+
+> We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
+
+After you have configured the environment variables, you can run the tests with the following command:
+
+```shell
+npm run test:local
+```
+
+If you only want to run a single test suite you can use the following command:
+
+```shell
+npm run test:local -- testSuiteName
+```
 
 # Connector SDK development
 
