@@ -4,12 +4,17 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.debug
+    container_name: bc-1
     ports:
       - "3000:80" # Webserver
       - "9229:9229" # Debugger
     environment:
       - CUSTOM_CONFIG_LOCATION=/config.json
-      - SYNC_ENABLED
+      - SYNC_ENABLED=${SYNC_ENABLED:-false}
+      - DATABASE_NAME=${DATBASE_NAME_PREFIX}-1
+      - transportLibrary__baseUrl
+      - transportLibrary__platformClientId
+      - transportLibrary__platformClientSecret
     volumes:
       - ..:/usr/app
       - ./config.json:/config.json:RO
@@ -23,12 +28,17 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.debug
+    container_name: bc-2
     ports:
       - "3001:80" # Webserver
       - "9231:9229" # Debugger
     environment:
       - CUSTOM_CONFIG_LOCATION=/config.json
-      - SYNC_ENABLED
+      - SYNC_ENABLED=${SYNC_ENABLED:-false}
+      - DATABASE_NAME=${DATBASE_NAME_PREFIX}-2
+      - transportLibrary__baseUrl
+      - transportLibrary__platformClientId
+      - transportLibrary__platformClientSecret
     volumes:
       - ..:/usr/app
       - ./config.json:/config.json:RO
