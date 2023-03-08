@@ -25,13 +25,13 @@ Only for Developers:
 To run a single Connector instance, execute the following command:
 
 ```shell
-docker compose -f .dev/docker-compose.debug.yml --env-file [path_to_your_env_file] up --build bc-1
+docker compose -f .dev/docker-compose.debug.yml --env-file [path_to_your_env_file] up --build connector-1
 ```
 
 To run two Connector instances, execute the following command:
 
 ```shell
-docker compose -f .dev/docker-compose.debug.yml --env-file [path_to_your_env_file] up --build bc-1 bc-2
+docker compose -f .dev/docker-compose.debug.yml --env-file [path_to_your_env_file] up --build connector-1 connector-2
 ```
 
 > ⚠️ Replace `[path_to_your_env_file]` with e.g. `.dev/.env`, depending on where your env file is located.
@@ -41,20 +41,18 @@ docker compose -f .dev/docker-compose.debug.yml --env-file [path_to_your_env_fil
 After a few seconds you should see the following output:
 
 ```console
-bc-api-1-stage             | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transportinitialized
+connector-1  | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transportinitialized
 ...
-bc-api-1-stage             | [2021-01-25T11:27:41.241] [INFO] HttpServerModule - Listening on port 80
+connector-1  | [2021-01-25T11:27:41.241] [INFO] HttpServerModule - Listening on port 80
 ...
-bc-api-1-stage             | [2021-01-25T11:27:41.241] [INFO] Runtime - Started all modules.
+connector-1  | [2021-01-25T11:27:41.241] [INFO] Runtime - Started all modules.
 ```
 
 You can access the Swagger UI of the Connector under http://localhost:3000/docs.
 
 ## How to debug
 
-Do NOT execute the steps from the previous chapter.
-
-1. Execute the VS Code task `Compile`
+1. Execute the VS Code task `Compile`. This task executes `tsc -w` (watches the code and compiles on change).
 2. Run the Connector as described in the previous chapter.
 3. To attach the debugger, switch to the VS Code "Run" view, select the Run configuration `Attach to Connector 1` or `Attach to Connector 2` and click the Run button.
 
@@ -67,8 +65,8 @@ If you're running on Windows you have to execute the `Restart` task after you sa
 To configure the Connector for testing you have to fill the following environment variables:
 
 -   NMSHD_TEST_BASEURL (the backbone baseUrl to test against)
--   NMSHD_TEST_CLIENTID (the backbone clientId to for the configured baseUrl)
--   NMSHD_TEST_CLIENTSECRET (the backbone clientSecret to for the configured baseUrl)
+-   NMSHD_TEST_CLIENTID (the backbone clientId for the configured baseUrl)
+-   NMSHD_TEST_CLIENTSECRET (the backbone clientSecret for the configured baseUrl)
 
 > We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
 

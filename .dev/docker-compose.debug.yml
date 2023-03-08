@@ -1,17 +1,17 @@
 version: "3.7"
 services:
-  bc-1:
+  connector-1:
     build:
       context: .
       dockerfile: ./Dockerfile.debug
-    container_name: bc-1
+    container_name: connector-1
     ports:
       - "3000:80" # Webserver
       - "9229:9229" # Debugger
     environment:
       - CUSTOM_CONFIG_LOCATION=/config.json
       - SYNC_ENABLED=${SYNC_ENABLED:-false}
-      - DATABASE_NAME=${DATBASE_NAME_PREFIX:-connector}-1
+      - DATABASE_NAME=${DATABASE_NAME_PREFIX:-connector}-1
       - transportLibrary__baseUrl
       - transportLibrary__platformClientId
       - transportLibrary__platformClientSecret
@@ -24,18 +24,18 @@ services:
     stdin_open: true
     tty: true
 
-  bc-2:
+  connector-2:
     build:
       context: .
       dockerfile: ./Dockerfile.debug
-    container_name: bc-2
+    container_name: connector-2
     ports:
       - "3001:80" # Webserver
       - "9231:9229" # Debugger
     environment:
       - CUSTOM_CONFIG_LOCATION=/config.json
       - SYNC_ENABLED=${SYNC_ENABLED:-false}
-      - DATABASE_NAME=${DATBASE_NAME_PREFIX}-2
+      - DATABASE_NAME=${DATABASE_NAME_PREFIX}-2
       - transportLibrary__baseUrl
       - transportLibrary__platformClientId
       - transportLibrary__platformClientSecret
