@@ -25,6 +25,9 @@ jobs:
       - run: npm run test:ci --workspaces --if-present
         env:
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017/?readPreference=primary&appname=transport&ssl=false
+          NMSHD_TEST_BASEURL: ${{ secrets.CNS_NMSHD_TEST_BASEURL }}
+          NMSHD_TEST_CLIENTID: ${{ secrets.CNS_NMSHD_TEST_CLIENTID }}
+          NMSHD_TEST_CLIENTSECRET: ${{ secrets.CNS_NMSHD_TEST_CLIENTSECRET }}
 
   build-docker:
     runs-on: ubuntu-latest
