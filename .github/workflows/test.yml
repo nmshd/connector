@@ -24,7 +24,26 @@ jobs:
         uses: supercharge/mongodb-github-action@1.6.0
       - run: npm run test:ci --workspaces --if-present
         env:
-          DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017/?readPreference=primary&appname=transport&ssl=false
+          DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017
+          NMSHD_TEST_BASEURL: ${{ secrets.CNS_NMSHD_TEST_BASEURL }}
+          NMSHD_TEST_CLIENTID: ${{ secrets.CNS_NMSHD_TEST_CLIENTID }}
+          NMSHD_TEST_CLIENTSECRET: ${{ secrets.CNS_NMSHD_TEST_CLIENTSECRET }}
+
+  test-ferret:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm run build:ci --workspaces --if-present
+      - uses: js-soft/ferretdb-github-action@1.0.2
+        with:
+          ferretdb-telemetry: "enabled"
+      - run: npm run test:ci
+        env:
+          DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017
           NMSHD_TEST_BASEURL: ${{ secrets.CNS_NMSHD_TEST_BASEURL }}
           NMSHD_TEST_CLIENTID: ${{ secrets.CNS_NMSHD_TEST_CLIENTID }}
           NMSHD_TEST_CLIENTSECRET: ${{ secrets.CNS_NMSHD_TEST_CLIENTSECRET }}
