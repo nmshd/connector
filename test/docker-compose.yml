@@ -1,0 +1,30 @@
+version: "3.7"
+services:
+  mongo:
+    container_name: test-mongo
+    hostname: test-mongo
+    image: mongo
+    ports:
+      - "27018:27017"
+    logging:
+      driver: none
+
+  postgres:
+    image: postgres
+    container_name: runtime-ferretdb-postgres
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=ferretdb
+
+  ferret:
+    image: ghcr.io/ferretdb/ferretdb:latest
+    container_name: runtime-ferretdb
+    ports:
+      - "27019:27017"
+    environment:
+      FERRETDB_POSTGRESQL_URL: postgres://user:password@postgres:5432/ferretdb
+      FERRETDB_TELEMETRY: disable
+      FERRETDB_LOG_LEVEL: error
+    depends_on:
+      - postgres
