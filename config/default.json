@@ -38,7 +38,7 @@
     },
     "infrastructure": {
         "httpServer": {
-            "enabled": false,
+            "enabled": true,
 
             "cors": {
                 "origin": false
@@ -83,7 +83,7 @@
             "requiredInfrastructure": ["httpServer"],
 
             "docs": {
-                "enabled": true,
+                "enabled": false,
                 "rapidoc": {
                     "persistAuth": false
                 }
