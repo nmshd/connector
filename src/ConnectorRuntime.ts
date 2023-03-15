@@ -234,7 +234,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         }
 
         const moduleConstructor = nodeModule.default as
-            | (new (runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger) => ConnectorRuntimeModule)
+            | (new (runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule)
             | undefined;
 
         if (!moduleConstructor) {
@@ -246,7 +246,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             return;
         }
 
-        const module = new moduleConstructor(this, connectorModuleConfiguration, this.loggerFactory.getLogger(moduleConstructor));
+        const module = new moduleConstructor(this, connectorModuleConfiguration, this.loggerFactory.getLogger(moduleConstructor), this.connectorMode);
 
         this.modules.add(module);
 
