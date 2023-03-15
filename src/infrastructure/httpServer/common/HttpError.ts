@@ -5,6 +5,7 @@ export interface HttpErrorJSON {
     message: string;
     id: string;
     time: string;
+    docs: string;
     stacktrace?: string[];
     details?: string;
 }
@@ -26,7 +27,8 @@ export class HttpError {
             code: this.code,
             message: this.message,
             id: this.id,
-            time: this.time
+            time: this.time,
+            docs: this.docs
         };
 
         if (verbose) {
