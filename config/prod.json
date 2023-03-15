@@ -1,4 +1,5 @@
 {
+    "mode": "production",
     "transportLibrary": {
         "baseUrl": "https://prod.enmeshed.eu"
     }

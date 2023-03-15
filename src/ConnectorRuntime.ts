@@ -11,6 +11,7 @@ import fs from "fs";
 import { validate as validateSchema } from "jsonschema";
 import path from "path";
 import { buildInformation } from "./buildInformation";
+import { ConnectorMode } from "./ConnectorMode";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
 import { DocumentationLink } from "./DocumentationLink";
@@ -54,6 +55,10 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     public readonly infrastructure = new ConnectorInfrastructureRegistry();
 
+    private constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory, private readonly connectorMode: ConnectorMode) {
+        super(connectorConfig, loggerFactory);
+    }
+
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
         const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
         const runtimeConfigSchemaString = fs.readFileSync(schemaPath).toString();
@@ -72,13 +77,26 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
         ConnectorLoggerFactory.init(loggerFactory);
-        const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
+
+        const connectorMode = this.connectorModeFromConfig(connectorConfig);
+        const runtime = new ConnectorRuntime(connectorConfig, loggerFactory, connectorMode);
         await runtime.init();
 
         runtime.scheduleKillTask();
         runtime.setupGlobalExceptionHandling();
 
         return runtime;
+    }
+
+    private static connectorModeFromConfig(connectorConfig: ConnectorRuntimeConfig): ConnectorMode {
+        switch (connectorConfig.mode) {
+            case "debug":
+                return ConnectorMode.Debug;
+            case "production":
+                return ConnectorMode.Production;
+            default:
+                return ConnectorMode.Production;
+        }
     }
 
     private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {

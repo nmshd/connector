@@ -3,6 +3,8 @@
 // npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t "ConnectorConfig" --no-top-ref
 
 export interface ConnectorConfig {
+    mode: "debug" | "production";
+
     database: {
         connectionString: string;
         dbName: string;
