@@ -1,8 +1,8 @@
 import { ConnectorMode } from "../../../ConnectorMode";
-import { HttpError } from "./HttpError";
+import { HttpError, HttpErrorJSON } from "./HttpError";
 
 export class Envelope {
-    protected constructor(public result?: any, public error?: HttpError) {}
+    protected constructor(public result?: any, public error?: HttpErrorJSON) {}
 
     public static ok(result: any): Envelope {
         return new Envelope(result, undefined);
@@ -10,10 +10,10 @@ export class Envelope {
 
     public static error(error: HttpError, connectorMode: ConnectorMode): Envelope {
         switch (connectorMode) {
-            case ConnectorMode.Debug:
-                return new Envelope(undefined, error);
-            case ConnectorMode.Production:
-                return new Envelope(undefined, new HttpError(error.code, error.message, error.id, error.time));
+            case "debug":
+                return new Envelope(undefined, error.toJSON("verbose"));
+            case "production":
+                return new Envelope(undefined, error.toJSON());
         }
     }
 }

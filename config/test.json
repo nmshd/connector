@@ -1,5 +1,5 @@
 {
-    "mode": "debug",
+    "debug": true,
     "transportLibrary": {
         "debug": true
     },

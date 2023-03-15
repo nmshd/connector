@@ -7,7 +7,6 @@ import http from "http";
 import { Server } from "typescript-rest";
 import TypescriptRestIOC from "typescript-rest-ioc";
 import { buildInformation } from "../../buildInformation";
-import { ConnectorMode } from "../../ConnectorMode";
 import { ConnectorInfrastructure, InfrastructureConfiguration } from "../ConnectorInfastructure";
 import { Envelope, HttpErrors } from "./common";
 import { HttpMethod } from "./HttpMethod";
@@ -118,9 +117,9 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         }
 
         switch (this.connectorMode) {
-            case ConnectorMode.Production:
+            case "production":
                 return {};
-            case ConnectorMode.Debug:
+            case "debug":
                 return {
                     // this csp is needed for the swagger ui / rapidoc
                     contentSecurityPolicy: {

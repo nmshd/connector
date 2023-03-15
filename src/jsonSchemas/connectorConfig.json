@@ -2,9 +2,8 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {},
     "properties": {
-        "mode": {
-            "enum": ["debug", "production"],
-            "type": "string"
+        "debug": {
+            "type": "boolean"
         },
         "database": {
             "additionalProperties": false,
@@ -1061,6 +1060,6 @@
             "type": "object"
         }
     },
-    "required": ["database", "transportLibrary", "logging", "modules", "infrastructure"],
+    "required": ["debug", "database", "transportLibrary", "logging", "modules", "infrastructure"],
     "type": "object"
 }

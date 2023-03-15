@@ -1,4 +1,1 @@
-export enum ConnectorMode {
-    Production = "production",
-    Debug = "debug"
-}
+export type ConnectorMode = "production" | "debug";

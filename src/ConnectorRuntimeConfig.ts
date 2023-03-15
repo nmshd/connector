@@ -3,7 +3,7 @@ import * as log4js from "log4js";
 import { ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
 
 export interface ConnectorRuntimeConfig extends RuntimeConfig {
-    mode: "debug" | "production";
+    debug: boolean;
 
     database: {
         connectionString: string;

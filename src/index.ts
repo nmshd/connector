@@ -40,7 +40,8 @@ const envKeyMapping: Record<string, string> = {
     DATABASE_CONNECTION_STRING: "database:connectionString", // eslint-disable-line @typescript-eslint/naming-convention
     SYNC_ENABLED: "modules:sync:enabled", // eslint-disable-line @typescript-eslint/naming-convention
     PLATFORM_CLIENT_ID: "transportLibrary:platformClientId", // eslint-disable-line @typescript-eslint/naming-convention
-    PLATFORM_CLIENT_SECRET: "transportLibrary:platformClientSecret" // eslint-disable-line @typescript-eslint/naming-convention
+    PLATFORM_CLIENT_SECRET: "transportLibrary:platformClientSecret", // eslint-disable-line @typescript-eslint/naming-convention
+    DEBUG: "debug" // eslint-disable-line @typescript-eslint/naming-convention
 };
 
 function applyAlias(variable: { key: string; value: any }) {

@@ -43,6 +43,10 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         return this._consumptionServices;
     }
 
+    private get connectorMode(): ConnectorMode {
+        return this.runtimeConfig.debug ? "debug" : "production";
+    }
+
     private _dataViewExpander: DataViewExpander;
 
     public override getServices(): RuntimeServices {
@@ -55,7 +59,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     public readonly infrastructure = new ConnectorInfrastructureRegistry();
 
-    private constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory, private readonly connectorMode: ConnectorMode) {
+    private constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory) {
         super(connectorConfig, loggerFactory);
     }
 
@@ -78,25 +82,13 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
         ConnectorLoggerFactory.init(loggerFactory);
 
-        const connectorMode = this.connectorModeFromConfig(connectorConfig);
-        const runtime = new ConnectorRuntime(connectorConfig, loggerFactory, connectorMode);
+        const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
         await runtime.init();
 
         runtime.scheduleKillTask();
         runtime.setupGlobalExceptionHandling();
 
         return runtime;
-    }
-
-    private static connectorModeFromConfig(connectorConfig: ConnectorRuntimeConfig): ConnectorMode {
-        switch (connectorConfig.mode) {
-            case "debug":
-                return ConnectorMode.Debug;
-            case "production":
-                return ConnectorMode.Production;
-            default:
-                return ConnectorMode.Production;
-        }
     }
 
     private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
