@@ -1,6 +1,7 @@
 import path from "path";
 import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
 import YAML from "yamljs";
+import { ConnectorMode } from "../../ConnectorMode";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 import { HttpMethod } from "../../infrastructure";
 
@@ -20,7 +21,13 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
 
     public init(): void {
         if (this.configuration.docs.enabled) {
-            this.addDocumentation();
+            switch (this.connectorMode) {
+                case ConnectorMode.Production:
+                    throw new Error("Documentation is not allowed in production mode.");
+                case ConnectorMode.Debug:
+                    this.addDocumentation();
+                    break;
+            }
         }
 
         this.runtime.infrastructure.httpServer.addControllers(["controllers/*.js", "controllers/*.ts", "!controllers/*.d.ts"], this.baseDirectory);
