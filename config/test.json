@@ -23,5 +23,6 @@
             }
         }
     },
-    "infrastructure": { "httpServer": { "enabled": true } }
+    "infrastructure": { "httpServer": { "enabled": true } },
+    "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
 }
