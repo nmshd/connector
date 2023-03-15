@@ -122,6 +122,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 return {};
             case ConnectorMode.Debug:
                 return {
+                    // this csp is needed for the swagger ui / rapidoc
                     contentSecurityPolicy: {
                         directives: {
                             defaultSrc: [],
