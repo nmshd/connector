@@ -96,7 +96,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 const apiKeyFromHeader = req.headers["x-api-key"];
                 if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
                     await sleep(1000);
-                    res.status(401).send(Envelope.error(HttpErrors.unauthorized()));
+                    res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
                     return;
                 }
 
@@ -174,7 +174,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
     private useErrorHandlers() {
         this.app.use(csrfErrorHandler);
-        this.app.use(genericErrorHandler);
+        this.app.use(genericErrorHandler(this.connectorMode));
     }
 
     private useHealthEndpoint() {

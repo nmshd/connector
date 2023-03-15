@@ -1,13 +1,14 @@
 import { DocumentationLink } from "../../../DocumentationLink";
 
 export class HttpError {
-    public readonly code: string;
-    public readonly message: string;
     public readonly docs: string;
-    public readonly id: string;
-    public readonly time: string;
 
-    public constructor(code: string, message: string) {
+    public constructor(
+        public readonly code: string,
+        public readonly message: string,
+        public readonly id: string = HttpErrorId.create(),
+        public readonly time: string = new Date().toISOString()
+    ) {
         this.id = HttpErrorId.create();
         this.time = new Date().toISOString();
         this.code = code;

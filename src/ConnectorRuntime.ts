@@ -268,7 +268,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     protected async initInfrastructure(): Promise<void> {
         if (this.runtimeConfig.infrastructure.httpServer.enabled) {
-            const httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer), "httpServer");
+            const httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer), "httpServer", this.connectorMode);
             this.infrastructure.add(httpServer);
         }
 
