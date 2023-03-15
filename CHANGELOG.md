@@ -4,6 +4,8 @@
 
 -   do not send stack traces over http (only log them)
 -   add a debug mode for the connector (use `{ "mode": "debug" }` in the config file) where stack traces are sent over http
+-   `coreHttpApi` docs arent allowed to enable in the production mode
+-   the `httpServer` infrastructure now allows to configure helmet fine grained over the `helmetOptions` option
 
 ## 3.2.8
 

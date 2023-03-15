@@ -2,11 +2,12 @@ import { sleep } from "@js-soft/ts-utils";
 import compression from "compression";
 import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
-import helmet from "helmet";
+import helmet, { HelmetOptions } from "helmet";
 import http from "http";
 import { Server } from "typescript-rest";
 import TypescriptRestIOC from "typescript-rest-ioc";
 import { buildInformation } from "../../buildInformation";
+import { ConnectorMode } from "../../ConnectorMode";
 import { ConnectorInfrastructure, InfrastructureConfiguration } from "../ConnectorInfastructure";
 import { Envelope, HttpErrors } from "./common";
 import { HttpMethod } from "./HttpMethod";
@@ -39,6 +40,7 @@ export interface HttpServerConfiguration extends InfrastructureConfiguration {
     port?: number;
     apiKey: string;
     cors?: CorsOptions;
+    helmetOptions?: HelmetOptions;
 }
 
 export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration> {
@@ -57,20 +59,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private configure(): void {
         this.logger.debug("Configuring middleware...");
 
-        this.app.use(
-            helmet({
-                contentSecurityPolicy: {
-                    directives: {
-                        defaultSrc: [],
-                        scriptSrc: ["'self'"],
-                        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-                        imgSrc: ["'self'", "https://enmeshed.eu", "data:"],
-                        connectSrc: ["'self'"],
-                        upgradeInsecureRequests: null
-                    }
-                }
-            })
-        );
+        this.app.use(helmet(this.getHelmetOptions()));
 
         this.app.use(requestLogger(this.logger));
         this.app.use(this.requestTracker.getTrackingMiddleware());
@@ -121,6 +110,30 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.useErrorHandlers();
 
         this.logger.debug("Completed configure()");
+    }
+
+    private getHelmetOptions(): HelmetOptions {
+        if (this.configuration.helmetOptions) {
+            return this.configuration.helmetOptions;
+        }
+
+        switch (this.connectorMode) {
+            case ConnectorMode.Production:
+                return {};
+            case ConnectorMode.Debug:
+                return {
+                    contentSecurityPolicy: {
+                        directives: {
+                            defaultSrc: [],
+                            scriptSrc: ["'self'"],
+                            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+                            imgSrc: ["'self'", "https://enmeshed.eu", "data:"],
+                            connectSrc: ["'self'"],
+                            upgradeInsecureRequests: null
+                        }
+                    }
+                };
+        }
     }
 
     private useUnsecuredCustomEndpoints() {
