@@ -1,4 +1,5 @@
 {
+    "mode": "production",
     "transportLibrary": {
         "realm": "id1"
     },
