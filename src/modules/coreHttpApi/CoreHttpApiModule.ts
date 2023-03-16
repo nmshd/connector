@@ -20,7 +20,13 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
 
     public init(): void {
         if (this.configuration.docs.enabled) {
-            this.addDocumentation();
+            switch (this.connectorMode) {
+                case "production":
+                    throw new Error("Documentation is not allowed in production mode.");
+                case "debug":
+                    this.addDocumentation();
+                    break;
+            }
         }
 
         this.runtime.infrastructure.httpServer.addControllers(["controllers/*.js", "controllers/*.ts", "!controllers/*.d.ts"], this.baseDirectory);

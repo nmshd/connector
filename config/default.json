@@ -1,4 +1,5 @@
 {
+    "debug": false,
     "transportLibrary": {
         "realm": "id1"
     },
@@ -82,7 +83,7 @@
             "requiredInfrastructure": ["httpServer"],
 
             "docs": {
-                "enabled": true,
+                "enabled": false,
                 "rapidoc": {
                     "persistAuth": false
                 }

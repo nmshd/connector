@@ -2,7 +2,7 @@ import { sleep } from "@js-soft/ts-utils";
 import compression from "compression";
 import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
-import helmet from "helmet";
+import helmet, { HelmetOptions } from "helmet";
 import http from "http";
 import { Server } from "typescript-rest";
 import TypescriptRestIOC from "typescript-rest-ioc";
@@ -39,6 +39,7 @@ export interface HttpServerConfiguration extends InfrastructureConfiguration {
     port?: number;
     apiKey: string;
     cors?: CorsOptions;
+    helmetOptions?: HelmetOptions;
 }
 
 export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration> {
@@ -57,20 +58,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private configure(): void {
         this.logger.debug("Configuring middleware...");
 
-        this.app.use(
-            helmet({
-                contentSecurityPolicy: {
-                    directives: {
-                        defaultSrc: [],
-                        scriptSrc: ["'self'"],
-                        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-                        imgSrc: ["'self'", "https://enmeshed.eu", "data:"],
-                        connectSrc: ["'self'"],
-                        upgradeInsecureRequests: null
-                    }
-                }
-            })
-        );
+        this.app.use(helmet(this.getHelmetOptions()));
 
         this.app.use(requestLogger(this.logger));
         this.app.use(this.requestTracker.getTrackingMiddleware());
@@ -96,7 +84,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 const apiKeyFromHeader = req.headers["x-api-key"];
                 if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
                     await sleep(1000);
-                    res.status(401).send(Envelope.error(HttpErrors.unauthorized()));
+                    res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
                     return;
                 }
 
@@ -121,6 +109,31 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.useErrorHandlers();
 
         this.logger.debug("Completed configure()");
+    }
+
+    private getHelmetOptions(): HelmetOptions {
+        if (this.configuration.helmetOptions) {
+            return this.configuration.helmetOptions;
+        }
+
+        switch (this.connectorMode) {
+            case "production":
+                return {};
+            case "debug":
+                return {
+                    // this csp is needed for the swagger ui / rapidoc
+                    contentSecurityPolicy: {
+                        directives: {
+                            defaultSrc: [],
+                            scriptSrc: ["'self'"],
+                            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+                            imgSrc: ["'self'", "https://enmeshed.eu", "data:"],
+                            connectSrc: ["'self'"],
+                            upgradeInsecureRequests: null
+                        }
+                    }
+                };
+        }
     }
 
     private useUnsecuredCustomEndpoints() {
@@ -174,7 +187,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
     private useErrorHandlers() {
         this.app.use(csrfErrorHandler);
-        this.app.use(genericErrorHandler);
+        this.app.use(genericErrorHandler(this.connectorMode));
     }
 
     private useHealthEndpoint() {

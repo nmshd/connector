@@ -11,6 +11,7 @@ import fs from "fs";
 import { validate as validateSchema } from "jsonschema";
 import path from "path";
 import { buildInformation } from "./buildInformation";
+import { ConnectorMode } from "./ConnectorMode";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
 import { DocumentationLink } from "./DocumentationLink";
@@ -42,6 +43,10 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         return this._consumptionServices;
     }
 
+    private get connectorMode(): ConnectorMode {
+        return this.runtimeConfig.debug ? "debug" : "production";
+    }
+
     private _dataViewExpander: DataViewExpander;
 
     public override getServices(): RuntimeServices {
@@ -53,6 +58,10 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     public readonly infrastructure = new ConnectorInfrastructureRegistry();
+
+    private constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory) {
+        super(connectorConfig, loggerFactory);
+    }
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
         const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
@@ -72,6 +81,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
         ConnectorLoggerFactory.init(loggerFactory);
+
         const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
         await runtime.init();
 
@@ -216,7 +226,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         }
 
         const moduleConstructor = nodeModule.default as
-            | (new (runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger) => ConnectorRuntimeModule)
+            | (new (runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule)
             | undefined;
 
         if (!moduleConstructor) {
@@ -228,7 +238,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             return;
         }
 
-        const module = new moduleConstructor(this, connectorModuleConfiguration, this.loggerFactory.getLogger(moduleConstructor));
+        const module = new moduleConstructor(this, connectorModuleConfiguration, this.loggerFactory.getLogger(moduleConstructor), this.connectorMode);
 
         this.modules.add(module);
 
@@ -250,7 +260,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     protected async initInfrastructure(): Promise<void> {
         if (this.runtimeConfig.infrastructure.httpServer.enabled) {
-            const httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer), "httpServer");
+            const httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer), "httpServer", this.connectorMode);
             this.infrastructure.add(httpServer);
         }
 

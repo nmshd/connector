@@ -6,6 +6,9 @@
             "type": "string",
             "format": "url"
         },
+        "debug": {
+            "type": "boolean"
+        },
         "transportLibrary": {
             "additionalProperties": false,
             "properties": {
