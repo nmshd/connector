@@ -57,7 +57,7 @@ export function genericErrorHandler(connectorMode: ConnectorMode) {
             if (error instanceof ApplicationError) {
                 logger.debug(`Handling ${ApplicationError.name}...`);
 
-                const payload = Envelope.error(HttpError.forProd(error.code, error.message), connectorMode);
+                const payload = Envelope.error(new HttpError(error.code, error.message, error.stack?.split("\n")), connectorMode);
 
                 let statusCode;
                 if (error.equals(RuntimeErrors.general.recordNotFound()) || error.equals(TransportCoreErrors.general.recordNotFound("", ""))) {
@@ -82,7 +82,7 @@ export function genericErrorHandler(connectorMode: ConnectorMode) {
             if (error instanceof RequestError) {
                 logger.debug(`Handling ${RequestError.name}...`);
 
-                const httpError = HttpError.forDev(error.code, error.reason, stacktrace, details);
+                const httpError = new HttpError(error.code, error.reason, stacktrace, details);
 
                 logger.error(`${httpError.id}\n${error.stack}`, error.object);
 
@@ -94,7 +94,7 @@ export function genericErrorHandler(connectorMode: ConnectorMode) {
             }
 
             // Unknown => 500
-            const httpError = HttpError.forDev("error.connector.unexpected", "An unexpected error occurred.", stacktrace, details);
+            const httpError = new HttpError("error.connector.unexpected", "An unexpected error occurred.", stacktrace, details);
 
             logger.error(`${httpError.id}\n${error.stack}`);
 
@@ -102,7 +102,7 @@ export function genericErrorHandler(connectorMode: ConnectorMode) {
 
             res.status(500).json(payload);
         } catch (error: any) {
-            const httpError = HttpError.forDev(
+            const httpError = new HttpError(
                 "error.connector.errorInErrorHandler",
                 `The error handler ran into an error, caused by '${error.message}', this should not happen`,
                 stackTraceFromError(error),
