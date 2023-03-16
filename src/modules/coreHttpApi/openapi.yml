@@ -4397,6 +4397,10 @@ components:
           allOf:
             - $ref: "#/components/schemas/RelationshipTemplateContent"
           nullable: false
+        secretKey:
+          type: string
+          nullable: false
+          description: The base64 encoded secret key which was used to encrypt the RelationshipTemplate.
         truncatedReference:
           type: string
           format: byte
