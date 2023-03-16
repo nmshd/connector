@@ -1,6 +1,13 @@
 # Changelog
 
-## 3.2.9
+## 3.3.1
+
+-> SDK 2.1.7
+
+-   upgrade the runtime to version 2.4.4
+-   upgrade nodejs to 18.15.0
+
+## 3.3.0
 
 -   do not send stack traces over http by default
 -   add a debug mode for the connector (use `{ "debug": true }` in the config file) where stack traces are sent over http
