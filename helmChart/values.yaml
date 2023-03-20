@@ -7,41 +7,38 @@ image:
 config: {}
 
 pod:
-  # a list of environment variables
-  # see https://enmeshed.eu/integrate/connector-configuration for configuration options
-  # can be used for secrets
-  # see https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#environment-variables
-  environment: []
-
-  # annotations for the pod
-  # https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-  annotations: {}
-
-  # securityContext for the pod
+  # securityContext for the pod deployed by the Deployment
   # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context
   securityContext: {}
 
-  # securityContext for the container in the pod
-  # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context-1
-  containerSecurityContext: {}
-
-  # the resources for the pod
-  # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources
-  resources: {}
-
-  # the nodeSelector for the pod
+  # the nodeSelector for the pod deployed by the Deployment
   # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
   nodeSelector: {}
 
-  # the tolerations for the pod
+  # the tolerations for the pod deployed by the Deployment
   # https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
   tolerations: []
 
-  # the affinity for the pod
+  # the affinity for the pod deployed by the Deployment
   # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#NodeAffinity
   affinity: {}
 
-  containerPort: 80
+  connector:
+    # a list of environment variables
+    # see https://enmeshed.eu/integrate/connector-configuration for configuration options
+    # can be used for secrets
+    # see https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#environment-variables
+    environment: []
+
+    # securityContext for the Connector container
+    # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context-1
+    securityContext: {}
+
+    # the resources for the Connector container
+    # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources
+    resources: {}
+
+    containerPort: 80
 
   # configuration for the FerretDB (https://docs.ferretdb.io) sidecar
   ferretdb:
@@ -55,6 +52,14 @@ pod:
     # can be used for secrets
     # see https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#environment-variables
     environment: []
+
+    # securityContext for the Connector container
+    # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context-1
+    securityContext: {}
+
+    # the resources for the Connector container
+    # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources
+    resources: {}
 
 service:
   # the service type

@@ -50,7 +50,8 @@ config:
             port: 80
 
 pod:
-    containerPort: 80
+    connector:
+        containerPort: 80
 
     ferretdb:
         enabled: true

@@ -2,10 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "enmeshed_connector.name" . }}
-  {{- with .Values.pod.annotations }}
-  annotations:
-    {{- toYaml . | nindent  }}
-  {{- end }}
   labels:
     {{- include "enmeshed_connector.selectorLabels" . | nindent 4 }}
 spec:
@@ -15,18 +11,19 @@ spec:
       {{- include "enmeshed_connector.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.pod.annotations }}
-      annotations:
-        {{- toYaml . | nindent 12 }}
-      {{- end }}
       labels:
         {{- include "enmeshed_connector.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.pod.securityContext }}
       securityContext:
-        {{- toYaml .Values.pod.securityContext | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: connector
-          securityContext: {{- toYaml .Values.pod.containerSecurityContext | nindent 12 }}
+          {{- with .Values.pod.connector.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           image: "ghcr.io/nmshd/connector:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -41,9 +38,12 @@ spec:
             httpGet:
               path: /health
               port: http
+          {{- with .Values.pod.connector.resources }}
           resources:
-            {{- toYaml .Values.pod.resources | nindent 12 }}
-          env: {{ append .Values.pod.environment (dict "name" "CUSTOM_CONFIG_LOCATION" "value" "/config.json") | toYaml | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env: 
+            {{ append .Values.pod.connector.environment (dict "name" "CUSTOM_CONFIG_LOCATION" "value" "/config.json") | toYaml | nindent 12 }}
           volumeMounts:
             - name: config-volume
               mountPath: /config.json
@@ -51,9 +51,18 @@ spec:
               readOnly: true
         {{ if .Values.pod.ferretdb.enabled }}
         - name: ferretdb
+          {{- with .Values.pod.ferretdb.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           image: "ghcr.io/ferretdb/ferretdb:{{ .Values.pod.ferretdb.tag }}"
           imagePullPolicy: IfNotPresent
-          env: {{ .Values.pod.ferretdb.environment | toYaml | nindent 12 }}
+          {{- with .Values.pod.connector.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env: 
+            {{ .Values.pod.ferretdb.environment | toYaml | nindent 12 }}
         {{ end }}
       volumes:
         - name: config-volume
