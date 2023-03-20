@@ -28,7 +28,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.pod.containerPort }}
+              containerPort: {{ .Values.pod.connector.containerPort }}
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -42,8 +42,12 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          env: 
-            {{ append .Values.pod.connector.environment (dict "name" "CUSTOM_CONFIG_LOCATION" "value" "/config.json") | toYaml | nindent 12 }}
+          env:
+            - name: CUSTOM_CONFIG_LOCATION
+              value: /config.json
+            {{- with .Values.pod.connector.environment }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           volumeMounts:
             - name: config-volume
               mountPath: /config.json
