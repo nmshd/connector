@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ include "enmeshed_connector.name" . }}
   labels:
-    {{- include "enmeshed_connector.labels" . | nindent 4 }}
+    {{- include "enmeshed_connector.selectorLabels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
