@@ -10,18 +10,6 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Common labels
-*/}}
-{{- define "enmeshed_connector.labels" -}}
-helm.sh/chart: {{ include "enmeshed_connector.chart" . }}
-{{ include "enmeshed_connector.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
-
-{{/*
 Selector labels
 */}}
 {{- define "enmeshed_connector.selectorLabels" -}}
