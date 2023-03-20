@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.2
+
+-   the helm chart now deploys a Deployment instead of a Pod (some configuration options have changed significantly)
+
 ## 3.3.1
 
 -> SDK 2.1.7

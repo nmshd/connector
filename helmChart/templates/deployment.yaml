@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "enmeshed_connector.name" . }}
+  labels:
+    {{- include "enmeshed_connector.selectorLabels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "enmeshed_connector.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "enmeshed_connector.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.pod.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: connector
+          {{- with .Values.pod.connector.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "ghcr.io/nmshd/connector:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.pod.connector.containerPort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          {{- with .Values.pod.connector.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: CUSTOM_CONFIG_LOCATION
+              value: /config.json
+            {{- with .Values.pod.connector.environment }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config.json
+              subPath: config.json
+              readOnly: true
+        {{ if .Values.pod.ferretdb.enabled }}
+        - name: ferretdb
+          {{- with .Values.pod.ferretdb.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "ghcr.io/ferretdb/ferretdb:{{ .Values.pod.ferretdb.tag }}"
+          imagePullPolicy: IfNotPresent
+          {{- with .Values.pod.connector.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env: 
+            {{ .Values.pod.ferretdb.environment | toYaml | nindent 12 }}
+        {{ end }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "enmeshed_connector.name" . }}
+      {{- with .Values.pod.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pod.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pod.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
