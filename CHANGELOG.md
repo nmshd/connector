@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.3
+
+-   set the `CAP_NET_BIND_SERVICE` capability for the node executable in the docker image (required for the Connector to bind to ports < 1024 when running as non-root)
+
 ## 3.3.2
 
 -   the helm chart now deploys a Deployment instead of a Pod (some configuration options have changed significantly)
