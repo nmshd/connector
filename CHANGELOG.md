@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.4
+
+-   the helm chart now allows to configure the image of the `ferretdb` sidecar (use `ferretdb.image` in the config file)
+
 ## 3.3.3
 
 -   set the `CAP_NET_BIND_SERVICE` capability for the node executable in the docker image (required for the Connector to bind to ports < 1024 when running as non-root)
