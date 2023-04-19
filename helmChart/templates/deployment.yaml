@@ -59,7 +59,7 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "ghcr.io/ferretdb/ferretdb:{{ .Values.pod.ferretdb.tag }}"
+          image: "ghcr.io/ferretdb/{{ .Values.pod.ferretdb.image }}:{{ .Values.pod.ferretdb.tag }}"
           imagePullPolicy: IfNotPresent
           {{- with .Values.pod.connector.resources }}
           resources:
