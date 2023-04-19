@@ -2,12 +2,6 @@
 
 ## Usage
 
-### Login to the registry
-
-```sh
-helm registry login -u <username> https://ghcr.io
-```
-
 ### Create a config file
 
 1. create a config file, e.g. `config.yaml`
