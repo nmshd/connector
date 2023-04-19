@@ -44,6 +44,8 @@ pod:
   ferretdb:
     enabled: false
 
+    image: "ferretdb"
+
     # see https://github.com/ferretdb/FerretDB/pkgs/container/ferretdb for available tags
     tag: "latest"
 

@@ -1,12 +1,10 @@
 # Connector Helm Chart
 
+## Documentation
+
+You can find a more detailed documentation [in the enmeshed docs](https://enmeshed.eu/integrate/helm-chart).
+
 ## Usage
-
-### Login to the registry
-
-```sh
-helm registry login -u <username> https://ghcr.io
-```
 
 ### Create a config file
 
