@@ -1,5 +1,9 @@
 # Connector Helm Chart
 
+## Documentation
+
+You can find a more detailed documentation [in the enmeshed docs](https://enmeshed.eu/integrate/helm-chart).
+
 ## Usage
 
 ### Create a config file
