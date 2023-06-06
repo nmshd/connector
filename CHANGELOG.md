@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.5
+
+-   upgrade nodejs to 18.16.0
+
 ## 3.3.4
 
 -   the helm chart now allows to configure the image of the `ferretdb` sidecar (use `ferretdb.image` in the config file)

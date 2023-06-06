@@ -1,4 +1,4 @@
-FROM node:18.15.0 as builder
+FROM node:18.16.0 as builder
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
 ARG PACKAGE_VERSION
@@ -13,7 +13,7 @@ COPY src src
 RUN npm run build
 RUN .ci/writeBuildInformation.sh
 
-FROM node:18.15.0-alpine
+FROM node:18.16.0-alpine
 ENV NODE_CONFIG_ENV=prod
 RUN apk add --no-cache tini
 RUN apk add libcap && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/node && apk del libcap
