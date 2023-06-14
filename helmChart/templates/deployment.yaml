@@ -71,7 +71,7 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: {{ include "enmeshed_connector.name" . }}
+            name: {{ include "enmeshed_connector.fullname" . }}
       {{- with .Values.pod.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
