@@ -12,6 +12,7 @@ describe("Account Endpoints", () => {
     test("can get IdentityInfo", async () => {
         const identityInfo = await client.account.getIdentityInfo();
         expect(identityInfo).toBeSuccessful(ValidationSchema.IdentityInfo);
+        throw new Error();
     });
 
     test("can sync", async () => {
