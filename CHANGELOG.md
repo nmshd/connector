@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.6
+
+-   bump npm packages
+
 ## 3.3.5
 
 -   upgrade nodejs to 18.16.0

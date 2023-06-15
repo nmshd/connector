@@ -15,13 +15,13 @@
 To run a single Connector instance, execute the following command:
 
 ```shell
-docker compose -f .dev/docker-compose.yml --env-file [path_to_your_env_file] up --build connector-1
+docker compose -f .dev/compose.yml --env-file [path_to_your_env_file] up --build connector-1
 ```
 
 To run two Connector instances, execute the following command:
 
 ```shell
-docker compose -f .dev/docker-compose.yml --env-file [path_to_your_env_file] up --build connector-1 connector-2
+docker compose -f .dev/compose.yml --env-file [path_to_your_env_file] up --build connector-1 connector-2
 ```
 
 > ⚠️ Replace `[path_to_your_env_file]` with e.g. `.dev/.env`, depending on where your env file is located.
