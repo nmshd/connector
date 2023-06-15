@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "enmeshed_connector.name" . }}
+  name: {{ include "enmeshed_connector.fullname" . }}
   labels:
     {{- include "enmeshed_connector.selectorLabels" . | nindent 4 }}
 spec:
@@ -71,7 +71,7 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: {{ include "enmeshed_connector.name" . }}
+            name: {{ include "enmeshed_connector.fullname" . }}
       {{- with .Values.pod.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
