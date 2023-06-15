@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.8
+
+-   upgrade libraries
+
 ## 3.3.7
 
 -   use fully qualified app name in the helm chart
