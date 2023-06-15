@@ -47,7 +47,7 @@
         },
         {
             "label": "Clear",
-            "command": "docker compose -f .dev/docker-compose.yml down -v",
+            "command": "docker compose -f .dev/compose.yml down -v",
             "type": "shell",
             "isBackground": true,
             "presentation": {
@@ -56,7 +56,7 @@
         },
         {
             "label": "Run 1",
-            "command": "docker compose -f .dev/docker-compose.yml --env-file .dev/.env${input:envFilePostfix} up connector-1",
+            "command": "docker compose -f .dev/compose.yml --env-file .dev/.env${input:envFilePostfix} up connector-1",
             "type": "shell",
             "isBackground": true,
             "presentation": {
@@ -65,7 +65,7 @@
         },
         {
             "label": "Run 2",
-            "command": "docker compose -f .dev/docker-compose.yml --env-file .dev/.env${input:envFilePostfix} up connector-1 connector-2",
+            "command": "docker compose -f .dev/compose.yml --env-file .dev/.env${input:envFilePostfix} up connector-1 connector-2",
             "type": "shell",
             "isBackground": true,
             "presentation": {
