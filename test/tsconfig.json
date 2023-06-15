@@ -22,6 +22,7 @@
         "typeRoots": ["../node_modules/@types"],
         "baseUrl": "../"
     },
+    "files": ["../node_modules/jest-expect-message/types/index.d.ts"],
     "include": ["**/*.ts"],
     "exclude": []
 }
