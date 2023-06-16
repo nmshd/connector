@@ -16,7 +16,7 @@ describe("Outgoing Requests", () => {
         const response = await client2.outgoingRequests.createRequest({
             content: {
                 items: [{ "@type": "ReadAttributeRequestItem", mustBeAccepted: false, query: { "@type": "IdentityAttributeQuery", valueType: "Surname" } }],
-                expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
+                expiresAt: DateTime.now().plus({ hour: 1 }).toISO()!
             },
             peer: (await client1.account.getIdentityInfo()).result.address
         });
@@ -34,7 +34,7 @@ describe("Outgoing Requests", () => {
         const response = await client1.outgoingRequests.createRequest({
             content: {
                 items: [{ "@type": "ReadAttributeRequestItem", mustBeAccepted: false, query: { "@type": "IdentityAttributeQuery", valueType: "Surname" } }],
-                expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
+                expiresAt: DateTime.now().plus({ hour: 1 }).toISO()!
             },
             peer: (await client2.account.getIdentityInfo()).result.address
         });
