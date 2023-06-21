@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.3.9
+
+-   Docker images are now provided for the following architectures:
+    -   `linux/amd64`
+    -   `linux/arm64`
+    -   `linux/arm64/v8`
+    -   `linux/arm/v7`
+
 ## 3.3.8
 
 -> SDK 2.1.8
