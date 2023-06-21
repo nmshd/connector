@@ -33,7 +33,7 @@ else # other error
 fi
 
 docker buildx build --push \
-    --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm64/v8 \
+    --platform linux/amd64,linux/arm64,linux/arm/v7 \
     $TAGS \
     --build-arg COMMIT_HASH=$COMMIT_HASH \
     --build-arg BUILD_NUMBER=$BUILD_NUMBER \
