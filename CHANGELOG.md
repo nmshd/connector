@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.3.10
+
+-   (helm chart) set defaults for the liveness and readiness probes
+-   make health check more robust and performant
+
 ## 3.3.9
 
 -   Docker images are now provided for the following architectures:

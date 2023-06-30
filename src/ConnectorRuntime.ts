@@ -10,12 +10,12 @@ import axios from "axios";
 import fs from "fs";
 import { validate as validateSchema } from "jsonschema";
 import path from "path";
-import { buildInformation } from "./buildInformation";
 import { ConnectorMode } from "./ConnectorMode";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
 import { DocumentationLink } from "./DocumentationLink";
 import { HealthChecker } from "./HealthChecker";
+import { buildInformation } from "./buildInformation";
 import { HttpServer } from "./infrastructure";
 import { ConnectorInfrastructureRegistry } from "./infrastructure/ConnectorInfrastructureRegistry";
 import { ConnectorLoggerFactory } from "./logging/ConnectorLoggerFactory";
@@ -58,6 +58,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     public readonly infrastructure = new ConnectorInfrastructureRegistry();
+
+    private healthChecker: HealthChecker;
 
     private constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory) {
         super(connectorConfig, loggerFactory);
@@ -141,6 +143,19 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             consumptionServices: this._consumptionServices,
             dataViewExpander: this._dataViewExpander
         } = await this.login(this.accountController, consumptionController));
+
+        this.healthChecker = HealthChecker.create(
+            new MongoDbConnection(this.runtimeConfig.database.connectionString, {
+                connectTimeoutMS: 1000,
+                socketTimeoutMS: 1000,
+                maxIdleTimeMS: 1000,
+                waitQueueTimeoutMS: 1000,
+                serverSelectionTimeoutMS: 1000
+            }),
+            axios.create({ baseURL: this.transport.config.baseUrl }),
+            this.accountController.authenticator,
+            this.loggerFactory.getLogger("HealthChecker")
+        );
     }
 
     private async checkDeviceCredentials(accountController: AccountController) {
@@ -155,20 +170,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     public async getHealth(): Promise<RuntimeHealth> {
-        const healthCheck = HealthChecker.create(
-            new MongoDbConnection(this.runtimeConfig.database.connectionString, {
-                connectTimeoutMS: 1000,
-                socketTimeoutMS: 1000,
-                maxIdleTimeMS: 1000,
-                waitQueueTimeoutMS: 1000,
-                serverSelectionTimeoutMS: 1000
-            }),
-            axios.create({ baseURL: this.transport.config.baseUrl }),
-            this.accountController.authenticator,
-            this.loggerFactory.getLogger("HealthChecker")
-        );
-        const health = await healthCheck.getReport();
-
+        const health = await this.healthChecker.getReport();
         return health;
     }
 
