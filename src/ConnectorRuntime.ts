@@ -59,7 +59,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     public readonly infrastructure = new ConnectorInfrastructureRegistry();
 
-    private healthCheck: HealthChecker;
+    private healthChecker: HealthChecker;
 
     private constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory) {
         super(connectorConfig, loggerFactory);
@@ -144,7 +144,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             dataViewExpander: this._dataViewExpander
         } = await this.login(this.accountController, consumptionController));
 
-        this.healthCheck = HealthChecker.create(
+        this.healthChecker = HealthChecker.create(
             new MongoDbConnection(this.runtimeConfig.database.connectionString, {
                 connectTimeoutMS: 1000,
                 socketTimeoutMS: 1000,
@@ -170,7 +170,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     public async getHealth(): Promise<RuntimeHealth> {
-        const health = await this.healthCheck.getReport();
+        const health = await this.healthChecker.getReport();
         return health;
     }
 
