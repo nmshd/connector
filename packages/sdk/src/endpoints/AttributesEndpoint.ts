@@ -3,11 +3,12 @@ import {
     ConnectorAttributes,
     ConnectorResponse,
     CreateAttributeRequest,
+    ExecuteIQLQueryRequest,
     ExecuteIdentityAttributeQueryRequest,
     ExecuteRelationshipAttributeQueryRequest,
     ExecuteThirdPartyRelationshipAttributeQueryRequest,
     GetAttributesRequest,
-    GetValidAttributesRequest
+    GetValidAttributesRequest,
 } from "../types";
 import { Endpoint } from "./Endpoint";
 
@@ -38,5 +39,9 @@ export class AttributesEndpoint extends Endpoint {
 
     public async executeThirdPartyRelationshipAttributeQuery(request: ExecuteThirdPartyRelationshipAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttribute[]>> {
         return await this.post("/api/v2/Attributes/ExecuteThirdPartyRelationshipAttributeQuery", request, 200);
+    }
+
+    public async executeIQLQuery(request: ExecuteIQLQueryRequest): Promise<ConnectorResponse<ConnectorAttribute[]>> {
+        return await this.post("/api/v2/Attributes/ExecuteIQLQuery", request, 200);
     }
 }

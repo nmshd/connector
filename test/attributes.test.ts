@@ -25,7 +25,8 @@ describe("Attributes", () => {
                 value: {
                     "@type": "GivenName",
                     value: "AGivenName"
-                }
+                },
+                tags: ["content:edu.de"]
             }
         });
 

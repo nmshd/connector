@@ -1,6 +1,8 @@
+import { Result } from "@js-soft/ts-utils";
+import { validate as validateIQL } from "@nmshd/iql";
 import { ConsumptionServices, TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, GET, POST, Path, PathParam, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -57,6 +59,23 @@ export class AttributesController extends BaseController {
     public async executeThirdPartyRelationshipAttributeQuery(request: any): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.executeThirdPartyRelationshipAttributeQuery(request);
         return this.ok(result);
+    }
+
+    @POST
+    @Path("/ExecuteIQLQuery")
+    @Accept("application/json")
+    public async executeIQLQuery(request: any): Promise<Envelope> {
+        return this.ok(await this.consumptionServices.attributes.executeIQLQuery({ query: { queryString: request.query.queryString } }));
+    }
+
+    @POST
+    @Path("/ValidateIQLQuery")
+    @Accept("application/json")
+    public validateIQLQuery(request: any): Envelope {
+        const result = validateIQL(request.query.queryString);
+        // ???: @jonas: What's the point of the 'Result' wrapper here?
+        //              Why not just return this.ok(result)?
+        return this.ok(Result.ok(result));
     }
 
     @GET
