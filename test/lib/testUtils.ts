@@ -37,13 +37,13 @@ export async function syncUntil(client: ConnectorClient, until: (context: Connec
 
     /* Loops until we time out or the exit condition specified by until() is
      * met. */
-    const startTime = Number(new Date());
+    const startTime = Date.now();
     do {
         if ((await doSync()) && until(result)) {
             return result;
         }
         await sleep(500);
-    } while (Number(new Date()) <= startTime + maxWaitSec * 1000);
+    } while (Date.now() <= startTime + maxWaitSec * 1000);
 
     throw new Error(`syncUntil() timed out after ${maxWaitSec} seconds`);
 }
