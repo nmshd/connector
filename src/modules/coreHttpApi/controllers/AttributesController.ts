@@ -73,8 +73,6 @@ export class AttributesController extends BaseController {
     @Accept("application/json")
     public validateIQLQuery(request: any): Envelope {
         const result = validateIQL(request.query.queryString);
-        // ???: @jonas: What's the point of the 'Result' wrapper here?
-        //              Why not just return this.ok(result)?
         return this.ok(Result.ok(result));
     }
 
