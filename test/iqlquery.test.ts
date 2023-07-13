@@ -80,8 +80,8 @@ test("Local IQL Query", async () => {
         };
 
         const response = await client1.attributes.executeIQLQuery(queryRequest);
-        const matchedAttributeIds = response.result.map((e: any) => e.id);
-        const expectedAttributeIds = e.matches.map((ii) => attributeIds[ii]);
+        const matchedAttributeIds: string[] = response.result.map((e: any) => e.id);
+        const expectedAttributeIds: string[] = e.matches.map((ii: number) => attributeIds[ii]); // eslint-disable-line no-loop-func
         expect([...matchedAttributeIds].sort()).toStrictEqual([...expectedAttributeIds].sort());
     }
 });
@@ -274,5 +274,5 @@ test("Remote ProposeAttributeRequest containing IQL Query without existing attri
     await client1.incomingRequests.accept(incomingRequest.id, requestResponse);
     const syncRes = await syncUntilHasMessages(client2);
     const attribute = (syncRes[0] as any).content.response.items[0].attribute;
-    expect(attribute).toEqual(incomingRequestItem.attribute);
+    expect(attribute).toStrictEqual(incomingRequestItem.attribute);
 });

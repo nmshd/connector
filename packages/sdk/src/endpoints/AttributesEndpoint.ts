@@ -8,7 +8,7 @@ import {
     ExecuteRelationshipAttributeQueryRequest,
     ExecuteThirdPartyRelationshipAttributeQueryRequest,
     GetAttributesRequest,
-    GetValidAttributesRequest,
+    GetValidAttributesRequest
 } from "../types";
 import { Endpoint } from "./Endpoint";
 
