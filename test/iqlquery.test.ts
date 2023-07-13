@@ -137,7 +137,7 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
                 newAttribute: matchedAttributes[0].content // why is this needed?? Test runs into timeout on syncUntilHasMessages otherwise
             }
         ]
-    } as any; // HACK: SDK accept() types are erroneous
+    };
     await client1.incomingRequests.accept(incomingRequest.id, requestResponse);
     const syncRes = await syncUntilHasMessages(client2);
     const attribute = (syncRes[0] as any).content.response.items[0].attribute;
@@ -203,7 +203,7 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
                 attributeId: matchedAttributes[0].id
             }
         ]
-    } as any; // HACK: SDK accept() types are erroneous
+    };
     await client1.incomingRequests.accept(incomingRequest.id, requestResponse);
     const syncRes = await syncUntilHasMessages(client2);
     const attribute = (syncRes[0] as any).content.response.items[0].attribute;
@@ -270,7 +270,7 @@ test("Remote ProposeAttributeRequest containing IQL Query without existing attri
                 attributeId
             }
         ]
-    } as any; // HACK: SDK accept() types are erroneous
+    };
     await client1.incomingRequests.accept(incomingRequest.id, requestResponse);
     const syncRes = await syncUntilHasMessages(client2);
     const attribute = (syncRes[0] as any).content.response.items[0].attribute;
