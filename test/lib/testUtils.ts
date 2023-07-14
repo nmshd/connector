@@ -15,37 +15,32 @@ import fs from "fs";
 import { DateTime } from "luxon";
 import { ValidationSchema } from "./validation";
 
-export async function syncUntil(client: ConnectorClient, until: (context: ConnectorSyncResult) => boolean, maxWaitSec = 8): Promise<ConnectorSyncResult> {
-    /* Defines a helper which performs the actual sync, storing new items in
-     * the 'results' array and returning a boolean which indicates whether the
-     * sync has produced any new items. This return value can be used to avoid
-     * unnecessary calls to until(). */
-    const result: ConnectorSyncResult = { messages: [], relationships: [] };
-    async function doSync(): Promise<boolean> {
-        let gotNewData = false;
-        const syncData = (await client.account.sync()).result;
-        if (syncData.messages.length > 0) {
-            result.messages.push(...syncData.messages);
-            gotNewData = true;
-        }
-        if (syncData.relationships.length > 0) {
-            result.relationships.push(...syncData.relationships);
-            gotNewData = true;
-        }
-        return gotNewData;
+export async function syncUntil(client: ConnectorClient, until: (syncResult: ConnectorSyncResult) => boolean): Promise<ConnectorSyncResult> {
+    const syncResponse = await client.account.sync();
+    expect(syncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
+
+    const connectorSyncResult: ConnectorSyncResult = { messages: [...syncResponse.result.messages], relationships: [...syncResponse.result.relationships] };
+
+    let iterationNumber = 0;
+    while (!until(connectorSyncResult) && iterationNumber < 25) {
+        // incrementally increase sleep duration
+        iterationNumber++;
+        await sleep(iterationNumber * 50);
+
+        const newSyncResponse = await client.account.sync();
+        expect(newSyncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
+
+        const newConnectorSyncResult = newSyncResponse.result;
+
+        connectorSyncResult.messages.push(...newConnectorSyncResult.messages);
+        connectorSyncResult.relationships.push(...newConnectorSyncResult.relationships);
     }
 
-    /* Loops until we time out or the exit condition specified by until() is
-     * met. */
-    const startTime = Date.now();
-    do {
-        if ((await doSync()) && until(result)) {
-            return result;
-        }
-        await sleep(500);
-    } while (Date.now() <= startTime + maxWaitSec * 1000);
+    if (!until(connectorSyncResult)) {
+        throw new Error("syncUntil() timed out");
+    }
 
-    throw new Error(`syncUntil() timed out after ${maxWaitSec} seconds`);
+    return connectorSyncResult;
 }
 
 export async function syncUntilHasRelationships(client: ConnectorClient, expectedNumberOfRelationships = 1): Promise<ConnectorRelationship[]> {
