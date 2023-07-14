@@ -1,5 +1,3 @@
-import { Result } from "@js-soft/ts-utils";
-import { validate as validateIQL } from "@nmshd/iql";
 import { ConsumptionServices, TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
 import { Accept, Context, GET, POST, Path, PathParam, Return, ServiceContext } from "typescript-rest";
@@ -72,9 +70,9 @@ export class AttributesController extends BaseController {
     @POST
     @Path("/ValidateIQLQuery")
     @Accept("application/json")
-    public validateIQLQuery(request: any): Envelope {
-        const result = validateIQL(request.query.queryString);
-        return this.ok(Result.ok(result));
+    public async validateIQLQuery(request: any): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.validateIQLQuery(request);
+        return this.ok(result);
     }
 
     @GET
