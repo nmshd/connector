@@ -871,7 +871,7 @@ paths:
                 type: object
                 properties:
                   isValid:
-                    type: string
+                    type: boolean
                   error:
                     type: object
                     properties:
