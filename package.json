@@ -51,7 +51,7 @@
         "@js-soft/node-logger": "1.0.3",
         "@js-soft/ts-utils": "^2.3.1",
         "@nmshd/iql": "^0.0.1",
-        "@nmshd/runtime": "2.5.2",
+        "@nmshd/runtime": "2.5.3",
         "agentkeepalive": "4.3.0",
         "amqplib": "^0.10.3",
         "axios": "^1.4.0",
