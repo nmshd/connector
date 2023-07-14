@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.4.0
+
+-   expose new IQL query type via the Connector API
+
 ## 3.3.10
 
 -   (helm chart) set defaults for the liveness and readiness probes
