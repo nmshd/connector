@@ -48,33 +48,6 @@ export async function syncUntil(client: ConnectorClient, until: (context: Connec
     throw new Error(`syncUntil() timed out after ${maxWaitSec} seconds`);
 }
 
-// export async function syncUntil(client: ConnectorClient, until: (syncResult: ConnectorSyncResult) => boolean): Promise<ConnectorSyncResult> {
-//     const syncResponse = await client.account.sync();
-//     expect(syncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
-
-//     const connectorSyncResult: ConnectorSyncResult = { messages: [...syncResponse.result.messages], relationships: [...syncResponse.result.relationships] };
-
-//     let iterationNumber = 0;
-//     while (!until(connectorSyncResult) && iterationNumber < 25) {
-//         iterationNumber++;
-//         await sleep(iterationNumber * 50);
-
-//         const newSyncResponse = await client.account.sync();
-//         expect(newSyncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
-
-//         const newConnectorSyncResult = syncResponse.result;
-
-//         connectorSyncResult.messages.push(...newConnectorSyncResult.messages);
-//         connectorSyncResult.relationships.push(...newConnectorSyncResult.relationships);
-//     }
-
-//     if (!until(connectorSyncResult)) {
-//         console.warn("until was not reached"); // eslint-disable-line no-console
-//     }
-
-//     return connectorSyncResult;
-// }
-
 export async function syncUntilHasRelationships(client: ConnectorClient, expectedNumberOfRelationships = 1): Promise<ConnectorRelationship[]> {
     const syncResult = await syncUntil(client, (syncResult) => syncResult.relationships.length >= expectedNumberOfRelationships);
     return syncResult.relationships;
