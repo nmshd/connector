@@ -23,20 +23,21 @@ export async function syncUntil(client: ConnectorClient, until: (syncResult: Con
 
     let iterationNumber = 0;
     while (!until(connectorSyncResult) && iterationNumber < 25) {
+        // incrementally increase sleep duration
         iterationNumber++;
         await sleep(iterationNumber * 50);
 
         const newSyncResponse = await client.account.sync();
         expect(newSyncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
 
-        const newConnectorSyncResult = syncResponse.result;
+        const newConnectorSyncResult = newSyncResponse.result;
 
         connectorSyncResult.messages.push(...newConnectorSyncResult.messages);
         connectorSyncResult.relationships.push(...newConnectorSyncResult.relationships);
     }
 
     if (!until(connectorSyncResult)) {
-        console.warn("until was not reached"); // eslint-disable-line no-console
+        throw new Error("syncUntil() timed out");
     }
 
     return connectorSyncResult;

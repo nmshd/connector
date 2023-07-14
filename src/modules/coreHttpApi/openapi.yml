@@ -803,6 +803,106 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  /api/v2/Attributes/ExecuteIQLQuery:
+    post:
+      operationId: executeIQLQuery
+      description: Execute IQL Query
+      tags:
+        - Attributes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    queryString:
+                      description: IQL Query String
+                      type: string
+                      example: "PhoneNumber && #emergency"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Attribute"
+                required:
+                  - result
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v2/Attributes/ValidateIQLQuery:
+    post:
+      operationId: validateIQLQuery
+      description: Validate IQL Query
+      tags:
+        - Attributes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    queryString:
+                      description: IQL Query String
+                      type: string
+                      example: "PhoneNumber && #emergency"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isValid:
+                    type: boolean
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                      location:
+                        type: object
+                        properties:
+                          start:
+                            type: object
+                            properties:
+                              column:
+                                type: number
+                              line:
+                                type: number
+                              offset:
+                                type: number
+                          end:
+                            type: object
+                            properties:
+                              column:
+                                type: number
+                              line:
+                                type: number
+                              offset:
+                                type: number
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
   # ------------------- Challenges -------------------
 
   /api/v2/Challenges:

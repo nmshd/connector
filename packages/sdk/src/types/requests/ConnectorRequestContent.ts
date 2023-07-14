@@ -1,4 +1,4 @@
-import { ThirdPartyAttributeQuery } from "../attributes";
+import { IQLQuery, ThirdPartyAttributeQuery } from "../attributes";
 import { ConnectorIdentityAttribute, ConnectorRelationshipAttribute } from "../attributes/ConnectorAttribute";
 import { IdentityAttributeQuery } from "../attributes/IdentityAttributeQuery";
 import { RelationshipAttributeQuery } from "../attributes/RelationshipAttributeQuery";
@@ -51,13 +51,13 @@ export interface ShareAttributeRequestItem extends ConnectorRequestContentItem {
 
 export interface ProposeAttributeRequestItem extends ConnectorRequestContentItem {
     "@type": "ProposeAttributeRequestItem";
-    query: IdentityAttributeQuery | RelationshipAttributeQuery;
+    query: IdentityAttributeQuery | RelationshipAttributeQuery | IQLQuery;
     attribute: ConnectorIdentityAttribute | ConnectorRelationshipAttribute;
 }
 
 export interface ReadAttributeRequestItem extends ConnectorRequestContentItem {
     "@type": "ReadAttributeRequestItem";
-    query: IdentityAttributeQuery | RelationshipAttributeQuery | ThirdPartyAttributeQuery;
+    query: IdentityAttributeQuery | RelationshipAttributeQuery | ThirdPartyAttributeQuery | IQLQuery;
 }
 
 export interface ConsentRequestItem extends ConnectorRequestContentItem {

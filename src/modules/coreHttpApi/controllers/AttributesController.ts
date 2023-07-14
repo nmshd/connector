@@ -1,6 +1,6 @@
 import { ConsumptionServices, TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, GET, POST, Path, PathParam, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -56,6 +56,22 @@ export class AttributesController extends BaseController {
     @Accept("application/json")
     public async executeThirdPartyRelationshipAttributeQuery(request: any): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.executeThirdPartyRelationshipAttributeQuery(request);
+        return this.ok(result);
+    }
+
+    @POST
+    @Path("/ExecuteIQLQuery")
+    @Accept("application/json")
+    public async executeIQLQuery(request: any): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.executeIQLQuery(request);
+        return this.ok(result);
+    }
+
+    @POST
+    @Path("/ValidateIQLQuery")
+    @Accept("application/json")
+    public async validateIQLQuery(request: any): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.validateIQLQuery(request);
         return this.ok(result);
     }
 
