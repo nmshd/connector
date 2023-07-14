@@ -2,11 +2,12 @@
 
 ## 3.4.0
 
+-> SDK 2.2.0
+
 -   expose new IQL query type via the Connector API
     -   `POST /api/v2/Attributes/ValidateIQLQuery` to validate an IQL query
     -   `POST /api/v2/Attributes/ExecuteIQLQuery` to execute an IQL query
 -   upgrade the runtime version to 2.5.2
--   upgrade the sdk version to 2.2.0
 
 ## 3.3.10
 
