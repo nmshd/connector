@@ -821,7 +821,7 @@ paths:
                     queryString:
                       description: IQL Query String
                       type: string
-                      example: PhoneNumber
+                      example: "PhoneNumber && #emergency"
 
       responses:
         200:
@@ -860,7 +860,7 @@ paths:
                     queryString:
                       description: IQL Query String
                       type: string
-                      example: PhoneNumber
+                      example: "PhoneNumber && #emergency"
 
       responses:
         200:
