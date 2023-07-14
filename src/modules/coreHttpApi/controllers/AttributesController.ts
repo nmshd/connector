@@ -65,7 +65,8 @@ export class AttributesController extends BaseController {
     @Path("/ExecuteIQLQuery")
     @Accept("application/json")
     public async executeIQLQuery(request: any): Promise<Envelope> {
-        return this.ok(await this.consumptionServices.attributes.executeIQLQuery({ query: { queryString: request.query.queryString } }));
+        const result = await this.consumptionServices.attributes.executeIQLQuery(request);
+        return this.ok(result);
     }
 
     @POST
