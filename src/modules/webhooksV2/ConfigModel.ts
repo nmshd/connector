@@ -6,11 +6,17 @@ export class ConfigModel {
 }
 
 export class Webhook {
-    public constructor(public readonly triggers: string[], public readonly target: Target) {}
+    public constructor(
+        public readonly triggers: string[],
+        public readonly target: Target
+    ) {}
 }
 
 export class Target {
-    public constructor(public readonly urlTemplate: WebhookUrlTemplate, public readonly headers: Record<string, string>) {}
+    public constructor(
+        public readonly urlTemplate: WebhookUrlTemplate,
+        public readonly headers: Record<string, string>
+    ) {}
 }
 
 export class WebhookUrlTemplate {
