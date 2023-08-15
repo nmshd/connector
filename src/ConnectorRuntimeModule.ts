@@ -11,7 +11,12 @@ export abstract class ConnectorRuntimeModule<TConfig extends ConnectorRuntimeMod
     TConfig,
     ConnectorRuntime
 > {
-    public constructor(runtime: ConnectorRuntime, configuration: TConfig, logger: ILogger, protected readonly connectorMode: ConnectorMode) {
+    public constructor(
+        runtime: ConnectorRuntime,
+        configuration: TConfig,
+        logger: ILogger,
+        protected readonly connectorMode: ConnectorMode
+    ) {
         super(runtime, configuration, logger);
     }
 }

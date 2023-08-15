@@ -6,7 +6,10 @@ import { BaseController } from "../common/BaseController";
 
 @Path("/api/v2/Attributes")
 export class AttributesController extends BaseController {
-    public constructor(@Inject private readonly transportServices: TransportServices, @Inject private readonly consumptionServices: ConsumptionServices) {
+    public constructor(
+        @Inject private readonly transportServices: TransportServices,
+        @Inject private readonly consumptionServices: ConsumptionServices
+    ) {
         super();
     }
 

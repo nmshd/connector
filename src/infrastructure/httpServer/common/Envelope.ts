@@ -2,7 +2,10 @@ import { ConnectorMode } from "../../../ConnectorMode";
 import { HttpError, HttpErrorJSON } from "./HttpError";
 
 export class Envelope {
-    protected constructor(public result?: any, public error?: HttpErrorJSON) {}
+    protected constructor(
+        public result?: any,
+        public error?: HttpErrorJSON
+    ) {}
 
     public static ok(result: any): Envelope {
         return new Envelope(result, undefined);

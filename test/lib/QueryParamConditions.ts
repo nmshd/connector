@@ -15,7 +15,10 @@ export interface ICondition {
 export class QueryParamConditions {
     private readonly _conditions: ICondition[];
 
-    public constructor(private readonly object: any, private readonly connectorClient: ConnectorClient) {
+    public constructor(
+        private readonly object: any,
+        private readonly connectorClient: ConnectorClient
+    ) {
         this._conditions = [];
     }
 

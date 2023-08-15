@@ -15,7 +15,12 @@ export class HttpError {
     public readonly id: string;
     public readonly time: string;
 
-    public constructor(public readonly code: string, public readonly message: string, public readonly stacktrace?: string[], public readonly details?: string) {
+    public constructor(
+        public readonly code: string,
+        public readonly message: string,
+        public readonly stacktrace?: string[],
+        public readonly details?: string
+    ) {
         this.id = HttpErrorId.create();
         this.time = new Date().toISOString();
 

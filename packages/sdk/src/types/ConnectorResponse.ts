@@ -4,7 +4,11 @@ export class ConnectorResponse<T> {
     private readonly _error?: ConnectorError;
     private readonly _result?: T;
 
-    protected constructor(private readonly _isSuccess: boolean, value?: T, error?: ConnectorError) {
+    protected constructor(
+        private readonly _isSuccess: boolean,
+        value?: T,
+        error?: ConnectorError
+    ) {
         if (_isSuccess && error) {
             throw new Error("InvalidOperation: A result cannot be successful and contain an error");
         }
