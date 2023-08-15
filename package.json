@@ -66,7 +66,7 @@
         "on-headers": "1.0.2",
         "rapidoc": "9.3.4",
         "reflect-metadata": "0.1.13",
-        "swagger-ui-express": "4.6.3",
+        "swagger-ui-express": "5.0.0",
         "typescript-ioc": "3.2.2",
         "typescript-rest": "3.0.4",
         "typescript-rest-ioc": "1.0.1",
