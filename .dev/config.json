@@ -11,6 +11,7 @@
     "modules": {
         "coreHttpApi": {
             "docs": {
+                "enabled": true,
                 "rapidoc": {
                     "persistAuth": true
                 }
