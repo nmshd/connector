@@ -2,6 +2,8 @@
 
 ## 3.4.1
 
+-> SDK 2.2.1
+
 -   upgrade the runtime version to 2.6.1
     -   support for the new [FreeTextRequestItem](https://enmeshed.eu/integrate/data-model-request-items#freetextrequestitem)
     -   support for the AttributeValue [Statement](https://enmeshed.eu/integrate/data-model-attribute-values#statement)
