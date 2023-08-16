@@ -2,7 +2,7 @@
 
 ## 3.5.0
 
--> SDK 2.2.1
+-> SDK 2.2.2
 
 -   upgrade the runtime version to 2.6.1
     -   support for the new [FreeTextRequestItem](https://enmeshed.eu/integrate/data-model-request-items#freetextrequestitem)
