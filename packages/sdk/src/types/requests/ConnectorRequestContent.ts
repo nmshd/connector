@@ -28,7 +28,8 @@ export type CreateOutgoingRequestRequestContentItemDerivations =
     | ProposeAttributeRequestItem
     | ReadAttributeRequestItem
     | ConsentRequestItem
-    | AuthenticationRequestItem;
+    | AuthenticationRequestItem
+    | FreeTextRequestItem;
 
 export interface ConnectorRequestContentItem {
     "@type"?: string;
@@ -68,4 +69,9 @@ export interface ConsentRequestItem extends ConnectorRequestContentItem {
 
 export interface AuthenticationRequestItem extends ConnectorRequestContentItem {
     "@type": "AuthenticationRequestItem";
+}
+
+export interface FreeTextRequestItem extends ConnectorRequestContentItem {
+    "@type": "FreeTextRequestItem";
+    freeText: string;
 }
