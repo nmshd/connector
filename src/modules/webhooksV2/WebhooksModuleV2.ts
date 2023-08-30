@@ -1,4 +1,4 @@
-import { Event } from "@js-soft/ts-utils";
+import { Event, DataEvent as tsUtilsDataEvent } from "@js-soft/ts-utils";
 import { DataEvent } from "@nmshd/runtime";
 import AgentKeepAlive, { HttpsAgent as AgentKeepAliveHttps } from "agentkeepalive";
 import axios, { AxiosInstance } from "axios";
@@ -31,7 +31,7 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
     }
 
     private async handleEvent(event: Event, webhook: Webhook) {
-        await this.triggerWebhook(webhook, event.namespace, event instanceof DataEvent ? event.data : undefined);
+        await this.triggerWebhook(webhook, event.namespace, event instanceof DataEvent || event instanceof tsUtilsDataEvent ? event.data : undefined);
     }
 
     private async triggerWebhook(webhook: Webhook, trigger: string, data: unknown) {

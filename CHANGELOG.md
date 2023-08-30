@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.5.1
+
+-   minor Bugfix for the WebhooksV2 module
+
 ## 3.5.0
 
 -> SDK 2.2.2
