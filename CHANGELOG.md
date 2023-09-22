@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.5.2
+
+-   fix problem with non-latin characters in filenames that caused a download of the file to return a 500
+-   upgrade the runtime version to 2.7.2
+
 ## 3.5.1
 
 -   minor Bugfix for the WebhooksV2 module
