@@ -11,6 +11,8 @@ spec:
       {{- include "enmeshed_connector.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.config | toString | sha256sum }}
       labels:
         {{- include "enmeshed_connector.selectorLabels" . | nindent 8 }}
     spec:
