@@ -3,7 +3,7 @@ export class DocumentationLink {
     private static readonly baseUrl: string = "https://enmeshed.eu";
 
     public static integrate__errorCodes(anchor?: string): string {
-        return this.build("integrate", "errorCodes", anchor);
+        return this.build("integrate", "error-codes", anchor);
     }
 
     public static integrate__configuration(anchor?: string): string {
