@@ -55,7 +55,11 @@ export abstract class BaseController {
             buffer = Buffer.from(content, "base64");
         }
 
-        response.status(status).setHeader("content-type", mimetype.value).setHeader("content-disposition", `attachment;filename=${filename}`).send(buffer);
+        response
+            .status(status)
+            .setHeader("content-type", mimetype.value)
+            .setHeader("content-disposition", `attachment;filename=${encodeURIComponent(filename)}`)
+            .send(buffer);
     }
 }
 

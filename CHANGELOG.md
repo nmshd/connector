@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.5.4
+
+-   the connector logs json when running in kubernetes
+-   update the links to the documentation
+
+## 3.5.3
+
+-   helm chart: re-deploy the connector when the configmap changes
+
+## 3.5.2
+
+-   fix problem with non-latin characters in filenames that caused a download of the file to return a 500
+-   upgrade the runtime version to 2.7.2
+-   upgrade nodejs to 18.18.0
+
 ## 3.5.1
 
 -   minor Bugfix for the WebhooksV2 module
