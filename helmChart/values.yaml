@@ -4,7 +4,12 @@ image:
 
 # a json or yaml config
 # see https://enmeshed.eu/integrate/connector-configuration for configuration options
-config: {}
+config:
+  logging:
+    appenders:
+      consoleAppender:
+        layout:
+          type: json
 
 pod:
   # securityContext for the pod deployed by the Deployment

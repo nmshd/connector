@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/connector",
-    "version": "3.5.3",
+    "version": "3.5.4",
     "private": true,
     "description": "The Enmeshed Connector",
     "homepage": "https://enmeshed.eu/integrate",
@@ -48,7 +48,7 @@
     },
     "dependencies": {
         "@js-soft/docdb-access-mongo": "1.1.4",
-        "@js-soft/node-logger": "1.0.3",
+        "@js-soft/node-logger": "1.1.0",
         "@js-soft/ts-utils": "^2.3.1",
         "@nmshd/iql": "^0.0.4",
         "@nmshd/runtime": "2.8.0",

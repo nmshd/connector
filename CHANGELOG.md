@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.5.4
+
+-   the connector logs json when running in kubernetes
+-   update the links to the documentation
+
 ## 3.5.3
 
 -   helm chart: re-deploy the connector when the configmap changes
