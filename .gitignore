@@ -9,3 +9,5 @@ helmChart/charts
 .dev/.env
 .dev/.env.*
 !.dev/.env.example
+
+tui.env
