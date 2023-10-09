@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.5.3
+
+-   helm chart: re-deploy the connector when the configmap changes
+
 ## 3.5.2
 
 -   fix problem with non-latin characters in filenames that caused a download of the file to return a 500
