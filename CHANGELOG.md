@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.5.5
+
+-   security audit
+-   helm chart
+    -   now available on artifacthub
+    -   more metadata
+
 ## 3.5.4
 
 -   the connector logs json when running in kubernetes
