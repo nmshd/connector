@@ -2,7 +2,8 @@ name: Artifact Repo Publish
 
 on:
   push:
-    branches: [chore/artifacthub-config]
+    branches: [main]
+    paths: [helmChart/artifacthub-repo.yml]
 
 jobs:
   upload-artifact-repo-config:
