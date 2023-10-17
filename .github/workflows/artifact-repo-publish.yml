@@ -12,8 +12,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install oras
         run: |
-          curl -L https://github.com/oras-project/oras/releases/download/v1.1.0/oras_1.1.0_linux_amd64.tar.gz -O
-          tar -xzf oras_1.1.0_linux_amd64.tar.gz oras
+          curl -L https://github.com/oras-project/oras/releases/download/v1.1.0/oras_1.1.0_linux_amd64.tar.gz -o oras.tar.gz
+          tar -xzf oras.tar.gz oras
           sudo mv oras /usr/local/bin
           rm oras_1.1.0_linux_amd64.tar.gz
       - name: Docker Login
