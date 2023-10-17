@@ -6,6 +6,8 @@
 -   helm chart
     -   now available on artifacthub
     -   more metadata
+-   upgrade the runtime version to 2.8.1
+-   -   upgrade nodejs to 18.18.2
 
 ## 3.5.4
 
