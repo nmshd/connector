@@ -6,7 +6,7 @@ This monorepo consolidates the following packages / applications:
 | Component | Version(s) |
 | -- | -- |
 | [The Connector docker images](./) | [see ghcr.io](https://github.com/nmshd/cns-connector/pkgs/container/connector) |
-| [The Connector helm charts](./) | [see ghcr.io](https://github.com/nmshd/cns-connector/pkgs/container/connector-helm-chart) |
+| [The Connector helm charts](./) | [see ghcr.io](https://github.com/nmshd/cns-connector/pkgs/container/connector-helm-chart) and [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/enmeshed-connector)](https://artifacthub.io/packages/search?repo=enmeshed-connector) |
 | [TypeScript Connector SDK](packages/sdk/) | [![npm version](https://badge.fury.io/js/@nmshd%2fconnector-sdk.svg)](https://www.npmjs.com/package/@nmshd/connector-sdk) |
 
 ## Documentation
