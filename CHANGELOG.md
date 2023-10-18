@@ -2,6 +2,8 @@
 
 ## 3.5.5
 
+-> SDK 2.2.3
+
 -   security audit
 -   helm chart
     -   now available on artifacthub

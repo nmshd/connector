@@ -3,4 +3,8 @@ export interface IQLQuery {
     queryString: string;
     validFrom?: string;
     validTo?: string;
+    attributeCreationHints?: {
+        valueType: string;
+        tags?: string[];
+    };
 }
