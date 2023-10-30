@@ -1,29 +1,39 @@
 import { PubSub, Topic } from "@google-cloud/pubsub";
-import { Event } from "@js-soft/ts-utils";
-import { DataEvent } from "@nmshd/runtime";
+import { DataEvent, Event } from "@js-soft/ts-utils";
+import { DataEvent as RuntimeDataEvent } from "@nmshd/runtime";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
 export interface PubsubPublisherModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     projectId: string;
-    topic: string;
-    credentials?: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        client_email: string;
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        private_key: string;
-    };
+    topicName: string;
+    keyFile: string;
 }
 
 export default class PubsubPublisherModule extends ConnectorRuntimeModule<PubsubPublisherModuleConfiguration> {
     private pubsub: PubSub;
     private topic: Topic;
 
-    public init(): void {
+    public async init(): Promise<void> {
         if (!this.configuration.projectId) throw new Error("Cannot start the module, the projectId is not defined.");
-        if (!this.configuration.topic) throw new Error("Cannot start the module, the topic is not defined.");
+        if (!this.configuration.topicName) throw new Error("Cannot start the module, the topic is not defined.");
+        if (!this.configuration.keyFile) throw new Error("Cannot start the module, the keyFile is not defined.");
 
-        this.pubsub = new PubSub({ projectId: this.configuration.projectId, credentials: this.configuration.credentials });
-        this.topic = this.pubsub.topic(this.configuration.topic);
+        this.pubsub = new PubSub({
+            projectId: this.configuration.projectId,
+            keyFile: this.configuration.keyFile
+        });
+
+        this.topic = this.pubsub.topic(this.configuration.topicName, {
+            batching: { maxMessages: 1 },
+            gaxOpts: {
+                timeout: 100000
+            }
+        });
+
+        this.logger.info("Checking if topic exists...");
+
+        const topicExists = (await this.topic.exists())[0];
+        if (!topicExists) throw new Error(`Topic ${this.configuration.topicName} does not exist.`);
     }
 
     public start(): void {
@@ -31,13 +41,15 @@ export default class PubsubPublisherModule extends ConnectorRuntimeModule<Pubsub
     }
 
     private async handleEvent(event: Event) {
-        const data = event instanceof DataEvent ? event.data : {};
+        const data = event instanceof DataEvent || event instanceof RuntimeDataEvent ? event.data : {};
         const buffer = Buffer.from(JSON.stringify(data));
 
-        await this.topic.publishMessage({
-            attributes: { namespace: event.namespace },
-            data: buffer
-        });
+        await this.topic
+            .publishMessage({
+                attributes: { namespace: event.namespace },
+                data: buffer
+            })
+            .catch((e) => this.logger.error("Could not publish message", e));
     }
 
     public async stop(): Promise<void> {
