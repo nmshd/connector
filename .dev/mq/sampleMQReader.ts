@@ -4,7 +4,7 @@ async function run() {
     const connection = await rabbit.connect("amqp://localhost");
     const channel = await connection.createChannel();
 
-    await this.channel.assertExchange("nmshd", "fanout");
+    await channel.assertExchange("nmshd", "fanout");
 
     const queueName = "myQueue";
 
