@@ -1,6 +1,6 @@
 import { Event, DataEvent as tsUtilsDataEvent } from "@js-soft/ts-utils";
 import { DataEvent } from "@nmshd/runtime";
-import AgentKeepAlive, { HttpsAgent as AgentKeepAliveHttps } from "agentkeepalive";
+import agentKeepAlive, { HttpsAgent as AgentKeepAliveHttps } from "agentkeepalive";
 import axios, { AxiosInstance } from "axios";
 import { ConnectorRuntimeModule } from "../../ConnectorRuntimeModule";
 import { ConfigModel, Webhook } from "./ConfigModel";
@@ -13,7 +13,7 @@ export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksMod
 
     public init(): void {
         this.axios = axios.create({
-            httpAgent: new AgentKeepAlive(),
+            httpAgent: new agentKeepAlive(),
             httpsAgent: new AgentKeepAliveHttps(),
             validateStatus: () => true,
             maxRedirects: 0
