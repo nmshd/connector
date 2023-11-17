@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.5.6
+
+-> SDK 2.2.4
+
+-   upgrade the runtime version to 2.9.1
+-   upgrade nodejs to 20.9.0
+
 ## 3.5.5
 
 -> SDK 2.2.3
@@ -9,7 +16,7 @@
     -   now available on artifacthub
     -   more metadata
 -   upgrade the runtime version to 2.8.1
--   -   upgrade nodejs to 18.18.2
+-   upgrade nodejs to 18.18.2
 
 ## 3.5.4
 
