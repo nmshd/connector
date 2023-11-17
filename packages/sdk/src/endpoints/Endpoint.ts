@@ -1,5 +1,5 @@
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import FormData from "form-data";
+import formDataLib from "form-data";
 import { ConnectorResponse } from "../types/ConnectorResponse";
 
 export abstract class Endpoint {
@@ -112,7 +112,7 @@ export abstract class Endpoint {
     }
 
     protected async postMultipart(url: string, data: Record<string, unknown>, filename: string): Promise<AxiosResponse<unknown>> {
-        const formData = new FormData();
+        const formData = new formDataLib();
         for (const key in data) {
             if (!data.hasOwnProperty(key)) {
                 continue;

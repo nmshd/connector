@@ -1,6 +1,6 @@
 import path from "path";
 import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
-import YAML from "yamljs";
+import yamlJs from "yamljs";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 import { HttpMethod } from "../../infrastructure";
 
@@ -96,7 +96,7 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
 
         this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/yaml", false, (req, res) => {
             res.set("Content-Type", "text/vnd.yaml");
-            res.send(YAML.stringify(swaggerDocument, 1000));
+            res.send(yamlJs.stringify(swaggerDocument, 1000));
         });
     }
 
@@ -118,7 +118,7 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
     }
 
     private loadOpenApiSpec() {
-        const swaggerDocument = YAML.load(path.join(this.baseDirectory, "openapi.yml"));
+        const swaggerDocument = yamlJs.load(path.join(this.baseDirectory, "openapi.yml"));
         return swaggerDocument;
     }
 

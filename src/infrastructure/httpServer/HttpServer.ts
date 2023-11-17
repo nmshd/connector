@@ -5,17 +5,17 @@ import express, { Application, RequestHandler } from "express";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
 import { Server } from "typescript-rest";
-import TypescriptRestIOC from "typescript-rest-ioc";
+import typescriptRestIOC from "typescript-rest-ioc";
 import { buildInformation } from "../../buildInformation";
 import { ConnectorInfrastructure, InfrastructureConfiguration } from "../ConnectorInfastructure";
-import { Envelope, HttpErrors } from "./common";
 import { HttpMethod } from "./HttpMethod";
+import { RequestTracker } from "./RequestTracker";
+import { Envelope, HttpErrors } from "./common";
 import { csrfErrorHandler } from "./middlewares/csrfErrorHandler";
-import { genericErrorHandler, RouteNotFoundError } from "./middlewares/genericErrorHandler";
+import { RouteNotFoundError, genericErrorHandler } from "./middlewares/genericErrorHandler";
 import { requestLogger } from "./middlewares/requestLogger";
 import { setDurationHeader } from "./middlewares/setResponseDurationHeader";
 import { setResponseTimeHeader } from "./middlewares/setResponseTimeHeader";
-import { RequestTracker } from "./RequestTracker";
 
 export interface CustomEndpoint {
     httpMethod: HttpMethod;
@@ -217,7 +217,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useCustomControllers() {
-        Server.registerServiceFactory(TypescriptRestIOC);
+        Server.registerServiceFactory(typescriptRestIOC);
 
         for (const controller of this.controllers) {
             Server.loadControllers(this.app, controller.globs, controller.baseDirectory);
