@@ -107,7 +107,7 @@
             "location": "pubsubPublisher/PubsubPublisherModule",
             "projectId": "",
             "topic": "",
-            "credentials": {}
+            "keyFile": ""
         }
     }
 }
