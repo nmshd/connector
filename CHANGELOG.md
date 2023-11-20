@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.6.0
+
+-   new module: 'pubsubPublisher' (see https://enmeshed.eu/integrate/connector-configuration#pubsubPublisher for more details on how to configure it)
+
 ## 3.5.6
 
 -> SDK 2.2.4
