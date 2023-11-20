@@ -23,13 +23,7 @@ export default class PubsubPublisherModule extends ConnectorRuntimeModule<Pubsub
             keyFile: this.configuration.keyFile
         });
 
-        this.topic = this.pubsub.topic(this.configuration.topicName, {
-            batching: { maxMessages: 1 },
-            gaxOpts: {
-                timeout: 100000
-            }
-        });
-
+        this.topic = this.pubsub.topic(this.configuration.topicName);
         this.logger.info("Checking if topic exists...");
 
         const topicExists = (await this.topic.exists())[0];
