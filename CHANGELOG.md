@@ -2,7 +2,7 @@
 
 ## 3.6.0
 
--   new module: 'pubsubPublisher' (see https://enmeshed.eu/integrate/connector-configuration#pubsubPublisher for more details on how to configure it)
+-   new module: 'pubsubPublisher' (see https://enmeshed.eu/operate/configuration#pubsubPublisher for more details on how to configure it)
 
 ## 3.5.6
 
@@ -46,8 +46,8 @@
 -> SDK 2.2.2
 
 -   upgrade the runtime version to 2.6.1
-    -   support for the new [FreeTextRequestItem](https://enmeshed.eu/integrate/data-model-request-items#freetextrequestitem)
-    -   support for the AttributeValue [Statement](https://enmeshed.eu/integrate/data-model-attribute-values#statement)
+    -   support for the new [FreeTextRequestItem](https://enmeshed.eu/integrate/requests-and-requestitems#freetextrequestitem)
+    -   support for the AttributeValue [Statement](https://enmeshed.eu/integrate/attribute-values#statement)
 
 ## 3.4.0
 
@@ -183,7 +183,7 @@
 
 ## 3.0.4
 
--   upgrade the runtime to version 2.0.1 ([`ProprietaryJSON`](https://enmeshed.eu/integrate/data-model-attribute-values#proprietaryjson) AttributeValueType)
+-   upgrade the runtime to version 2.0.1 ([`ProprietaryJSON`](https://enmeshed.eu/integrate/attribute-values#proprietaryjson) AttributeValueType)
 
 ## 3.0.3
 
@@ -256,7 +256,7 @@
 
 ## 2.3.0
 
--   new module: 'webhooksV2' (see https://enmeshed.eu/integrate/connector-configuration#webhooksV2 for more details on how to configure it)
+-   new module: 'webhooksV2' (see https://enmeshed.eu/operate/configuration#webhooksV2 for more details on how to configure it)
 -   the 'webhooks' module is now deprecated
 
 ## 2.2.1

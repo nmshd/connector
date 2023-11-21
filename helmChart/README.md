@@ -2,7 +2,7 @@
 
 ## Documentation
 
-You can find a more detailed documentation [in the enmeshed docs](https://enmeshed.eu/integrate/helm-chart).
+You can find a more detailed documentation [in the enmeshed docs](https://enmeshed.eu/operate/setup-with-helm-charts).
 
 ## Usage
 

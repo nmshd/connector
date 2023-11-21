@@ -13,7 +13,7 @@ export class ConnectorInfrastructureRegistry {
     public getByName<T extends ConnectorInfrastructure>(name: string): T {
         const infrastructure = this.infrastructure[name.toLowerCase()];
         if (!infrastructure) {
-            const docLink = DocumentationLink.integrate__configuration(name);
+            const docLink = DocumentationLink.operate__configuration(name);
             throw new Error(`The infrastructure '${name}' is not available. Visit the docs '${docLink}'' to learn how to enable it.`);
         }
 
