@@ -10,11 +10,12 @@ async function run() {
     const topic = pubSub.topic(topicName!);
 
     const topicExists = (await topic.exists())[0];
-    if (!topicExists) throw new Error(`Topic ${topicName} does not exist.`);
+    if (!topicExists) throw new Error(`Topic '${topicName}' does not exist.`);
 
-    const subscription = topic.subscription(process.env.PUBSUB_SUBSCRIPTION_NAME!);
+    const subscriptionName = process.env.PUBSUB_SUBSCRIPTION_NAME!;
+    const subscription = topic.subscription(subscriptionName);
     const subscriptionExists = (await subscription.exists())[0];
-    if (!subscriptionExists) throw new Error(`Subscription ${topicName} does not exist.`);
+    if (!subscriptionExists) throw new Error(`Subscription '${subscriptionName}' does not exist.`);
 
     subscription.on("message", (message) => {
         console.log(message.id);
