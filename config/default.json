@@ -101,10 +101,10 @@
             "displayName": "AMQP Publisher",
             "location": "amqpPublisher/AMQPPublisherModule"
         },
-        "pubsubPublisher": {
+        "PubSubPublisher": {
             "enabled": false,
             "displayName": "PubSub Publisher",
-            "location": "pubsubPublisher/PubsubPublisherModule",
+            "location": "pubSubPublisher/PubSubPublisherModule",
             "projectId": "",
             "topic": "",
             "keyFile": ""

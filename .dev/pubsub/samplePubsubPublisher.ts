@@ -1,13 +1,13 @@
 import { PubSub } from "@google-cloud/pubsub";
 
-const pubsub = new PubSub({
+const pubSub = new PubSub({
     projectId: process.env.PUBSUB_PROJECT_ID,
     keyFile: process.env.PUBSUB_KEY_FILE
 });
 
 async function run() {
     const topicName = process.env.PUBSUB_TOPIC_NAME;
-    const topic = pubsub.topic(topicName!);
+    const topic = pubSub.topic(topicName!);
 
     const topicExists = (await topic.exists())[0];
     if (!topicExists) throw new Error(`Topic ${topicName} does not exist.`);
