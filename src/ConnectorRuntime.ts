@@ -101,7 +101,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
         if (!this.runtimeConfig.database.connectionString) {
-            this.logger.error(`No database connection string provided. See ${DocumentationLink.integrate__configuration("database")} on how to configure the database connection.`);
+            this.logger.error(`No database connection string provided. See ${DocumentationLink.operate__configuration("database")} on how to configure the database connection.`);
             process.exit(1);
         }
 

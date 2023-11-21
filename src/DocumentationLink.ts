@@ -6,8 +6,8 @@ export class DocumentationLink {
         return this.build("integrate", "error-codes", anchor);
     }
 
-    public static integrate__configuration(anchor?: string): string {
-        return this.build("integrate", "connector-configuration", anchor);
+    public static operate__configuration(anchor?: string): string {
+        return this.build("operate", "configuration", anchor);
     }
 
     private static build(site: string, subSite: string, anchor = "") {

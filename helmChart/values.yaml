@@ -3,7 +3,7 @@ image:
   tag: ""
 
 # a json or yaml config
-# see https://enmeshed.eu/integrate/connector-configuration for configuration options
+# see https://enmeshed.eu/operate/configuration for configuration options
 config:
   logging:
     appenders:
@@ -30,7 +30,7 @@ pod:
 
   connector:
     # a list of environment variables
-    # see https://enmeshed.eu/integrate/connector-configuration for configuration options
+    # see https://enmeshed.eu/operate/configuration for configuration options
     # can be used for secrets
     # see https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#environment-variables
     environment: []

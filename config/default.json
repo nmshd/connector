@@ -100,6 +100,14 @@
             "enabled": false,
             "displayName": "AMQP Publisher",
             "location": "amqpPublisher/AMQPPublisherModule"
+        },
+        "PubSubPublisher": {
+            "enabled": false,
+            "displayName": "PubSub Publisher",
+            "location": "pubSubPublisher/PubSubPublisherModule",
+            "projectId": "",
+            "topic": "",
+            "keyFile": ""
         }
     }
 }

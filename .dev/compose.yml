@@ -17,7 +17,7 @@ services:
       - transportLibrary__platformClientSecret
     volumes:
       - ..:/usr/app
-      - ./config.json:/config.json:RO
+      - ./config.json:/config.json:ro
     depends_on:
       - mongo
       - mongo-express
@@ -41,7 +41,7 @@ services:
       - transportLibrary__platformClientSecret
     volumes:
       - ..:/usr/app
-      - ./config.json:/config.json:RO
+      - ./config.json:/config.json:ro
     depends_on:
       - mongo
       - mongo-express
