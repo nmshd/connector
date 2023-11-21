@@ -2,7 +2,7 @@
 
 ## 3.6.0
 
--   new module: 'PubSubPublisher' (see https://enmeshed.eu/operate/configuration#PubSubPublisher for more details on how to configure it)
+-   new module: 'PubSubPublisher' (see https://enmeshed.eu/operate/configuration#pubsubpublisher for more details on how to configure it)
 -   upgrade the runtime version to 2.10.0
 
 ## 3.5.6
