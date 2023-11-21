@@ -29,7 +29,7 @@ export default class PubSubPublisherModule extends ConnectorRuntimeModule<PubSub
         this.logger.info("Checking if topic exists...");
 
         const topicExists = (await this.topic.exists())[0];
-        if (!topicExists) throw new Error(`Topic ${this.configuration.topicName} does not exist in the project '${this.configuration.projectId}'.`);
+        if (!topicExists) throw new Error(`Topic '${this.configuration.topicName}' does not exist in the project '${this.configuration.projectId}'.`);
     }
 
     public start(): void {
