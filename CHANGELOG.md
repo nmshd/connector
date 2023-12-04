@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.6.2
+
+-   provenance sbom for the Docker Images
+
 ## 3.6.1
 
 -   provenance attestations on the Docker Images
