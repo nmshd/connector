@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.6.1
+
+-   provenance attestations on the Docker Images
+
 ## 3.6.0
 
 -   new module: 'PubSubPublisher' (see https://enmeshed.eu/operate/configuration#pubsubpublisher for more details on how to configure it)
