@@ -32,7 +32,7 @@ else # other error
     echo $OUTPUT
 fi
 
-docker buildx build --push \
+docker buildx build --push --provenance=true \
     --platform linux/amd64,linux/arm64 \
     $TAGS \
     --build-arg COMMIT_HASH=$COMMIT_HASH \
