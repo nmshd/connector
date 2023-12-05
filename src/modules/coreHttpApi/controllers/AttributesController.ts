@@ -14,30 +14,39 @@ export class AttributesController extends BaseController {
     }
 
     @POST
+    @Path("/IdentityAttribute")
     @Accept("application/json")
-    // TODO: Rename to createIdentityAttribute?
-    public async createAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
-        return this.created(result);
-    }
-
-    // TODO: createAndShareRelationshipAttribute is request and therefore not part of Attributes REST API?
-
-    @POST
-    @Accept("application/json")
-    public async succeedIdentityAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.succeedIdentityAttribute(request);
+    public async createIdentityAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.createIdentityAttribute({ content: request });
         return this.created(result);
     }
 
     @POST
+    @Path("/RelationshipAttribute")
     @Accept("application/json")
-    public async succeedRelationshipAttributeAndNotifyPeer(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer(request);
+    public async createRelationshipAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.createAndShareRelationshipAttribute(request);
         return this.created(result);
     }
 
     @POST
+    @Path("/succeedIdentityAttribute/:id")
+    @Accept("application/json")
+    public async succeedIdentityAttribute(@PathParam("id") id: string, content: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.succeedIdentityAttribute({ predecessorId: id, successorContent: content });
+        return this.created(result);
+    }
+
+    @POST
+    @Path("/succeedRelationshipAttribute/:id")
+    @Accept("application/json")
+    public async succeedRelationshipAttributeAndNotifyPeer(@PathParam("id") id: string, content: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({ predecessorId: id, successorContent: content });
+        return this.created(result);
+    }
+
+    @POST
+    @Path("/notifyPeerAboutIdentityAttributeSuccession")
     @Accept("application/json")
     public async notifyPeerAboutIdentityAttributeSuccession(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.consumptionServices.attributes.notifyPeerAboutIdentityAttributeSuccession(request);

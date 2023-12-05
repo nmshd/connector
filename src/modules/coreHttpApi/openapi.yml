@@ -279,25 +279,32 @@ paths:
 
   # ------------------- Attributes -------------------
 
-  /api/v2/Attributes:
+  /api/v2/Attributes/IdentityAttribute:
     post:
-      operationId: createAttribute
-      description: Create an Attribute
+      operationId: createIdentityAttribute
+      description: Create an Identity Attribute
       tags:
         - Attributes
       requestBody:
         content:
           application/json:
             schema:
-              additionalProperties: false
-              properties:
-                content:
-                  anyOf:
-                    - "$ref": "#/components/schemas/IdentityAttribute"
-                    - "$ref": "#/components/schemas/RelationshipAttribute"
-              required:
-                - content
               type: object
+              additionalProperties: false
+              required:
+                - value
+              properties:
+                value:
+                  $ref: "#/components/schemas/AttributeValue"
+                tags:
+                  type: array
+                  items:
+                    type: string
+                validFrom:
+                  type: string
+                validTo:
+                  type: string
+
       responses:
         201:
           description: Success
@@ -309,7 +316,7 @@ paths:
                   result:
                     type: object
                     nullable: false
-                    $ref: "#/components/schemas/Attribute"
+                    $ref: "#/components/schemas/IdentityAttribute"
                 required:
                   - result
           headers:
@@ -324,6 +331,84 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  /api/v2/Attributes/RelationshipAttribute:
+    post:
+      operationId: createRelationshipAttribute
+      description: Create an Relationship Attribute
+      tags:
+        - Attributes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - content
+                - peer
+              properties:
+                content:
+                  type: object
+                  required:
+                    - value
+                    - key
+                    - confidentiality
+                  properties:
+                    value:
+                      $ref: "#/components/schemas/AttributeValue"
+                    key:
+                      type: string
+                    confidentiality:
+                      enum:
+                        - public
+                        - private
+                        - protected
+                    isTechnical:
+                      type: boolean
+                    validFrom:
+                      type: string
+                    validTo:
+                      type: string
+                peer:
+                  type: string
+                requestMetadata:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    metadata:
+                      type: any
+                    expiresAt:
+                      type: string
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    nullable: false
+                    $ref: "#/components/schemas/Request"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v2/Attributes:
     get:
       operationId: getAttributes
       description: Query Attributes
@@ -430,6 +515,191 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         403:
           $ref: "#/components/responses/Forbidden"
+
+  /api/v2/Attributes/SucceedIdentityAttribute/{id}:
+    post:
+      operationId: succeedIdentityAttribute
+      description: Succeeds an Identity Attribute.
+      tags:
+        - Attributes
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Predecessor.
+          required: true
+          schema:
+            $ref: "#/components/schemas/AttributeID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - value
+              properties:
+                value:
+                  $ref: "#/components/schemas/AttributeValue"
+                tags:
+                  type: array
+                  items:
+                    type: string
+                validFrom:
+                  type: string
+                validTo:
+                  type: string
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    type: object
+                    required:
+                      - predecessor
+                      - successor
+                    properties:
+                      predecessor:
+                        $ref: "#/components/schemas/IdentityAttribute"
+                      sucessor:
+                        $ref: "#/components/schemas/IdentityAttribute"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v2/Attributes/SucceedRelationshipAttribute/{id}:
+    post:
+      operationId: succeedRelationshipAttribute
+      description: Succeeds a Relationship Attribute.
+      tags:
+        - Attributes
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Predecessor.
+          required: true
+          schema:
+            $ref: "#/components/schemas/AttributeID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                value:
+                  $ref: "#/components/schemas/AttributeValue"
+                validFrom:
+                  type: string
+                validTo:
+                  type: string
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    type: object
+                    required:
+                      - predecessor
+                      - successor
+                    properties:
+                      predecessor:
+                        $ref: "#/components/schemas/RelationshipAttribute"
+                      sucessor:
+                        $ref: "#/components/schemas/RelationshipAttribute"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v2/Attributes/NotifyPeerAboutIdentityAttributeSuccession:
+    post:
+      operationId: notifyPeerAboutIdentityAttributeSuccession
+      description: Notifies Peer about Identity Attribute Succession.
+      tags:
+        - Attributes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - peer
+                - attributeId
+              properties:
+                attributeId:
+                  type: string
+                peer:
+                  type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    type: object
+                    required:
+                      - predecessor
+                      - successor
+                    properties:
+                      predecessor:
+                        $ref: "#/components/schemas/RelationshipAttribute"
+                      sucessor:
+                        $ref: "#/components/schemas/RelationshipAttribute"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
 
   /api/v2/Attributes/{id}:
     get:
