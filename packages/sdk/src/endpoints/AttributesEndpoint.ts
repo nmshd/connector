@@ -26,15 +26,15 @@ export class AttributesEndpoint extends Endpoint {
     }
 
     public async succeedIdentityAttribute(request: SucceedIdentityAttributeRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
-        return await this.post("/api/v2/Attributes//succeedIdentityAttribute/:id", request);
+        return await this.post(`/api/v2/Attributes/succeedIdentityAttribute/${request.predecessorId}`, request.successorContent);
     }
 
     public async succeedRelationshipAttribute(request: SucceedRelationshipAttributeRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
-        return await this.post("/api/v2/Attributes//succeedRelationshipAttribute/:id", request);
+        return await this.post(`/api/v2/Attributes/succeedRelationshipAttribute/${request.predecessorId}`, request.successorContent);
     }
 
     public async notifyPeerAboutIdentityAttributeSuccession(request: NotifyPeerAboutIdentityAttributeSuccessionRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
-        return await this.post("/api/v2/Attributes//notifyPeerAboutIdentityAttributeSuccession", request);
+        return await this.post("/api/v2/Attributes/notifyPeerAboutIdentityAttributeSuccession", request);
     }
 
     public async getAttributes(request: GetAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
