@@ -15,8 +15,32 @@ export class AttributesController extends BaseController {
 
     @POST
     @Accept("application/json")
+    // TODO: Rename to createIdentityAttribute?
     public async createAttribute(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
+        return this.created(result);
+    }
+
+    // TODO: createAndShareRelationshipAttribute is request and therefore not part of Attributes REST API?
+
+    @POST
+    @Accept("application/json")
+    public async succeedIdentityAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.succeedIdentityAttribute(request);
+        return this.created(result);
+    }
+
+    @POST
+    @Accept("application/json")
+    public async succeedRelationshipAttributeAndNotifyPeer(request: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer(request);
+        return this.created(result);
+    }
+
+    @POST
+    @Accept("application/json")
+    public async notifyPeerAboutIdentityAttributeSuccession(request: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.notifyPeerAboutIdentityAttributeSuccession(request);
         return this.created(result);
     }
 
