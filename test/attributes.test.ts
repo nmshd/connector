@@ -6,11 +6,9 @@ import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
-let client1Address: string;
 
 beforeAll(async () => {
     [client1] = await launcher.launch(1);
-    client1Address = (await client1.account.getIdentityInfo()).result.address;
 }, 30000);
 afterAll(() => launcher.stop());
 
@@ -152,4 +150,31 @@ describe("Execute AttributeQueries", () => {
 
     //     expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AString");
     // });
+
+    describe("Succeed Attribute", () => {
+        test("Should succeed an Identity Attribute", async () => {
+            const createAttributeResponse = await client1.attributes.createIdentityAttribute({
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
+                },
+                tags: ["content:edu.de"]
+            });
+
+            const attributeId = createAttributeResponse.result.id;
+
+            const succeedAttributeResponse = await client1.attributes.succeedIdentityAttribute({
+                predecessorId: attributeId,
+                successorContent: {
+                    value: {
+                        "@type": "GivenName",
+                        value: "AGivenName"
+                    },
+                    tags: ["content:edu.de"]
+                }
+            });
+
+            expect(succeedAttributeResponse.isSuccess).toBe(true);
+        });
+    });
 });
