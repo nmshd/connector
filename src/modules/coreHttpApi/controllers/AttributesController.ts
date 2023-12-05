@@ -16,10 +16,7 @@ export class AttributesController extends BaseController {
     @POST
     @Accept("application/json")
     public async createAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const selfAddress = (await this.transportServices.account.getIdentityInfo()).value.address;
-        if (request?.content?.owner !== selfAddress) throw new Error("You are not allowed to create an attribute that is not owned by yourself");
-
-        const result = await this.consumptionServices.attributes.createAttribute(request);
+        const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
         return this.created(result);
     }
 
