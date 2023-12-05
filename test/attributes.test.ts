@@ -1,7 +1,7 @@
 import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
-import { createAttribute } from "./lib/testUtils";
+import { createIdentityAttribute, createRelationshipAttribute } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
@@ -18,16 +18,12 @@ describe("Attributes", () => {
     let attributeId: string;
 
     test("should create an attribute", async () => {
-        const createAttributeResponse = await client1.attributes.createAttribute({
-            content: {
-                "@type": "IdentityAttribute",
-                owner: client1Address,
-                value: {
-                    "@type": "GivenName",
-                    value: "AGivenName"
-                },
-                tags: ["content:edu.de"]
-            }
+        const createAttributeResponse = await client1.attributes.createIdentityAttribute({
+            value: {
+                "@type": "GivenName",
+                value: "AGivenName"
+            },
+            tags: ["content:edu.de"]
         });
 
         expect(createAttributeResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
@@ -53,16 +49,11 @@ describe("Attributes", () => {
 
 describe("Attributes Query", () => {
     test("should query attributes", async () => {
-        const client1Address = (await client1.account.getIdentityInfo()).result.address;
         const attribute = (
-            await client1.attributes.createAttribute({
-                content: {
-                    "@type": "IdentityAttribute",
-                    owner: client1Address,
-                    value: {
-                        "@type": "GivenName",
-                        value: "AGivenName"
-                    }
+            await client1.attributes.createIdentityAttribute({
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
                 }
             })
         ).result;
@@ -88,16 +79,11 @@ describe("Attributes Query", () => {
     });
 
     test("should query valid attributes", async () => {
-        const client1Address = (await client1.account.getIdentityInfo()).result.address;
         const attribute = (
-            await client1.attributes.createAttribute({
-                content: {
-                    "@type": "IdentityAttribute",
-                    owner: client1Address,
-                    value: {
-                        "@type": "GivenName",
-                        value: "AGivenName"
-                    }
+            await client1.attributes.createIdentityAttribute({
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
                 }
             })
         ).result;
@@ -122,14 +108,10 @@ describe("Attributes Query", () => {
 
 describe("Execute AttributeQueries", () => {
     test("should execute an IdentityAttributeQuery", async () => {
-        const attribute = await createAttribute(client1, {
-            content: {
-                "@type": "IdentityAttribute",
-                owner: client1Address,
-                value: {
-                    "@type": "GivenName",
-                    value: "AGivenName"
-                }
+        const attribute = await createIdentityAttribute(client1, {
+            value: {
+                "@type": "GivenName",
+                value: "AGivenName"
             }
         });
 
@@ -141,10 +123,8 @@ describe("Execute AttributeQueries", () => {
     });
 
     test("should execute a RelationshipAttributeQuery", async () => {
-        await createAttribute(client1, {
+        await createRelationshipAttribute(client1, {
             content: {
-                "@type": "RelationshipAttribute",
-                owner: client1Address,
                 value: {
                     "@type": "ProprietaryString",
                     title: "ATitle",
@@ -152,7 +132,8 @@ describe("Execute AttributeQueries", () => {
                 },
                 key: "AKey",
                 confidentiality: "public"
-            }
+            },
+            peer: "peer"
         });
 
         const executeRelationshipAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
