@@ -38,10 +38,10 @@ export class AttributesController extends BaseController {
     }
 
     @POST
-    @Path("/succeedRelationshipAttribute/:id")
+    @Path("/succeedRelationshipAttributeAndNotifyPeer")
     @Accept("application/json")
-    public async succeedRelationshipAttributeAndNotifyPeer(@PathParam("id") id: string, content: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({ predecessorId: id, successorContent: content });
+    public async succeedRelationshipAttributeAndNotifyPeer(predecessorId: string, successorContent: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({ predecessorId: predecessorId, successorContent: successorContent });
         return this.created(result);
     }
 

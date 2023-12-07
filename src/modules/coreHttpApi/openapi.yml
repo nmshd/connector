@@ -584,32 +584,36 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/SucceedRelationshipAttribute/{id}:
+  /api/v2/Attributes/SucceedRelationshipAttributeAndNotifyPeer:
     post:
-      operationId: succeedRelationshipAttribute
-      description: Succeeds a Relationship Attribute.
+      operationId: succeedRelationshipAttributeAndNotifyPeer
+      description: Succeeds a relationship attribute and notifies the peer about it.
       tags:
         - Attributes
-      parameters:
-        - in: path
-          name: id
-          description: The ID of the Predecessor.
-          required: true
-          schema:
-            $ref: "#/components/schemas/AttributeID"
       requestBody:
         content:
           application/json:
             schema:
               type: object
               additionalProperties: false
+              required:
+                - predecessorId
+                - successorContent
               properties:
-                value:
-                  $ref: "#/components/schemas/AttributeValue"
-                validFrom:
-                  type: string
-                validTo:
-                  type: string
+                predecessorId:
+                  $ref: "#/components/schemas/AttributeID"
+                successorContent:
+                  type: object
+                  additionalProperties: false
+                  required:
+                    - value
+                  properties:
+                    value:
+                      $ref: "#/components/schemas/AttributeValue"
+                    validFrom:
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
+                    validTo:
+                      $ref: "#/components/schemas/AttributeContent_validTo"
 
       responses:
         200:
