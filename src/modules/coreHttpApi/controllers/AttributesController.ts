@@ -30,10 +30,10 @@ export class AttributesController extends BaseController {
     }
 
     @POST
-    @Path("/succeedIdentityAttribute/:id")
+    @Path("/succeedIdentityAttribute")
     @Accept("application/json")
-    public async succeedIdentityAttribute(@PathParam("id") id: string, content: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.succeedIdentityAttribute({ predecessorId: id, successorContent: content });
+    public async succeedIdentityAttribute(predecessorId: string, successorContent: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.succeedIdentityAttribute({ predecessorId: predecessorId, successorContent: successorContent });
         return this.created(result);
     }
 

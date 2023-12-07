@@ -516,19 +516,12 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/SucceedIdentityAttribute/{id}:
+  /api/v2/Attributes/SucceedIdentityAttribute:
     post:
       operationId: succeedIdentityAttribute
-      description: Succeeds an Identity Attribute.
+      description: Succeeds an identity attribute.
       tags:
         - Attributes
-      parameters:
-        - in: path
-          name: id
-          description: The ID of the Predecessor.
-          required: true
-          schema:
-            $ref: "#/components/schemas/AttributeID"
       requestBody:
         content:
           application/json:
@@ -536,18 +529,25 @@ paths:
               type: object
               additionalProperties: false
               required:
-                - value
+                - predecessorId
+                - successorContent
               properties:
-                value:
-                  $ref: "#/components/schemas/AttributeValue"
-                tags:
-                  type: array
-                  items:
-                    type: string
-                validFrom:
-                  type: string
-                validTo:
-                  type: string
+                predecessorId:
+                  $ref: "#/components/schemas/AttributeID"
+                successorContent:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    value:
+                      $ref: "#/components/schemas/AttributeValue"
+                    tags:
+                      $ref: "#/components/schemas/IdentityAttributeContent_tags"
+                    validFrom:
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
+                    validTo:
+                      $ref: "#/components/schemas/AttributeContent_validTo"
+                  required:
+                    - value
 
       responses:
         200:
@@ -2497,7 +2497,7 @@ paths:
             examples:
               RelationshipTemplateReference:
                 value: |
-                  { 
+                  {
                     "id": "RLT_________________",
                     "secretKey": "YOUR_SECRET_KEY"
                   }
@@ -3375,7 +3375,7 @@ paths:
                   }
               TokenReferenceTruncated:
                 value: |
-                  { 
+                  {
                     "reference": "YOUR_REFERENCE"
                   }
       responses:
@@ -3911,6 +3911,24 @@ components:
         - owner
         - value
 
+    # TODO: ??? Replace all existing valid{From,To}s?
+    AttributeContent_validFrom:
+      type: string
+      format: date-time
+      description: The date and time when the attribute becomes valid.
+
+    AttributeContent_validTo:
+      type: string
+      format: date-time
+      description: The date and time when the attribute expires.
+
+    IdentityAttributeContent_tags:
+      type: array
+      items:
+        type: string
+      description: The tags of the attribute.
+
+
     Attribute:
       type: object
       additionalProperties: false
@@ -3976,6 +3994,7 @@ components:
           type: string
       required:
         - "@type"
+
 
     ConnectorHealth:
       type: object
@@ -4954,9 +4973,9 @@ components:
               type: string
             code:
               description: >
-                The error code.  
+                The error code.
 
-                There are some generic error codes like: 
+                There are some generic error codes like:
                   - error.connector.recordNotFound
                   - error.connector.unauthorized
                   - error.connector.forbidden
