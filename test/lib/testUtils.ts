@@ -6,10 +6,11 @@ import {
     ConnectorMessage,
     ConnectorRelationship,
     ConnectorRelationshipTemplate,
+    ConnectorRequest,
     ConnectorSyncResult,
     ConnectorToken,
+    CreateAndShareRelationshipAttributeRequest,
     CreateIdentityAttributeRequest,
-    CreateRelationshipAttributeRequest,
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
 import fs from "fs";
@@ -219,8 +220,8 @@ export async function createIdentityAttribute(client: ConnectorClient, request: 
     return response.result;
 }
 
-export async function createRelationshipAttribute(client: ConnectorClient, request: CreateRelationshipAttributeRequest): Promise<ConnectorAttribute> {
-    const response = await client.attributes.createRelationshipAttribute(request);
+export async function createRelationshipAttribute(client: ConnectorClient, request: CreateAndShareRelationshipAttributeRequest): Promise<ConnectorRequest> {
+    const response = await client.attributes.createAndShareRelationshipAttribute(request);
     expect(response).toBeSuccessful(ValidationSchema.ConnectorAttribute);
     return response.result;
 }

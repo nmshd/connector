@@ -1,9 +1,11 @@
 import {
     ConnectorAttribute,
     ConnectorAttributes,
+    ConnectorRequest,
     ConnectorResponse,
+    CreateAndShareRelationshipAttributeRequest,
+    CreateAttributeRequest,
     CreateIdentityAttributeRequest,
-    CreateRelationshipAttributeRequest,
     ExecuteIQLQueryRequest,
     ExecuteIdentityAttributeQueryRequest,
     ExecuteRelationshipAttributeQueryRequest,
@@ -11,30 +13,51 @@ import {
     GetAttributesRequest,
     GetValidAttributesRequest,
     NotifyPeerAboutIdentityAttributeSuccessionRequest,
+    ShareAttributeRequest,
+    ShareIdentityAttributeRequest,
+    SucceedAttributeRequest,
+    SucceedAttributeResponse,
     SucceedIdentityAttributeRequest,
-    SucceedRelationshipAttributeRequest
+    SucceedRelationshipAttributeAndNotifyPeerRequest
 } from "../types";
+import { CreateAttributeResponse } from "../types/attributes/requests/CreateAttributeResponse";
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
+    public async createAttribute(request: CreateAttributeRequest): Promise<ConnectorResponse<CreateAttributeResponse>> {
+        return await this.post("/api/v2/Attributes", request);
+    }
+
     public async createIdentityAttribute(request: CreateIdentityAttributeRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
-        return await this.post("/api/v2/Attributes/IdentityAttribute", request);
+        return await this.post("/api/v2/Attributes/CreateIdentityAttribute", request);
     }
 
-    public async createRelationshipAttribute(request: CreateRelationshipAttributeRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
-        return await this.post("/api/v2/Attributes/RelationshipAttribute", request);
+    public async createAndShareRelationshipAttribute(request: CreateAndShareRelationshipAttributeRequest): Promise<ConnectorResponse<ConnectorRequest>> {
+        return await this.post("/api/v2/Attributes/CreateAndShareRelationshipAttribute", request);
     }
 
-    public async succeedIdentityAttribute(request: SucceedIdentityAttributeRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
-        return await this.post(`/api/v2/Attributes/succeedIdentityAttribute/${request.predecessorId}`, request.successorContent);
+    public async succeedAttribute(request: SucceedAttributeRequest): Promise<ConnectorResponse<SucceedAttributeResponse>> {
+        return await this.post("/api/v2/Attributes/SucceedAttribute", request);
     }
 
-    public async succeedRelationshipAttribute(request: SucceedRelationshipAttributeRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
-        return await this.post(`/api/v2/Attributes/succeedRelationshipAttribute/${request.predecessorId}`, request.successorContent);
+    public async succeedIdentityAttribute(request: SucceedIdentityAttributeRequest): Promise<ConnectorResponse<SucceedAttributeResponse>> {
+        return await this.post("/api/v2/Attributes/SucceedIdentityAttribute", request);
     }
 
-    public async notifyPeerAboutIdentityAttributeSuccession(request: NotifyPeerAboutIdentityAttributeSuccessionRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
-        return await this.post("/api/v2/Attributes/notifyPeerAboutIdentityAttributeSuccession", request);
+    public async succeedRelationshipAttributeAndNotifyPeer(request: SucceedRelationshipAttributeAndNotifyPeerRequest): Promise<ConnectorResponse<SucceedAttributeResponse>> {
+        return await this.post("/api/v2/Attributes/SucceedRelationshipAttributeAndNotifyPeer", request);
+    }
+
+    public async shareAttribute(request: ShareAttributeRequest): Promise<ConnectorResponse<CreateAttributeResponse>> {
+        return await this.post("/api/v2/Attributes/ShareAttribute", request);
+    }
+
+    public async shareIdentityAttribute(request: ShareIdentityAttributeRequest): Promise<ConnectorResponse<ConnectorRequest>> {
+        return await this.post("/api/v2/Attributes/ShareIdentityAttribute", request);
+    }
+
+    public async notifyPeerAboutIdentityAttributeSuccession(request: NotifyPeerAboutIdentityAttributeSuccessionRequest): Promise<ConnectorResponse<SucceedAttributeResponse>> {
+        return await this.post("/api/v2/Attributes/NotifyPeerAboutIdentityAttributeSuccession", request);
     }
 
     public async getAttributes(request: GetAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {

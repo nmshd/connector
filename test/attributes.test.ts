@@ -1,14 +1,18 @@
 import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
-import { createIdentityAttribute } from "./lib/testUtils";
+import { createIdentityAttribute, establishRelationship, syncUntilHasMessages } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
+let client2: ConnectorClient;
+let client2Address: string;
 
 beforeAll(async () => {
-    [client1] = await launcher.launch(1);
+    [client1, client2] = await launcher.launch(2);
+    await establishRelationship(client1, client2);
+    client2Address = (await client2.account.getIdentityInfo()).result.address;
 }, 30000);
 afterAll(() => launcher.stop());
 
@@ -150,6 +154,119 @@ describe("Execute AttributeQueries", () => {
 
     //     expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AString");
     // });
+
+    describe("Share Attribute", () => {
+        test("Should share an Identity Attribute", async () => {
+            const attribute = (
+                await client1.attributes.createIdentityAttribute({
+                    value: {
+                        "@type": "GivenName",
+                        value: "AGivenName"
+                    }
+                })
+            ).result;
+
+            const result = await client1.attributes.shareAttribute({ "@type": "Share", attributeId: attribute.id, peer: client2Address });
+            expect(result.isSuccess).toBe(true);
+        });
+
+        test("Should notify peer about Identity Attribute Succession", async () => {
+            const attribute = (
+                await client1.attributes.createIdentityAttribute({
+                    value: {
+                        "@type": "GivenName",
+                        value: "AGivenName"
+                    }
+                })
+            ).result;
+
+            const shareRequest = await client1.attributes.shareIdentityAttribute({ attributeId: attribute.id, peer: client2Address });
+
+            expect(shareRequest.isSuccess).toBe(true);
+
+            await syncUntilHasMessages(client2);
+
+            await client2.incomingRequests.accept(shareRequest.result.id, { items: [{ accept: true }] });
+
+            await syncUntilHasMessages(client1);
+
+            const successionResponse = await client1.attributes.succeedIdentityAttribute({
+                predecessorId: attribute.id,
+                successorContent: {
+                    value: {
+                        "@type": "GivenName",
+                        value: "ANewGivenName"
+                    }
+                }
+            });
+
+            expect(successionResponse.isSuccess).toBe(true);
+
+            const notificationResult = await client1.attributes.shareAttribute({
+                "@type": "Notify",
+                attributeId: successionResponse.result.successor.id,
+                peer: client2Address
+            });
+            expect(notificationResult.isSuccess).toBe(true);
+        });
+    });
+
+    describe("Share Identity Attribute", () => {
+        test("Should share an Identity Attribute", async () => {
+            const attribute = (
+                await client1.attributes.createIdentityAttribute({
+                    value: {
+                        "@type": "GivenName",
+                        value: "AGivenName"
+                    }
+                })
+            ).result;
+
+            const result = await client1.attributes.shareIdentityAttribute({ attributeId: attribute.id, peer: client2Address });
+            expect(result.isSuccess).toBe(true);
+        });
+    });
+
+    describe("Notify peer about Identity Attribute Succession", () => {
+        test("Should notify peer about Identity Attribute Succession", async () => {
+            const attribute = (
+                await client1.attributes.createIdentityAttribute({
+                    value: {
+                        "@type": "GivenName",
+                        value: "AGivenName"
+                    }
+                })
+            ).result;
+
+            const shareRequest = await client1.attributes.shareIdentityAttribute({ attributeId: attribute.id, peer: client2Address });
+
+            expect(shareRequest.isSuccess).toBe(true);
+
+            await syncUntilHasMessages(client2);
+
+            await client2.incomingRequests.accept(shareRequest.result.id, { items: [{ accept: true }] });
+
+            await syncUntilHasMessages(client1);
+
+            const successionResponse = await client1.attributes.succeedIdentityAttribute({
+                predecessorId: attribute.id,
+                successorContent: {
+                    value: {
+                        "@type": "GivenName",
+                        value: "ANewGivenName"
+                    }
+                }
+            });
+
+            expect(successionResponse.isSuccess).toBe(true);
+
+            const notificationResult = await client1.attributes.notifyPeerAboutIdentityAttributeSuccession({
+                attributeId: successionResponse.result.successor.id,
+                peer: client2Address
+            });
+            expect(notificationResult.isSuccess).toBe(true);
+        });
+    });
 
     describe("Succeed Attribute", () => {
         test("Should succeed an Identity Attribute", async () => {

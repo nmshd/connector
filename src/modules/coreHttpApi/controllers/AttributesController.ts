@@ -14,7 +14,21 @@ export class AttributesController extends BaseController {
     }
 
     @POST
-    @Path("/IdentityAttribute")
+    @Accept("application/json")
+    public async createAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+        // TODO: remove createAndShareRelationshipAttribute
+        // TODO: restore original payload structure
+        let result: any;
+        if (request.value) {
+            result = await this.consumptionServices.attributes.createIdentityAttribute({ content: request });
+        } else {
+            result = await this.consumptionServices.attributes.createAndShareRelationshipAttribute(request);
+        }
+        return this.created(result);
+    }
+
+    @POST
+    @Path("/CreateIdentityAttribute")
     @Accept("application/json")
     public async createIdentityAttribute(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.consumptionServices.attributes.createIdentityAttribute({ content: request });
@@ -22,63 +36,69 @@ export class AttributesController extends BaseController {
     }
 
     @POST
-    @Path("/RelationshipAttribute")
+    @Path("/CreateAndShareRelationshipAttribute")
     @Accept("application/json")
-    public async createRelationshipAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+    public async createandShareRelationshipAttribute(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.consumptionServices.attributes.createAndShareRelationshipAttribute(request);
         return this.created(result);
     }
 
-    // TODO: Alle successions -> POST only
     @POST
-    @Path("/succeedAttribute")
+    @Path("/SucceedIdentityAttribute")
     @Accept("application/json")
-    public async succeedAttribute(id: string, successorContent: any): Promise<Return.NewResource<Envelope>> {
-        // TODO:
-        // openapi:
-        // ------------------
-        // predecessorId: string;
-        // successorContent: {
-        //     "@type": "IdentityAttribute";
-        //     value: AttributeValues.Identity.Json;
-        //     tags?: string[];
-        //     validFrom?: ISO8601DateTimeString;
-        //     validTo?: ISO8601DateTimeString;
-        // } | {
-        //     "@type": "RelationshipAttribute";
-        //     value: AttributeValues.Identity.Json;
-        //     validFrom?: ISO8601DateTimeString;
-        //     validTo?: ISO8601DateTimeString;
-        // };
-        //
+    public async succeedIdentityAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.succeedIdentityAttribute({ predecessorId: request.predecessorId, successorContent: request.successorContent });
+        return this.created(result);
+    }
 
-        let result: any
-        if (successorContent["@type"] === "IdentityAttribute") {
-            result = await this.consumptionServices.attributes.succeedIdentityAttribute({ predecessorId: id, successorContent: successorContent });
-        } else if (successorContent["@type"] === "RelationshipAttribute") {
-            result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({ predecessorId: id, successorContent: successorContent });
+    @POST
+    @Path("/SucceedAttribute")
+    @Accept("application/json")
+    public async succeedAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+        let result: any;
+        if (request.successorContent["@type"] === "IdentityAttribute") {
+            result = await this.consumptionServices.attributes.succeedIdentityAttribute({ predecessorId: request.id, successorContent: request.successorContent });
+        } else if (request.successorContent["@type"] === "RelationshipAttribute") {
+            result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({ predecessorId: request.id, successorContent: request.successorContent });
         }
         return this.created(result);
     }
 
     @POST
-    @Path("/succeedIdentityAttribute")
+    @Path("/SucceedRelationshipAttributeAndNotifyPeer")
     @Accept("application/json")
-    public async succeedIdentityAttribute(predecessorId: string, successorContent: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.succeedIdentityAttribute({ predecessorId: predecessorId, successorContent: successorContent });
+    public async succeedRelationshipAttributeAndNotifyPeer(request: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({
+            predecessorId: request.predecessorId,
+            successorContent: request.successorContent
+        });
         return this.created(result);
     }
 
     @POST
-    @Path("/succeedRelationshipAttributeAndNotifyPeer")
+    @Path("/ShareAttribute")
     @Accept("application/json")
-    public async succeedRelationshipAttributeAndNotifyPeer(predecessorId: string, successorContent: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({ predecessorId: predecessorId, successorContent: successorContent });
+    public async shareAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+        // TODO: Remove?
+        let result: any;
+        if (request.successorContent["@type"] === "Share") {
+            result = await this.consumptionServices.attributes.shareIdentityAttribute(request);
+        } else if (request.successorContent["@type"] === "Notify") {
+            result = await this.consumptionServices.attributes.notifyPeerAboutIdentityAttributeSuccession(request);
+        }
         return this.created(result);
     }
 
     @POST
-    @Path("/notifyPeerAboutIdentityAttributeSuccession")
+    @Path("/ShareIdentityAttribute")
+    @Accept("application/json")
+    public async shareIdentityAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.shareIdentityAttribute(request);
+        return this.created(result);
+    }
+
+    @POST
+    @Path("/NotifyPeerAboutIdentityAttributeSuccession")
     @Accept("application/json")
     public async notifyPeerAboutIdentityAttributeSuccession(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.consumptionServices.attributes.notifyPeerAboutIdentityAttributeSuccession(request);

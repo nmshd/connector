@@ -1,6 +1,6 @@
 import { ConnectorAttributeValue } from "../ConnectorAttribute";
 
-export interface CreateRelationshipAttributeRequest {
+export interface CreateAndShareRelationshipAttributeRequest {
     content: {
         value: ConnectorAttributeValue;
         key: string;
