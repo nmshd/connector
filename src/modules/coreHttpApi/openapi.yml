@@ -379,7 +379,7 @@ paths:
                     description:
                       type: string
                     metadata:
-                      type: any
+                      type: object
                     expiresAt:
                       type: string
       responses:
@@ -516,6 +516,13 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  # TODO: /api/v2/Attributes/SucceedAttribute convenience route
+  # maps to succeedIdentityAttribute or succeedRelationshipAt...
+  # requires an extra "@type" parameter to distinguish
+  #   post:
+  #     operationId: succeedAttribute
+  #     description: Succeeds either a relationship attribute or an identity attribute.
+
   /api/v2/Attributes/SucceedIdentityAttribute:
     post:
       operationId: succeedIdentityAttribute
@@ -537,6 +544,8 @@ paths:
                 successorContent:
                   type: object
                   additionalProperties: false
+                  required:
+                    - value
                   properties:
                     value:
                       $ref: "#/components/schemas/AttributeValue"
@@ -546,8 +555,6 @@ paths:
                       $ref: "#/components/schemas/AttributeContent_validFrom"
                     validTo:
                       $ref: "#/components/schemas/AttributeContent_validTo"
-                  required:
-                    - value
 
       responses:
         200:
@@ -3992,7 +3999,7 @@ components:
 
     AttributeValue:
       type: object
-      additionalProperties: {}
+      additionalProperties: false
       properties:
         "@type":
           type: string

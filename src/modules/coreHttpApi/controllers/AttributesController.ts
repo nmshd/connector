@@ -29,6 +29,38 @@ export class AttributesController extends BaseController {
         return this.created(result);
     }
 
+    // TODO: Alle successions -> POST only
+    @POST
+    @Path("/succeedAttribute")
+    @Accept("application/json")
+    public async succeedAttribute(id: string, successorContent: any): Promise<Return.NewResource<Envelope>> {
+        // TODO:
+        // openapi:
+        // ------------------
+        // predecessorId: string;
+        // successorContent: {
+        //     "@type": "IdentityAttribute";
+        //     value: AttributeValues.Identity.Json;
+        //     tags?: string[];
+        //     validFrom?: ISO8601DateTimeString;
+        //     validTo?: ISO8601DateTimeString;
+        // } | {
+        //     "@type": "RelationshipAttribute";
+        //     value: AttributeValues.Identity.Json;
+        //     validFrom?: ISO8601DateTimeString;
+        //     validTo?: ISO8601DateTimeString;
+        // };
+        //
+
+        let result: any
+        if (successorContent["@type"] === "IdentityAttribute") {
+            result = await this.consumptionServices.attributes.succeedIdentityAttribute({ predecessorId: id, successorContent: successorContent });
+        } else if (successorContent["@type"] === "RelationshipAttribute") {
+            result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({ predecessorId: id, successorContent: successorContent });
+        }
+        return this.created(result);
+    }
+
     @POST
     @Path("/succeedIdentityAttribute")
     @Accept("application/json")
