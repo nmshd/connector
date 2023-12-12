@@ -16,14 +16,8 @@ export class AttributesController extends BaseController {
     @POST
     @Accept("application/json")
     public async createAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        // TODO: remove createAndShareRelationshipAttribute
-        // TODO: restore original payload structure
-        let result: any;
-        if (request.value) {
-            result = await this.consumptionServices.attributes.createIdentityAttribute({ content: request });
-        } else {
-            result = await this.consumptionServices.attributes.createAndShareRelationshipAttribute(request);
-        }
+        const attributeValue = request.value; // Legacy API recieves whole Relationship Attribute => extract attribute value for new use case
+        const result = await this.consumptionServices.attributes.createIdentityAttribute(attributeValue);
         return this.created(result);
     }
 
@@ -72,20 +66,20 @@ export class AttributesController extends BaseController {
         return this.created(result);
     }
 
-    @POST
-    @Path("/ShareAttribute")
-    @Accept("application/json")
-    public async shareAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        // TODO: Remove?
-        // TODO: Distinguish between cases by loading attribute and checking if succeeded => remove @type
-        let result: any;
-        if (request.successorContent["@type"] === "Share") {
-            result = await this.consumptionServices.attributes.shareIdentityAttribute(request);
-        } else {
-            result = await this.consumptionServices.attributes.notifyPeerAboutIdentityAttributeSuccession(request);
-        }
-        return this.created(result);
-    }
+    // @POST
+    // @Path("/ShareAttribute")
+    // @Accept("application/json")
+    // public async shareAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+    //     // TODO: Remove?
+    //     // TODO: Distinguish between cases by loading attribute and checking if succeeded => remove @type
+    //     let result: any;
+    //     if (request.successorContent["@type"] === "Share") {
+    //         result = await this.consumptionServices.attributes.shareIdentityAttribute(request);
+    //     } else {
+    //         result = await this.consumptionServices.attributes.notifyPeerAboutIdentityAttributeSuccession(request);
+    //     }
+    //     return this.created(result);
+    // }
 
     @POST
     @Path("/ShareIdentityAttribute")

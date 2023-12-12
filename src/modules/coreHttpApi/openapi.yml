@@ -282,17 +282,20 @@ paths:
   /api/v2/Attributes:
     post:
       operationId: createAttribute
-      description: Create an Identity Attribute or create and share a Relationship Attribute
+      description: Create an Attribute
       tags:
         - Attributes
       requestBody:
         content:
           application/json:
             schema:
-              oneOf: # TODO: Okay to use oneOf here?
-                - $ref: "#/components/schemas/CreateIdentityAttributeRequest"
-                - $ref: "#/components/schemas/CreateAndShareRelationshipAttributeRequest"
-
+              additionalProperties: false
+              properties:
+                content:
+                  "$ref": "#/components/schemas/IdentityAttribute"
+              required:
+                - content
+              type: object
       responses:
         201:
           description: Success
@@ -302,13 +305,9 @@ paths:
                 type: object
                 properties:
                   result:
-                    oneOf:
-                      - type: object
-                        nullable: false
-                        $ref: "#/components/schemas/IdentityAttribute"
-                      - type: object
-                        nullable: false
-                        $ref: "#/components/schemas/Request"
+                    type: object
+                    nullable: false
+                    $ref: "#/components/schemas/Attribute"
                 required:
                   - result
           headers:
@@ -506,73 +505,73 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/ShareAttribute:
-    post:
-      operationId: shareAttribute
-      description: Share an Identity Attribute or notify peer about succession of Identity Attribute
-      tags:
-        - Attributes
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - type: object
-                  required:
-                    - "@type"
-                    - attributeId
-                    - peer
-                  properties:
-                    "@type":
-                      enum:
-                        - "Share"
-                    attributeId:
-                      $ref: "#/components/schemas/AttributeID"
-                    peer:
-                      $ref: "#/components/schemas/Address"
-                    requestMetadata:
-                      $ref: "#/components/schemas/RequestMetadata"
-                - type: object
-                  required:
-                    - "@type"
-                    - attributeId
-                    - peer
-                  properties:
-                    "@type":
-                      enum:
-                        - "Notify"
-                    attributeId:
-                      $ref: "#/components/schemas/AttributeID"
-                    peer:
-                      $ref: "#/components/schemas/Address"
+  # /api/v2/Attributes/ShareAttribute:
+  #   post:
+  #     operationId: shareAttribute
+  #     description: Share an Identity Attribute or notify peer about succession of Identity Attribute
+  #     tags:
+  #       - Attributes
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             oneOf:
+  #               - type: object
+  #                 required:
+  #                   - "@type"
+  #                   - attributeId
+  #                   - peer
+  #                 properties:
+  #                   "@type":
+  #                     enum:
+  #                       - "Share"
+  #                   attributeId:
+  #                     $ref: "#/components/schemas/AttributeID"
+  #                   peer:
+  #                     $ref: "#/components/schemas/Address"
+  #                   requestMetadata:
+  #                     $ref: "#/components/schemas/RequestMetadata"
+  #               - type: object
+  #                 required:
+  #                   - "@type"
+  #                   - attributeId
+  #                   - peer
+  #                 properties:
+  #                   "@type":
+  #                     enum:
+  #                       - "Notify"
+  #                   attributeId:
+  #                     $ref: "#/components/schemas/AttributeID"
+  #                   peer:
+  #                     $ref: "#/components/schemas/Address"
 
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    nullable: false
-                    type: object
-                    $ref: "#/components/schemas/Request"
-                required:
-                  - result
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
+  #     responses:
+  #       200:
+  #         description: Success
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 result:
+  #                   nullable: false
+  #                   type: object
+  #                   $ref: "#/components/schemas/Request"
+  #               required:
+  #                 - result
+  #         headers:
+  #           X-Response-Duration-ms:
+  #             schema:
+  #               $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+  #           X-Response-Time:
+  #             schema:
+  #               $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+  #       401:
+  #         $ref: "#/components/responses/Unauthorized"
+  #       403:
+  #         $ref: "#/components/responses/Forbidden"
+  #       404:
+  #         $ref: "#/components/responses/NotFound"
 
   /api/v2/Attributes/NotifyPeerAboutIdentityAttributeSuccession:
     post:

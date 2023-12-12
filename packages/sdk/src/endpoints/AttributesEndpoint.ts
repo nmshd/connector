@@ -1,10 +1,10 @@
 import {
     ConnectorAttribute,
     ConnectorAttributes,
+    ConnectorIdentityAttribute,
     ConnectorRequest,
     ConnectorResponse,
     CreateAndShareRelationshipAttributeRequest,
-    CreateAttributeRequest,
     CreateIdentityAttributeRequest,
     ExecuteIQLQueryRequest,
     ExecuteIdentityAttributeQueryRequest,
@@ -13,18 +13,16 @@ import {
     GetAttributesRequest,
     GetValidAttributesRequest,
     NotifyPeerAboutIdentityAttributeSuccessionRequest,
-    ShareAttributeRequest,
     ShareIdentityAttributeRequest,
     SucceedAttributeRequest,
     SucceedAttributeResponse,
     SucceedIdentityAttributeRequest,
     SucceedRelationshipAttributeAndNotifyPeerRequest
 } from "../types";
-import { CreateAttributeResponse } from "../types/attributes/requests/CreateAttributeResponse";
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
-    public async createAttribute(request: CreateAttributeRequest): Promise<ConnectorResponse<CreateAttributeResponse>> {
+    public async createAttribute(request: ConnectorIdentityAttribute): Promise<ConnectorResponse<ConnectorAttribute>> {
         return await this.post("/api/v2/Attributes", request);
     }
 
@@ -48,9 +46,9 @@ export class AttributesEndpoint extends Endpoint {
         return await this.post("/api/v2/Attributes/SucceedRelationshipAttributeAndNotifyPeer", request);
     }
 
-    public async shareAttribute(request: ShareAttributeRequest): Promise<ConnectorResponse<CreateAttributeResponse>> {
-        return await this.post("/api/v2/Attributes/ShareAttribute", request);
-    }
+    // public async shareAttribute(request: ShareAttributeRequest): Promise<ConnectorResponse<CreateAttributeResponse>> {
+    //     return await this.post("/api/v2/Attributes/ShareAttribute", request);
+    // }
 
     public async shareIdentityAttribute(request: ShareIdentityAttributeRequest): Promise<ConnectorResponse<ConnectorRequest>> {
         return await this.post("/api/v2/Attributes/ShareIdentityAttribute", request);

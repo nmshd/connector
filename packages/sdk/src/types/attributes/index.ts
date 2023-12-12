@@ -5,7 +5,6 @@ export * from "./IdentityAttributeQuery";
 export * from "./RelationshipAttributeQuery";
 export * from "./ThirdPartyAttributeQuery";
 export * from "./requests/CreateAndShareRelationshipAttributeRequest";
-export * from "./requests/CreateAttributeRequest";
 export * from "./requests/CreateIdentityAttributeRequest";
 export * from "./requests/ExecuteIQLQueryRequest";
 export * from "./requests/ExecuteIdentityAttributeQueryRequest";

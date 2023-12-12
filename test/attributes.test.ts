@@ -155,59 +155,47 @@ describe("Execute AttributeQueries", () => {
     //     expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AString");
     // });
 
-    describe("Share Attribute", () => {
+    describe("Create Identity Attribute", () => {
         test("Should share an Identity Attribute", async () => {
-            const attribute = (
-                await client1.attributes.createIdentityAttribute({
-                    value: {
-                        "@type": "GivenName",
-                        value: "AGivenName"
-                    }
-                })
-            ).result;
-
-            const result = await client1.attributes.shareAttribute({ "@type": "Share", attributeId: attribute.id, peer: client2Address });
-            expect(result.isSuccess).toBe(true);
-        });
-
-        test("Should notify peer about Identity Attribute Succession", async () => {
-            const attribute = (
-                await client1.attributes.createIdentityAttribute({
-                    value: {
-                        "@type": "GivenName",
-                        value: "AGivenName"
-                    }
-                })
-            ).result;
-
-            const shareRequest = await client1.attributes.shareIdentityAttribute({ attributeId: attribute.id, peer: client2Address });
-
-            expect(shareRequest.isSuccess).toBe(true);
-
-            await syncUntilHasMessages(client2);
-
-            await client2.incomingRequests.accept(shareRequest.result.id, { items: [{ accept: true }] });
-
-            await syncUntilHasMessages(client1);
-
-            const successionResponse = await client1.attributes.succeedIdentityAttribute({
-                predecessorId: attribute.id,
-                successorContent: {
-                    value: {
-                        "@type": "GivenName",
-                        value: "ANewGivenName"
-                    }
+            const attribute = await client1.attributes.createIdentityAttribute({
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
                 }
             });
 
-            expect(successionResponse.isSuccess).toBe(true);
+            expect(attribute.isSuccess).toBe(true);
+        });
+    });
 
-            const notificationResult = await client1.attributes.shareAttribute({
-                "@type": "Notify",
-                attributeId: successionResponse.result.successor.id,
+    describe("Create and share Relationship Attribute", () => {
+        test("Should share an Identity Attribute", async () => {
+            const createRequest = await client1.attributes.createAndShareRelationshipAttribute({
+                content: {
+                    value: {
+                        "@type": "ProprietaryString",
+                        title: "text",
+                        value: "AGivenName"
+                    },
+                    key: "key",
+                    confidentiality: "public"
+                },
                 peer: client2Address
             });
-            expect(notificationResult.isSuccess).toBe(true);
+
+            expect(createRequest.isSuccess).toBe(true);
+
+            await syncUntilHasMessages(client2);
+
+            await client2.incomingRequests.accept(createRequest.result.id, { items: [{ accept: true }] });
+
+            await syncUntilHasMessages(client1);
+
+            const request = await client1.outgoingRequests.getRequest(createRequest.result.id);
+
+            expect(request.result.status).toBe("Completed");
+
+            // TODO: validate that shared attribute is correctly created on side of client 2
         });
     });
 
@@ -224,6 +212,7 @@ describe("Execute AttributeQueries", () => {
 
             const result = await client1.attributes.shareIdentityAttribute({ attributeId: attribute.id, peer: client2Address });
             expect(result.isSuccess).toBe(true);
+            // TODO: validate that shared attribute is correctly created on side of client 2
         });
     });
 
@@ -264,11 +253,14 @@ describe("Execute AttributeQueries", () => {
                 attributeId: successionResponse.result.successor.id,
                 peer: client2Address
             });
+
             expect(notificationResult.isSuccess).toBe(true);
+
+            // TODO: validate succession on side of client 2
         });
     });
 
-    describe("Succeed Attribute", () => {
+    describe("Succeed Identity Attribute", () => {
         test("Should succeed an Identity Attribute", async () => {
             const createAttributeResponse = await client1.attributes.createIdentityAttribute({
                 value: {
@@ -292,6 +284,52 @@ describe("Execute AttributeQueries", () => {
             });
 
             expect(succeedAttributeResponse.isSuccess).toBe(true);
+
+            // TODO: validate succession on side of client 2
+        });
+    });
+
+    describe("Succeed Relationship Attribute", () => {
+        test("Should succeed a Relationship Attribute", async () => {
+            const createRequest = await client1.attributes.createAndShareRelationshipAttribute({
+                content: {
+                    value: {
+                        "@type": "ProprietaryString",
+                        title: "text",
+                        value: "AGivenName"
+                    },
+                    key: "key",
+                    confidentiality: "public"
+                },
+                peer: client2Address
+            });
+
+            await syncUntilHasMessages(client2);
+
+            await client2.incomingRequests.accept(createRequest.result.id, { items: [{ accept: true }] });
+
+            const message = await syncUntilHasMessages(client1);
+
+            const request = await client1.outgoingRequests.getRequest(createRequest.result.id);
+
+            expect(request.result.status).toBe("Completed");
+
+            const relationshipAttributeId = (message[0] as any).content.response.items[0].attributeId; // TODO: How to retrieve attribute id?
+
+            const result = await client1.attributes.succeedRelationshipAttributeAndNotifyPeer({
+                predecessorId: relationshipAttributeId,
+                successorContent: {
+                    value: {
+                        "@type": "ProprietaryString",
+                        title: "text",
+                        value: "ANewGivenName"
+                    }
+                }
+            });
+
+            expect(result.isSuccess).toBe(true);
+
+            // TODO: validate succession on side of client 2
         });
     });
 });
