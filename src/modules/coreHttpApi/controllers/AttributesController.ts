@@ -47,7 +47,7 @@ export class AttributesController extends BaseController {
     @Path("/SucceedIdentityAttribute")
     @Accept("application/json")
     public async succeedIdentityAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.succeedIdentityAttribute({ predecessorId: request.predecessorId, successorContent: request.successorContent });
+        const result = await this.consumptionServices.attributes.succeedIdentityAttribute(request);
         return this.created(result);
     }
 
@@ -57,9 +57,9 @@ export class AttributesController extends BaseController {
     public async succeedAttribute(request: any): Promise<Return.NewResource<Envelope>> {
         let result: any;
         if (request.successorContent["@type"] === "IdentityAttribute") {
-            result = await this.consumptionServices.attributes.succeedIdentityAttribute({ predecessorId: request.id, successorContent: request.successorContent });
-        } else if (request.successorContent["@type"] === "RelationshipAttribute") {
-            result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({ predecessorId: request.id, successorContent: request.successorContent });
+            result = await this.consumptionServices.attributes.succeedIdentityAttribute(request);
+        } else {
+            result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer(request);
         }
         return this.created(result);
     }
@@ -68,10 +68,7 @@ export class AttributesController extends BaseController {
     @Path("/SucceedRelationshipAttributeAndNotifyPeer")
     @Accept("application/json")
     public async succeedRelationshipAttributeAndNotifyPeer(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({
-            predecessorId: request.predecessorId,
-            successorContent: request.successorContent
-        });
+        const result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer(request);
         return this.created(result);
     }
 
@@ -80,10 +77,11 @@ export class AttributesController extends BaseController {
     @Accept("application/json")
     public async shareAttribute(request: any): Promise<Return.NewResource<Envelope>> {
         // TODO: Remove?
+        // TODO: Distinguish between cases by loading attribute and checking if succeeded => remove @type
         let result: any;
         if (request.successorContent["@type"] === "Share") {
             result = await this.consumptionServices.attributes.shareIdentityAttribute(request);
-        } else if (request.successorContent["@type"] === "Notify") {
+        } else {
             result = await this.consumptionServices.attributes.notifyPeerAboutIdentityAttributeSuccession(request);
         }
         return this.created(result);

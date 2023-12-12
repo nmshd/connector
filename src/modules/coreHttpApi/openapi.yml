@@ -699,9 +699,9 @@ paths:
                     - predecessorId
                     - successorContent
                   properties:
-                    "@type":
+                    "@type": # TODO: Simplify with: https://stackoverflow.com/questions/49391808/reusing-references-to-models-but-redefining-required-properties?rq=4
                       enum:
-                        - IdentityAttribute # TODO: Usage of this enum okay? => Determines that this property has to be of type IdentityAttribute
+                        - IdentityAttribute
                     predecessorId:
                       $ref: "#/components/schemas/AttributeID"
                     successorContent:
@@ -721,6 +721,7 @@ paths:
                 - type: object
                   additionalProperties: false
                   required:
+                    - "@type"
                     - predecessorId
                     - successorContent
                   properties:
