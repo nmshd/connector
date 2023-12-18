@@ -906,7 +906,7 @@ paths:
                     properties:
                       predecessor:
                         $ref: "#/components/schemas/RelationshipAttribute"
-                      sucessor:
+                      successor:
                         $ref: "#/components/schemas/RelationshipAttribute"
                 required:
                   - result
