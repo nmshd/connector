@@ -17,3 +17,6 @@ export interface CreateAndShareRelationshipAttributeRequest {
         expiresAt?: string;
     };
 }
+
+// TODO: Warum gibt es keine CreateAttributeRequest.ts?
+// TODO: Watum importieren wir nicht die Datentype aus runtime?
