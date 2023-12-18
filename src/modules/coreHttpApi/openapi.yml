@@ -433,7 +433,7 @@ paths:
   /api/v2/Attributes/CreateAndShareRelationshipAttribute:
     post:
       operationId: createAndShareRelationshipAttribute
-      description: Create and share a Relationship Attribute
+      description: Create and share a Relationship Attribute via a request.
       tags:
         - Attributes
       requestBody:
@@ -4810,7 +4810,7 @@ components:
             validTo:
               $ref: "#/components/schemas/AttributeContent_validTo"
         peer:
-          type: string
+          $ref: "#/components/schemas/Address"
         requestMetadata:
           $ref: "#/components/schemas/RequestMetadata"
 
