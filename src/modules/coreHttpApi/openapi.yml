@@ -1146,11 +1146,7 @@ paths:
                       type: object
                       properties:
                         confidentiality:
-                          enum:
-                            - public
-                            - private
-                            - protected
-                          type: string
+                          $ref: "#/components/schemas/Confidentiality"
                         description:
                           type: string
                         isTechnical:
@@ -4098,10 +4094,7 @@ components:
         "@type":
           type: string
         confidentiality:
-          enum:
-            - public
-            - private
-            - protected
+          $ref: "#/components/schemas/Confidentiality"
           type: string
           description: The confidentiality of the attribute.
         isTechnical:
@@ -4148,6 +4141,13 @@ components:
       items:
         type: string
       description: The tags of the attribute.
+
+    Confidentiality:
+      enum:
+        - public
+        - protected
+        - private
+      type: string
 
     Attribute:
       type: object
@@ -4798,10 +4798,7 @@ components:
             key:
               type: string
             confidentiality:
-              enum:
-                - public
-                - private
-                - protected
+              $ref: "#/components/schemas/Confidentiality"
             isTechnical:
               type: boolean
             validFrom:
