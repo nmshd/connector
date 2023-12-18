@@ -487,13 +487,14 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: false
+                required:
+                  - result
                 properties:
                   result:
                     type: object
                     nullable: false
                     $ref: "#/components/schemas/IdentityAttribute"
-                required:
-                  - result
           headers:
             X-Response-Duration-ms:
               schema:
@@ -4736,18 +4737,22 @@ components:
       type: object
       additionalProperties: false
       required:
-        - value
+        - content
       properties:
-        value:
-          $ref: "#/components/schemas/AttributeValue"
-        tags:
-          type: array
-          items:
-            type: string
-        validFrom:
-          $ref: "#/components/schemas/AttributeContent_validFrom"
-        validTo:
-          $ref: "#/components/schemas/AttributeContent_validTo"
+        content:
+          type: object
+          additionalProperties: false
+          required:
+            - value
+          properties:
+            value:
+              $ref: "#/components/schemas/AttributeValue"
+            tags:
+              $ref: "#/components/schemas/IdentityAttributeContent_tags"
+            validFrom:
+              $ref: "#/components/schemas/AttributeContent_validFrom"
+            validTo:
+              $ref: "#/components/schemas/AttributeContent_validTo"
 
     RequestValidationResult:
       type: object
