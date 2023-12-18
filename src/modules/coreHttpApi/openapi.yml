@@ -857,11 +857,9 @@ paths:
                         type: string
                       type: array
                     validFrom:
-                      description: The date the attribute became valid.
-                      type: string
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
                     validTo:
-                      description: The date the attribute becomes invalid.
-                      type: string
+                      $ref: "#/components/schemas/AttributeContent_validTo"
                     valueType:
                       description: The valueType of the attribute.
                       type: string
@@ -917,11 +915,9 @@ paths:
                       description: The owner of the relationship attribute.
                       type: string
                     validFrom:
-                      description: The date the attribute became valid.
-                      type: string
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
                     validTo:
-                      description: The date the attribute becomes invalid.
-                      type: string
+                      $ref: "#/components/schemas/AttributeContent_validTo"
                     attributeCreationHints:
                       description: This describes how to create an attribute if it does not exist.
                       type: object
@@ -1034,11 +1030,9 @@ paths:
                       items:
                         $ref: "#/components/schemas/Address"
                     validFrom:
-                      description: The date the attribute became valid.
-                      type: string
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
                     validTo:
-                      description: The date the attribute becomes invalid.
-                      type: string
+                      $ref: "#/components/schemas/AttributeContent_validTo"
                   required:
                     - key
                     - owner
@@ -3854,13 +3848,9 @@ components:
             type: string
           description: The tags of the attribute.
         validFrom:
-          type: string
-          format: date-time
-          description: The date and time when the attribute becomes valid.
+          $ref: "#/components/schemas/AttributeContent_validFrom"
         validTo:
-          type: string
-          format: date-time
-          description: The date and time when the attribute expires.
+          $ref: "#/components/schemas/AttributeContent_validTo"
         value:
           "$ref": "#/components/schemas/AttributeValue"
       required:
@@ -3891,13 +3881,9 @@ components:
             - $ref: "#/components/schemas/Address"
           description: The address of the identity that owns the attribute.
         validFrom:
-          type: string
-          format: date-time
-          description: The date and time when the attribute becomes valid.
+          $ref: "#/components/schemas/AttributeContent_validFrom"
         validTo:
-          type: string
-          format: date-time
-          description: The date and time when the attribute expires.
+          $ref: "#/components/schemas/AttributeContent_validTo"
         value:
           "$ref": "#/components/schemas/AttributeValue"
       required:
@@ -3907,13 +3893,11 @@ components:
         - owner
         - value
 
-    # TODO: ??? Replace all existing valid{From,To}s?
     AttributeContent_validFrom:
       type: string
       format: date-time
       description: The date and time when the attribute becomes valid.
 
-    # TODO: Rename schemas? (simply validTo, tags, ...)
     AttributeContent_validTo:
       type: string
       format: date-time
