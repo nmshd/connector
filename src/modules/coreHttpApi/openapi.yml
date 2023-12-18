@@ -282,7 +282,8 @@ paths:
   /api/v2/Attributes:
     post:
       operationId: createAttribute
-      description: Create an Attribute
+      description: "Creates an Identity Attribute. Legacy Route: Use 'attributes/CreateIdentityAttribute' instead."
+      deprecated: true
       tags:
         - Attributes
       requestBody:
@@ -291,7 +292,6 @@ paths:
             schema:
               additionalProperties: false
               properties:
-                # TODO: add relationship attribute
                 content:
                   "$ref": "#/components/schemas/IdentityAttribute"
               required:

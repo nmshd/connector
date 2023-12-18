@@ -16,7 +16,7 @@ export class AttributesController extends BaseController {
     @POST
     @Accept("application/json")
     public async createAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const attributeValue = request.value; // Legacy API recieves whole Relationship Attribute => extract attribute value for new use case
+        const attributeValue = request.value;
         const result = await this.consumptionServices.attributes.createIdentityAttribute(attributeValue);
         return this.created(result);
     }
