@@ -3834,6 +3834,10 @@ components:
     IdentityAttribute:
       type: object
       additionalProperties: false
+      required:
+        - "@type"
+        - owner
+        - value
       properties:
         "@type":
           type: string
@@ -3853,10 +3857,6 @@ components:
           $ref: "#/components/schemas/AttributeContent_validTo"
         value:
           "$ref": "#/components/schemas/AttributeValue"
-      required:
-        - "@type"
-        - owner
-        - value
 
     RelationshipAttribute:
       type: object
@@ -3877,7 +3877,6 @@ components:
         owner:
           type: string
           allOf:
-            # TODO: What's this singleton allOf about?
             - $ref: "#/components/schemas/Address"
           description: The address of the identity that owns the attribute.
         validFrom:
