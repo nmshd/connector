@@ -4212,7 +4212,7 @@ components:
 
     AttributeValue:
       type: object
-      additionalProperties: false
+      additionalProperties: true
       properties:
         "@type":
           type: string
