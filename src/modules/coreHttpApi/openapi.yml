@@ -585,16 +585,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties: false
-              required:
-                - attributeId
-                - peer
-              properties:
-                attributeId:
-                  $ref: "#/components/schemas/AttributeID"
-                peer:
-                  $ref: "#/components/schemas/Address"
+              $ref: "#/components/schemas/NotifyPeerAboutIdentityAttributeSuccessionRequest"
 
       responses:
         200:
@@ -4726,6 +4717,18 @@ components:
               $ref: "#/components/schemas/AttributeContent_validFrom"
             validTo:
               $ref: "#/components/schemas/AttributeContent_validTo"
+
+    NotifyPeerAboutIdentityAttributeSuccessionRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - attributeId
+        - peer
+      properties:
+        attributeId:
+          $ref: "#/components/schemas/AttributeID"
+        peer:
+          $ref: "#/components/schemas/Address"
 
     RequestValidationResult:
       type: object
