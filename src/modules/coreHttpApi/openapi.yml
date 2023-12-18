@@ -641,18 +641,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties: false
-              required:
-                - attributeId
-                - peer
-              properties:
-                attributeId:
-                  $ref: "#/components/schemas/AttributeID"
-                peer:
-                  $ref: "#/components/schemas/Address"
-                requestMetadata:
-                  $ref: "#/components/schemas/RequestMetadata"
+              $ref: "#/components/schemas/ShareIdentityAttributeRequest"
 
       responses:
         200:
@@ -4823,6 +4812,20 @@ components:
               $ref: "#/components/schemas/AttributeContent_validFrom"
             validTo:
               $ref: "#/components/schemas/AttributeContent_validTo"
+
+    ShareIdentityAttributeRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - attributeId
+        - peer
+      properties:
+        attributeId:
+          $ref: "#/components/schemas/AttributeID"
+        peer:
+          $ref: "#/components/schemas/Address"
+        requestMetadata:
+          $ref: "#/components/schemas/RequestMetadata"
 
     Message:
       type: object

@@ -25,14 +25,14 @@ export class AttributesController extends BaseController {
     @Path("/CreateIdentityAttribute")
     @Accept("application/json")
     public async createIdentityAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.createIdentityAttribute({ content: request });
+        const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
         return this.created(result);
     }
 
     @POST
     @Path("/CreateAndShareRelationshipAttribute")
     @Accept("application/json")
-    public async createandShareRelationshipAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+    public async createAndShareRelationshipAttribute(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.consumptionServices.attributes.createAndShareRelationshipAttribute(request);
         return this.created(result);
     }
