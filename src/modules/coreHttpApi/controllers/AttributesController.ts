@@ -49,8 +49,10 @@ export class AttributesController extends BaseController {
     @Path("/SucceedAttribute")
     @Accept("application/json")
     public async succeedAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+        const predecessorResult = await this.consumptionServices.attributes.getAttribute(request.predecessorId);
+        const predecessor = predecessorResult.value;
         let result: any;
-        if (request.successorContent["@type"] === "IdentityAttribute") {
+        if (predecessor["content"]["@type"] === "IdentityAttribute") {
             result = await this.consumptionServices.attributes.succeedIdentityAttribute(request);
         } else {
             result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer(request);

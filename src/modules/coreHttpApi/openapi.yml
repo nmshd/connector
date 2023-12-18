@@ -507,6 +507,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  # TODO: cleanup comments
   # /api/v2/Attributes/ShareAttribute:
   #   post:
   #     operationId: shareAttribute
@@ -673,56 +674,8 @@ paths:
           application/json:
             schema:
               oneOf:
-                - type: object
-                  additionalProperties: false
-                  required:
-                    - "@type"
-                    - predecessorId
-                    - successorContent
-                  properties:
-                    "@type": # TODO: Simplify with: https://stackoverflow.com/questions/49391808/reusing-references-to-models-but-redefining-required-properties?rq=4
-                      enum:
-                        - IdentityAttribute
-                    predecessorId:
-                      $ref: "#/components/schemas/AttributeID"
-                    successorContent:
-                      type: object
-                      additionalProperties: false
-                      required:
-                        - value
-                      properties:
-                        value:
-                          $ref: "#/components/schemas/AttributeValue"
-                        tags:
-                          $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                        validFrom:
-                          $ref: "#/components/schemas/AttributeContent_validFrom"
-                        validTo:
-                          $ref: "#/components/schemas/AttributeContent_validTo"
-                - type: object
-                  additionalProperties: false
-                  required:
-                    - "@type"
-                    - predecessorId
-                    - successorContent
-                  properties:
-                    "@type":
-                      enum:
-                        - RelationshipAttribute
-                    predecessorId:
-                      $ref: "#/components/schemas/AttributeID"
-                    successorContent:
-                      type: object
-                      additionalProperties: false
-                      required:
-                        - value
-                      properties:
-                        value:
-                          $ref: "#/components/schemas/AttributeValue"
-                        validFrom:
-                          $ref: "#/components/schemas/AttributeContent_validFrom"
-                        validTo:
-                          $ref: "#/components/schemas/AttributeContent_validTo"
+                - { $ref: "#/components/schemas/SucceedIdentityAttributeRequest" }
+                - { $ref: "#/components/schemas/SucceedRelationshipAttributeAndNotifyPeerRequest" }
 
       responses:
         200:
@@ -731,32 +684,14 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: false
+                required:
+                  - result
                 properties:
                   result:
                     oneOf:
-                      - nullable: false
-                        type: object
-                        required:
-                          - predecessor
-                          - successor
-                        properties:
-                          predecessor:
-                            $ref: "#/components/schemas/IdentityAttribute"
-                          sucessor:
-                            $ref: "#/components/schemas/IdentityAttribute"
-                      - nullable: false
-                        type: object
-                        required:
-                          - predecessor
-                          - successor
-                        properties:
-                          # TODO: RelAttribute returns a request, not an attribute
-                          predecessor:
-                            $ref: "#/components/schemas/RelationshipAttribute"
-                          sucessor:
-                            $ref: "#/components/schemas/RelationshipAttribute"
-                required:
-                  - result
+                      - { $ref: "#/components/schemas/SucceedRelationshipAttributeAndNotifyPeerResponse" }
+                      - { $ref: "#/components/schemas/SucceedIdentityAttributeResponse" }
           headers:
             X-Response-Duration-ms:
               schema:
@@ -789,21 +724,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  result:
-                    nullable: false
-                    type: object
-                    required:
-                      - predecessor
-                      - successor
-                    properties:
-                      predecessor:
-                        $ref: "#/components/schemas/IdentityAttribute"
-                      sucessor:
-                        $ref: "#/components/schemas/IdentityAttribute"
-                required:
-                  - result
+                $ref: "#/components/schemas/SucceedIdentityAttributeResponse"
           headers:
             X-Response-Duration-ms:
               schema:
@@ -836,22 +757,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                additionalProperties: false
-                required:
-                  - result
-                properties:
-                  result:
-                    nullable: false
-                    type: object
-                    required:
-                      - predecessor
-                      - successor
-                    properties:
-                      predecessor:
-                        $ref: "#/components/schemas/RelationshipAttribute"
-                      successor:
-                        $ref: "#/components/schemas/RelationshipAttribute"
+                $ref: "#/components/schemas/SucceedRelationshipAttributeAndNotifyPeerResponse"
           headers:
             X-Response-Duration-ms:
               schema:
@@ -4718,6 +4624,24 @@ components:
             validTo:
               $ref: "#/components/schemas/AttributeContent_validTo"
 
+    SucceedIdentityAttributeResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - result
+      properties:
+        result:
+          nullable: false
+          type: object
+          required:
+            - predecessor
+            - successor
+          properties:
+            predecessor:
+              $ref: "#/components/schemas/IdentityAttribute"
+            sucessor:
+              $ref: "#/components/schemas/IdentityAttribute"
+
     NotifyPeerAboutIdentityAttributeSuccessionRequest:
       type: object
       additionalProperties: false
@@ -4818,6 +4742,24 @@ components:
               $ref: "#/components/schemas/AttributeContent_validFrom"
             validTo:
               $ref: "#/components/schemas/AttributeContent_validTo"
+
+    SucceedRelationshipAttributeAndNotifyPeerResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - result
+      properties:
+        result:
+          type: object
+          additionalProperties: false
+          required:
+            - predecessor
+            - successor
+          properties:
+            predecessor:
+              $ref: "#/components/schemas/RelationshipAttribute"
+            successor:
+              $ref: "#/components/schemas/RelationshipAttribute"
 
     ShareIdentityAttributeRequest:
       type: object
