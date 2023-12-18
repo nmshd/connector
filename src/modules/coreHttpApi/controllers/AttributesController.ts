@@ -68,21 +68,6 @@ export class AttributesController extends BaseController {
         return this.created(result);
     }
 
-    // @POST
-    // @Path("/ShareAttribute")
-    // @Accept("application/json")
-    // public async shareAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-    //     // TODO: Remove?
-    //     // TODO: Distinguish between cases by loading attribute and checking if succeeded => remove @type
-    //     let result: any;
-    //     if (request.successorContent["@type"] === "Share") {
-    //         result = await this.consumptionServices.attributes.shareIdentityAttribute(request);
-    //     } else {
-    //         result = await this.consumptionServices.attributes.notifyPeerAboutIdentityAttributeSuccession(request);
-    //     }
-    //     return this.created(result);
-    // }
-
     @POST
     @Path("/ShareIdentityAttribute")
     @Accept("application/json")
