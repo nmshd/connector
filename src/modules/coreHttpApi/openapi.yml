@@ -291,6 +291,7 @@ paths:
             schema:
               additionalProperties: false
               properties:
+                # TODO: add relationship attribute
                 content:
                   "$ref": "#/components/schemas/IdentityAttribute"
               required:
@@ -768,6 +769,7 @@ paths:
                           - predecessor
                           - successor
                         properties:
+                          # TODO: RelAttribute returns a request, not an attribute
                           predecessor:
                             $ref: "#/components/schemas/RelationshipAttribute"
                           sucessor:
@@ -4131,6 +4133,7 @@ components:
       format: date-time
       description: The date and time when the attribute becomes valid.
 
+    # TODO: Rename schemas? (simply validTo, tags, ...)
     AttributeContent_validTo:
       type: string
       format: date-time
@@ -4180,6 +4183,7 @@ components:
             - "$ref": "#/components/schemas/RelationshipAttribute"
       required:
         - id
+        # TODO: soll createdAt wirklich required sein?
         - createdAt
         - content
 
