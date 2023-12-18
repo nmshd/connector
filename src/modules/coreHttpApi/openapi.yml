@@ -790,28 +790,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties: false
-              required:
-                - predecessorId
-                - successorContent
-              properties:
-                predecessorId:
-                  $ref: "#/components/schemas/AttributeID"
-                successorContent:
-                  type: object
-                  additionalProperties: false
-                  required:
-                    - value
-                  properties:
-                    value:
-                      $ref: "#/components/schemas/AttributeValue"
-                    tags:
-                      $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
+              $ref: "#/components/schemas/SucceedIdentityAttributeRequest"
 
       responses:
         200:
@@ -4710,6 +4689,30 @@ components:
         - content
       properties:
         content:
+          type: object
+          additionalProperties: false
+          required:
+            - value
+          properties:
+            value:
+              $ref: "#/components/schemas/AttributeValue"
+            tags:
+              $ref: "#/components/schemas/IdentityAttributeContent_tags"
+            validFrom:
+              $ref: "#/components/schemas/AttributeContent_validFrom"
+            validTo:
+              $ref: "#/components/schemas/AttributeContent_validTo"
+
+    SucceedIdentityAttributeRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - predecessorId
+        - successorContent
+      properties:
+        predecessorId:
+          $ref: "#/components/schemas/AttributeID"
+        successorContent:
           type: object
           additionalProperties: false
           required:
