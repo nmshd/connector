@@ -896,6 +896,9 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: false
+                required:
+                  - result
                 properties:
                   result:
                     nullable: false
@@ -908,8 +911,6 @@ paths:
                         $ref: "#/components/schemas/RelationshipAttribute"
                       successor:
                         $ref: "#/components/schemas/RelationshipAttribute"
-                required:
-                  - result
           headers:
             X-Response-Duration-ms:
               schema:
