@@ -3946,7 +3946,6 @@ components:
             - "$ref": "#/components/schemas/RelationshipAttribute"
       required:
         - id
-        # TODO: soll createdAt wirklich required sein?
         - createdAt
         - content
 
