@@ -869,26 +869,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties: false
-              required:
-                - predecessorId
-                - successorContent
-              properties:
-                predecessorId:
-                  $ref: "#/components/schemas/AttributeID"
-                successorContent:
-                  type: object
-                  additionalProperties: false
-                  required:
-                    - value
-                  properties:
-                    value:
-                      $ref: "#/components/schemas/AttributeValue"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
+              $ref: "#/components/schemas/SucceedRelationshipAttributeAndNotifyPeerRequest"
 
       responses:
         200:
@@ -4820,6 +4801,28 @@ components:
           $ref: "#/components/schemas/Address"
         requestMetadata:
           $ref: "#/components/schemas/RequestMetadata"
+
+    SucceedRelationshipAttributeAndNotifyPeerRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - predecessorId
+        - successorContent
+      properties:
+        predecessorId:
+          $ref: "#/components/schemas/AttributeID"
+        successorContent:
+          type: object
+          additionalProperties: false
+          required:
+            - value
+          properties:
+            value:
+              $ref: "#/components/schemas/AttributeValue"
+            validFrom:
+              $ref: "#/components/schemas/AttributeContent_validFrom"
+            validTo:
+              $ref: "#/components/schemas/AttributeContent_validTo"
 
     Message:
       type: object
