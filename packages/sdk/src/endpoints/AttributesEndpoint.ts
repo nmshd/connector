@@ -46,10 +46,6 @@ export class AttributesEndpoint extends Endpoint {
         return await this.post("/api/v2/Attributes/SucceedRelationshipAttributeAndNotifyPeer", request);
     }
 
-    // public async shareAttribute(request: ShareAttributeRequest): Promise<ConnectorResponse<CreateAttributeResponse>> {
-    //     return await this.post("/api/v2/Attributes/ShareAttribute", request);
-    // }
-
     public async shareIdentityAttribute(request: ShareIdentityAttributeRequest): Promise<ConnectorResponse<ConnectorRequest>> {
         return await this.post("/api/v2/Attributes/ShareIdentityAttribute", request);
     }
