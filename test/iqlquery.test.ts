@@ -42,7 +42,7 @@ beforeAll(async () => {
     ];
     attributeIds = [];
     for (const attribute of attributes) {
-        const attributeId = (await client1.attributes.createIdentityAttribute({ value: attribute.value, tags: attribute.tags })).result.id;
+        const attributeId = (await client1.attributes.createIdentityAttribute({ content: { value: attribute.value, tags: attribute.tags } })).result.id;
         attributeIds.push(attributeId);
     }
 
@@ -260,7 +260,7 @@ test("Remote ProposeAttributeRequest containing IQL Query without existing attri
     incomingRequestItem.attribute.owner = client1Address;
     const requestItemAttribute = incomingRequestItem.attribute;
     // TODO: also add tags in createIdentityAttribute?
-    const attributeId = (await client1.attributes.createIdentityAttribute({ value: requestItemAttribute.value })).result.id;
+    const attributeId = (await client1.attributes.createIdentityAttribute({ content: { value: requestItemAttribute.value } })).result.id;
 
     /* Reply to the response with the first matched attribute. Wait on C2 for
      * the message to arrive. */
