@@ -1,7 +1,7 @@
 import { IQLQuery, ThirdPartyAttributeQuery } from "../attributes";
+import { ConnectorIdentityAttribute, ConnectorRelationshipAttribute } from "../attributes/ConnectorAttribute";
 import { IdentityAttributeQuery } from "../attributes/IdentityAttributeQuery";
 import { RelationshipAttributeQuery } from "../attributes/RelationshipAttributeQuery";
-import { ConnectorIdentityAttribute, ConnectorRelationshipAttribute } from "../attributes/requests/ConnectorAttribute";
 
 export interface ConnectorRequestContent {
     "@type"?: string;
