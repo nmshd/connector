@@ -212,8 +212,6 @@ describe("Execute AttributeQueries", () => {
             const request = await client1.outgoingRequests.getRequest(createRequest.result.id);
 
             expect(request.result.status).toBe("Completed");
-
-            // TODO: validate that shared attribute is correctly created on side of client 2
         });
     });
 
@@ -232,7 +230,6 @@ describe("Execute AttributeQueries", () => {
 
             const result = await client1.attributes.shareIdentityAttribute({ attributeId: attribute.id, peer: client2Address });
             expect(result.isSuccess).toBe(true);
-            // TODO: validate that shared attribute is correctly created on side of client 2
         });
     });
 
@@ -277,8 +274,6 @@ describe("Execute AttributeQueries", () => {
             });
 
             expect(notificationResult.isSuccess).toBe(true);
-
-            // TODO: validate succession on side of client 2
         });
     });
 
@@ -308,8 +303,6 @@ describe("Execute AttributeQueries", () => {
             });
 
             expect(succeedAttributeResponse.isSuccess).toBe(true);
-
-            // TODO: validate succession on side of client 2
         });
     });
 
@@ -338,7 +331,7 @@ describe("Execute AttributeQueries", () => {
 
             expect(request.result.status).toBe("Completed");
 
-            const relationshipAttributeId = (message[0] as any).content.response.items[0].attributeId; // TODO: How to retrieve attribute id?
+            const relationshipAttributeId = (message[0] as any).content.response.items[0].attributeId;
 
             const result = await client1.attributes.succeedRelationshipAttributeAndNotifyPeer({
                 predecessorId: relationshipAttributeId,
@@ -352,8 +345,6 @@ describe("Execute AttributeQueries", () => {
             });
 
             expect(result.isSuccess).toBe(true);
-
-            // TODO: validate succession on side of client 2
         });
     });
 });

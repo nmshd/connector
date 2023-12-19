@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.7.0
+
+-   add usecases for attribute succession
+-   refactor existing attribute use cases
+
 ## 3.6.2
 
 -   provenance sbom for the Docker Images

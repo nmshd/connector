@@ -220,7 +220,7 @@ export async function createIdentityAttribute(client: ConnectorClient, request: 
     return response.result;
 }
 
-export async function createRelationshipAttribute(client: ConnectorClient, request: CreateAndShareRelationshipAttributeRequest): Promise<ConnectorRequest> {
+export async function createAndShareRelationshipAttribute(client: ConnectorClient, request: CreateAndShareRelationshipAttributeRequest): Promise<ConnectorRequest> {
     const response = await client.attributes.createAndShareRelationshipAttribute(request);
     expect(response).toBeSuccessful(ValidationSchema.ConnectorAttribute);
     return response.result;

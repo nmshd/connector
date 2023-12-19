@@ -4,7 +4,6 @@ import {
     ConnectorRequest,
     ConnectorResponse,
     CreateAndShareRelationshipAttributeRequest,
-    CreateAttributeRequest,
     CreateIdentityAttributeRequest,
     ExecuteIQLQueryRequest,
     ExecuteIdentityAttributeQueryRequest,
@@ -22,10 +21,6 @@ import {
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
-    public async createAttribute(request: CreateAttributeRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
-        return await this.post("/api/v2/Attributes", request);
-    }
-
     public async createIdentityAttribute(request: CreateIdentityAttributeRequest): Promise<ConnectorResponse<ConnectorAttribute>> {
         return await this.post("/api/v2/Attributes/CreateIdentityAttribute", request);
     }
