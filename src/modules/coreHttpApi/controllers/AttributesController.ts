@@ -16,7 +16,8 @@ export class AttributesController extends BaseController {
     @POST
     @Accept("application/json")
     public async createAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        // TODO request.content contains unnecessary owner value => delete?
+        // owner is left optional in openapi spec for backward compatibility
+        if (request.content.owner) delete request.content.owner;
         const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
         return this.created(result);
     }
@@ -45,6 +46,7 @@ export class AttributesController extends BaseController {
         return this.created(result);
     }
 
+    // TODO: delete succeedAttribute?
     @POST
     @Path("/SucceedAttribute")
     @Accept("application/json")

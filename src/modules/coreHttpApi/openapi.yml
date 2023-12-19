@@ -293,7 +293,7 @@ paths:
               additionalProperties: false
               properties:
                 content:
-                  "$ref": "#/components/schemas/IdentityAttribute" # TODO: specifies owner to be mandatory => we do not use this field
+                  "$ref": "#/components/schemas/CreateAttributeRequest"
               required:
                 - content
               type: object
@@ -304,13 +304,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  result:
-                    type: object
-                    nullable: false
-                    $ref: "#/components/schemas/Attribute"
                 required:
                   - result
+                properties:
+                  result:
+                    $ref: "#/components/schemas/CreateIdentityAttributeResponse"
+
           headers:
             X-Response-Duration-ms:
               schema:
@@ -451,8 +450,6 @@ paths:
                 type: object
                 properties:
                   result:
-                    type: object
-                    nullable: false
                     $ref: "#/components/schemas/Request"
                 required:
                   - result
@@ -492,9 +489,7 @@ paths:
                   - result
                 properties:
                   result:
-                    type: object
-                    nullable: false
-                    $ref: "#/components/schemas/IdentityAttribute"
+                    $ref: "#/components/schemas/CreateIdentityAttributeResponse"
           headers:
             X-Response-Duration-ms:
               schema:
@@ -528,8 +523,8 @@ paths:
                 type: object
                 properties:
                   result:
-                    nullable: false
                     type: object
+                    additionalProperties: false
                     required:
                       - predecessor
                       - successor
@@ -575,8 +570,6 @@ paths:
                 type: object
                 properties:
                   result:
-                    nullable: false
-                    type: object
                     $ref: "#/components/schemas/Request"
                 required:
                   - result
@@ -688,7 +681,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SucceedRelationshipAttributeAndNotifyPeerResponse"
+                type: object
+                required:
+                  - result
+                properties:
+                  result:
+                    $ref: "#/components/schemas/SucceedRelationshipAttributeAndNotifyPeerResponse"
           headers:
             X-Response-Duration-ms:
               schema:
@@ -3847,10 +3845,7 @@ components:
             - $ref: "#/components/schemas/Address"
           description: The address of the identity that owns the attribute.
         tags:
-          type: array
-          items:
-            type: string
-          description: The tags of the attribute.
+          $ref: "#/components/schemas/IdentityAttributeContent_tags"
         validFrom:
           $ref: "#/components/schemas/AttributeContent_validFrom"
         validTo:
@@ -4492,6 +4487,29 @@ components:
         - content
         - peer
 
+    CreateAttributeRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - content
+      properties:
+        content:
+          type: object
+          additionalProperties: false
+          required:
+            - value
+          properties:
+            owner:
+              $ref: "#/components/schemas/Address"
+            value:
+              $ref: "#/components/schemas/AttributeValue"
+            tags:
+              $ref: "#/components/schemas/IdentityAttributeContent_tags"
+            validFrom:
+              $ref: "#/components/schemas/AttributeContent_validFrom"
+            validTo:
+              $ref: "#/components/schemas/AttributeContent_validTo"
+
     CreateIdentityAttributeRequest:
       type: object
       additionalProperties: false
@@ -4555,6 +4573,41 @@ components:
             sucessor:
               $ref: "#/components/schemas/IdentityAttribute"
 
+    CreateIdentityAttributeResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/AttributeID"
+          nullable: false
+          description: The ID of the attribute.
+        parentId:
+          "$ref": "#/components/schemas/AttributeID"
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time when the attribute was created.
+        shareInfo:
+          "$ref": "#/components/schemas/AttributeShareInfo"
+        succeededBy:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/AttributeID"
+          description: The ID of the attribute that was used to succeed this attribute.
+        succeeds:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/AttributeID"
+          description: The ID of the attribute that this attribute succeeds.
+        content:
+          anyOf:
+            - "$ref": "#/components/schemas/IdentityAttribute"
+      required:
+        - id
+        - createdAt
+        - content
+
     NotifyPeerAboutIdentityAttributeSuccessionRequest:
       type: object
       additionalProperties: false
@@ -4591,6 +4644,7 @@ components:
 
     RequestMetadata:
       type: object
+      additionalProperties: false
       properties:
         title:
           type: string
@@ -4660,19 +4714,13 @@ components:
       type: object
       additionalProperties: false
       required:
-        - result
+        - predecessor
+        - successor
       properties:
-        result:
-          type: object
-          additionalProperties: false
-          required:
-            - predecessor
-            - successor
-          properties:
-            predecessor:
-              $ref: "#/components/schemas/RelationshipAttribute"
-            successor:
-              $ref: "#/components/schemas/RelationshipAttribute"
+        predecessor:
+          $ref: "#/components/schemas/RelationshipAttribute"
+        successor:
+          $ref: "#/components/schemas/RelationshipAttribute"
 
     ShareIdentityAttributeRequest:
       type: object
