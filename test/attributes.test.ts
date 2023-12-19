@@ -21,11 +21,13 @@ describe("Attributes", () => {
 
     test("should create an attribute", async () => {
         const createAttributeResponse = await client1.attributes.createIdentityAttribute({
-            value: {
-                "@type": "GivenName",
-                value: "AGivenName"
-            },
-            tags: ["content:edu.de"]
+            content: {
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
+                },
+                tags: ["content:edu.de"]
+            }
         });
 
         expect(createAttributeResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
@@ -53,9 +55,11 @@ describe("Attributes Query", () => {
     test("should query attributes", async () => {
         const attribute = (
             await client1.attributes.createIdentityAttribute({
-                value: {
-                    "@type": "GivenName",
-                    value: "AGivenName"
+                content: {
+                    value: {
+                        "@type": "GivenName",
+                        value: "AGivenName"
+                    }
                 }
             })
         ).result;
@@ -83,9 +87,11 @@ describe("Attributes Query", () => {
     test("should query valid attributes", async () => {
         const attribute = (
             await client1.attributes.createIdentityAttribute({
-                value: {
-                    "@type": "GivenName",
-                    value: "AGivenName"
+                content: {
+                    value: {
+                        "@type": "GivenName",
+                        value: "AGivenName"
+                    }
                 }
             })
         ).result;
@@ -111,9 +117,11 @@ describe("Attributes Query", () => {
 describe("Execute AttributeQueries", () => {
     test("should execute an IdentityAttributeQuery", async () => {
         const attribute = await createIdentityAttribute(client1, {
-            value: {
-                "@type": "GivenName",
-                value: "AGivenName"
+            content: {
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
+                }
             }
         });
 
@@ -158,9 +166,11 @@ describe("Execute AttributeQueries", () => {
     describe("Create Identity Attribute", () => {
         test("Should share an Identity Attribute", async () => {
             const attribute = await client1.attributes.createIdentityAttribute({
-                value: {
-                    "@type": "GivenName",
-                    value: "AGivenName"
+                content: {
+                    value: {
+                        "@type": "GivenName",
+                        value: "AGivenName"
+                    }
                 }
             });
 
@@ -203,9 +213,11 @@ describe("Execute AttributeQueries", () => {
         test("Should share an Identity Attribute", async () => {
             const attribute = (
                 await client1.attributes.createIdentityAttribute({
-                    value: {
-                        "@type": "GivenName",
-                        value: "AGivenName"
+                    content: {
+                        value: {
+                            "@type": "GivenName",
+                            value: "AGivenName"
+                        }
                     }
                 })
             ).result;
@@ -220,9 +232,11 @@ describe("Execute AttributeQueries", () => {
         test("Should notify peer about Identity Attribute Succession", async () => {
             const attribute = (
                 await client1.attributes.createIdentityAttribute({
-                    value: {
-                        "@type": "GivenName",
-                        value: "AGivenName"
+                    content: {
+                        value: {
+                            "@type": "GivenName",
+                            value: "AGivenName"
+                        }
                     }
                 })
             ).result;
@@ -263,11 +277,13 @@ describe("Execute AttributeQueries", () => {
     describe("Succeed Identity Attribute", () => {
         test("Should succeed an Identity Attribute", async () => {
             const createAttributeResponse = await client1.attributes.createIdentityAttribute({
-                value: {
-                    "@type": "GivenName",
-                    value: "AGivenName"
-                },
-                tags: ["content:edu.de"]
+                content: {
+                    value: {
+                        "@type": "GivenName",
+                        value: "AGivenName"
+                    },
+                    tags: ["content:edu.de"]
+                }
             });
 
             const attributeId = createAttributeResponse.result.id;
