@@ -4499,6 +4499,9 @@ components:
           required:
             - value
           properties:
+            "@type":
+              type: string
+              enum: ["IdentityAttribute"]
             owner:
               $ref: "#/components/schemas/Address"
             value:
