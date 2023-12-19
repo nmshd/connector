@@ -75,6 +75,7 @@ test("Local IQL Query", async () => {
     for (const e of table) {
         const queryRequest: ExecuteIQLQueryRequest = {
             query: {
+                "@type": "IQLQuery",
                 queryString: e.iqlQuery
             }
         };
@@ -122,6 +123,7 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
     const matchedAttributes = (
         await client1.attributes.executeIQLQuery({
             query: {
+                "@type": "IQLQuery",
                 queryString: iqlQueryString
             }
         })
@@ -189,6 +191,7 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
     const matchedAttributes = (
         await client1.attributes.executeIQLQuery({
             query: {
+                "@type": "IQLQuery",
                 queryString: iqlQueryString
             }
         })
@@ -250,6 +253,7 @@ test("Remote ProposeAttributeRequest containing IQL Query without existing attri
     const matchedAttributes = (
         await client1.attributes.executeIQLQuery({
             query: {
+                "@type": "IQLQuery",
                 queryString: iqlQueryString
             }
         })
