@@ -293,7 +293,7 @@ paths:
               additionalProperties: false
               properties:
                 content:
-                  "$ref": "#/components/schemas/IdentityAttribute"
+                  "$ref": "#/components/schemas/IdentityAttribute" # TODO: specifies owner to be mandatory => we do not use this field
               required:
                 - content
               type: object

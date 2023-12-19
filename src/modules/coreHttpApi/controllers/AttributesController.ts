@@ -16,8 +16,8 @@ export class AttributesController extends BaseController {
     @POST
     @Accept("application/json")
     public async createAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const attributeValue = request.value;
-        const result = await this.consumptionServices.attributes.createIdentityAttribute(attributeValue);
+        // TODO request.content contains unnecessary owner value => delete?
+        const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
         return this.created(result);
     }
 
