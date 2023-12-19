@@ -7,11 +7,13 @@ import { ValidationSchema } from "./lib/validation";
 const launcher = new Launcher();
 let client1: ConnectorClient;
 let client2: ConnectorClient;
+let client1Address: string;
 let client2Address: string;
 
 beforeAll(async () => {
     [client1, client2] = await launcher.launch(2);
     await establishRelationship(client1, client2);
+    client1Address = (await client1.account.getIdentityInfo()).result.address;
     client2Address = (await client2.account.getIdentityInfo()).result.address;
 }, 30000);
 afterAll(() => launcher.stop());
@@ -132,36 +134,42 @@ describe("Execute AttributeQueries", () => {
         expect(attributes).toContainEqual(attribute);
     });
 
-    // TODO: requires an active relationship and an accept from peer before relationship attribute can be queried
-    // test("should execute a RelationshipAttributeQuery", async () => {
-    //     await createRelationshipAttribute(client1, {
-    //         content: {
-    //             value: {
-    //                 "@type": "ProprietaryString",
-    //                 title: "ATitle",
-    //                 value: "AString"
-    //             },
-    //             key: "AKey",
-    //             confidentiality: "public"
-    //         },
-    //         peer: "peer"
-    //     });
+    test("should execute a RelationshipAttributeQuery", async () => {
+        const createRequest = await client1.attributes.createAndShareRelationshipAttribute({
+            content: {
+                value: {
+                    "@type": "ProprietaryString",
+                    title: "ATitle",
+                    value: "AString"
+                },
+                key: "AKey",
+                confidentiality: "public"
+            },
+            peer: "peer"
+        });
 
-    //     const executeRelationshipAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
-    //         query: {
-    //             key: "AKey",
-    //             owner: client1Address,
-    //             attributeCreationHints: {
-    //                 valueType: "ProprietaryString",
-    //                 title: "A title",
-    //                 confidentiality: "public"
-    //             }
-    //         }
-    //     });
-    //     expect(executeRelationshipAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+        await syncUntilHasMessages(client2);
 
-    //     expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AString");
-    // });
+        await client2.incomingRequests.accept(createRequest.result.id, { items: [{ accept: true }] });
+
+        await syncUntilHasMessages(client1);
+
+        const executeRelationshipAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
+            query: {
+                key: "AKey",
+                owner: client1Address,
+                attributeCreationHints: {
+                    valueType: "ProprietaryString",
+                    title: "A title",
+                    confidentiality: "public"
+                }
+            }
+        });
+
+        expect(executeRelationshipAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+
+        expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AString");
+    });
 
     describe("Create Identity Attribute", () => {
         test("Should share an Identity Attribute", async () => {
@@ -204,8 +212,6 @@ describe("Execute AttributeQueries", () => {
             const request = await client1.outgoingRequests.getRequest(createRequest.result.id);
 
             expect(request.result.status).toBe("Completed");
-
-            // TODO: validate that shared attribute is correctly created on side of client 2
         });
     });
 
@@ -224,7 +230,6 @@ describe("Execute AttributeQueries", () => {
 
             const result = await client1.attributes.shareIdentityAttribute({ attributeId: attribute.id, peer: client2Address });
             expect(result.isSuccess).toBe(true);
-            // TODO: validate that shared attribute is correctly created on side of client 2
         });
     });
 
@@ -269,8 +274,6 @@ describe("Execute AttributeQueries", () => {
             });
 
             expect(notificationResult.isSuccess).toBe(true);
-
-            // TODO: validate succession on side of client 2
         });
     });
 
@@ -300,8 +303,6 @@ describe("Execute AttributeQueries", () => {
             });
 
             expect(succeedAttributeResponse.isSuccess).toBe(true);
-
-            // TODO: validate succession on side of client 2
         });
     });
 
@@ -330,7 +331,7 @@ describe("Execute AttributeQueries", () => {
 
             expect(request.result.status).toBe("Completed");
 
-            const relationshipAttributeId = (message[0] as any).content.response.items[0].attributeId; // TODO: How to retrieve attribute id?
+            const relationshipAttributeId = (message[0] as any).content.response.items[0].attributeId;
 
             const result = await client1.attributes.succeedRelationshipAttributeAndNotifyPeer({
                 predecessorId: relationshipAttributeId,
@@ -344,8 +345,6 @@ describe("Execute AttributeQueries", () => {
             });
 
             expect(result.isSuccess).toBe(true);
-
-            // TODO: validate succession on side of client 2
         });
     });
 });
