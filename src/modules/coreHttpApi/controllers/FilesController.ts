@@ -2,7 +2,7 @@ import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Reference } from "@nmshd/transport";
 import express from "express";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, Errors, FileParam, FormParam, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, Errors, FileParam, FormParam, GET, POST, Path, PathParam, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController, Mimetype } from "../common/BaseController";
 
@@ -94,7 +94,7 @@ export class FilesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                const qrCodeResult = await this.transportServices.files.createQrCodeForFile({ fileId });
+                const qrCodeResult = await this.transportServices.files.createQRCodeForFile({ fileId });
                 return this.file(
                     qrCodeResult,
                     (r) => r.value.qrCodeBytes,
@@ -124,7 +124,7 @@ export class FilesController extends BaseController {
     ): Promise<Return.NewResource<Envelope> | void> {
         switch (accept) {
             case "image/png":
-                const qrCodeResult = await this.transportServices.files.createTokenQrCodeForFile({
+                const qrCodeResult = await this.transportServices.files.createTokenQRCodeForFile({
                     fileId: id,
                     expiresAt: request.expiresAt
                 });
