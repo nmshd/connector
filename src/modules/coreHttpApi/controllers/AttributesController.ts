@@ -1,4 +1,4 @@
-import { ConsumptionServices, TransportServices } from "@nmshd/runtime";
+import { ConsumptionServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
 import { Accept, Context, GET, POST, Path, PathParam, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
@@ -6,10 +6,7 @@ import { BaseController } from "../common/BaseController";
 
 @Path("/api/v2/Attributes")
 export class AttributesController extends BaseController {
-    public constructor(
-        @Inject private readonly transportServices: TransportServices,
-        @Inject private readonly consumptionServices: ConsumptionServices
-    ) {
+    public constructor(@Inject private readonly consumptionServices: ConsumptionServices) {
         super();
     }
 
@@ -19,8 +16,8 @@ export class AttributesController extends BaseController {
         /* We left 'owner' and '@type' optional in the openapi spec for
          * backwards compatibility. If set, they have to be removed here or the runtime
          * use case will throw an error. */
-        if (typeof request.content?.owner !== "undefined") delete request.content.owner;
-        if (request.content?.["@type"] === "IdentityAttribute") delete request.content["@type"];
+        if (typeof request?.content?.owner !== "undefined") delete request.content.owner;
+        if (request?.content?.["@type"] === "IdentityAttribute") delete request.content["@type"];
 
         const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
         return this.created(result);
@@ -54,7 +51,7 @@ export class AttributesController extends BaseController {
     @Path("/SucceedAttribute")
     @Accept("application/json")
     public async succeedAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const predecessorResult = await this.consumptionServices.attributes.getAttribute(request.predecessorId);
+        const predecessorResult = await this.consumptionServices.attributes.getAttribute(request?.predecessorId);
         const predecessor = predecessorResult.value;
         let result: any;
         if (predecessor.content["@type"] === "IdentityAttribute") {
