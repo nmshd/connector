@@ -1,9 +1,9 @@
-import { ConnectorAttributeValue } from "../ConnectorAttribute";
+import { ConnectorRelationshipAttribute } from "../ConnectorAttribute";
 
 export interface SucceedRelationshipAttributeAndNotifyPeerRequest {
     predecessorId: string;
     successorContent: {
-        value: ConnectorAttributeValue;
+        value: ConnectorRelationshipAttribute;
         validFrom?: string;
         validTo?: string;
     };

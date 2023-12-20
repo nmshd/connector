@@ -16,12 +16,12 @@ export class AttributesController extends BaseController {
     @POST
     @Accept("application/json")
     public async createAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        // owner is left optional in openapi spec for backward compatibility
-        if (request.content.owner) delete request.content.owner;
-        // @type is optional in openapi spec for backward compatibility
-        if (request.content["@type"] === "IdentityAttribute") {
-            delete request.content["@type"];
-        }
+        /* We left 'owner' and '@type' optional in the openapi spec for
+         * backwards compatibility. If set, they have to be removed here or the runtime
+         * use case will throw an error. */
+        if (typeof request.content.owner !== "undefined") delete request.content.owner;
+        if (request.content["@type"] === "IdentityAttribute") delete request.content["@type"];
+
         const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
         return this.created(result);
     }
