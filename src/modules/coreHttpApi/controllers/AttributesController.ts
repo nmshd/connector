@@ -19,8 +19,8 @@ export class AttributesController extends BaseController {
         /* We left 'owner' and '@type' optional in the openapi spec for
          * backwards compatibility. If set, they have to be removed here or the runtime
          * use case will throw an error. */
-        if (typeof request.content.owner !== "undefined") delete request.content.owner;
-        if (request.content["@type"] === "IdentityAttribute") delete request.content["@type"];
+        if (typeof request.content?.owner !== "undefined") delete request.content.owner;
+        if (request.content?.["@type"] === "IdentityAttribute") delete request.content["@type"];
 
         const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
         return this.created(result);
@@ -50,7 +50,6 @@ export class AttributesController extends BaseController {
         return this.created(result);
     }
 
-    // TODO: delete succeedAttribute?
     @POST
     @Path("/SucceedAttribute")
     @Accept("application/json")
@@ -58,7 +57,7 @@ export class AttributesController extends BaseController {
         const predecessorResult = await this.consumptionServices.attributes.getAttribute(request.predecessorId);
         const predecessor = predecessorResult.value;
         let result: any;
-        if (predecessor["content"]["@type"] === "IdentityAttribute") {
+        if (predecessor.content["@type"] === "IdentityAttribute") {
             result = await this.consumptionServices.attributes.succeedIdentityAttribute(request);
         } else {
             result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer(request);
