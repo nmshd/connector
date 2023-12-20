@@ -2,6 +2,8 @@
 
 ## 3.7.0
 
+-> SDK 2.3.0
+
 -   add usecases for attribute succession
 -   refactor existing attribute use cases
 
