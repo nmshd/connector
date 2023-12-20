@@ -4,6 +4,7 @@
 
 -> SDK 2.3.0
 
+-   fix: POST /api/v2/Attributes will no longer accept RelationshipAttributes, as this was unintentional and led to wrong behavior
 -   add usecases for attribute succession
 -   refactor existing attribute use cases
 
