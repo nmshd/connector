@@ -29,7 +29,8 @@ export type CreateOutgoingRequestRequestContentItemDerivations =
     | ReadAttributeRequestItem
     | ConsentRequestItem
     | AuthenticationRequestItem
-    | FreeTextRequestItem;
+    | FreeTextRequestItem
+    | RegisterAttributeListenerRequestItem;
 
 export interface ConnectorRequestContentItem {
     "@type"?: string;
@@ -74,4 +75,9 @@ export interface AuthenticationRequestItem extends ConnectorRequestContentItem {
 export interface FreeTextRequestItem extends ConnectorRequestContentItem {
     "@type": "FreeTextRequestItem";
     freeText: string;
+}
+
+export interface RegisterAttributeListenerRequestItem extends ConnectorRequestContentItem {
+    "@type": "RegisterAttributeListenerRequestItem";
+    query: IdentityAttributeQuery | ThirdPartyRelationshipAttributeQuery;
 }
