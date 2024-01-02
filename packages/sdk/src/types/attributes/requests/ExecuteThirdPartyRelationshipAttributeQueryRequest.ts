@@ -1,5 +1,5 @@
-import { ThirdPartyAttributeQuery } from "../ThirdPartyAttributeQuery";
+import { ThirdPartyRelationshipAttributeQuery } from "../ThirdPartyRelationshipAttributeQuery";
 
 export interface ExecuteThirdPartyRelationshipAttributeQueryRequest {
-    query: ThirdPartyAttributeQuery;
+    query: ThirdPartyRelationshipAttributeQuery;
 }

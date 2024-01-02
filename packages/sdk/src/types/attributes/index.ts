@@ -3,7 +3,7 @@ export * from "./ConnectorAttributes";
 export * from "./IQLQuery";
 export * from "./IdentityAttributeQuery";
 export * from "./RelationshipAttributeQuery";
-export * from "./ThirdPartyAttributeQuery";
+export * from "./ThirdPartyRelationshipAttributeQuery";
 export * from "./requests/CreateAttributeRequest";
 export * from "./requests/ExecuteIQLQueryRequest";
 export * from "./requests/ExecuteIdentityAttributeQueryRequest";
