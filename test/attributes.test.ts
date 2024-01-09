@@ -171,6 +171,7 @@ describe("Execute AttributeQueries", () => {
         expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AString");
     });
 
+    // TODO: Tests lead to timout errors in the syncUntilHasMessages method => remove tests?
     describe("Create Identity Attribute", () => {
         test("Should share an Identity Attribute", async () => {
             const attribute = await client1.attributes.createIdentityAttribute({
