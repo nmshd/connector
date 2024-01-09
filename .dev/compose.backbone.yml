@@ -1,6 +1,6 @@
 services:
   consumer-api:
-    image: ghcr.io/nmshd/backbone-consumer-api:v4.2.0
+    image: ghcr.io/nmshd/backbone-consumer-api:v4.2.6
     container_name: consumer-api
     hostname: consumer-api
     environment:
@@ -79,7 +79,3 @@ services:
 configs:
   Config:
     file: appsettings.override.json
-
-networks:
-  default:
-    name: backbone
