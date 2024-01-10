@@ -13,8 +13,6 @@ if ! type "docker" >/dev/null; then
   exit 1
 fi
 
-if ! type "tsc" >/dev/null; then
-  npm i -g typescript cpx
-fi
+npm i -g typescript cpx
 
 code --install-extension actboy168.tasks
