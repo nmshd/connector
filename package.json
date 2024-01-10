@@ -26,7 +26,11 @@
         "test:ci": "npm run build && jest -i",
         "test:local": "npm run build --workspaces && . .dev/scripts/testSetup.sh && jest",
         "test:local:ferretdb": "npm run build && . .dev/scripts/testSetupFerret.sh && jest -w 2",
-        "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json"
+        "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json",
+        "teardown": "npm run teardown:backbone && npm run teardown:test-env && npm run teardown:testconnectors",
+        "teardown:backbone": "docker compose -p connector-test-backbone --env-file .dev/compose.backbone.env -f .dev/compose.backbone.yml down -v",
+        "teardown:test-env": "docker compose -p connector-tests -f test/compose.yml down -v",
+        "teardown:testconnectors": "docker compose -f .dev/compose.yml down -v"
     },
     "jest": {
         "maxWorkers": 2,
