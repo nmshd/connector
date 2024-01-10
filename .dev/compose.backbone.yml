@@ -56,18 +56,17 @@ services:
 
   seed-database:
     image: postgres
-    volumes:
-      - ./setup-postgres.sql:/app/setup-db/setup-postgres.sql
     environment:
       - PGPASSWORD=Passw0rd
-    command: psql -h postgres -U postgres -d enmeshed -f /app/setup-db/setup-postgres.sql
+      - CONSUMERAPI_VERSION=v4.2.6
+    command: /bin/bash -c 'env && apt update -y && apt install -y wget && wget https://raw.githubusercontent.com/nmshd/backbone/capi/$$CONSUMERAPI_VERSION/setup-db/setup-postgres.sql -O /setup-postgres.sql && psql -h postgres -U postgres -d enmeshed -f /setup-postgres.sql'
     depends_on:
       database:
         condition: service_healthy
 
   seed-client:
     container_name: seed-client
-    image: ghcr.io/nmshd/backbone-admin-cli:v2.0.2
+    image: ghcr.io/nmshd/backbone-admin-cli:v2.2.1
     depends_on:
       consumer-api:
         condition: service_healthy
