@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-docker compose -p connector-tests -f test/compose.yml down
