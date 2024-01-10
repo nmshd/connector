@@ -47,7 +47,7 @@
         },
         {
             "label": "Clear",
-            "command": "docker compose -f .dev/compose.yml down -v",
+            "command": "npm run teardown",
             "type": "shell",
             "isBackground": true,
             "presentation": {

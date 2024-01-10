@@ -145,8 +145,9 @@ describe("Execute AttributeQueries", () => {
                 key: "AKey",
                 confidentiality: "public"
             },
-            peer: "peer"
+            peer: client2Address
         });
+        expect(createRequest).toBeSuccessful(ValidationSchema.ConnectorRequest);
 
         await syncUntilHasMessages(client2);
 

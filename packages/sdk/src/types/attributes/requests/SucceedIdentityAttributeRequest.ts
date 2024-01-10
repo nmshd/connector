@@ -1,9 +1,9 @@
-import { ConnectorIdentityAttribute } from "../ConnectorAttribute";
+import { ConnectorAttributeValue } from "../ConnectorAttribute";
 
 export interface SucceedIdentityAttributeRequest {
     predecessorId: string;
     successorContent: {
-        value: ConnectorIdentityAttribute;
+        value: ConnectorAttributeValue;
         tags?: string[];
         validFrom?: string;
         validTo?: string;
