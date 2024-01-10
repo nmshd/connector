@@ -13,9 +13,14 @@ export class Launcher {
         env["infrastructure:httpServer:port"] = port.toString();
         env["infrastructure:httpServer:apiKey"] = this.apiKey;
 
-        env["transportLibrary:baseUrl"] = process.env["NMSHD_TEST_BASEURL"] ?? "http://localhost:8090";
-        env["transportLibrary:platformClientId"] = process.env["NMSHD_TEST_CLIENTID"] ?? "test";
-        env["transportLibrary:platformClientSecret"] = process.env["NMSHD_TEST_CLIENTSECRET"] ?? "test";
+        const notDefinedEnvironmentVariables = ["NMSHD_TEST_BASEURL", "NMSHD_TEST_CLIENTID", "NMSHD_TEST_CLIENTSECRET"].filter((env) => !process.env[env]);
+        if (notDefinedEnvironmentVariables.length > 0) {
+            throw new Error(`Missing environment variable(s): ${notDefinedEnvironmentVariables.join(", ")}}`);
+        }
+
+        env["transportLibrary:baseUrl"] = process.env["NMSHD_TEST_BASEURL"];
+        env["transportLibrary:platformClientId"] = process.env["NMSHD_TEST_CLIENTID"];
+        env["transportLibrary:platformClientSecret"] = process.env["NMSHD_TEST_CLIENTSECRET"];
 
         env.NODE_CONFIG_ENV = "test";
         env.DATABASE_NAME = accountName;

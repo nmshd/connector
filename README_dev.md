@@ -54,7 +54,7 @@ If you're running on Windows you have to execute the `Restart` task after you sa
 
 ### Remote Backbone
 
-To configure the Connector for testing you have to fill the following environment variables:
+Set the following environment variables:
 
 -   NMSHD_TEST_BASEURL (the backbone baseUrl to test against)
 -   NMSHD_TEST_CLIENTID (the backbone clientId for the configured baseUrl)
@@ -70,7 +70,13 @@ To start a local backbone, execute the following command:
 npm run start:backbone
 ```
 
-Make sure to not have the `NMSHD_TEST_BASEURL`, `NMSHD_TEST_CLIENTID` and `NMSHD_TEST_CLIENTSECRET` set when starting the tests as the tests will then use a remote backbone.
+Set the following environment variables:
+
+-   NMSHD_TEST_BASEURL to `http://localhost:8090`
+-   NMSHD_TEST_CLIENTID to `test``
+-   NMSHD_TEST_CLIENTSECRET to `test`
+
+> We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
 
 ### Run the tests
 
