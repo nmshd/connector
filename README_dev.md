@@ -4,7 +4,7 @@
 2. download and install [Node JS](https://nodejs.org/en/download/)
 3. install the npm packages `typescript` and `cpx` **globally**
 4. Optional: install the VS Code extension [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks)
-5. Optional: restarting the Connector using the VSCode task `More Tasks > Restart` requires the tool socat. Make sure to install it on your system.
+5. Optional: restarting the Connector using the VSCode task `More Tasks > Restart` requires the tool socat. Make sure to install it on your system. This can be done for example using `apt-get install socat` on Ubuntu and `brew install socat` using Homebrew.
 6. run `npm i`
 
 ## How to run
