@@ -15,9 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Start Backbone
-        uses: nmshd/start-backbone@latest
-        with:
-          consumerapi-version: v4.2.6
+        run: npm run start:backbone
       - uses: actions/setup-node@v3
         with:
           node-version: 20
@@ -28,18 +26,13 @@ jobs:
       - run: npm run test:ci --workspaces --if-present
         env:
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017
-          NMSHD_TEST_BASEURL: http://localhost:5000
-          NMSHD_TEST_CLIENTID: test
-          NMSHD_TEST_CLIENTSECRET: test
 
   test-ferret:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Start Backbone
-        uses: nmshd/start-backbone@latest
-        with:
-          consumerapi-version: v4.2.6
+        run: npm run start:backbone
       - uses: actions/setup-node@v3
         with:
           node-version: 20
@@ -51,9 +44,6 @@ jobs:
       - run: npm run test:ci
         env:
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017
-          NMSHD_TEST_BASEURL: http://localhost:5000
-          NMSHD_TEST_CLIENTID: test
-          NMSHD_TEST_CLIENTSECRET: test
 
   build-docker:
     runs-on: ubuntu-latest
