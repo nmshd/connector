@@ -4,4 +4,4 @@ export NMSHD_TEST_CLIENTID="test"
 export NMSHD_TEST_CLIENTSECRET="test"
 
 docker compose -p connector-tests -f test/compose.yml up -d mongo
-docker compose -p connector-test-backbone -f .dev/compose.backbone.yml up -d
+docker compose -p connector-test-backbone --env-file .dev/compose.backbone.env -f .dev/compose.backbone.yml up -d

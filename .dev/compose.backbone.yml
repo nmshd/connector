@@ -1,6 +1,6 @@
 services:
   consumer-api:
-    image: ghcr.io/nmshd/backbone-consumer-api:v4.2.6
+    image: ghcr.io/nmshd/backbone-consumer-api:${CONSUMERAPI_TAG}
     container_name: consumer-api
     hostname: consumer-api
     environment:
@@ -58,8 +58,7 @@ services:
     image: postgres
     environment:
       - PGPASSWORD=Passw0rd
-      - CONSUMERAPI_VERSION=v4.2.6
-    command: /bin/bash -c 'env && apt update -y && apt install -y wget && wget https://raw.githubusercontent.com/nmshd/backbone/capi/$$CONSUMERAPI_VERSION/setup-db/setup-postgres.sql -O /setup-postgres.sql && psql -h postgres -U postgres -d enmeshed -f /setup-postgres.sql'
+    command: /bin/bash -c 'env && apt update -y && apt install -y wget && wget https://raw.githubusercontent.com/nmshd/backbone/capi/${CONSUMERAPI_TAG}/setup-db/setup-postgres.sql -O /setup-postgres.sql && psql -h postgres -U postgres -d enmeshed -f /setup-postgres.sql'
     depends_on:
       database:
         condition: service_healthy
