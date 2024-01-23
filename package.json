@@ -24,7 +24,7 @@
         "tsc": "tsc",
         "tsc:watch": "tsc -w",
         "test:ci": "npm run build && jest -i",
-        "test:local": "npm run test:local:mongodb",
+        "test:local": "npm run test:local:mongo",
         "test:local:mongo": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" jest",
         "test:local:ferret": "npm run build --workspaces && npm run start:test-env:ferret && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27019\" jest",
         "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json",
