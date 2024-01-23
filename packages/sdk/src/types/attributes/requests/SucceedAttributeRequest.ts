@@ -1,4 +1,10 @@
-import { SucceedIdentityAttributeRequest } from "./SucceedIdentityAttributeRequest";
-import { SucceedRelationshipAttributeAndNotifyPeerRequest } from "./SucceedRelationshipAttributeAndNotifyPeerRequest";
+import { ConnectorAttributeValue } from "../ConnectorAttribute";
 
-export type SucceedAttributeRequest = SucceedRelationshipAttributeAndNotifyPeerRequest | SucceedIdentityAttributeRequest;
+export interface SucceedAttributeRequest {
+    successorContent: {
+        value: ConnectorAttributeValue;
+        tags?: string[];
+        validFrom?: string;
+        validTo?: string;
+    };
+}

@@ -467,26 +467,20 @@ paths:
             schema:
               additionalProperties: false
               properties:
-                content:
+                successorContent:
                   type: object
                   additionalProperties: false
                   required:
-                    - successorContent
+                    - value
                   properties:
-                    content:
-                      type: object
-                      additionalProperties: false
-                      required:
-                        - value
-                      properties:
-                        value:
-                          $ref: "#/components/schemas/AttributeValue"
-                        tags:
-                          $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                        validFrom:
-                          $ref: "#/components/schemas/AttributeContent_validFrom"
-                        validTo:
-                          $ref: "#/components/schemas/AttributeContent_validTo"
+                    value:
+                      $ref: "#/components/schemas/AttributeValue"
+                    tags:
+                      $ref: "#/components/schemas/IdentityAttributeContent_tags"
+                    validFrom:
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
+                    validTo:
+                      $ref: "#/components/schemas/AttributeContent_validTo"
 
       responses:
         200:
@@ -550,14 +544,8 @@ paths:
             schema:
               additionalProperties: false
               properties:
-                content:
-                  type: object
-                  additionalProperties: false
-                  required:
-                    - peer
-                  properties:
-                    peer:
-                      $ref: "#/components/schemas/Address"
+                peer:
+                  $ref: "#/components/schemas/Address"
 
       responses:
         200:
@@ -4429,7 +4417,6 @@ components:
         - createdAt
         - content
 
-    # TODO: Update openapi.yml
     RequestValidationResult:
       type: object
       properties:
