@@ -1,6 +1,6 @@
 import { ConsumptionServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, GET, POST, Path, PathParam, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, Errors, GET, POST, Path, PathParam, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -22,16 +22,32 @@ export class AttributesController extends BaseController {
         if (request?.content?.["@type"] === "IdentityAttribute") delete request.content["@type"];
 
         const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
-        return this.created(result);
+        return this.created(result); // TODO: ???: was does created() do?
     }
 
-    // TODO: Succeed repository attribute or relationship attribute
     @POST
-    @Path("/:id/Succeed")
+    @Path("/:predecessorId/Succeed")
     @Accept("application/json")
-    public async succeedAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
-        return this.created(result);
+    public async succeedAttribute(@PathParam("predecessorId") predecessorId: string, request: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.getAttribute({ id: predecessorId });
+        if (result.isError) {
+            throw new Errors.NotFoundError(`Predecessor attribute '${predecessorId}' not found.`)
+        }
+        const predecessor = result.value;
+
+        if (predecessor.content["@type"] === "IdentityAttribute") {
+            const result = await this.consumptionServices.attributes.succeedIdentityAttribute({
+                predecessorId: predecessorId,
+                successorContent: request
+            });
+            return this.created(result);
+        }
+
+        const successionResult = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({
+            predecessorId: predecessorId,
+            successorContent: request
+        });
+        return this.created(successionResult)
     }
 
     @POST

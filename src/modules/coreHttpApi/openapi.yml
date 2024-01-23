@@ -327,7 +327,7 @@ paths:
                   - result
                 properties:
                   result:
-                    $ref: "#/components/schemas/CreateIdentityAttributeResponse"
+                    $ref: "#/components/schemas/CreateRepositoryAttributeResponse"
 
           headers:
             X-Response-Duration-ms:
@@ -508,7 +508,7 @@ paths:
                   - result
                 properties:
                   result:
-                    $ref: "#/components/schemas/CreateIdentityAttributeResponse"
+                    $ref: "#/components/schemas/CreateRepositoryAttributeResponse"
           headers:
             X-Response-Duration-ms:
               schema:
@@ -568,61 +568,51 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/ShareIdentityAttribute:
-    post:
-      operationId: shareIdentityAttribute
-      description: Share Identity Attribute
-      tags:
-        - Attributes
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ShareIdentityAttributeRequest"
-
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    $ref: "#/components/schemas/Request"
-                required:
-                  - result
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
-  /api/v2/Attributes/SucceedAttribute:
+  /api/v2/Attributes/{predecessorId}/Succeed:
     post:
       operationId: succeedAttribute
-      description: Succeeds either a Relationship Attribute or an Identity Attribute.
+      description: Succeeds either a Relationship Attribute or a Repository Attribute.
       tags:
         - Attributes
+      parameters:
+        - name: predecessorId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the predecessor attribute
       requestBody:
         content:
           application/json:
             schema:
-              oneOf:
-                - { $ref: "#/components/schemas/SucceedIdentityAttributeRequest" }
-                - { $ref: "#/components/schemas/SucceedRelationshipAttributeAndNotifyPeerRequest" }
+              additionalProperties: false
+              properties:
+                content:
+                  type: object
+                  additionalProperties: false
+                  required:
+                    - successorContent
+                  properties:
+                    content:
+                      type: object
+                      additionalProperties: false
+                      required:
+                        - value
+                      properties:
+                        value:
+                          $ref: "#/components/schemas/AttributeValue"
+                        tags:
+                          $ref: "#/components/schemas/IdentityAttributeContent_tags"
+                        validFrom:
+                          $ref: "#/components/schemas/AttributeContent_validFrom"
+                        validTo:
+                          $ref: "#/components/schemas/AttributeContent_validTo"
 
       responses:
         200:
-          description: Success
+          description: |
+            Success. Succeeding a Relationship Attribute will return an
+            additional 'notificationId' field.
           content:
             application/json:
               schema:
@@ -632,9 +622,19 @@ paths:
                   - result
                 properties:
                   result:
-                    oneOf:
-                      - { $ref: "#/components/schemas/SucceedRelationshipAttributeAndNotifyPeerResponse" }
-                      - { $ref: "#/components/schemas/SucceedIdentityAttributeResponse" }
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - predecessor
+                      - successor
+                    properties:
+                      predecessor:
+                        $ref: "#/components/schemas/Attribute"
+                      successor:
+                        $ref: "#/components/schemas/Attribute"
+                      notificationId:
+                        type: string
+
           headers:
             X-Response-Duration-ms:
               schema:
@@ -4595,7 +4595,7 @@ components:
             sucessor:
               $ref: "#/components/schemas/IdentityAttribute"
 
-    CreateIdentityAttributeResponse:
+    CreateRepositoryAttributeResponse:
       type: object
       additionalProperties: false
       properties:
