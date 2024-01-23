@@ -38,7 +38,7 @@ export class AttributesController extends BaseController {
         if (predecessor.content["@type"] === "IdentityAttribute") {
             const result = await this.consumptionServices.attributes.succeedIdentityAttribute({
                 predecessorId: predecessorId,
-                successorContent: request
+                ...request
             });
             return this.created(result);
         }

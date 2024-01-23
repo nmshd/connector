@@ -6,10 +6,8 @@ import {
     ConnectorMessage,
     ConnectorRelationship,
     ConnectorRelationshipTemplate,
-    ConnectorRequest,
     ConnectorSyncResult,
     ConnectorToken,
-    CreateAndShareRelationshipAttributeRequest,
     CreateIdentityAttributeRequest,
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
@@ -213,15 +211,8 @@ export async function establishRelationship(client1: ConnectorClient, client2: C
     const relationships2 = await syncUntilHasRelationships(client2);
     expect(relationships2).toHaveLength(1);
 }
-
-export async function createIdentityAttribute(client: ConnectorClient, request: CreateIdentityAttributeRequest): Promise<ConnectorAttribute> {
-    const response = await client.attributes.createIdentityAttribute(request);
-    expect(response).toBeSuccessful(ValidationSchema.ConnectorAttribute);
-    return response.result;
-}
-
-export async function createAndShareRelationshipAttribute(client: ConnectorClient, request: CreateAndShareRelationshipAttributeRequest): Promise<ConnectorRequest> {
-    const response = await client.attributes.createAndShareRelationshipAttribute(request);
+export async function createRepositoryAttribute(client: ConnectorClient, request: CreateIdentityAttributeRequest): Promise<ConnectorAttribute> {
+    const response = await client.attributes.createRepositoryAttribute(request);
     expect(response).toBeSuccessful(ValidationSchema.ConnectorAttribute);
     return response.result;
 }
