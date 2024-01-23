@@ -1,4 +1,3 @@
-// TODO: Remove obsolete routes
 import { ConnectorAttributeValue } from "../ConnectorAttribute";
 
 export interface SucceedIdentityAttributeRequest {
