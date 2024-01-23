@@ -579,7 +579,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/AttributeID"
           description: ID of the predecessor attribute
       requestBody:
         content:
@@ -612,7 +612,7 @@ paths:
         200:
           description: |
             Success. Succeeding a Relationship Attribute will return an
-            additional 'notificationId' field.
+            additional ID of the notification sent to the peer.
           content:
             application/json:
               schema:
@@ -633,7 +633,7 @@ paths:
                       successor:
                         $ref: "#/components/schemas/Attribute"
                       notificationId:
-                        type: string
+                        $ref: "#/components/schemas/NotificationID"
 
           headers:
             X-Response-Duration-ms:
@@ -649,63 +649,63 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/SucceedIdentityAttribute:
+  /api/v2/Attributes/{attributeId}/NotifyPeer:
     post:
-      operationId: succeedIdentityAttribute
-      description: Succeeds an identity attribute.
+      operationId: notifyPeerAboutRepositoryAttributeSuccession
+      description: |
+        Notifies a peer about a succeeded and previously shared repository
+        attribute.
       tags:
         - Attributes
+      parameters:
+        - name: attributeId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/AttributeID"
+          description: ID of the succeeded repository attribute
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SucceedIdentityAttributeRequest"
+              additionalProperties: false
+              properties:
+                content:
+                  type: object
+                  additionalProperties: false
+                  required:
+                    - peer
+                  properties:
+                    peer:
+                      $ref: "#/components/schemas/Address"
 
       responses:
         200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SucceedIdentityAttributeResponse"
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
-  /api/v2/Attributes/SucceedRelationshipAttributeAndNotifyPeer:
-    post:
-      operationId: succeedRelationshipAttributeAndNotifyPeer
-      description: Succeeds a relationship attribute and notifies the peer about it.
-      tags:
-        - Attributes
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/SucceedRelationshipAttributeAndNotifyPeerRequest"
-
-      responses:
-        200:
-          description: Success
+          description: |
+            "Success. Returns the successor and predecessor own shared identity
+            attributes as well as the ID of the notification sent to the peer."
           content:
             application/json:
               schema:
                 type: object
+                additionalProperties: false
                 required:
                   - result
                 properties:
                   result:
-                    $ref: "#/components/schemas/SucceedRelationshipAttributeAndNotifyPeerResponse"
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - predecessor
+                      - successor
+                    properties:
+                      predecessor:
+                        $ref: "#/components/schemas/Attribute"
+                      successor:
+                        $ref: "#/components/schemas/Attribute"
+                      notificationId:
+                        $ref: "#/components/schemas/NotificationID"
+
           headers:
             X-Response-Duration-ms:
               schema:
@@ -3789,6 +3789,14 @@ components:
       example: MSG_________________
       maxLength: 20
       description: The ID of a message.
+
+    NotificationID:
+      type: string
+      format: NotificationID
+      minLength: 20
+      example: ____________________
+      maxLength: 20
+      description: The ID of a notification.
 
     RelationshipID:
       type: string
