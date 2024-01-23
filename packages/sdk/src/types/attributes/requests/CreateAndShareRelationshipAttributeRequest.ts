@@ -1,8 +1,8 @@
-import { ConnectorRelationshipAttribute } from "../ConnectorAttribute";
+import { ConnectorAttributeValue } from "../ConnectorAttribute";
 
 export interface CreateAndShareRelationshipAttributeRequest {
     content: {
-        value: ConnectorRelationshipAttribute;
+        value: ConnectorAttributeValue;
         key: string;
         confidentiality: "public" | "private" | "protected";
         isTechnical?: boolean;

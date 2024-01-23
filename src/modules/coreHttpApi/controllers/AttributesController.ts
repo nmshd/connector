@@ -12,10 +12,12 @@ export class AttributesController extends BaseController {
 
     @POST
     @Accept("application/json")
-    public async createAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+    public async createRepositoryAttribute(request: any): Promise<Return.NewResource<Envelope>> {
         /* We left 'owner' and '@type' optional in the openapi spec for
          * backwards compatibility. If set, they have to be removed here or the runtime
          * use case will throw an error. */
+        // TODO: ???: Sollen .@type und .owner behalten werden?
+        //            Wenn nicht, auch in openapi.yml löschen.
         if (typeof request?.content?.owner !== "undefined") delete request.content.owner;
         if (request?.content?.["@type"] === "IdentityAttribute") delete request.content["@type"];
 
@@ -23,66 +25,21 @@ export class AttributesController extends BaseController {
         return this.created(result);
     }
 
+    // TODO: Succeed repository attribute or relationship attribute
     @POST
-    @Path("/CreateIdentityAttribute")
+    @Path("/:id/Succeed")
     @Accept("application/json")
-    public async createIdentityAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+    public async succeedAttribute(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
         return this.created(result);
     }
 
     @POST
-    @Path("/CreateAndShareRelationshipAttribute")
-    @Accept("application/json")
-    public async createAndShareRelationshipAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.createAndShareRelationshipAttribute(request);
-        return this.created(result);
-    }
-
-    @POST
-    @Path("/SucceedIdentityAttribute")
-    @Accept("application/json")
-    public async succeedIdentityAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.succeedIdentityAttribute(request);
-        return this.created(result);
-    }
-
-    @POST
-    @Path("/SucceedAttribute")
-    @Accept("application/json")
-    public async succeedAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const predecessorResult = await this.consumptionServices.attributes.getAttribute(request?.predecessorId);
-        const predecessor = predecessorResult.value;
-        let result: any;
-        if (predecessor.content["@type"] === "IdentityAttribute") {
-            result = await this.consumptionServices.attributes.succeedIdentityAttribute(request);
-        } else {
-            result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer(request);
-        }
-        return this.created(result);
-    }
-
-    @POST
-    @Path("/SucceedRelationshipAttributeAndNotifyPeer")
-    @Accept("application/json")
-    public async succeedRelationshipAttributeAndNotifyPeer(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer(request);
-        return this.created(result);
-    }
-
-    @POST
-    @Path("/ShareIdentityAttribute")
-    @Accept("application/json")
-    public async shareIdentityAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.shareIdentityAttribute(request);
-        return this.created(result);
-    }
-
-    @POST
-    @Path("/NotifyPeerAboutIdentityAttributeSuccession")
+    @Path("/:id/NotifyPeer")
     @Accept("application/json")
     public async notifyPeerAboutIdentityAttributeSuccession(request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.notifyPeerAboutIdentityAttributeSuccession(request);
+        // TODO:
+        const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
         return this.created(result);
     }
 
