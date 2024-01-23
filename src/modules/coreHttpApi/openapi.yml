@@ -3662,7 +3662,7 @@ components:
       type: string
       format: NotificationID
       minLength: 20
-      example: ____________________
+      example: NOT_________________
       maxLength: 20
       description: The ID of a notification.
 
