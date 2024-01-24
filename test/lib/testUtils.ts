@@ -5,12 +5,15 @@ import {
     ConnectorFile,
     ConnectorMessage,
     ConnectorRelationship,
+    ConnectorRelationshipAttribute,
     ConnectorRelationshipTemplate,
+    ConnectorRequestStatus,
     ConnectorSyncResult,
     ConnectorToken,
     CreateIdentityAttributeRequest,
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
+import { LocalAttributeDTO } from "@nmshd/runtime";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { ValidationSchema } from "./validation";
@@ -51,6 +54,14 @@ export async function syncUntilHasRelationships(client: ConnectorClient, expecte
 export async function syncUntilHasMessages(client: ConnectorClient, expectedNumberOfMessages = 1): Promise<ConnectorMessage[]> {
     const syncResult = await syncUntil(client, (syncResult) => syncResult.messages.length >= expectedNumberOfMessages);
     return syncResult.messages;
+}
+
+export async function syncUntilHasMessageWithRequest(client: ConnectorClient, requestId: string): Promise<ConnectorMessage> {
+    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
+        return syncResult.messages.filter((m: ConnectorMessage) => (m.content as any)["@type"] === "Request" && (m.content as any).id === requestId.toString());
+    };
+    const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
+    return filterRequestMessagesByRequestId(syncResult)[0];
 }
 
 export async function uploadOwnToken(client: ConnectorClient): Promise<ConnectorToken> {
@@ -215,6 +226,62 @@ export async function createRepositoryAttribute(client: ConnectorClient, request
     const response = await client.attributes.createRepositoryAttribute(request);
     expect(response).toBeSuccessful(ValidationSchema.ConnectorAttribute);
     return response.result;
+}
+
+/**
+ * Creates and shares a relationship attribute, waiting for all communication
+ * and event processing to finish. Expects an established relationship.
+ *
+ * Returns the sender's own shared relationship attribute.
+ */
+export async function executeFullCreateAndShareRelationshipAttributeFlow(
+    sender: ConnectorClient,
+    recipient: ConnectorClient,
+    attributeContent: Omit<ConnectorRelationshipAttribute, "owner" | "@type">
+): Promise<ConnectorAttribute> {
+    const senderIdentityInfoResult = await sender.account.getIdentityInfo();
+    expect(senderIdentityInfoResult.isSuccess).toBe(true);
+    const senderAddress = senderIdentityInfoResult.result.address;
+
+    const recipientIdentityInfoResult = await recipient.account.getIdentityInfo();
+    expect(recipientIdentityInfoResult.isSuccess).toBe(true);
+    const recipientAddress = recipientIdentityInfoResult.result.address;
+
+    const request = await sender.outgoingRequests.createRequest({
+        peer: recipientAddress,
+        content: {
+            items: [
+                {
+                    "@type": "CreateAttributeRequestItem",
+                    mustBeAccepted: true,
+                    attribute: {...attributeContent, owner: senderAddress, "@type": "RelationshipAttribute"}
+                }
+            ]
+        }
+    });
+
+    const sendMessageResponse = await sender.messages.sendMessage({
+        recipients: [recipientAddress],
+        content: request.result.content
+    });
+    const requestId = (sendMessageResponse.result.content as any).id;
+
+    await syncUntilHasMessageWithRequest(recipient, requestId);
+    const recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
+    while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {
+        await sleep(500);
+    }
+    await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
+
+    const responseMessage = await syncUntilHasMessageWithRequest(sender, requestId);
+    const sharedAttributeId = (responseMessage.content as any).response.items[0].attributeId;
+    const senderRequest = (await sender.outgoingRequests.getRequest(requestId)).result;
+    while (senderRequest.status !== ConnectorRequestStatus.Completed) {
+        await sleep(500);
+    }
+
+    const senderOwnSharedRelationshipAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
+    return senderOwnSharedRelationshipAttribute;
 }
 
 /**

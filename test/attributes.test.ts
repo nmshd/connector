@@ -1,7 +1,7 @@
-import { ConnectorClient } from "@nmshd/connector-sdk";
+import { ConnectorClient, ConnectorRelationshipAttribute } from "@nmshd/connector-sdk";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
-import { createRepositoryAttribute, establishRelationship } from "./lib/testUtils";
+import { createRepositoryAttribute, establishRelationship, executeFullCreateAndShareRelationshipAttributeFlow } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
@@ -126,38 +126,32 @@ describe("Attributes", () => {
         expect(succeedAttributeResponse.isSuccess).toBe(true);
     });
 
-    // TODO: fix
-    // test("Should succeed a Relationship Attribute", async () => {
-    //     const createRequest = await client1.attributes.createAndShareRelationshipAttribute({
-    //         content: {
-    //             value: {
-    //                 "@type": "ProprietaryString",
-    //                 title: "text",
-    //                 value: "AGivenName"
-    //             },
-    //             key: "key",
-    //             confidentiality: "public"
-    //         },
-    //         peer: client2Address
-    //     });
-    //     await syncUntilHasMessages(client2);
-    //     await client2.incomingRequests.accept(createRequest.result.id, { items: [{ accept: true }] });
-    //     const message = await syncUntilHasMessages(client1);
-    //     const request = await client1.outgoingRequests.getRequest(createRequest.result.id);
-    //     expect(request.result.status).toBe("Completed");
-    //     const relationshipAttributeId = (message[0] as any).content.response.items[0].attributeId;
-    //     const result = await client1.attributes.succeedRelationshipAttributeAndNotifyPeer({
-    //         predecessorId: relationshipAttributeId,
-    //         successorContent: {
-    //             value: {
-    //                 "@type": "ProprietaryString",
-    //                 title: "text",
-    //                 value: "ANewGivenName"
-    //             }
-    //         }
-    //     });
-    //     expect(result.isSuccess).toBe(true);
-    // });
+    test("Should succeed a Relationship Attribute", async () => {
+
+        const attributeContent: Omit<ConnectorRelationshipAttribute, "owner" | "@type"> = {
+            value: {
+                "@type": "ProprietaryString",
+                title: "text",
+                value: "AGivenName"
+            },
+            key: "key",
+            confidentiality: "public"
+        };
+        const attribute = await executeFullCreateAndShareRelationshipAttributeFlow(client1, client2, attributeContent)
+
+        console.log("lol")
+        // const result = await client1.attributes.succeedRelationshipAttributeAndNotifyPeer({
+        //     predecessorId: relationshipAttributeId,
+        //     successorContent: {
+        //         value: {
+        //             "@type": "ProprietaryString",
+        //             title: "text",
+        //             value: "ANewGivenName"
+        //         }
+        //     }
+        // });
+        // expect(result.isSuccess).toBe(true);
+    });
 });
 
 describe("Attributes Query", () => {
