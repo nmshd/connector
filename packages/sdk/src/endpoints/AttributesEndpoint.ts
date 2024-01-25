@@ -24,7 +24,10 @@ export class AttributesEndpoint extends Endpoint {
         return await this.post(`/api/v2/Attributes/${predecessorId}/Succeed`, request);
     }
 
-    public async notifyPeerAboutIdentityAttributeSuccession(attributeId: string, request: NotifyPeerAboutIdentityAttributeSuccessionRequest): Promise<ConnectorResponse<SucceedAttributeResponse>> {
+    public async notifyPeerAboutIdentityAttributeSuccession(
+        attributeId: string,
+        request: NotifyPeerAboutIdentityAttributeSuccessionRequest
+    ): Promise<ConnectorResponse<SucceedAttributeResponse>> {
         return await this.post(`/api/v2/Attributes/${attributeId}/NotifyPeer`, request);
     }
 
