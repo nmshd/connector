@@ -1,4 +1,4 @@
-export interface ThirdPartyAttributeQuery {
+export interface ThirdPartyRelationshipAttributeQuery {
     "@type"?: "ThirdPartyRelationshipAttributeQuery";
     key: string;
     owner: string;

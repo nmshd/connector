@@ -31,16 +31,15 @@
         "build:schemas:watch": "npx nodemon -e ts -w 'src/types' --exec 'npm run build:schemas'"
     },
     "dependencies": {
-        "@nrk/expect-openapi": "^2.6.0",
-        "axios": "^1.6.2",
+        "axios": "^1.6.3",
         "form-data": "^4.0.0",
         "qs": "^6.11.2"
     },
     "devDependencies": {
         "@types/form-data": "^2.5.0",
-        "@types/qs": "^6.9.10",
+        "@types/qs": "^6.9.11",
         "openapi-typescript-codegen": "^0.25.0",
-        "ts-json-schema-generator": "^1.4.0"
+        "ts-json-schema-generator": "^1.5.0"
     },
     "publishConfig": {
         "access": "public",

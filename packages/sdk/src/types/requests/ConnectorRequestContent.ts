@@ -1,4 +1,4 @@
-import { IQLQuery, ThirdPartyAttributeQuery } from "../attributes";
+import { IQLQuery, ThirdPartyRelationshipAttributeQuery } from "../attributes";
 import { ConnectorIdentityAttribute, ConnectorRelationshipAttribute } from "../attributes/ConnectorAttribute";
 import { IdentityAttributeQuery } from "../attributes/IdentityAttributeQuery";
 import { RelationshipAttributeQuery } from "../attributes/RelationshipAttributeQuery";
@@ -29,7 +29,8 @@ export type CreateOutgoingRequestRequestContentItemDerivations =
     | ReadAttributeRequestItem
     | ConsentRequestItem
     | AuthenticationRequestItem
-    | FreeTextRequestItem;
+    | FreeTextRequestItem
+    | RegisterAttributeListenerRequestItem;
 
 export interface ConnectorRequestContentItem {
     "@type"?: string;
@@ -58,7 +59,7 @@ export interface ProposeAttributeRequestItem extends ConnectorRequestContentItem
 
 export interface ReadAttributeRequestItem extends ConnectorRequestContentItem {
     "@type": "ReadAttributeRequestItem";
-    query: IdentityAttributeQuery | RelationshipAttributeQuery | ThirdPartyAttributeQuery | IQLQuery;
+    query: IdentityAttributeQuery | RelationshipAttributeQuery | ThirdPartyRelationshipAttributeQuery | IQLQuery;
 }
 
 export interface ConsentRequestItem extends ConnectorRequestContentItem {
@@ -74,4 +75,9 @@ export interface AuthenticationRequestItem extends ConnectorRequestContentItem {
 export interface FreeTextRequestItem extends ConnectorRequestContentItem {
     "@type": "FreeTextRequestItem";
     freeText: string;
+}
+
+export interface RegisterAttributeListenerRequestItem extends ConnectorRequestContentItem {
+    "@type": "RegisterAttributeListenerRequestItem";
+    query: IdentityAttributeQuery | ThirdPartyRelationshipAttributeQuery;
 }

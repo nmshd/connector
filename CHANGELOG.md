@@ -9,6 +9,8 @@
 
 ## 3.6.2
 
+-> SDK 2.2.5
+
 -   provenance sbom for the Docker Images
 
 ## 3.6.1
