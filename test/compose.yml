@@ -18,5 +18,3 @@ services:
       FERRETDB_SQLITE_URL: file:./
       FERRETDB_TELEMETRY: disable
       FERRETDB_LOG_LEVEL: error
-    depends_on:
-      - postgres
