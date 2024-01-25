@@ -31,7 +31,7 @@ export class AttributesController extends BaseController {
     public async succeedAttribute(@PathParam("predecessorId") predecessorId: string, request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.consumptionServices.attributes.getAttribute({ id: predecessorId });
         if (result.isError) {
-            throw new Errors.NotFoundError(`Predecessor attribute '${predecessorId}' not found.`)
+            throw new Errors.NotFoundError(`Predecessor attribute '${predecessorId}' not found.`);
         }
         const predecessor = result.value;
 
@@ -45,9 +45,9 @@ export class AttributesController extends BaseController {
 
         const successionResult = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({
             predecessorId: predecessorId,
-            successorContent: request
+            ...request
         });
-        return this.created(successionResult)
+        return this.created(successionResult);
     }
 
     @POST

@@ -65,40 +65,40 @@ describe("Attributes", () => {
         expect(attribute.isSuccess).toBe(true);
     });
 
-    // TODO: fix
-    // TODO: Tests lead to timout errors in the syncUntilHasMessages method => remove tests?
-    //     test("Should notify peer about Identity Attribute Succession", async () => {
-    //         const attribute = (
-    //             await client1.attributes.createRepositoryAttribute({
-    //                 content: {
-    //                     value: {
-    //                         "@type": "GivenName",
-    //                         value: "AGivenName"
-    //                     }
-    //                 }
-    //             })
-    //         ).result;
-    //         const shareRequest = await client1.attributes.shareIdentityAttribute({ attributeId: attribute.id, peer: client2Address });
-    //         expect(shareRequest.isSuccess).toBe(true);
-    //         await syncUntilHasMessages(client2);
-    //         await client2.incomingRequests.accept(shareRequest.result.id, { items: [{ accept: true }] });
-    //         await syncUntilHasMessages(client1);
-    //         const successionResponse = await client1.attributes.succeedIdentityAttribute({
-    //             predecessorId: attribute.id,
-    //             successorContent: {
-    //                 value: {
-    //                     "@type": "GivenName",
-    //                     value: "ANewGivenName"
-    //                 }
+    // test("Should notify peer about Identity Attribute Succession", async () => {
+    // const attribute = (
+    //     await client1.attributes.createRepositoryAttribute({
+    //         content: {
+    //             value: {
+    //                 "@type": "GivenName",
+    //                 value: "AGivenName"
     //             }
-    //         });
-    //         expect(successionResponse.isSuccess).toBe(true);
-    //         const notificationResult = await client1.attributes.notifyPeerAboutIdentityAttributeSuccession({
-    //             attributeId: successionResponse.result.successor.id,
-    //             peer: client2Address
-    //         });
-    //         expect(notificationResult.isSuccess).toBe(true);
-    //     });
+    //         }
+    //     })
+    // ).result;
+
+    // const shareRequest = null// await client1.attributes.shareIdentityAttribute({ attributeId: attribute.id, peer: client2Address });
+
+    // expect(shareRequest.isSuccess).toBe(true);
+    // await syncUntilHasMessages(client2);
+    // await client2.incomingRequests.accept(shareRequest.result.id, { items: [{ accept: true }] });
+    // await syncUntilHasMessages(client1);
+    // const successionResponse = await client1.attributes.succeedIdentityAttribute({
+    //     predecessorId: attribute.id,
+    //     successorContent: {
+    //         value: {
+    //             "@type": "GivenName",
+    //             value: "ANewGivenName"
+    //         }
+    //     }
+    // });
+    // expect(successionResponse.isSuccess).toBe(true);
+    // const notificationResult = await client1.attributes.notifyPeerAboutIdentityAttributeSuccession({
+    //     attributeId: successionResponse.result.successor.id,
+    //     peer: client2Address
+    // });
+    // expect(notificationResult.isSuccess).toBe(true);
+    // });
 
     test("should succeed a Repository Attribute", async () => {
         const createAttributeResponse = await client1.attributes.createRepositoryAttribute({
@@ -127,8 +127,9 @@ describe("Attributes", () => {
     });
 
     test("Should succeed a Relationship Attribute", async () => {
-
-        const attributeContent: Omit<ConnectorRelationshipAttribute, "owner" | "@type"> = {
+        const attributeContent: ConnectorRelationshipAttribute = {
+            owner: client1Address,
+            "@type": "RelationshipAttribute",
             value: {
                 "@type": "ProprietaryString",
                 title: "text",
@@ -137,20 +138,18 @@ describe("Attributes", () => {
             key: "key",
             confidentiality: "public"
         };
-        const attribute = await executeFullCreateAndShareRelationshipAttributeFlow(client1, client2, attributeContent)
+        const attribute = await executeFullCreateAndShareRelationshipAttributeFlow(client1, client2, attributeContent);
 
-        console.log("lol")
-        // const result = await client1.attributes.succeedRelationshipAttributeAndNotifyPeer({
-        //     predecessorId: relationshipAttributeId,
-        //     successorContent: {
-        //         value: {
-        //             "@type": "ProprietaryString",
-        //             title: "text",
-        //             value: "ANewGivenName"
-        //         }
-        //     }
-        // });
-        // expect(result.isSuccess).toBe(true);
+        const result = await client1.attributes.succeedAttribute(attribute.id, {
+            successorContent: {
+                value: {
+                    "@type": "ProprietaryString",
+                    title: "text",
+                    value: "ANewGivenName"
+                }
+            }
+        });
+        expect(result.isSuccess).toBe(true);
     });
 });
 
@@ -235,42 +234,50 @@ describe("Execute AttributeQueries", () => {
         expect(attributes).toContainEqual(attribute);
     });
 
-    // TODO: fix
-    // test("should execute a RelationshipAttributeQuery", async () => {
-    //     const createRequest = await client1.attributes.createAndShareRelationshipAttribute({
-    //         content: {
-    //             value: {
-    //                 "@type": "ProprietaryString",
-    //                 title: "ATitle",
-    //                 value: "AString"
-    //             },
-    //             key: "AKey",
-    //             confidentiality: "public"
-    //         },
-    //         peer: client2Address
-    //     });
-    //     expect(createRequest).toBeSuccessful(ValidationSchema.ConnectorRequest);
+    test("should execute a RelationshipAttributeQuery", async () => {
+        const attributeContent: ConnectorRelationshipAttribute = {
+            owner: client1Address,
+            "@type": "RelationshipAttribute",
+            value: {
+                "@type": "ProprietaryString",
+                title: "text",
+                value: "AGivenName"
+            },
+            key: "key",
+            confidentiality: "public"
+        };
+        await executeFullCreateAndShareRelationshipAttributeFlow(client1, client2, attributeContent);
 
-    //     await syncUntilHasMessages(client2);
+        const executeRelationshipAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
+            query: {
+                key: "key",
+                owner: client1Address,
+                attributeCreationHints: {
+                    valueType: "ProprietaryString",
+                    title: "text",
+                    confidentiality: "public"
+                }
+            }
+        });
 
-    //     await client2.incomingRequests.accept(createRequest.result.id, { items: [{ accept: true }] });
+        const executeRelationshipAttributeQueryResult2 = await client2.attributes.executeRelationshipAttributeQuery({
+            query: {
+                key: "key",
+                owner: client1Address,
+                attributeCreationHints: {
+                    valueType: "ProprietaryString",
+                    title: "text",
+                    confidentiality: "public"
+                }
+            }
+        });
 
-    //     await syncUntilHasMessages(client1);
+        expect(executeRelationshipAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttribute);
 
-    //     const executeRelationshipAttributeQueryResult = await client1.attributes.executeRelationshipAttributeQuery({
-    //         query: {
-    //             key: "AKey",
-    //             owner: client1Address,
-    //             attributeCreationHints: {
-    //                 valueType: "ProprietaryString",
-    //                 title: "A title",
-    //                 confidentiality: "public"
-    //             }
-    //         }
-    //     });
+        expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AGivenName");
 
-    //     expect(executeRelationshipAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+        expect(executeRelationshipAttributeQueryResult2).toBeSuccessful(ValidationSchema.ConnectorAttribute);
 
-    //     expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AString");
-    // });
+        expect(executeRelationshipAttributeQueryResult2.result.content.value.value).toBe("AGivenName");
+    });
 });

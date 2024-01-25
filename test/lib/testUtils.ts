@@ -13,7 +13,6 @@ import {
     CreateIdentityAttributeRequest,
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
-import { LocalAttributeDTO } from "@nmshd/runtime";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { ValidationSchema } from "./validation";
@@ -58,9 +57,22 @@ export async function syncUntilHasMessages(client: ConnectorClient, expectedNumb
 
 export async function syncUntilHasMessageWithRequest(client: ConnectorClient, requestId: string): Promise<ConnectorMessage> {
     const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
-        return syncResult.messages.filter((m: ConnectorMessage) => (m.content as any)["@type"] === "Request" && (m.content as any).id === requestId.toString());
+        return syncResult.messages.filter((m: ConnectorMessage) => (m.content as any)["@type"] === "Request" && (m.content as any).id === requestId);
     };
     const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
+    return filterRequestMessagesByRequestId(syncResult)[0];
+}
+export async function syncUntilHasMessageWithResponse(client: ConnectorClient, requestId: string): Promise<ConnectorMessage> {
+    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
+        return syncResult.messages.filter((m: ConnectorMessage) => {
+            const matcher = (m.content as any)["@type"] === "ResponseWrapper" && (m.content as any).requestId === requestId;
+            return matcher;
+        });
+    };
+    const syncResult = await syncUntil(client, (syncResult) => {
+        const length = filterRequestMessagesByRequestId(syncResult).length;
+        return length !== 0;
+    });
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
 
@@ -254,7 +266,7 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
                 {
                     "@type": "CreateAttributeRequestItem",
                     mustBeAccepted: true,
-                    attribute: {...attributeContent, owner: senderAddress, "@type": "RelationshipAttribute"}
+                    attribute: { ...attributeContent, owner: senderAddress, "@type": "RelationshipAttribute" }
                 }
             ]
         }
@@ -273,7 +285,7 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
     }
     await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
 
-    const responseMessage = await syncUntilHasMessageWithRequest(sender, requestId);
+    const responseMessage = await syncUntilHasMessageWithResponse(sender, requestId);
     const sharedAttributeId = (responseMessage.content as any).response.items[0].attributeId;
     const senderRequest = (await sender.outgoingRequests.getRequest(requestId)).result;
     while (senderRequest.status !== ConnectorRequestStatus.Completed) {
@@ -283,6 +295,60 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
     const senderOwnSharedRelationshipAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
     return senderOwnSharedRelationshipAttribute;
 }
+
+/**
+ * Creates a repository attribute on sender's side and shares it with
+ * recipient, waiting for all communication and event processing to finish.
+ *
+ * Returns the sender's own shared identity attribute.
+ */
+// export async function executeFullCreateAndShareIdentityAttributeFlow(
+//     sender: ConnectorClient,
+//     recipient: ConnectorClient,
+//     attributeContent: CreateIdentityAttributeRequest
+// ): Promise<ConnectorAttribute> {
+//     const senderIdentityInfoResult = await sender.account.getIdentityInfo();
+//     expect(senderIdentityInfoResult.isSuccess).toBe(true);
+//     const senderAddress = senderIdentityInfoResult.result.address;
+
+//     const recipientIdentityInfoResult = await recipient.account.getIdentityInfo();
+//     expect(recipientIdentityInfoResult.isSuccess).toBe(true);
+//     const recipientAddress = recipientIdentityInfoResult.result.address;
+
+//     const createAttributeRequestResult = await sender.attributes.createRepositoryAttribute(attributeContent);
+//     const attribute = createAttributeRequestResult.result;
+
+//     const shareAttributeRequest: CreateOutgoingRequestRequest = {
+//         peer: recipientAddress,
+//         content: {
+//             items: [
+//                 {
+//                     "@type": "ShareAttributeRequestItem",
+//                     mustBeAccepted: true,
+//                     attribute: attributeContent
+//                 }
+//             ]
+//         }
+//     };
+
+//     const shareRequestResult = await sender.outgoingRequests.createRequest(shareAttributeRequest);
+//     const shareRequestId = shareRequestResult.value.id;
+
+//     await syncUntilHasMessageWithRequest(recipient.transport, shareRequestId);
+//     await recipient.eventBus.waitForEvent(IncomingRequestStatusChangedEvent, (e) => {
+//         return e.data.request.id === shareRequestId && e.data.newStatus === LocalRequestStatus.ManualDecisionRequired;
+//     });
+//     await recipient.consumption.incomingRequests.accept({ requestId: shareRequestId, items: [{ accept: true }] });
+
+//     const responseMessage = await syncUntilHasMessageWithResponse(sender.transport, shareRequestId);
+//     const sharedAttributeId = responseMessage.content.response.items[0].attributeId;
+//     await sender.eventBus.waitForEvent(OutgoingRequestStatusChangedEvent, (e) => {
+//         return e.data.request.id === shareRequestId && e.data.newStatus === LocalRequestStatus.Completed;
+//     });
+
+//     const senderOwnSharedIdentityAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
+//     return senderOwnSharedIdentityAttribute;
+// }
 
 /**
  * Generate all possible combinations of the given arrays.
