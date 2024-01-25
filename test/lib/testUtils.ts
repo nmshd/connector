@@ -3,6 +3,7 @@ import {
     ConnectorAttribute,
     ConnectorClient,
     ConnectorFile,
+    ConnectorIdentityAttribute,
     ConnectorMessage,
     ConnectorRelationship,
     ConnectorRelationshipAttribute,
@@ -11,6 +12,7 @@ import {
     ConnectorSyncResult,
     ConnectorToken,
     CreateIdentityAttributeRequest,
+    CreateOutgoingRequestRequest,
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
 import fs from "fs";
@@ -279,9 +281,11 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
     const requestId = (sendMessageResponse.result.content as any).id;
 
     await syncUntilHasMessageWithRequest(recipient, requestId);
-    const recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
+    let recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
+    // TODO: ???: Zugriff auf Events vom Connector für präzisen Ablauf? Siehe Runtime.
     while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {
         await sleep(500);
+        recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
     }
     await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
 
@@ -302,53 +306,57 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
  *
  * Returns the sender's own shared identity attribute.
  */
-// export async function executeFullCreateAndShareIdentityAttributeFlow(
-//     sender: ConnectorClient,
-//     recipient: ConnectorClient,
-//     attributeContent: CreateIdentityAttributeRequest
-// ): Promise<ConnectorAttribute> {
-//     const senderIdentityInfoResult = await sender.account.getIdentityInfo();
-//     expect(senderIdentityInfoResult.isSuccess).toBe(true);
-//     const senderAddress = senderIdentityInfoResult.result.address;
+export async function executeFullCreateAndShareIdentityAttributeFlow(
+    sender: ConnectorClient,
+    recipient: ConnectorClient,
+    attributeContent: ConnectorIdentityAttribute
+): Promise<ConnectorAttribute> {
+    const recipientIdentityInfoResult = await recipient.account.getIdentityInfo();
+    expect(recipientIdentityInfoResult.isSuccess).toBe(true);
+    const recipientAddress = recipientIdentityInfoResult.result.address;
 
-//     const recipientIdentityInfoResult = await recipient.account.getIdentityInfo();
-//     expect(recipientIdentityInfoResult.isSuccess).toBe(true);
-//     const recipientAddress = recipientIdentityInfoResult.result.address;
+    const createAttributeRequestResult = await sender.attributes.createRepositoryAttribute({ content: { value: attributeContent.value } });
+    const attribute = createAttributeRequestResult.result;
 
-//     const createAttributeRequestResult = await sender.attributes.createRepositoryAttribute(attributeContent);
-//     const attribute = createAttributeRequestResult.result;
+    const shareAttributeRequest: CreateOutgoingRequestRequest = {
+        peer: recipientAddress,
+        content: {
+            items: [
+                {
+                    "@type": "ShareAttributeRequestItem",
+                    mustBeAccepted: true,
+                    sourceAttributeId: attribute.id,
+                    attribute: attributeContent
+                }
+            ]
+        }
+    };
 
-//     const shareAttributeRequest: CreateOutgoingRequestRequest = {
-//         peer: recipientAddress,
-//         content: {
-//             items: [
-//                 {
-//                     "@type": "ShareAttributeRequestItem",
-//                     mustBeAccepted: true,
-//                     attribute: attributeContent
-//                 }
-//             ]
-//         }
-//     };
+    const createRequestResult = await sender.outgoingRequests.createRequest(shareAttributeRequest);
 
-//     const shareRequestResult = await sender.outgoingRequests.createRequest(shareAttributeRequest);
-//     const shareRequestId = shareRequestResult.value.id;
+    const sendMessageResponse = await sender.messages.sendMessage({
+        recipients: [recipientAddress],
+        content: createRequestResult.result.content
+    });
 
-//     await syncUntilHasMessageWithRequest(recipient.transport, shareRequestId);
-//     await recipient.eventBus.waitForEvent(IncomingRequestStatusChangedEvent, (e) => {
-//         return e.data.request.id === shareRequestId && e.data.newStatus === LocalRequestStatus.ManualDecisionRequired;
-//     });
-//     await recipient.consumption.incomingRequests.accept({ requestId: shareRequestId, items: [{ accept: true }] });
+    const requestId = (sendMessageResponse.result.content as any).id;
+    await syncUntilHasMessageWithRequest(recipient, requestId);
 
-//     const responseMessage = await syncUntilHasMessageWithResponse(sender.transport, shareRequestId);
-//     const sharedAttributeId = responseMessage.content.response.items[0].attributeId;
-//     await sender.eventBus.waitForEvent(OutgoingRequestStatusChangedEvent, (e) => {
-//         return e.data.request.id === shareRequestId && e.data.newStatus === LocalRequestStatus.Completed;
-//     });
+    let recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
+    // TODO: ???: Zugriff auf Events vom Connector für präzisen Ablauf? Siehe Runtime.
+    while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {
+        await sleep(500);
+        recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
+    }
 
-//     const senderOwnSharedIdentityAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
-//     return senderOwnSharedIdentityAttribute;
-// }
+    await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
+
+    const responseMessage = await syncUntilHasMessageWithResponse(sender, requestId);
+    const sharedAttributeId = (responseMessage as any).content.response.items[0].attributeId;
+
+    const senderOwnSharedIdentityAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
+    return senderOwnSharedIdentityAttribute;
+}
 
 /**
  * Generate all possible combinations of the given arrays.
