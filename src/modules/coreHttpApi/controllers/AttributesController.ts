@@ -16,13 +16,11 @@ export class AttributesController extends BaseController {
         /* We left 'owner' and '@type' optional in the openapi spec for
          * backwards compatibility. If set, they have to be removed here or the runtime
          * use case will throw an error. */
-        // TODO: ???: Sollen .@type und .owner behalten werden?
-        //            Wenn nicht, auch in openapi.yml löschen.
         if (typeof request?.content?.owner !== "undefined") delete request.content.owner;
         if (request?.content?.["@type"] === "IdentityAttribute") delete request.content["@type"];
 
         const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
-        return this.created(result); // TODO: ???: was does created() do?
+        return this.created(result);
     }
 
     @POST

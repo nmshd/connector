@@ -282,7 +282,6 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
 
     await syncUntilHasMessageWithRequest(recipient, requestId);
     let recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
-    // TODO: ???: Zugriff auf Events vom Connector für präzisen Ablauf? Siehe Runtime.
     while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {
         await sleep(500);
         recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
@@ -344,7 +343,6 @@ export async function executeFullCreateAndShareIdentityAttributeFlow(
     await syncUntilHasMessageWithRequest(recipient, requestId);
 
     let recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
-    // TODO: ???: Zugriff auf Events vom Connector für präzisen Ablauf? Siehe Runtime.
     while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {
         await sleep(500);
         recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
