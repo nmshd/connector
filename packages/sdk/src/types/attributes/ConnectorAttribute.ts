@@ -7,8 +7,10 @@ export interface ConnectorAttribute {
     shareInfo?: ConnectorAttributeShareInfo;
 }
 
+/* Either of requestReference or noticicationReference must be set, but not both. */
 export interface ConnectorAttributeShareInfo {
-    requestReference: string;
+    requestReference?: string;
+    notificationReference?: string;
     peer: string;
     sourceAttribute?: string;
 }
