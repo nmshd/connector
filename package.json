@@ -32,7 +32,7 @@
         "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json",
         "start:backbone": "docker compose -p connector-test-backbone --env-file .dev/compose.backbone.env -f .dev/compose.backbone.yml up -d",
         "start:test-env": "docker compose -p connector-tests -f test/compose.yml up -d",
-        "start:test-env:ferretdb": "npm run start:test-env -- ferretdb",
+        "start:test-env:ferretdb": "npm run start:test-env -- ferret",
         "start:test-env:mongo": "npm run start:test-env -- mongo",
         "teardown": "npm run teardown:backbone && npm run teardown:test-env && npm run teardown:testconnectors",
         "teardown:backbone": "docker compose -p connector-test-backbone --env-file .dev/compose.backbone.env -f .dev/compose.backbone.yml down -v",
