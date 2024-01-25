@@ -8,22 +8,14 @@ services:
     logging:
       driver: none
 
-  postgres:
-    image: postgres
-    container_name: connector-ferretdb-postgres
-    hostname: postgres
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=ferretdb
-
   ferret:
     image: ghcr.io/ferretdb/ferretdb:latest
     container_name: connector-ferretdb
     ports:
       - "27019:27017"
     environment:
-      FERRETDB_POSTGRESQL_URL: postgres://user:password@postgres:5432/ferretdb
+      FERRETDB_HANDLER: sqlite
+      FERRETDB_SQLITE_URL: file:./
       FERRETDB_TELEMETRY: disable
       FERRETDB_LOG_LEVEL: error
     depends_on:
