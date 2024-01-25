@@ -303,6 +303,7 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
 /**
  * Creates a repository attribute on sender's side and shares it with
  * recipient, waiting for all communication and event processing to finish.
+ * Expects an established relationship.
  *
  * Returns the sender's own shared identity attribute.
  */

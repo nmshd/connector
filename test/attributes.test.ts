@@ -39,7 +39,6 @@ describe("Attributes", () => {
 
         expect(createAttributeResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
 
-        // TODO: move to test setup function; tests must be independent of each other
         attributeId = createAttributeResponse.result.id;
     });
 
