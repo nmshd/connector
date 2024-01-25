@@ -295,27 +295,21 @@ paths:
                   type: object
                   additionalProperties: false
                   required:
-                    - content
+                    - value
                   properties:
-                    content:
-                      type: object
-                      additionalProperties: false
-                      required:
-                        - value
-                      properties:
-                        "@type":
-                          type: string
-                          enum: ["IdentityAttribute"]
-                        owner:
-                          $ref: "#/components/schemas/Address"
-                        value:
-                          $ref: "#/components/schemas/AttributeValue"
-                        tags:
-                          $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                        validFrom:
-                          $ref: "#/components/schemas/AttributeContent_validFrom"
-                        validTo:
-                          $ref: "#/components/schemas/AttributeContent_validTo"
+                    "@type":
+                      type: string
+                      enum: ["IdentityAttribute"]
+                    owner:
+                      $ref: "#/components/schemas/Address"
+                    value:
+                      $ref: "#/components/schemas/AttributeValue"
+                    tags:
+                      $ref: "#/components/schemas/IdentityAttributeContent_tags"
+                    validFrom:
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
+                    validTo:
+                      $ref: "#/components/schemas/AttributeContent_validTo"
       responses:
         201:
           description: Success
@@ -3797,6 +3791,7 @@ components:
       items:
         type: string
       description: The tags of the attribute.
+      example: ["tag_1", "tag_2"]
 
     Confidentiality:
       enum:
