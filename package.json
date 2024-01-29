@@ -4,7 +4,7 @@
     "private": true,
     "description": "The Enmeshed Connector",
     "homepage": "https://enmeshed.eu/integrate",
-    "repository": "github:nmshd/cns-connector",
+    "repository": "github:nmshd/connector",
     "license": "MIT",
     "author": "j&s-soft GmbH",
     "workspaces": [
