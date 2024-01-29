@@ -25,7 +25,7 @@ You can find a more detailed documentation [in the enmeshed docs](https://enmesh
 
 ### Install the chart
 
-> you can list available versions [here](https://github.com/nmshd/cns-connector/pkgs/container/connector-helm-chart)
+> you can list available versions [here](https://github.com/nmshd/connector/pkgs/container/connector-helm-chart)
 
 ```sh
 helm install connector oci://ghcr.io/nmshd/connector-helm-chart --version <version> -f <your-config-file>.yaml
