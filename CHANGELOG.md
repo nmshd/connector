@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.3
+
+-> SDK 2.2.6
+
+-   update the connector repository url
+
 ## 3.6.2
 
 -> SDK 2.2.5

@@ -6,7 +6,7 @@ type: application
 icon: https://raw.githubusercontent.com/nmshd/nmshd.github.io/main/assets/images/Logo.svg
 home: https://enmeshed.eu
 sources:
-  - "https://github.com/nmshd/cns-connector/tree/main/helmChart"
+  - "https://github.com/nmshd/connector/tree/main/helmChart"
 
 # version and appVersion are set by the publishHelmChart.sh script
 version: 0.0.0

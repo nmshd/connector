@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/connector-sdk",
-    "version": "2.2.5",
+    "version": "2.2.6",
     "description": "the enmeshed connector sdk",
     "keywords": [
         "enmeshed",
@@ -10,7 +10,7 @@
     "homepage": "https://enmeshed.eu/integrate/connector-sdks#typescript-sdk",
     "repository": {
         "type": "git",
-        "url": "https://github.com/nmshd/cns-connector.git",
+        "url": "https://github.com/nmshd/connector.git",
         "directory": "/packages/sdk"
     },
     "license": "MIT",
