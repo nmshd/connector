@@ -1,6 +1,6 @@
 import { ConnectorAttributeValue } from "../ConnectorAttribute";
 
-export interface CreateIdentityAttributeRequest {
+export interface CreateRepositoryAttributeRequest {
     content: {
         value: ConnectorAttributeValue;
         tags?: string[];

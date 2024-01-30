@@ -2,7 +2,7 @@ import {
     ConnectorAttribute,
     ConnectorAttributes,
     ConnectorResponse,
-    CreateIdentityAttributeRequest as CreateRepositoryAttributeRequest,
+    CreateRepositoryAttributeRequest,
     ExecuteIQLQueryRequest,
     ExecuteIdentityAttributeQueryRequest,
     ExecuteRelationshipAttributeQueryRequest,
