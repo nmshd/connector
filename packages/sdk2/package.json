@@ -1,0 +1,17 @@
+{
+    "name": "sdk2",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "gen": "npx openapicmd typegen ../../src/modules/coreHttpApi/openapi.yml > api.d.ts"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "openapicmd": "^2.3.1",
+        "openapi-client-axios": "^7.5.1",
+        "yamljs": "^0.3.0"
+    }
+}

@@ -9,7 +9,8 @@
     "author": "j&s-soft GmbH",
     "workspaces": [
         ".",
-        "packages/sdk"
+        "packages/sdk",
+        "packages/sdk2"
     ],
     "scripts": {
         "lint": "npm run lint:tsc && npm run lint:prettier && npm run lint:eslint",
