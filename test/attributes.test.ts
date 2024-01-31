@@ -240,9 +240,9 @@ describe("Execute AttributeQueries", () => {
             }
         });
 
-        const executeIdentityAttributeQueryResult = await client1.attributes.executeIdentityAttributeQuery({ query: { valueType: "GivenName" } });
-        expect(executeIdentityAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttributes);
-        const attributes = executeIdentityAttributeQueryResult.result;
+        const executeIdentityAttributeQueryResponse = await client1.attributes.executeIdentityAttributeQuery({ query: { valueType: "GivenName" } });
+        expect(executeIdentityAttributeQueryResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+        const attributes = executeIdentityAttributeQueryResponse.result;
 
         expect(attributes).toContainEqual(attribute);
     });
@@ -261,7 +261,7 @@ describe("Execute AttributeQueries", () => {
         };
         await executeFullCreateAndShareRelationshipAttributeFlow(client1, client2, attributeContent);
 
-        const executeRelationshipAttributeQueryResult = await client2.attributes.executeRelationshipAttributeQuery({
+        const executeRelationshipAttributeQueryResponse = await client2.attributes.executeRelationshipAttributeQuery({
             query: {
                 key: "key",
                 owner: client1Address,
@@ -273,8 +273,8 @@ describe("Execute AttributeQueries", () => {
             }
         });
 
-        expect(executeRelationshipAttributeQueryResult).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+        expect(executeRelationshipAttributeQueryResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
 
-        expect(executeRelationshipAttributeQueryResult.result.content.value.value).toBe("AGivenName");
+        expect(executeRelationshipAttributeQueryResponse.result.content.value.value).toBe("AGivenName");
     });
 });
