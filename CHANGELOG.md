@@ -8,6 +8,7 @@
 -   add routes for attribute succession:
     -   `POST /api/v2/Attributes/{predecessorId}/Succeed`: Succeeds Repository Attributes and Relationship Attributes.
     -   `POST /api/v2/Attributes/{attributeId}/NotifyPeer`: Notifies a peer about a succession of a previously shared Identity Attribute.
+-   Enable the notification module by default
 
 ## 3.6.3
 
