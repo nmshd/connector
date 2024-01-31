@@ -11,8 +11,8 @@ import {
     ConnectorRequestStatus,
     ConnectorSyncResult,
     ConnectorToken,
-    CreateIdentityAttributeRequest,
     CreateOutgoingRequestRequest,
+    CreateRepositoryAttributeRequest,
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
 import fs from "fs";
@@ -64,6 +64,14 @@ export async function syncUntilHasMessageWithRequest(client: ConnectorClient, re
     const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
+export async function syncUntilHasMessageWithNotification(client: ConnectorClient, notificationId: string): Promise<ConnectorMessage> {
+    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
+        return syncResult.messages.filter((m: ConnectorMessage) => (m.content as any)["@type"] === "Notification" && (m.content as any).id === notificationId);
+    };
+    const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
+    return filterRequestMessagesByRequestId(syncResult)[0];
+}
+
 export async function syncUntilHasMessageWithResponse(client: ConnectorClient, requestId: string): Promise<ConnectorMessage> {
     const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
         return syncResult.messages.filter((m: ConnectorMessage) => {
@@ -236,7 +244,7 @@ export async function establishRelationship(client1: ConnectorClient, client2: C
     const relationships2 = await syncUntilHasRelationships(client2);
     expect(relationships2).toHaveLength(1);
 }
-export async function createRepositoryAttribute(client: ConnectorClient, request: CreateIdentityAttributeRequest): Promise<ConnectorAttribute> {
+export async function createRepositoryAttribute(client: ConnectorClient, request: CreateRepositoryAttributeRequest): Promise<ConnectorAttribute> {
     const response = await client.attributes.createRepositoryAttribute(request);
     expect(response).toBeSuccessful(ValidationSchema.ConnectorAttribute);
     return response.result;

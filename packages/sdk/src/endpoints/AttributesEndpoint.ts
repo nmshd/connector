@@ -13,6 +13,7 @@ import {
     SucceedAttributeRequest,
     SucceedAttributeResponse
 } from "../types";
+import { NotifyPeerAboutIdentityAttributeSuccessionResponse } from "../types/attributes/requests/NotifyPeerAboutIdentityAttributeSuccessionResponse";
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
@@ -27,7 +28,7 @@ export class AttributesEndpoint extends Endpoint {
     public async notifyPeerAboutIdentityAttributeSuccession(
         attributeId: string,
         request: NotifyPeerAboutIdentityAttributeSuccessionRequest
-    ): Promise<ConnectorResponse<SucceedAttributeResponse>> {
+    ): Promise<ConnectorResponse<NotifyPeerAboutIdentityAttributeSuccessionResponse>> {
         return await this.post(`/api/v2/Attributes/${attributeId}/NotifyPeer`, request);
     }
 

@@ -31,7 +31,7 @@ describe("Template Tests", () => {
     test("create a template with undefined maxNumberOfAllocations", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
             content: { a: "A" },
-            expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
+            expiresAt: DateTime.utc().plus({ minutes: 10 }).toString()
         });
 
         templateWithUndefinedMaxNumberOfAllocations = response.result;

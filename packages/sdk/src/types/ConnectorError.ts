@@ -4,5 +4,6 @@ export interface ConnectorError {
     message: string;
     docs: string;
     time: string;
+    details?: string;
     stacktrace?: string[];
 }

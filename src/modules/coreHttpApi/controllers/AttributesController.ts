@@ -1,6 +1,7 @@
-import { ConsumptionServices, TransportServices } from "@nmshd/runtime";
+import { ApplicationError } from "@js-soft/ts-utils";
+import { ConsumptionServices, RuntimeErrors, TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, Errors, GET, POST, Path, PathParam, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, GET, POST, Path, PathParam, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -17,7 +18,9 @@ export class AttributesController extends BaseController {
     @Accept("application/json")
     public async createRepositoryAttribute(request: any): Promise<Return.NewResource<Envelope>> {
         const selfAddress = (await this.transportServices.account.getIdentityInfo()).value.address;
-        if (request?.content?.owner !== selfAddress) throw new Errors.BadRequestError("You are not allowed to create an attribute that is not owned by yourself");
+        if (request?.content?.owner && request?.content?.owner !== selfAddress) {
+            throw new ApplicationError("error.connector.attributes.cannotCreateNotSelfOwnedAttribute", "You are not allowed to create an attribute that is not owned by yourself");
+        }
         /* We left 'owner' and '@type' optional in the openapi spec for
          * backwards compatibility. If set, they have to be removed here or the runtime
          * use case will throw an error. */
@@ -34,7 +37,7 @@ export class AttributesController extends BaseController {
     public async succeedAttribute(@PathParam("predecessorId") predecessorId: string, request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.consumptionServices.attributes.getAttribute({ id: predecessorId });
         if (result.isError) {
-            throw new Errors.NotFoundError(`Predecessor attribute '${predecessorId}' not found.`);
+            throw RuntimeErrors.general.recordNotFoundWithMessage(`Predecessor attribute '${predecessorId}' not found.`);
         }
         const predecessor = result.value;
 
