@@ -256,14 +256,14 @@ describe("Execute AttributeQueries", () => {
                 title: "text",
                 value: "AGivenName"
             },
-            key: "key",
+            key: "someSpecialKey",
             confidentiality: "public"
         };
         await executeFullCreateAndShareRelationshipAttributeFlow(client1, client2, attributeContent);
 
         const executeRelationshipAttributeQueryResponse = await client2.attributes.executeRelationshipAttributeQuery({
             query: {
-                key: "key",
+                key: "someSpecialKey",
                 owner: client1Address,
                 attributeCreationHints: {
                     valueType: "ProprietaryString",
