@@ -10,10 +10,10 @@ import {
     GetAttributesRequest,
     GetValidAttributesRequest,
     NotifyPeerAboutIdentityAttributeSuccessionRequest,
+    NotifyPeerAboutIdentityAttributeSuccessionResponse,
     SucceedAttributeRequest,
     SucceedAttributeResponse
 } from "../types";
-import { NotifyPeerAboutIdentityAttributeSuccessionResponse } from "../types/attributes/requests/NotifyPeerAboutIdentityAttributeSuccessionResponse";
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
