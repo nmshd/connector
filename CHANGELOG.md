@@ -9,6 +9,12 @@
     -   `POST /api/v2/Attributes/{predecessorId}/Succeed`: Succeeds Repository Attributes and Relationship Attributes.
     -   `POST /api/v2/Attributes/{attributeId}/NotifyPeer`: Notifies a peer about a succession of a previously shared Identity Attribute.
 
+## 3.6.3
+
+-> SDK 2.2.6
+
+-   update the connector repository url
+
 ## 3.6.2
 
 -> SDK 2.2.5

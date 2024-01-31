@@ -1,12 +1,12 @@
 # Connector
 
-[![GitHub Actions CI](https://github.com/nmshd/cns-connector/workflows/Publish/badge.svg)](https://github.com/nmshd/cns-connector/actions?query=workflow%3APublish)
+[![GitHub Actions CI](https://github.com/nmshd/connector/workflows/Publish/badge.svg)](https://github.com/nmshd/connector/actions?query=workflow%3APublish)
 
 This monorepo consolidates the following packages / applications:
 | Component | Version(s) |
 | -- | -- |
-| [The Connector docker images](./) | [see ghcr.io](https://github.com/nmshd/cns-connector/pkgs/container/connector) |
-| [The Connector helm charts](./) | [see ghcr.io](https://github.com/nmshd/cns-connector/pkgs/container/connector-helm-chart) and [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/enmeshed-connector)](https://artifacthub.io/packages/search?repo=enmeshed-connector) |
+| [The Connector docker images](./) | [see ghcr.io](https://github.com/nmshd/connector/pkgs/container/connector) |
+| [The Connector helm charts](./) | [see ghcr.io](https://github.com/nmshd/connector/pkgs/container/connector-helm-chart) and [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/enmeshed-connector)](https://artifacthub.io/packages/search?repo=enmeshed-connector) |
 | [TypeScript Connector SDK](packages/sdk/) | [![npm version](https://badge.fury.io/js/@nmshd%2fconnector-sdk.svg)](https://www.npmjs.com/package/@nmshd/connector-sdk) |
 
 ## Documentation
