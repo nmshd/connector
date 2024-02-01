@@ -19,7 +19,10 @@ export class AttributesController extends BaseController {
     public async createRepositoryAttribute(request: any): Promise<Return.NewResource<Envelope>> {
         const selfAddress = (await this.transportServices.account.getIdentityInfo()).value.address;
         if (request?.content?.owner && request?.content?.owner !== selfAddress) {
-            throw new ApplicationError("error.connector.attributes.cannotCreateNotSelfOwnedAttribute", "You are not allowed to create an attribute that is not owned by yourself");
+            throw new ApplicationError(
+                "error.connector.attributes.cannotCreateNotSelfOwnedRepositoryAttribute",
+                "You are not allowed to create an attribute that is not owned by yourself"
+            );
         }
         /* We left 'owner' and '@type' optional in the openapi spec for
          * backwards compatibility. If set, they have to be removed here or the runtime

@@ -13,9 +13,9 @@ expect.extend({
         const receivedClone = JSON.parse(JSON.stringify(received));
         const expectedClone = JSON.parse(JSON.stringify(expected));
 
-        excludes.forEach((exclud) => {
-            set(receivedClone, exclud, undefined);
-            set(expectedClone, exclud, undefined);
+        excludes.forEach((exclude) => {
+            set(receivedClone, exclude, undefined);
+            set(expectedClone, exclude, undefined);
         });
 
         const matcherName = "toStrictEqual";
@@ -47,8 +47,6 @@ expect.extend({
         return { message: () => message, pass };
     }
 });
-
-export {};
 
 declare global {
     namespace jest {

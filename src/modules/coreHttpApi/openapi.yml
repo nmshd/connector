@@ -445,7 +445,7 @@ paths:
   /api/v2/Attributes/{predecessorId}/Succeed:
     post:
       operationId: succeedAttribute
-      description: Succeeds either a Relationship Attribute or a Repository Attribute.
+      description: Succeeds either a relationship attribute or a repository attribute.
       tags:
         - Attributes
       parameters:
@@ -477,10 +477,10 @@ paths:
                       $ref: "#/components/schemas/AttributeContent_validTo"
 
       responses:
-        200:
+        201:
           description: |
-            Success. Succeeding a Relationship Attribute will return an
-            additional ID of the notification sent to the peer.
+            Success. Succeeding a relationship/repository attribute returns the predecessor and successor.
+            For relationship attributes additional the ID of the notification sent to the peer is returned.
           content:
             application/json:
               schema:
@@ -544,7 +544,7 @@ paths:
       responses:
         200:
           description: |
-            "Success. Returns the successor and predecessor own shared identity
+            "Success. Returns the successor and predecessor own shared repository
             attributes as well as the ID of the notification sent to the peer."
           content:
             application/json:
