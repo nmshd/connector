@@ -71,6 +71,7 @@
         "typescript-ioc": "3.2.2",
         "typescript-rest": "3.0.4",
         "typescript-rest-ioc": "1.0.1",
+        "typescript-rest-swagger": "github:sebbi08/typescript-rest-swagger",
         "yamljs": "0.3.0"
     },
     "devDependencies": {
