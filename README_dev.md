@@ -2,7 +2,7 @@
 
 1. download and install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 2. download and install [Node JS](https://nodejs.org/en/download/)
-3. install the npm packages `typescript` and `cpx` **globally**
+3. Optional: install the npm package `typescript` **globally** to use the `tsc` command without the `npx` prefix
 4. Optional: install the VS Code extension [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks)
 5. Optional: restarting the Connector using the VSCode task `More Tasks > Restart` requires the tool socat. Make sure to install it on your system. This can be done for example using `apt-get install socat` on Ubuntu and `brew install socat` using Homebrew.
 6. run `npm i`
