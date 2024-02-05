@@ -8,9 +8,9 @@
             "port": 9229,
             "sourceMaps": true,
             "restart": true,
-            "localRoot": "${workspaceFolder}/dist",
-            "remoteRoot": "/usr/app/dist",
-            "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/usr/app",
+            // "outFiles": ["${workspaceFolder}/dist/**/*.js", "${workspaceFolder}/packages/runtime/packages/*/dist/*.js"],
             "skipFiles": ["<node_internals>/**"]
         },
         {
@@ -20,9 +20,9 @@
             "port": 9231,
             "sourceMaps": true,
             "restart": true,
-            "localRoot": "${workspaceFolder}/dist",
-            "remoteRoot": "/usr/app/dist",
-            "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/usr/app",
+            // "outFiles": ["${workspaceFolder}/dist/**/*.js"],
             "skipFiles": ["<node_internals>/**"]
         }
     ]

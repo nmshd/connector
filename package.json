@@ -9,7 +9,13 @@
     "author": "j&s-soft GmbH",
     "workspaces": [
         ".",
-        "packages/sdk"
+        "packages/sdk",
+        "packages/runtime/packages/iql",
+        "packages/runtime/packages/transport",
+        "packages/runtime/packages/content",
+        "packages/runtime/packages/consumption",
+        "packages/runtime/packages/runtime",
+        "packages/runtime/packages/app-runtime"
     ],
     "scripts": {
         "lint": "npm run lint:tsc && npm run lint:prettier && npm run lint:eslint",
