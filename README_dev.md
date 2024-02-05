@@ -2,7 +2,7 @@
 
 1. download and install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 2. download and install [Node JS](https://nodejs.org/en/download/)
-3. Optional: install the npm packages `typescript` **globally** to use the `tsc` command without the `npx` prefix
+3. Optional: install the npm package `typescript` **globally** to use the `tsc` command without the `npx` prefix
 4. Optional: install the VS Code extension [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks)
 5. run `npm i`
 
