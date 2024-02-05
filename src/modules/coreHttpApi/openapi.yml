@@ -480,7 +480,7 @@ paths:
         201:
           description: |
             Success. Succeeding a relationship/repository attribute returns the predecessor and successor.
-            For relationship attributes additional the ID of the notification sent to the peer is returned.
+            Additionally, for relationship attributes the ID of the notification sent to the peer is returned.
           content:
             application/json:
               schema:
