@@ -1,5 +1,5 @@
 export interface IQLQuery {
-    "@type": "IQLQuery";
+    "@type"?: "IQLQuery";
     queryString: string;
     validFrom?: string;
     validTo?: string;
