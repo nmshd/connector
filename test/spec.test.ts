@@ -1,8 +1,8 @@
 import * as ts from "typescript";
 import yamljs from "yamljs";
 
-import { MetadataGenerator, SpecGenerator } from "typescript-rest-swagger";
-import { Swagger } from "typescript-rest-swagger/dist/swagger/swagger";
+import { MetadataGenerator, SpecGenerator, Swagger } from "typescript-rest-swagger";
+
 import tsConfigBase from "../tsconfig.json";
 
 describe("test openapi spec against routes", () => {
@@ -39,6 +39,8 @@ describe("test openapi spec against routes", () => {
 
         // Paths not defined in the typescript-rest way
         const ignorePaths = ["/health", "/Healthcheck", "/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support"];
+        //
+        const postReturnCodeIgnorePaths = ["/api/v2/Account/Sync", "/api/v2/Attributes/ExecuteIQLQuery", "/api/v2/Attributes/ValidateIQLQuery", "/api/v2/Challenges/Validate"];
 
         manualPaths.forEach((path) => {
             if (ignorePaths.includes(path)) {
@@ -56,13 +58,15 @@ describe("test openapi spec against routes", () => {
 
             expect(generatedMethods, `Path ${path} do not have the same methods`).toStrictEqual(manualMethods);
 
-            // Object.keys(manualOpenApiSpec.paths[path]).forEach((method) => {
-            //     const key = method as "get" | "put" | "post" | "delete" | "options" | "head" | "patch";
-            //     const manualResponses = Object.keys(manualOpenApiSpec.paths[path][key]!.responses);
-            //     const expectedResponseCode = key !== "get" ? "201" : "200";
-            //     if (key === "post") debugger;
-            //     // expect(manualResponses, `Path ${path} and method ${method} dose not conain response code ${expectedResponseCode}`).toContainEqual(expectedResponseCode);
-            // });
+            if (postReturnCodeIgnorePaths.includes(path)) {
+                return;
+            }
+            Object.keys(manualOpenApiSpec.paths[path]).forEach((method) => {
+                const key = method as "get" | "put" | "post" | "delete" | "options" | "head" | "patch";
+                const manualResponses = Object.keys(manualOpenApiSpec.paths[path][key]?.responses ?? {});
+                const expectedResponseCode = key === "post" ? "201" : "200";
+                expect(manualResponses, `Path ${path} and method ${method} dose not conain response code ${expectedResponseCode}`).toContainEqual(expectedResponseCode);
+            });
         });
     });
 });
