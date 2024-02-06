@@ -73,9 +73,7 @@ test("Local IQL Query", async () => {
     ];
 
     for (const e of table) {
-        const queryRequest: ExecuteIQLQueryRequest = {
-            query: { queryString: e.iqlQuery }
-        };
+        const queryRequest: ExecuteIQLQueryRequest = { query: { queryString: e.iqlQuery } };
 
         const response = await client1.attributes.executeIQLQuery(queryRequest);
         const matchedAttributeIds: string[] = response.result.map((e: any) => e.id);
