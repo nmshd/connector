@@ -542,7 +542,7 @@ paths:
                   $ref: "#/components/schemas/Address"
 
       responses:
-        200:
+        201:
           description: |
             "Success. Returns the successor and predecessor own shared repository
             attributes as well as the ID of the notification sent to the peer."
