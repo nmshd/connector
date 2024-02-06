@@ -74,10 +74,7 @@ test("Local IQL Query", async () => {
 
     for (const e of table) {
         const queryRequest: ExecuteIQLQueryRequest = {
-            query: {
-                "@type": "IQLQuery",
-                queryString: e.iqlQuery
-            }
+            query: { queryString: e.iqlQuery }
         };
 
         const response = await client1.attributes.executeIQLQuery(queryRequest);
@@ -120,14 +117,7 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
     const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItem).query as IQLQuery).queryString;
-    const matchedAttributes = (
-        await client1.attributes.executeIQLQuery({
-            query: {
-                "@type": "IQLQuery",
-                queryString: iqlQueryString
-            }
-        })
-    ).result;
+    const matchedAttributes = (await client1.attributes.executeIQLQuery({ query: { queryString: iqlQueryString } })).result;
 
     /* Reply to the response with the first matched attribute. Wait on C2 for
      * the message to arrive. */
@@ -188,14 +178,7 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
     const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItem).query as IQLQuery).queryString;
-    const matchedAttributes = (
-        await client1.attributes.executeIQLQuery({
-            query: {
-                "@type": "IQLQuery",
-                queryString: iqlQueryString
-            }
-        })
-    ).result;
+    const matchedAttributes = (await client1.attributes.executeIQLQuery({ query: { queryString: iqlQueryString } })).result;
 
     /* Reply to the response with the first matched attribute. Wait on C2 for
      * the message to arrive. */
@@ -250,14 +233,7 @@ test("Remote ProposeAttributeRequest containing IQL Query without existing attri
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
     const incomingRequestItem: ProposeAttributeRequestItem = incomingRequest.content.items[0] as ProposeAttributeRequestItem;
     const iqlQueryString = (incomingRequestItem.query as IQLQuery).queryString;
-    const matchedAttributes = (
-        await client1.attributes.executeIQLQuery({
-            query: {
-                "@type": "IQLQuery",
-                queryString: iqlQueryString
-            }
-        })
-    ).result;
+    const matchedAttributes = (await client1.attributes.executeIQLQuery({ query: { queryString: iqlQueryString } })).result;
 
     expect(matchedAttributes).toHaveLength(0);
 
