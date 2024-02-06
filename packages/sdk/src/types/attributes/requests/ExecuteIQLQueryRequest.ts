@@ -1,5 +1,5 @@
 import { IQLQuery } from "../IQLQuery";
 
 export interface ExecuteIQLQueryRequest {
-    query: IQLQuery;
+    query: Omit<IQLQuery, "@type"> & { "@type"?: string };
 }
