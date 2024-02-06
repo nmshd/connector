@@ -6,6 +6,7 @@
 
 -   upgrade the runtime version to 3.5.1
     -   this will improve the performance of internal queries on FerretDB (e.g. while sending messages)
+-   upgrade nodejs to 20.11.0
 -   fix: `POST /api/v2/Attributes` will no longer accept RelationshipAttributes, as this was unintentional and led to wrong behavior
 -   add routes for attribute succession:
     -   `POST /api/v2/Attributes/{predecessorId}/Succeed`: Succeeds Repository Attributes and Relationship Attributes.
