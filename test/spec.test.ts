@@ -40,7 +40,14 @@ describe("test openapi spec against routes", () => {
         // Paths not defined in the typescript-rest way
         const ignorePaths = ["/health", "/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support"];
         // Paths to ignroe in regard to return code consistencie (Post requests that return 200 due to no creation)
-        const postReturnCodeIgnorePaths = ["/api/v2/Account/Sync", "/api/v2/Attributes/ExecuteIQLQuery", "/api/v2/Attributes/ValidateIQLQuery", "/api/v2/Challenges/Validate"];
+        /* eslint-disable @typescript-eslint/naming-convention */
+        const returnCodeOvererite: Record<string, string> = {
+            "/api/v2/Account/Sync": "200",
+            "/api/v2/Attributes/ExecuteIQLQuery": "200",
+            "/api/v2/Attributes/ValidateIQLQuery": "200",
+            "/api/v2/Challenges/Validate": "200"
+        };
+        /* eslint-enable @typescript-eslint/naming-convention */
 
         manualPaths.forEach((path) => {
             if (ignorePaths.includes(path)) {
@@ -58,13 +65,11 @@ describe("test openapi spec against routes", () => {
 
             expect(generatedMethods, `Path ${path} do not have the same methods`).toStrictEqual(manualMethods);
 
-            if (postReturnCodeIgnorePaths.includes(path)) {
-                return;
-            }
             Object.keys(manualOpenApiSpec.paths[path]).forEach((method) => {
                 const key = method as "get" | "put" | "post" | "delete" | "options" | "head" | "patch";
                 const manualResponses = Object.keys(manualOpenApiSpec.paths[path][key]?.responses ?? {});
-                const expectedResponseCode = key === "post" ? "201" : "200";
+                let expectedResponseCode = key === "post" ? "201" : "200";
+                expectedResponseCode = returnCodeOvererite[path] ?? expectedResponseCode;
                 expect(manualResponses, `Path ${path} and method ${method} does not contain response code ${expectedResponseCode}`).toContainEqual(expectedResponseCode);
             });
         });
