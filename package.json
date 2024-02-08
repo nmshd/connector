@@ -101,7 +101,7 @@
         "ts-jest": "^29.1.1",
         "ts-node": "^10.9.1",
         "typescript": "^5.3.2",
-        "typescript-rest-swagger": "github:sebbi08/typescript-rest-swagger"
+        "typescript-rest-swagger": "github:nmshd/typescript-rest-swagger#1.1.7"
     },
     "overrides": {
         "typescript-rest": {
