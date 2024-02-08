@@ -38,7 +38,7 @@ describe("test openapi spec against routes", () => {
         });
 
         // Paths not defined in the typescript-rest way
-        const ignorePaths = ["/health", "/Healthcheck", "/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support"];
+        const ignorePaths = ["/health", "/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support"];
         //
         const postReturnCodeIgnorePaths = ["/api/v2/Account/Sync", "/api/v2/Attributes/ExecuteIQLQuery", "/api/v2/Attributes/ValidateIQLQuery", "/api/v2/Challenges/Validate"];
 
