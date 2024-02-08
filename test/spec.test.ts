@@ -41,7 +41,7 @@ describe("test openapi spec against routes", () => {
         const ignorePaths = ["/health", "/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support"];
         // Paths to ignroe in regard to return code consistencie (Post requests that return 200 due to no creation)
         /* eslint-disable @typescript-eslint/naming-convention */
-        const returnCodeOvererite: Record<string, string> = {
+        const returnCodeOvererite: Record<string, string | undefined> = {
             "/api/v2/Account/Sync": "200",
             "/api/v2/Attributes/ExecuteIQLQuery": "200",
             "/api/v2/Attributes/ValidateIQLQuery": "200",
