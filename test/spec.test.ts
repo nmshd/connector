@@ -39,7 +39,7 @@ describe("test openapi spec against routes", () => {
 
         // Paths not defined in the typescript-rest way
         const ignorePaths = ["/health", "/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support"];
-        //
+        // Paths to ignroe in regard to return code consistencie (Post requests that return 200 due to no creation)
         const postReturnCodeIgnorePaths = ["/api/v2/Account/Sync", "/api/v2/Attributes/ExecuteIQLQuery", "/api/v2/Attributes/ValidateIQLQuery", "/api/v2/Challenges/Validate"];
 
         manualPaths.forEach((path) => {
@@ -65,11 +65,12 @@ describe("test openapi spec against routes", () => {
                 const key = method as "get" | "put" | "post" | "delete" | "options" | "head" | "patch";
                 const manualResponses = Object.keys(manualOpenApiSpec.paths[path][key]?.responses ?? {});
                 const expectedResponseCode = key === "post" ? "201" : "200";
-                expect(manualResponses, `Path ${path} and method ${method} dose not conain response code ${expectedResponseCode}`).toContainEqual(expectedResponseCode);
+                expect(manualResponses, `Path ${path} and method ${method} does not contain response code ${expectedResponseCode}`).toContainEqual(expectedResponseCode);
             });
         });
     });
 });
+
 function harmonizeSpec(spec: any) {
     for (const path in spec.paths) {
         const newPath = path.replaceAll(/\{.*?\}/g, "{param}");
