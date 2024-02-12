@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.7.1
+
+-   upgrade the runtime version to 3.7.0
+-   upgrade assorted dependencies
+
 ## 3.7.0
 
 -> SDK 3.0.0
