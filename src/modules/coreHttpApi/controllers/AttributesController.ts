@@ -1,4 +1,5 @@
-import { ConsumptionServices, TransportServices } from "@nmshd/runtime";
+import { ApplicationError } from "@js-soft/ts-utils";
+import { ConsumptionServices, RuntimeErrors, TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
 import { Accept, Context, GET, POST, Path, PathParam, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
@@ -7,19 +8,62 @@ import { BaseController } from "../common/BaseController";
 @Path("/api/v2/Attributes")
 export class AttributesController extends BaseController {
     public constructor(
-        @Inject private readonly transportServices: TransportServices,
-        @Inject private readonly consumptionServices: ConsumptionServices
+        @Inject private readonly consumptionServices: ConsumptionServices,
+        @Inject private readonly transportServices: TransportServices
     ) {
         super();
     }
 
     @POST
     @Accept("application/json")
-    public async createAttribute(request: any): Promise<Return.NewResource<Envelope>> {
+    public async createRepositoryAttribute(request: any): Promise<Return.NewResource<Envelope>> {
         const selfAddress = (await this.transportServices.account.getIdentityInfo()).value.address;
-        if (request?.content?.owner !== selfAddress) throw new Error("You are not allowed to create an attribute that is not owned by yourself");
+        if (request?.content?.owner && request?.content?.owner !== selfAddress) {
+            throw new ApplicationError(
+                "error.connector.attributes.cannotCreateNotSelfOwnedRepositoryAttribute",
+                "You are not allowed to create an attribute that is not owned by yourself"
+            );
+        }
+        /* We left 'owner' and '@type' optional in the openapi spec for
+         * backwards compatibility. If set, they have to be removed here or the runtime
+         * use case will throw an error. */
+        if (typeof request?.content?.owner !== "undefined") delete request.content.owner;
+        if (request?.content?.["@type"] === "IdentityAttribute") delete request.content["@type"];
 
-        const result = await this.consumptionServices.attributes.createAttribute(request);
+        const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
+        return this.created(result);
+    }
+
+    @POST
+    @Path("/:predecessorId/Succeed")
+    @Accept("application/json")
+    public async succeedAttribute(@PathParam("predecessorId") predecessorId: string, request: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.getAttribute({ id: predecessorId });
+        if (result.isError) {
+            throw RuntimeErrors.general.recordNotFoundWithMessage(`Predecessor attribute '${predecessorId}' not found.`);
+        }
+        const predecessor = result.value;
+
+        if (predecessor.content["@type"] === "IdentityAttribute") {
+            const result = await this.consumptionServices.attributes.succeedIdentityAttribute({
+                predecessorId: predecessorId,
+                ...request
+            });
+            return this.created(result);
+        }
+
+        const successionResult = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({
+            predecessorId: predecessorId,
+            ...request
+        });
+        return this.created(successionResult);
+    }
+
+    @POST
+    @Path("/:attributeId/NotifyPeer")
+    @Accept("application/json")
+    public async notifyPeerAboutIdentityAttributeSuccession(@PathParam("attributeId") attributeId: string, request: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.notifyPeerAboutIdentityAttributeSuccession({ attributeId: attributeId, peer: request.peer });
         return this.created(result);
     }
 

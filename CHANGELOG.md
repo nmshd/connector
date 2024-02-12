@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.7.0
+
+-> SDK 3.0.0
+
+-   upgrade the runtime version to 3.5.3
+    -   this will improve the performance of internal queries on FerretDB (e.g. while sending messages)
+-   upgrade nodejs to 20.11.0
+-   fix: `POST /api/v2/Attributes` will no longer accept RelationshipAttributes, as this was unintentional and led to wrong behavior
+-   add routes for attribute succession:
+    -   `POST /api/v2/Attributes/{predecessorId}/Succeed`: Succeeds Repository Attributes and Relationship Attributes.
+    -   `POST /api/v2/Attributes/{attributeId}/NotifyPeer`: Notifies a peer about a succession of a previously shared Identity Attribute.
+-   Enable the notification module by default
+
 ## 3.6.3
 
 -> SDK 2.2.6

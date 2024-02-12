@@ -4,7 +4,8 @@
 2. download and install [Node JS](https://nodejs.org/en/download/)
 3. Optional: install the npm package `typescript` **globally** to use the `tsc` command without the `npx` prefix
 4. Optional: install the VS Code extension [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks)
-5. run `npm i`
+5. Optional: restarting the Connector using the VSCode task `More Tasks > Restart` requires the tool socat. Make sure to install it on your system. This can be done for example using `apt-get install socat` on Ubuntu and `brew install socat` using Homebrew.
+6. run `npm i`
 
 ## How to run
 
@@ -52,7 +53,9 @@ If you're running on Windows you have to execute the `Restart` task after you sa
 
 ## How to test
 
-To configure the Connector for testing you have to fill the following environment variables:
+### Remote Backbone
+
+Set the following environment variables:
 
 -   NMSHD_TEST_BASEURL (the backbone baseUrl to test against)
 -   NMSHD_TEST_CLIENTID (the backbone clientId for the configured baseUrl)
@@ -60,7 +63,23 @@ To configure the Connector for testing you have to fill the following environmen
 
 > We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
 
-After you have configured the environment variables, you can run the tests with the following command:
+### Local Backbone
+
+To start a local backbone, execute the following command:
+
+```shell
+npm run start:backbone
+```
+
+Set the following environment variables:
+
+-   NMSHD_TEST_BASEURL to `http://localhost:8090`
+-   NMSHD_TEST_CLIENTID to `test`
+-   NMSHD_TEST_CLIENTSECRET to `test`
+
+> We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
+
+### Run the tests
 
 ```shell
 npm run test:local

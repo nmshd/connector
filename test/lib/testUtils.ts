@@ -3,12 +3,16 @@ import {
     ConnectorAttribute,
     ConnectorClient,
     ConnectorFile,
+    ConnectorIdentityAttribute,
     ConnectorMessage,
     ConnectorRelationship,
+    ConnectorRelationshipAttribute,
     ConnectorRelationshipTemplate,
+    ConnectorRequestStatus,
     ConnectorSyncResult,
     ConnectorToken,
-    CreateAttributeRequest,
+    CreateOutgoingRequestRequest,
+    CreateRepositoryAttributeRequest,
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
 import fs from "fs";
@@ -51,6 +55,35 @@ export async function syncUntilHasRelationships(client: ConnectorClient, expecte
 export async function syncUntilHasMessages(client: ConnectorClient, expectedNumberOfMessages = 1): Promise<ConnectorMessage[]> {
     const syncResult = await syncUntil(client, (syncResult) => syncResult.messages.length >= expectedNumberOfMessages);
     return syncResult.messages;
+}
+
+export async function syncUntilHasMessageWithRequest(client: ConnectorClient, requestId: string): Promise<ConnectorMessage> {
+    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
+        return syncResult.messages.filter((m: ConnectorMessage) => (m.content as any)["@type"] === "Request" && (m.content as any).id === requestId);
+    };
+    const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
+    return filterRequestMessagesByRequestId(syncResult)[0];
+}
+export async function syncUntilHasMessageWithNotification(client: ConnectorClient, notificationId: string): Promise<ConnectorMessage> {
+    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
+        return syncResult.messages.filter((m: ConnectorMessage) => (m.content as any)["@type"] === "Notification" && (m.content as any).id === notificationId);
+    };
+    const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
+    return filterRequestMessagesByRequestId(syncResult)[0];
+}
+
+export async function syncUntilHasMessageWithResponse(client: ConnectorClient, requestId: string): Promise<ConnectorMessage> {
+    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
+        return syncResult.messages.filter((m: ConnectorMessage) => {
+            const matcher = (m.content as any)["@type"] === "ResponseWrapper" && (m.content as any).requestId === requestId;
+            return matcher;
+        });
+    };
+    const syncResult = await syncUntil(client, (syncResult) => {
+        const length = filterRequestMessagesByRequestId(syncResult).length;
+        return length !== 0;
+    });
+    return filterRequestMessagesByRequestId(syncResult)[0];
 }
 
 export async function uploadOwnToken(client: ConnectorClient): Promise<ConnectorToken> {
@@ -211,12 +244,125 @@ export async function establishRelationship(client1: ConnectorClient, client2: C
     const relationships2 = await syncUntilHasRelationships(client2);
     expect(relationships2).toHaveLength(1);
 }
-
-export async function createAttribute(client: ConnectorClient, request: CreateAttributeRequest): Promise<ConnectorAttribute> {
-    const response = await client.attributes.createAttribute(request);
+export async function createRepositoryAttribute(client: ConnectorClient, request: CreateRepositoryAttributeRequest): Promise<ConnectorAttribute> {
+    const response = await client.attributes.createRepositoryAttribute(request);
     expect(response).toBeSuccessful(ValidationSchema.ConnectorAttribute);
-
     return response.result;
+}
+
+/**
+ * Creates and shares a relationship attribute, waiting for all communication
+ * and event processing to finish. Expects an established relationship.
+ *
+ * Returns the sender's own shared relationship attribute.
+ */
+export async function executeFullCreateAndShareRelationshipAttributeFlow(
+    sender: ConnectorClient,
+    recipient: ConnectorClient,
+    attributeContent: Omit<ConnectorRelationshipAttribute, "owner" | "@type">
+): Promise<ConnectorAttribute> {
+    const senderIdentityInfoResult = await sender.account.getIdentityInfo();
+    expect(senderIdentityInfoResult.isSuccess).toBe(true);
+    const senderAddress = senderIdentityInfoResult.result.address;
+
+    const recipientIdentityInfoResult = await recipient.account.getIdentityInfo();
+    expect(recipientIdentityInfoResult.isSuccess).toBe(true);
+    const recipientAddress = recipientIdentityInfoResult.result.address;
+
+    const request = await sender.outgoingRequests.createRequest({
+        peer: recipientAddress,
+        content: {
+            items: [
+                {
+                    "@type": "CreateAttributeRequestItem",
+                    mustBeAccepted: true,
+                    attribute: { ...attributeContent, owner: senderAddress, "@type": "RelationshipAttribute" }
+                }
+            ]
+        }
+    });
+
+    const sendMessageResponse = await sender.messages.sendMessage({
+        recipients: [recipientAddress],
+        content: request.result.content
+    });
+    const requestId = (sendMessageResponse.result.content as any).id;
+
+    await syncUntilHasMessageWithRequest(recipient, requestId);
+    let recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
+    while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {
+        await sleep(500);
+        recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
+    }
+    await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
+
+    const responseMessage = await syncUntilHasMessageWithResponse(sender, requestId);
+    const sharedAttributeId = (responseMessage.content as any).response.items[0].attributeId;
+    const senderRequest = (await sender.outgoingRequests.getRequest(requestId)).result;
+    while (senderRequest.status !== ConnectorRequestStatus.Completed) {
+        await sleep(500);
+    }
+
+    const senderOwnSharedRelationshipAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
+    return senderOwnSharedRelationshipAttribute;
+}
+
+/**
+ * Creates a repository attribute on sender's side and shares it with
+ * recipient, waiting for all communication and event processing to finish.
+ * Expects an established relationship.
+ *
+ * Returns the sender's own shared identity attribute.
+ */
+export async function executeFullCreateAndShareIdentityAttributeFlow(
+    sender: ConnectorClient,
+    recipient: ConnectorClient,
+    attributeContent: ConnectorIdentityAttribute
+): Promise<ConnectorAttribute> {
+    const recipientIdentityInfoResult = await recipient.account.getIdentityInfo();
+    expect(recipientIdentityInfoResult.isSuccess).toBe(true);
+    const recipientAddress = recipientIdentityInfoResult.result.address;
+
+    const createAttributeRequestResult = await sender.attributes.createRepositoryAttribute({ content: { value: attributeContent.value } });
+    const attribute = createAttributeRequestResult.result;
+
+    const shareAttributeRequest: CreateOutgoingRequestRequest = {
+        peer: recipientAddress,
+        content: {
+            items: [
+                {
+                    "@type": "ShareAttributeRequestItem",
+                    mustBeAccepted: true,
+                    sourceAttributeId: attribute.id,
+                    attribute: attributeContent
+                }
+            ]
+        }
+    };
+
+    const createRequestResult = await sender.outgoingRequests.createRequest(shareAttributeRequest);
+
+    const sendMessageResponse = await sender.messages.sendMessage({
+        recipients: [recipientAddress],
+        content: createRequestResult.result.content
+    });
+
+    const requestId = (sendMessageResponse.result.content as any).id;
+    await syncUntilHasMessageWithRequest(recipient, requestId);
+
+    let recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
+    while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {
+        await sleep(500);
+        recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
+    }
+
+    await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
+
+    const responseMessage = await syncUntilHasMessageWithResponse(sender, requestId);
+    const sharedAttributeId = (responseMessage as any).content.response.items[0].attributeId;
+
+    const senderOwnSharedIdentityAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
+    return senderOwnSharedIdentityAttribute;
 }
 
 /**

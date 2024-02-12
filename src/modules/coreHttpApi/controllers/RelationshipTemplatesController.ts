@@ -1,7 +1,7 @@
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import express from "express";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, Errors, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, Errors, GET, POST, Path, PathParam, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController, Mimetype } from "../common/BaseController";
 
@@ -47,7 +47,7 @@ export class RelationshipTemplatesController extends BaseController {
     public async getRelationshipTemplate(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         switch (accept) {
             case "image/png":
-                const qrCodeResult = await this.transportServices.relationshipTemplates.createQrCodeForOwnTemplate({ templateId: id });
+                const qrCodeResult = await this.transportServices.relationshipTemplates.createQRCodeForOwnTemplate({ templateId: id });
 
                 return this.file(
                     qrCodeResult,
@@ -94,7 +94,7 @@ export class RelationshipTemplatesController extends BaseController {
     ): Promise<Return.NewResource<Envelope> | void> {
         switch (accept) {
             case "image/png":
-                const qrCodeResult = await this.transportServices.relationshipTemplates.createTokenQrCodeForOwnTemplate({
+                const qrCodeResult = await this.transportServices.relationshipTemplates.createTokenQRCodeForOwnTemplate({
                     templateId: id,
                     expiresAt: request.expiresAt
                 });

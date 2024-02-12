@@ -7,11 +7,19 @@ export interface ConnectorAttribute {
     shareInfo?: ConnectorAttributeShareInfo;
 }
 
-export interface ConnectorAttributeShareInfo {
+export interface ConnectorAttributeShareInfoForRequest {
     requestReference: string;
     peer: string;
     sourceAttribute?: string;
 }
+
+export interface ConnectorAttributeShareInfoForNotification {
+    notificationReference: string;
+    peer: string;
+    sourceAttribute?: string;
+}
+
+export type ConnectorAttributeShareInfo = ConnectorAttributeShareInfoForNotification | ConnectorAttributeShareInfoForRequest;
 
 export interface ConnectorBaseAttribute {
     "@type": string;

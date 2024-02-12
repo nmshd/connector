@@ -18,6 +18,7 @@
         "strictPropertyInitialization": false,
         "downlevelIteration": true,
         "lib": ["es2021"],
+        "declarationMap": true,
         "typeRoots": ["./node_modules/@types"]
     },
     "include": ["src/**/*"]

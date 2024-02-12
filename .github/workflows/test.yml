@@ -7,57 +7,61 @@ jobs:
   run-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: bash .ci/runChecks.sh
 
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - name: Start Backbone
+        run: npm run start:backbone
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: npm ci
       - run: npm run build:ci --workspaces --if-present
       - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.6.0
+        uses: supercharge/mongodb-github-action@v1
       - run: npm run test:ci --workspaces --if-present
         env:
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017
-          NMSHD_TEST_BASEURL: ${{ secrets.CNS_NMSHD_TEST_BASEURL }}
-          NMSHD_TEST_CLIENTID: ${{ secrets.CNS_NMSHD_TEST_CLIENTID }}
-          NMSHD_TEST_CLIENTSECRET: ${{ secrets.CNS_NMSHD_TEST_CLIENTSECRET }}
+          NMSHD_TEST_BASEURL: http://localhost:8090
+          NMSHD_TEST_CLIENTID: test
+          NMSHD_TEST_CLIENTSECRET: test
 
   test-ferret:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - name: Start Backbone
+        run: npm run start:backbone
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: npm ci
       - run: npm run build:ci --workspaces --if-present
-      - uses: js-soft/ferretdb-github-action@1.0.2
+      - uses: js-soft/ferretdb-github-action@1.1.0
         with:
           ferretdb-telemetry: "enabled"
       - run: npm run test:ci
         env:
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017
-          NMSHD_TEST_BASEURL: ${{ secrets.CNS_NMSHD_TEST_BASEURL }}
-          NMSHD_TEST_CLIENTID: ${{ secrets.CNS_NMSHD_TEST_CLIENTID }}
-          NMSHD_TEST_CLIENTSECRET: ${{ secrets.CNS_NMSHD_TEST_CLIENTSECRET }}
+          NMSHD_TEST_BASEURL: http://localhost:8090
+          NMSHD_TEST_CLIENTID: test
+          NMSHD_TEST_CLIENTSECRET: test
 
   build-docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build the productive docker image
         run: bash .ci/testBuildingProductiveDockerImage.sh
 
   lint-helm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: azure/setup-helm@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

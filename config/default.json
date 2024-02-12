@@ -46,6 +46,12 @@
         }
     },
     "modules": {
+        "notification": {
+            "enabled": true,
+            "displayName": "Notification Module",
+            "name": "NotificationModule",
+            "location": "@nmshd/runtime:NotificationModule"
+        },
         "decider": {
             "enabled": true,
             "displayName": "Decider Module",

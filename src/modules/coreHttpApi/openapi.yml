@@ -281,8 +281,8 @@ paths:
 
   /api/v2/Attributes:
     post:
-      operationId: createAttribute
-      description: Create an Attribute
+      operationId: createRepositoryAttribute
+      description: "Creates a Repository Attribute."
       tags:
         - Attributes
       requestBody:
@@ -292,12 +292,24 @@ paths:
               additionalProperties: false
               properties:
                 content:
-                  anyOf:
-                    - "$ref": "#/components/schemas/IdentityAttribute"
-                    - "$ref": "#/components/schemas/RelationshipAttribute"
-              required:
-                - content
-              type: object
+                  type: object
+                  additionalProperties: false
+                  required:
+                    - value
+                  properties:
+                    "@type":
+                      type: string
+                      enum: ["IdentityAttribute"]
+                    owner:
+                      $ref: "#/components/schemas/Address"
+                    value:
+                      $ref: "#/components/schemas/AttributeValue"
+                    tags:
+                      $ref: "#/components/schemas/IdentityAttributeContent_tags"
+                    validFrom:
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
+                    validTo:
+                      $ref: "#/components/schemas/AttributeContent_validTo"
       responses:
         201:
           description: Success
@@ -305,13 +317,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  result:
-                    type: object
-                    nullable: false
-                    $ref: "#/components/schemas/Attribute"
                 required:
                   - result
+                properties:
+                  result:
+                    $ref: "#/components/schemas/CreateRepositoryAttributeResponse"
+
           headers:
             X-Response-Duration-ms:
               schema:
@@ -430,6 +441,146 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         403:
           $ref: "#/components/responses/Forbidden"
+
+  /api/v2/Attributes/{predecessorId}/Succeed:
+    post:
+      operationId: succeedAttribute
+      description: Succeeds either a relationship attribute or a repository attribute.
+      tags:
+        - Attributes
+      parameters:
+        - name: predecessorId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/AttributeID"
+          description: ID of the predecessor attribute
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: false
+              properties:
+                successorContent:
+                  type: object
+                  additionalProperties: false
+                  required:
+                    - value
+                  properties:
+                    value:
+                      $ref: "#/components/schemas/AttributeValue"
+                    tags:
+                      $ref: "#/components/schemas/IdentityAttributeContent_tags"
+                    validFrom:
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
+                    validTo:
+                      $ref: "#/components/schemas/AttributeContent_validTo"
+
+      responses:
+        201:
+          description: |
+            Success. Succeeding a relationship/repository attribute returns the predecessor and successor.
+            Additionally, for relationship attributes the ID of the notification sent to the peer is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - result
+                properties:
+                  result:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - predecessor
+                      - successor
+                    properties:
+                      predecessor:
+                        $ref: "#/components/schemas/Attribute"
+                      successor:
+                        $ref: "#/components/schemas/Attribute"
+                      notificationId:
+                        $ref: "#/components/schemas/NotificationID"
+
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v2/Attributes/{attributeId}/NotifyPeer:
+    post:
+      operationId: notifyPeerAboutRepositoryAttributeSuccession
+      description: |
+        Notifies a peer about a succeeded and previously shared repository
+        attribute.
+      tags:
+        - Attributes
+      parameters:
+        - name: attributeId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/AttributeID"
+          description: ID of the succeeded repository attribute
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: false
+              properties:
+                peer:
+                  $ref: "#/components/schemas/Address"
+
+      responses:
+        201:
+          description: |
+            "Success. Returns the successor and predecessor own shared repository
+            attributes as well as the ID of the notification sent to the peer."
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - result
+                properties:
+                  result:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - predecessor
+                      - successor
+                    properties:
+                      predecessor:
+                        $ref: "#/components/schemas/Attribute"
+                      successor:
+                        $ref: "#/components/schemas/Attribute"
+                      notificationId:
+                        $ref: "#/components/schemas/NotificationID"
+
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
 
   /api/v2/Attributes/{id}:
     get:
@@ -585,11 +736,9 @@ paths:
                         type: string
                       type: array
                     validFrom:
-                      description: The date the attribute became valid.
-                      type: string
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
                     validTo:
-                      description: The date the attribute becomes invalid.
-                      type: string
+                      $ref: "#/components/schemas/AttributeContent_validTo"
                     valueType:
                       description: The valueType of the attribute.
                       type: string
@@ -645,21 +794,15 @@ paths:
                       description: The owner of the relationship attribute.
                       type: string
                     validFrom:
-                      description: The date the attribute became valid.
-                      type: string
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
                     validTo:
-                      description: The date the attribute becomes invalid.
-                      type: string
+                      $ref: "#/components/schemas/AttributeContent_validTo"
                     attributeCreationHints:
                       description: This describes how to create an attribute if it does not exist.
                       type: object
                       properties:
                         confidentiality:
-                          enum:
-                            - public
-                            - private
-                            - protected
-                          type: string
+                          $ref: "#/components/schemas/Confidentiality"
                         description:
                           type: string
                         isTechnical:
@@ -766,11 +909,9 @@ paths:
                       items:
                         $ref: "#/components/schemas/Address"
                     validFrom:
-                      description: The date the attribute became valid.
-                      type: string
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
                     validTo:
-                      description: The date the attribute becomes invalid.
-                      type: string
+                      $ref: "#/components/schemas/AttributeContent_validTo"
                   required:
                     - key
                     - owner
@@ -2227,7 +2368,7 @@ paths:
             examples:
               RelationshipTemplateReference:
                 value: |
-                  { 
+                  {
                     "id": "RLT_________________",
                     "secretKey": "YOUR_SECRET_KEY"
                   }
@@ -3105,7 +3246,7 @@ paths:
                   }
               TokenReferenceTruncated:
                 value: |
-                  { 
+                  {
                     "reference": "YOUR_REFERENCE"
                   }
       responses:
@@ -3511,6 +3652,14 @@ components:
       maxLength: 20
       description: The ID of a message.
 
+    NotificationID:
+      type: string
+      format: NotificationID
+      minLength: 20
+      example: NOT_________________
+      maxLength: 20
+      description: The ID of a notification.
+
     RelationshipID:
       type: string
       format: RelationshipID
@@ -3572,6 +3721,10 @@ components:
     IdentityAttribute:
       type: object
       additionalProperties: false
+      required:
+        - "@type"
+        - owner
+        - value
       properties:
         "@type":
           type: string
@@ -3581,24 +3734,13 @@ components:
             - $ref: "#/components/schemas/Address"
           description: The address of the identity that owns the attribute.
         tags:
-          type: array
-          items:
-            type: string
-          description: The tags of the attribute.
+          $ref: "#/components/schemas/IdentityAttributeContent_tags"
         validFrom:
-          type: string
-          format: date-time
-          description: The date and time when the attribute becomes valid.
+          $ref: "#/components/schemas/AttributeContent_validFrom"
         validTo:
-          type: string
-          format: date-time
-          description: The date and time when the attribute expires.
+          $ref: "#/components/schemas/AttributeContent_validTo"
         value:
           "$ref": "#/components/schemas/AttributeValue"
-      required:
-        - "@type"
-        - owner
-        - value
 
     RelationshipAttribute:
       type: object
@@ -3607,10 +3749,7 @@ components:
         "@type":
           type: string
         confidentiality:
-          enum:
-            - public
-            - private
-            - protected
+          $ref: "#/components/schemas/Confidentiality"
           type: string
           description: The confidentiality of the attribute.
         isTechnical:
@@ -3625,13 +3764,9 @@ components:
             - $ref: "#/components/schemas/Address"
           description: The address of the identity that owns the attribute.
         validFrom:
-          type: string
-          format: date-time
-          description: The date and time when the attribute becomes valid.
+          $ref: "#/components/schemas/AttributeContent_validFrom"
         validTo:
-          type: string
-          format: date-time
-          description: The date and time when the attribute expires.
+          $ref: "#/components/schemas/AttributeContent_validTo"
         value:
           "$ref": "#/components/schemas/AttributeValue"
       required:
@@ -3640,6 +3775,30 @@ components:
         - key
         - owner
         - value
+
+    AttributeContent_validFrom:
+      type: string
+      format: date-time
+      description: The date and time when the attribute becomes valid.
+
+    AttributeContent_validTo:
+      type: string
+      format: date-time
+      description: The date and time when the attribute expires.
+
+    IdentityAttributeContent_tags:
+      type: array
+      items:
+        type: string
+      description: The tags of the attribute.
+      example: ["tag_1", "tag_2"]
+
+    Confidentiality:
+      enum:
+        - public
+        - protected
+        - private
+      type: string
 
     Attribute:
       type: object
@@ -3700,7 +3859,7 @@ components:
 
     AttributeValue:
       type: object
-      additionalProperties: {}
+      additionalProperties: true
       properties:
         "@type":
           type: string
@@ -4218,6 +4377,41 @@ components:
         - content
         - peer
 
+    CreateRepositoryAttributeResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/AttributeID"
+          nullable: false
+          description: The ID of the attribute.
+        parentId:
+          "$ref": "#/components/schemas/AttributeID"
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time when the attribute was created.
+        shareInfo:
+          "$ref": "#/components/schemas/AttributeShareInfo"
+        succeededBy:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/AttributeID"
+          description: The ID of the attribute that was used to succeed this attribute.
+        succeeds:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/AttributeID"
+          description: The ID of the attribute that this attribute succeeds.
+        content:
+          anyOf:
+            - "$ref": "#/components/schemas/IdentityAttribute"
+      required:
+        - id
+        - createdAt
+        - content
+
     RequestValidationResult:
       type: object
       properties:
@@ -4239,6 +4433,20 @@ components:
       required:
         - isSuccess
         - items
+
+    RequestMetadata:
+      type: object
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        metadata:
+          type: object
+        expiresAt:
+          type: string
+          format: date-time
 
     Message:
       type: object
@@ -4684,9 +4892,9 @@ components:
               type: string
             code:
               description: >
-                The error code.  
+                The error code.
 
-                There are some generic error codes like: 
+                There are some generic error codes like:
                   - error.connector.recordNotFound
                   - error.connector.unauthorized
                   - error.connector.forbidden
