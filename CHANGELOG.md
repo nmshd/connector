@@ -2,8 +2,9 @@
 
 ## 3.7.2
 
+-> SDK 4.0.0
+
 -   upgrade the runtime version to 4.0.0
--   upgrade the sdk version to 4.0.0
 
 ## 3.7.1
 
