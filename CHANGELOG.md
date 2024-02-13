@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.0
+
+-   upgrade the runtime version to 4.0.0
+-   use the names 'repository attribute' and 'own shared identity attribute'
+
 ## 3.7.1
 
 -   upgrade the runtime version to 3.7.0
