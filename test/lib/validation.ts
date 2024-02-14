@@ -34,7 +34,8 @@ export enum ValidationSchema {
     ConnectorRequest = "ConnectorRequest",
     ConnectorRequests = "ConnectorRequests",
     ConnectorAttribute = "ConnectorAttribute",
-    ConnectorAttributes = "ConnectorAttributes"
+    ConnectorAttributes = "ConnectorAttributes",
+    SucceedAttributeResponse = "SucceedAttributeResponse"
 }
 
 export function validateSchema(schemaName: ValidationSchema, obj: any): void {

@@ -14,6 +14,8 @@ import {
     SucceedAttributeRequest,
     SucceedAttributeResponse
 } from "../types";
+import { GetOwnRepositoryAttributes } from "../types/attributes/requests/GetOwnRepositoryAttributesRequest";
+import { GetOwnSharedIdentityAttributesRequest } from "../types/attributes/requests/GetOwnSharedIdentityAttributes";
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
@@ -42,6 +44,13 @@ export class AttributesEndpoint extends Endpoint {
 
     public async getValidAttributes(request: GetValidAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Valid", request);
+    }
+
+    public async getOwnRepositoryAttributes(request?: GetOwnRepositoryAttributes): Promise<ConnectorResponse<ConnectorAttributes>> {
+        return await this.get("/api/v2/Attributes/Own/Repository", request);
+    }
+    public async getOwnSharedIdentityAttributes(request?: GetOwnSharedIdentityAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
+        return await this.get("/api/v2/Attributes/Own/Shared", request);
     }
 
     public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttributes>> {

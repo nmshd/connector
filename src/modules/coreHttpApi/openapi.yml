@@ -279,11 +279,17 @@ paths:
 
   # ------------------- Attributes -------------------
 
-  /api/v2/Attributes/Own/Identity:
+  /api/v2/Attributes/Own/Repository:
     get:
-      operationId: getOwnIdentityAttributes
+      operationId: getOwnRepositoryAttributes
       tags:
         - New
+      parameters:
+        - name: onlyLatestVersions
+          in: query
+          required: false
+          schema:
+            type: boolean
       responses:
         200:
           description: Success
@@ -310,11 +316,98 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/Own/Identity/Shared:
+  /api/v2/Attributes/Own/Shared:
     get:
       operationId: getOwnSharedIdentityAttributes
       tags:
         - New
+      parameters:
+        - name: query.createdAt
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: query.content.@type
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.content.tags
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.content.validFrom
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: query.content.validTo
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: query.content.key
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.content.isTechnical
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
+        - name: query.content.confidentiality
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.content.value.@type
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.shareInfo
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.shareInfo.requestReference
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.shareInfo.notificationReference
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.shareInfo.sourceAttribute
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: peer
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+        - name: onlyValid
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: hideTechnical
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: onlyLatestVersions
+          in: query
+          required: false
+          schema:
+            type: boolean
+
       responses:
         200:
           description: Success
@@ -341,7 +434,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/Peer/Identity/Shared:
+  /api/v2/Attributes/Peer/Shared:
     get:
       operationId: getPeerSharedIdentityAttributes
       tags:

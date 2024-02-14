@@ -1,4 +1,4 @@
-import { ConnectorClient, ConnectorRelationshipAttribute } from "@nmshd/connector-sdk";
+import { ConnectorAttribute, ConnectorClient, ConnectorRelationshipAttribute, ConnectorResponse } from "@nmshd/connector-sdk";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import {
@@ -90,7 +90,7 @@ describe("Attributes", () => {
             }
         });
 
-        expect(succeedAttributeResponse.isSuccess).toBe(true);
+        expect(succeedAttributeResponse).toBeSuccessful(ValidationSchema.SucceedAttributeResponse);
 
         const succeededAttribute = (await client1.attributes.getAttribute(succeedAttributeResponse.result.successor.id)).result;
 
@@ -276,5 +276,143 @@ describe("Execute AttributeQueries", () => {
         expect(executeRelationshipAttributeQueryResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
 
         expect(executeRelationshipAttributeQueryResponse.result.content.value.value).toBe("AGivenName");
+    });
+});
+
+describe("Read Attribute and versions", () => {
+    const launcher = new Launcher();
+    let client1: ConnectorClient;
+    let client2: ConnectorClient;
+    let client1Address: string;
+    let client2Address: string;
+    beforeEach(async () => {
+        // TODO remove this and switch to the global defined in beforeAll once a remove all attributes is available
+        [client1, client2] = await launcher.launch(2);
+        client1Address = (await client1.account.getIdentityInfo()).result.address;
+        client2Address = (await client2.account.getIdentityInfo()).result.address;
+        await establishRelationship(client1, client2);
+    });
+
+    afterEach(() => {
+        launcher.stop();
+    });
+
+    test("should get all the repository attributes only", async () => {
+        const attributes = await client1.attributes.getOwnRepositoryAttributes({});
+        expect(attributes.result).toHaveLength(0);
+
+        const numberOfAttributes = 5;
+        for (let i = 0; i < numberOfAttributes; i++) {
+            const newAtt = await client1.attributes.createRepositoryAttribute({
+                content: {
+                    value: {
+                        "@type": "GivenName",
+                        value: `AGivenName${i}`
+                    }
+                }
+            });
+            expect(newAtt).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+        }
+        await executeFullCreateAndShareIdentityAttributeFlow(client1, client2, {
+            "@type": "IdentityAttribute",
+            value: {
+                "@type": "GivenName",
+                value: "AGivenName5"
+            },
+            owner: client1Address
+        });
+
+        const newAttributes = await client1.attributes.getOwnRepositoryAttributes();
+        expect(newAttributes.result).toHaveLength(6);
+    });
+
+    test("should get all the latest repository attributes only", async () => {
+        const attributesResponse = await client1.attributes.getOwnRepositoryAttributes({});
+        expect(attributesResponse.result).toHaveLength(0);
+
+        const numberOfAttributes = 5;
+        let newAttributeResponse: ConnectorResponse<ConnectorAttribute>;
+        for (let i = 0; i < numberOfAttributes; i++) {
+            newAttributeResponse = await client1.attributes.createRepositoryAttribute({
+                content: {
+                    value: {
+                        "@type": "GivenName",
+                        value: `AGivenName${i}`
+                    }
+                }
+            });
+            expect(newAttributeResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+        }
+
+        await client1.attributes.succeedAttribute(newAttributeResponse!.result.id, {
+            successorContent: {
+                value: {
+                    "@type": "GivenName",
+                    value: "ANewGivenName"
+                }
+            }
+        });
+        const allAttributesResponse = await client1.attributes.getOwnRepositoryAttributes({ onlyLatestVersions: false });
+        expect(allAttributesResponse.result).toHaveLength(6);
+
+        const onylLatestAttributesResponse = await client1.attributes.getOwnRepositoryAttributes({ onlyLatestVersions: true });
+        expect(onylLatestAttributesResponse.result).toHaveLength(5);
+    });
+
+    test("should get all own shared identity attributes", async () => {
+        await executeFullCreateAndShareIdentityAttributeFlow(client1, client2, {
+            "@type": "IdentityAttribute",
+            value: {
+                "@type": "GivenName",
+                value: "ANewGivenName"
+            },
+            owner: client1Address
+        });
+
+        await client1.attributes.createRepositoryAttribute({
+            content: {
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
+                }
+            }
+        });
+
+        const attributesResponse = await client1.attributes.getOwnSharedIdentityAttributes({
+            peer: client2Address
+        });
+
+        expect(attributesResponse.result).toHaveLength(1);
+    });
+
+    test("should get the latest own shared identity attributes", async () => {
+        const sharedAttribute = await executeFullCreateAndShareIdentityAttributeFlow(client1, client2, {
+            "@type": "IdentityAttribute",
+            value: {
+                "@type": "GivenName",
+                value: "AGivenName"
+            },
+            owner: client1Address
+        });
+
+        const succeededAttributeResponse = await client1.attributes.succeedAttribute(sharedAttribute.shareInfo!.sourceAttribute!, {
+            successorContent: {
+                value: {
+                    "@type": "GivenName",
+                    value: "ANewGivenName"
+                }
+            }
+        });
+
+        await client1.attributes.notifyPeerAboutIdentityAttributeSuccession(succeededAttributeResponse.result.predecessor.id, {
+            peer: client2Address
+        });
+
+        const attributesResponse = await client1.attributes.getOwnSharedIdentityAttributes({
+            peer: client2Address,
+            onlyLatestVersions: true
+        });
+
+        expect(attributesResponse.result).toHaveLength(1);
     });
 });
