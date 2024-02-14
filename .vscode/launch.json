@@ -10,7 +10,6 @@
             "restart": true,
             "localRoot": "${workspaceFolder}",
             "remoteRoot": "/usr/app",
-            // "outFiles": ["${workspaceFolder}/dist/**/*.js", "${workspaceFolder}/packages/runtime/packages/*/dist/*.js"],
             "skipFiles": ["<node_internals>/**"]
         },
         {
@@ -22,7 +21,6 @@
             "restart": true,
             "localRoot": "${workspaceFolder}",
             "remoteRoot": "/usr/app",
-            // "outFiles": ["${workspaceFolder}/dist/**/*.js"],
             "skipFiles": ["<node_internals>/**"]
         }
     ]
