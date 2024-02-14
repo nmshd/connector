@@ -316,7 +316,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/Own/Shared:
+  /api/v2/Attributes/Own/Shared/Identity:
     get:
       operationId: getOwnSharedIdentityAttributes
       tags:
@@ -434,11 +434,93 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/Peer/Shared:
+  /api/v2/Attributes/Peer/Shared/Identity:
     get:
       operationId: getPeerSharedIdentityAttributes
       tags:
         - New
+
+      parameters:
+        - name: query.createdAt
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: query.content.@type
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.content.tags
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.content.validFrom
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: query.content.validTo
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: query.content.key
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.content.isTechnical
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
+        - name: query.content.confidentiality
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.content.value.@type
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.shareInfo
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.shareInfo.requestReference
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: query.shareInfo.notificationReference
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: peer
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+        - name: onlyValid
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: hideTechnical
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: onlyLatestVersions
+          in: query
+          required: false
+          schema:
+            type: boolean
       responses:
         200:
           description: Success
@@ -465,11 +547,18 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/{id}/Versions/:
+  /api/v2/Attributes/{id}/Versions:
     get:
       operationId: getVersionsOfAttribute
       tags:
         - New
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Attribute.
+          required: true
+          schema:
+            $ref: "#/components/schemas/AttributeID"
       responses:
         200:
           description: Success
@@ -498,9 +587,31 @@ paths:
 
   /api/v2/Attributes/{id}/Versions/Shared:
     get:
-      operationId: getSharedVersionsOfIdentityAttribute
+      operationId: getSharedVersionsOfRepositoryAttribute
       tags:
         - New
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Attribute.
+          required: true
+          schema:
+            $ref: "#/components/schemas/AttributeID"
+        - in: query
+          name: peers
+          description: An array of peers
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Address"
+        - in: query
+          name: onlyLatestVersion
+          description: Whether to only get the latest version of the attribute for each peer
+          required: false
+          schema:
+            type: boolean
+            default: true
       responses:
         200:
           description: Success

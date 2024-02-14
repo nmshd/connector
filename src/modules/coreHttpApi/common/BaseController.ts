@@ -1,9 +1,12 @@
 import { Result } from "@js-soft/ts-utils";
 import express from "express";
-import { Return } from "typescript-rest";
+import { Context, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 
 export abstract class BaseController {
+    @Context
+    protected context: ServiceContext;
+
     protected created<T>(result: Result<T>): Return.NewResource<Envelope> {
         return new Return.NewResource<Envelope>("_", this.json<T>(result));
     }

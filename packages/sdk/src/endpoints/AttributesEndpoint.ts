@@ -16,6 +16,8 @@ import {
 } from "../types";
 import { GetOwnRepositoryAttributes } from "../types/attributes/requests/GetOwnRepositoryAttributesRequest";
 import { GetOwnSharedIdentityAttributesRequest } from "../types/attributes/requests/GetOwnSharedIdentityAttributes";
+import { GetPeerSharedIdentityAttributesRequest } from "../types/attributes/requests/GetPeerSharedIdentityAttributes";
+import { GetSharedVersionsOfRepositoryAttributeRequest } from "../types/attributes/requests/GetSharedVersionsOfRepositoryAttributeRequest";
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
@@ -50,7 +52,19 @@ export class AttributesEndpoint extends Endpoint {
         return await this.get("/api/v2/Attributes/Own/Repository", request);
     }
     public async getOwnSharedIdentityAttributes(request?: GetOwnSharedIdentityAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
-        return await this.get("/api/v2/Attributes/Own/Shared", request);
+        return await this.get("/api/v2/Attributes/Own/Shared/Identity", request);
+    }
+    public async getPeerSharedIdentityAttributes(request?: GetPeerSharedIdentityAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
+        return await this.get("/api/v2/Attributes/Peer/Shared/Identity", request);
+    }
+    public async getVersionsOfAttribute(attributeId: string): Promise<ConnectorResponse<ConnectorAttributes>> {
+        return await this.get(`/api/v2/Attributes/${attributeId}/Versions`);
+    }
+    public async getSharedVersionsOfRepositoryAttribute(
+        attributeId: string,
+        request: GetSharedVersionsOfRepositoryAttributeRequest = { onlyLatestVersion: false }
+    ): Promise<ConnectorResponse<ConnectorAttributes>> {
+        return await this.get(`/api/v2/Attributes/${attributeId}/Versions/Shared`, request);
     }
 
     public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttributes>> {

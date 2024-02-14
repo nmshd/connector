@@ -359,7 +359,7 @@ describe("Read Attribute and versions", () => {
         expect(onylLatestAttributesResponse.result).toHaveLength(5);
     });
 
-    test("should get all own shared identity attributes", async () => {
+    test("should get all own/peer shared identity attributes", async () => {
         await executeFullCreateAndShareIdentityAttributeFlow(client1, client2, {
             "@type": "IdentityAttribute",
             value: {
@@ -378,14 +378,19 @@ describe("Read Attribute and versions", () => {
             }
         });
 
-        const attributesResponse = await client1.attributes.getOwnSharedIdentityAttributes({
+        const ownAttributesResponse = await client1.attributes.getOwnSharedIdentityAttributes({
             peer: client2Address
         });
 
-        expect(attributesResponse.result).toHaveLength(1);
+        const peerAttributesResponse = await client2.attributes.getPeerSharedIdentityAttributes({
+            peer: client1Address
+        });
+
+        expect(ownAttributesResponse.result).toHaveLength(1);
+        expect(peerAttributesResponse.result).toHaveLength(1);
     });
 
-    test("should get the latest own shared identity attributes", async () => {
+    test("should get the latest own/peer shared identity attributes", async () => {
         const sharedAttribute = await executeFullCreateAndShareIdentityAttributeFlow(client1, client2, {
             "@type": "IdentityAttribute",
             value: {
@@ -408,11 +413,79 @@ describe("Read Attribute and versions", () => {
             peer: client2Address
         });
 
-        const attributesResponse = await client1.attributes.getOwnSharedIdentityAttributes({
+        const ownAttributesResponse = await client1.attributes.getOwnSharedIdentityAttributes({
             peer: client2Address,
             onlyLatestVersions: true
         });
 
-        expect(attributesResponse.result).toHaveLength(1);
+        const peerAttributesResponse = await client2.attributes.getPeerSharedIdentityAttributes({
+            peer: client1Address,
+            onlyLatestVersions: true
+        });
+
+        expect(ownAttributesResponse.result).toHaveLength(1);
+        expect(peerAttributesResponse.result).toHaveLength(1);
+    });
+
+    test("should get all local/shard versions of an attribute", async () => {
+        const [client3] = await launcher.launch(1);
+        await establishRelationship(client1, client3);
+        const client3Address = (await client3.account.getIdentityInfo()).result.address;
+        const newAttributeResponse = await executeFullCreateAndShareIdentityAttributeFlow(client1, [client2, client3], {
+            "@type": "IdentityAttribute",
+            value: {
+                "@type": "GivenName",
+                value: "AGivenName"
+            },
+            owner: client1Address
+        });
+        const numberOfSuccessions = 5;
+        const initialRepositoryAttributeId = newAttributeResponse[0].shareInfo!.sourceAttribute!;
+        let latestSuccessionId = initialRepositoryAttributeId;
+
+        for (let i = 0; i < numberOfSuccessions; i++) {
+            const successionResponse = await client1.attributes.succeedAttribute(latestSuccessionId, {
+                successorContent: {
+                    value: {
+                        "@type": "GivenName",
+                        value: `AGivenName${i}`
+                    }
+                }
+            });
+            latestSuccessionId = successionResponse.result.successor.id;
+            await client1.attributes.notifyPeerAboutIdentityAttributeSuccession(successionResponse.result.successor.id, {
+                peer: client2Address
+            });
+            await client1.attributes.notifyPeerAboutIdentityAttributeSuccession(successionResponse.result.successor.id, {
+                peer: client3Address
+            });
+        }
+
+        const allVersions = await client1.attributes.getVersionsOfAttribute(initialRepositoryAttributeId);
+        expect(allVersions.result).toHaveLength(6);
+
+        const allSharedVersions = await client1.attributes.getSharedVersionsOfRepositoryAttribute(initialRepositoryAttributeId, {
+            onlyLatestVersion: false
+        });
+        expect(allSharedVersions.result).toHaveLength(12);
+
+        const allOfMultiplePeersSharedVersions = await client1.attributes.getSharedVersionsOfRepositoryAttribute(initialRepositoryAttributeId, {
+            onlyLatestVersion: false,
+            peers: [client2Address, client3Address]
+        });
+
+        expect(allOfMultiplePeersSharedVersions.result).toHaveLength(12);
+        const allOfOnePeersSharedVersions = await client1.attributes.getSharedVersionsOfRepositoryAttribute(initialRepositoryAttributeId, {
+            onlyLatestVersion: false,
+            peers: [client2Address]
+        });
+
+        expect(allOfOnePeersSharedVersions.result).toHaveLength(6);
+        const latestOfAllPeersSharedVersions = await client1.attributes.getSharedVersionsOfRepositoryAttribute(initialRepositoryAttributeId, {
+            onlyLatestVersion: true,
+            peers: [client2Address, client3Address]
+        });
+
+        expect(latestOfAllPeersSharedVersions.result).toHaveLength(2);
     });
 });
