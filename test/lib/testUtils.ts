@@ -17,9 +17,8 @@ import {
 } from "@nmshd/connector-sdk";
 import fs from "fs";
 import { DateTime } from "luxon";
-import { ValidationSchema } from "./validation";
-
 import { MongoClient } from "mongodb";
+import { ValidationSchema } from "./validation";
 
 export async function connectAndEmptyCollection(databaseName: string, collectionName: string): Promise<void> {
     const client = new MongoClient(process.env.DATABASE_CONNECTION_STRING!);
