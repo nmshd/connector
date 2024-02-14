@@ -282,7 +282,6 @@ describe("Execute AttributeQueries", () => {
 
 describe("Read Attribute and versions", () => {
     beforeEach(async () => {
-        // TODO remove this and switch to the global defined in beforeAll once a remove all attributes is available
         await connectAndEmptyCollection(client1._metadata!.accountName, "Attributes");
         await connectAndEmptyCollection(client2._metadata!.accountName, "Attributes");
     });
