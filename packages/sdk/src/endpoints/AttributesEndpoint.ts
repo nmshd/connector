@@ -8,16 +8,16 @@ import {
     ExecuteRelationshipAttributeQueryRequest,
     ExecuteThirdPartyRelationshipAttributeQueryRequest,
     GetAttributesRequest,
+    GetOwnRepositoryAttributesRequest,
+    GetOwnSharedIdentityAttributesRequest,
+    GetPeerSharedIdentityAttributesRequest,
+    GetSharedVersionsOfRepositoryAttributeRequest,
     GetValidAttributesRequest,
     NotifyPeerAboutIdentityAttributeSuccessionRequest,
     NotifyPeerAboutIdentityAttributeSuccessionResponse,
     SucceedAttributeRequest,
     SucceedAttributeResponse
 } from "../types";
-import { GetOwnRepositoryAttributes } from "../types/attributes/requests/GetOwnRepositoryAttributesRequest";
-import { GetOwnSharedIdentityAttributesRequest } from "../types/attributes/requests/GetOwnSharedIdentityAttributes";
-import { GetPeerSharedIdentityAttributesRequest } from "../types/attributes/requests/GetPeerSharedIdentityAttributes";
-import { GetSharedVersionsOfRepositoryAttributeRequest } from "../types/attributes/requests/GetSharedVersionsOfRepositoryAttributeRequest";
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
@@ -48,7 +48,7 @@ export class AttributesEndpoint extends Endpoint {
         return await this.get("/api/v2/Attributes/Valid", request);
     }
 
-    public async getOwnRepositoryAttributes(request?: GetOwnRepositoryAttributes): Promise<ConnectorResponse<ConnectorAttributes>> {
+    public async getOwnRepositoryAttributes(request?: GetOwnRepositoryAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Own/Repository", request);
     }
     public async getOwnSharedIdentityAttributes(request?: GetOwnSharedIdentityAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {

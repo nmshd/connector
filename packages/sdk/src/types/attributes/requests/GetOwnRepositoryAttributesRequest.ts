@@ -1,3 +1,3 @@
-export interface GetOwnRepositoryAttributes {
+export interface GetOwnRepositoryAttributesRequest {
     onlyLatestVersions?: boolean;
 }
