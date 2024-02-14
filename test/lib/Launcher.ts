@@ -4,6 +4,9 @@ import path from "path";
 import getPort from "./getPort";
 import waitForConnector from "./waitForConnector";
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export type ConnectorWithMetadata = ConnectorClient & { _metadata?: Record<string, string> };
+
 export class Launcher {
     private readonly _processes: ChildProcess[] = [];
     private readonly apiKey = "xxx";
@@ -43,16 +46,21 @@ export class Launcher {
         return `http://localhost:${port}`;
     }
 
-    public async launch(count: number): Promise<ConnectorClient[]> {
-        const clients: ConnectorClient[] = [];
+    public async launch(count: number): Promise<ConnectorWithMetadata[]> {
+        const clients: ConnectorWithMetadata[] = [];
         const ports: number[] = [];
 
         for (let i = 0; i < count; i++) {
             const port = await getPort();
-            clients.push(ConnectorClient.create({ baseUrl: `http://localhost:${port}`, apiKey: this.apiKey }));
+            const client = ConnectorClient.create({ baseUrl: `http://localhost:${port}`, apiKey: this.apiKey });
+
+            clients.push(client);
             ports.push(port);
 
             const accountName = this.randomString();
+
+            clients[i]["_metadata"] = { accountName: `acc-${accountName}` };
+
             this._processes.push(this.spawnConnector(port, accountName));
         }
 

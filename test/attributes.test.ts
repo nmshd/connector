@@ -1,7 +1,8 @@
-import { ConnectorAttribute, ConnectorClient, ConnectorRelationshipAttribute, ConnectorResponse } from "@nmshd/connector-sdk";
-import { Launcher } from "./lib/Launcher";
+import { ConnectorAttribute, ConnectorRelationshipAttribute, ConnectorResponse } from "@nmshd/connector-sdk";
+import { ConnectorWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import {
+    connectAndEmptyCollection,
     createRepositoryAttribute,
     establishRelationship,
     executeFullCreateAndShareIdentityAttributeFlow,
@@ -12,8 +13,8 @@ import {
 import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
-let client1: ConnectorClient;
-let client2: ConnectorClient;
+let client1: ConnectorWithMetadata;
+let client2: ConnectorWithMetadata;
 let client1Address: string;
 let client2Address: string;
 
@@ -280,21 +281,10 @@ describe("Execute AttributeQueries", () => {
 });
 
 describe("Read Attribute and versions", () => {
-    const launcher = new Launcher();
-    let client1: ConnectorClient;
-    let client2: ConnectorClient;
-    let client1Address: string;
-    let client2Address: string;
     beforeEach(async () => {
         // TODO remove this and switch to the global defined in beforeAll once a remove all attributes is available
-        [client1, client2] = await launcher.launch(2);
-        client1Address = (await client1.account.getIdentityInfo()).result.address;
-        client2Address = (await client2.account.getIdentityInfo()).result.address;
-        await establishRelationship(client1, client2);
-    });
-
-    afterEach(() => {
-        launcher.stop();
+        await connectAndEmptyCollection(client1._metadata!.accountName, "Attributes");
+        await connectAndEmptyCollection(client2._metadata!.accountName, "Attributes");
     });
 
     test("should get all the repository attributes only", async () => {
@@ -428,7 +418,8 @@ describe("Read Attribute and versions", () => {
     });
 
     test("should get all local/shard versions of an attribute", async () => {
-        const [client3] = await launcher.launch(1);
+        const newLauncher = new Launcher();
+        const [client3] = await newLauncher.launch(1);
         await establishRelationship(client1, client3);
         const client3Address = (await client3.account.getIdentityInfo()).result.address;
         const newAttributeResponse = await executeFullCreateAndShareIdentityAttributeFlow(client1, [client2, client3], {
@@ -487,5 +478,7 @@ describe("Read Attribute and versions", () => {
         });
 
         expect(latestOfAllPeersSharedVersions.result).toHaveLength(2);
+
+        newLauncher.stop();
     });
 });

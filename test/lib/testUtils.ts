@@ -19,6 +19,20 @@ import fs from "fs";
 import { DateTime } from "luxon";
 import { ValidationSchema } from "./validation";
 
+import { MongoClient } from "mongodb";
+
+export async function connectAndEmptyCollection(databaseName: string, collectionName: string): Promise<void> {
+    const client = new MongoClient(process.env.DATABASE_CONNECTION_STRING!);
+    try {
+        await client.connect();
+        const database = client.db(databaseName);
+        const collection = database.collection(collectionName);
+        await collection.deleteMany({});
+    } finally {
+        await client.close();
+    }
+}
+
 export async function syncUntil(client: ConnectorClient, until: (syncResult: ConnectorSyncResult) => boolean): Promise<ConnectorSyncResult> {
     const syncResponse = await client.account.sync();
     expect(syncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
