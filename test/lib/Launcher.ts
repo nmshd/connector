@@ -1,4 +1,5 @@
 import { ConnectorClient } from "@nmshd/connector-sdk";
+import { Random, RandomCharacterRange } from "@nmshd/transport";
 import { ChildProcess, spawn } from "child_process";
 import path from "path";
 import getPort from "./getPort";
@@ -37,7 +38,7 @@ export class Launcher {
 
     public async launchSimple(): Promise<string> {
         const port = await getPort();
-        const accountName = this.randomString();
+        const accountName = await this.randomString();
 
         this._processes.push(this.spawnConnector(port, accountName));
 
@@ -53,7 +54,7 @@ export class Launcher {
         for (let i = 0; i < count; i++) {
             const port = await getPort();
 
-            const accountName = this.randomString();
+            const accountName = await this.randomString();
             const client = ConnectorClient.create({ baseUrl: `http://localhost:${port}`, apiKey: this.apiKey }) as ConnectorClientWithMetadata;
             client["_metadata"] = { accountName: `acc-${accountName}` };
 
@@ -67,8 +68,8 @@ export class Launcher {
         return clients;
     }
 
-    private randomString(): string {
-        return Math.random().toString(36).substring(7);
+    private async randomString(): Promise<string> {
+        return await Random.string(7, RandomCharacterRange.Alphabet);
     }
 
     public stop(): void {
