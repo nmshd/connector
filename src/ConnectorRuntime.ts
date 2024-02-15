@@ -73,7 +73,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         if (!result.valid) {
             let errorMessage = "The configuration is not valid:";
             for (const error of result.errors) {
-                errorMessage += `\r\n  - ${error.stack}`;
+                errorMessage += `\r\n  - ${error.stack} got ${JSON.stringify(error.instance)}`;
             }
             console.error(errorMessage); // eslint-disable-line no-console
             throw new Error(errorMessage);
