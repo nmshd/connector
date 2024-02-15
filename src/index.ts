@@ -3,6 +3,9 @@ import nconf from "nconf";
 import { ConnectorRuntime } from "./ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 
+import http from "http";
+import https from "https";
+
 export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRuntimeConfig {
     nconf
         .overrides(overrides)
@@ -69,6 +72,12 @@ function parseString(value: string) {
 }
 
 async function run() {
+    // console.log(http.globalAgent.maxSockets);
+    http.globalAgent.maxSockets = 10000;
+
+    // console.log(https.globalAgent.maxSockets);
+    https.globalAgent.maxSockets = 10000;
+
     const config = createConnectorConfig();
     const runtime = await ConnectorRuntime.create(config);
     await runtime.start();
