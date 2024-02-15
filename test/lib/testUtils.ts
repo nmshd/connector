@@ -332,12 +332,12 @@ export async function executeFullCreateAndShareRepositoryAttributeFlow(
     recipient: ConnectorClient,
     attributeContent: ConnectorIdentityAttribute
 ): Promise<ConnectorAttribute>;
-export async function executeFullCreateAndShareIdentityAttributeFlow(
+export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipient: ConnectorClient[],
     attributeContent: ConnectorIdentityAttribute
 ): Promise<ConnectorAttribute[]>;
-export async function executeFullCreateAndShareIdentityAttributeFlow(
+export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipients: ConnectorClient | ConnectorClient[],
     attributeContent: ConnectorIdentityAttribute

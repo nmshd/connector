@@ -302,7 +302,7 @@ describe("Read Attribute and versions", () => {
             });
             expect(newAtt).toBeSuccessful(ValidationSchema.ConnectorAttribute);
         }
-        await executeFullCreateAndShareIdentityAttributeFlow(client1, client2, {
+        await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
             "@type": "IdentityAttribute",
             value: {
                 "@type": "GivenName",
@@ -349,7 +349,7 @@ describe("Read Attribute and versions", () => {
     });
 
     test("should get all own/peer shared identity attributes", async () => {
-        await executeFullCreateAndShareIdentityAttributeFlow(client1, client2, {
+        await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
             "@type": "IdentityAttribute",
             value: {
                 "@type": "GivenName",
@@ -380,7 +380,7 @@ describe("Read Attribute and versions", () => {
     });
 
     test("should get the latest own/peer shared identity attributes", async () => {
-        const sharedAttribute = await executeFullCreateAndShareIdentityAttributeFlow(client1, client2, {
+        const sharedAttribute = await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
             "@type": "IdentityAttribute",
             value: {
                 "@type": "GivenName",
@@ -398,7 +398,7 @@ describe("Read Attribute and versions", () => {
             }
         });
 
-        await client1.attributes.notifyPeerAboutIdentityAttributeSuccession(succeededAttributeResponse.result.predecessor.id, {
+        await client1.attributes.notifyPeerAboutRepositoryAttributeSuccession(succeededAttributeResponse.result.predecessor.id, {
             peer: client2Address
         });
 
@@ -421,7 +421,7 @@ describe("Read Attribute and versions", () => {
         const [client3] = await newLauncher.launch(1);
         await establishRelationship(client1, client3);
         const client3Address = (await client3.account.getIdentityInfo()).result.address;
-        const newAttributeResponse = await executeFullCreateAndShareIdentityAttributeFlow(client1, [client2, client3], {
+        const newAttributeResponse = await executeFullCreateAndShareRepositoryAttributeFlow(client1, [client2, client3], {
             "@type": "IdentityAttribute",
             value: {
                 "@type": "GivenName",
@@ -443,10 +443,10 @@ describe("Read Attribute and versions", () => {
                 }
             });
             latestSuccessionId = successionResponse.result.successor.id;
-            await client1.attributes.notifyPeerAboutIdentityAttributeSuccession(successionResponse.result.successor.id, {
+            await client1.attributes.notifyPeerAboutRepositoryAttributeSuccession(successionResponse.result.successor.id, {
                 peer: client2Address
             });
-            await client1.attributes.notifyPeerAboutIdentityAttributeSuccession(successionResponse.result.successor.id, {
+            await client1.attributes.notifyPeerAboutRepositoryAttributeSuccession(successionResponse.result.successor.id, {
                 peer: client3Address
             });
         }
