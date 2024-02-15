@@ -1,3 +1,4 @@
+import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { sleep } from "@js-soft/ts-utils";
 import {
     ConnectorAttribute,
@@ -17,18 +18,18 @@ import {
 } from "@nmshd/connector-sdk";
 import fs from "fs";
 import { DateTime } from "luxon";
-import { MongoClient } from "mongodb";
 import { ValidationSchema } from "./validation";
 
 export async function connectAndEmptyCollection(databaseName: string, collectionName: string): Promise<void> {
-    const client = new MongoClient(process.env.DATABASE_CONNECTION_STRING!);
+    const connection = new MongoDbConnection(process.env.DATABASE_CONNECTION_STRING!);
     try {
-        await client.connect();
-        const database = client.db(databaseName);
-        const collection = database.collection(collectionName);
-        await collection.deleteMany({});
+        await connection.connect();
+
+        const database = await connection.getDatabase(databaseName);
+        const collection = await database.getCollection(collectionName);
+        await collection.delete({});
     } finally {
-        await client.close();
+        await connection.close();
     }
 }
 

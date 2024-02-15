@@ -11,7 +11,7 @@
             },
             "console": {
                 "type": "logLevelFilter",
-                "level": "WARN",
+                "level": "ERROR",
                 "appender": "consoleAppender"
             }
         },
