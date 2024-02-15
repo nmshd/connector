@@ -5,8 +5,8 @@ import {
     connectAndEmptyCollection,
     createRepositoryAttribute,
     establishRelationship,
-    executeFullCreateAndShareIdentityAttributeFlow,
     executeFullCreateAndShareRelationshipAttributeFlow,
+    executeFullCreateAndShareRepositoryAttributeFlow,
     syncUntilHasMessageWithNotification,
     syncUntilHasMessages
 } from "./lib/testUtils";
@@ -99,7 +99,7 @@ describe("Attributes", () => {
     });
 
     test("Should notify peer about Repository Attribute Succession", async () => {
-        const ownSharedRepositoryAttribute = await executeFullCreateAndShareIdentityAttributeFlow(client1, client2, {
+        const ownSharedIdentityAttribute = await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
             "@type": "IdentityAttribute",
             owner: client1Address,
             value: {
@@ -108,9 +108,9 @@ describe("Attributes", () => {
             }
         });
 
-        expect(ownSharedRepositoryAttribute.shareInfo?.sourceAttribute).toBeDefined();
+        expect(ownSharedIdentityAttribute.shareInfo?.sourceAttribute).toBeDefined();
 
-        const ownUnsharedRepositoryAttribute = await client1.attributes.getAttribute(ownSharedRepositoryAttribute.shareInfo!.sourceAttribute!);
+        const ownUnsharedRepositoryAttribute = await client1.attributes.getAttribute(ownSharedIdentityAttribute.shareInfo!.sourceAttribute!);
 
         const successionResponse = await client1.attributes.succeedAttribute(ownUnsharedRepositoryAttribute.result.id, {
             successorContent: {
@@ -121,7 +121,7 @@ describe("Attributes", () => {
             }
         });
         expect(successionResponse.isSuccess).toBe(true);
-        const notificationResponse = await client1.attributes.notifyPeerAboutIdentityAttributeSuccession(successionResponse.result.successor.id, {
+        const notificationResponse = await client1.attributes.notifyPeerAboutRepositoryAttributeSuccession(successionResponse.result.successor.id, {
             peer: client2Address
         });
         expect(notificationResponse.isSuccess).toBe(true);

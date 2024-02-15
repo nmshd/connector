@@ -327,7 +327,7 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
  *
  * Returns the sender's own shared identity attribute.
  */
-export async function executeFullCreateAndShareIdentityAttributeFlow(
+export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipient: ConnectorClient,
     attributeContent: ConnectorIdentityAttribute

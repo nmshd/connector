@@ -903,7 +903,7 @@ paths:
       responses:
         201:
           description: |
-            "Success. Returns the successor and predecessor own shared repository
+            "Success. Returns the successor and predecessor own shared identity
             attributes as well as the ID of the notification sent to the peer."
           content:
             application/json:
