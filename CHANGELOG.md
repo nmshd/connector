@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.2
+
+-> SDK 4.0.0
+
+-   upgrade the runtime version to 4.0.0
+
 ## 3.7.1
 
 -   upgrade the runtime version to 3.7.0

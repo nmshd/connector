@@ -9,8 +9,8 @@ import {
     ExecuteThirdPartyRelationshipAttributeQueryRequest,
     GetAttributesRequest,
     GetValidAttributesRequest,
-    NotifyPeerAboutIdentityAttributeSuccessionRequest,
-    NotifyPeerAboutIdentityAttributeSuccessionResponse,
+    NotifyPeerAboutRepositoryAttributeSuccessionRequest,
+    NotifyPeerAboutRepositoryAttributeSuccessionResponse,
     SucceedAttributeRequest,
     SucceedAttributeResponse
 } from "../types";
@@ -25,10 +25,10 @@ export class AttributesEndpoint extends Endpoint {
         return await this.post(`/api/v2/Attributes/${predecessorId}/Succeed`, request);
     }
 
-    public async notifyPeerAboutIdentityAttributeSuccession(
+    public async notifyPeerAboutRepositoryAttributeSuccession(
         attributeId: string,
-        request: NotifyPeerAboutIdentityAttributeSuccessionRequest
-    ): Promise<ConnectorResponse<NotifyPeerAboutIdentityAttributeSuccessionResponse>> {
+        request: NotifyPeerAboutRepositoryAttributeSuccessionRequest
+    ): Promise<ConnectorResponse<NotifyPeerAboutRepositoryAttributeSuccessionResponse>> {
         return await this.post(`/api/v2/Attributes/${attributeId}/NotifyPeer`, request);
     }
 
