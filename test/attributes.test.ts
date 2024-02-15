@@ -1,5 +1,5 @@
 import { ConnectorAttribute, ConnectorRelationshipAttribute, ConnectorResponse } from "@nmshd/connector-sdk";
-import { ConnectorWithMetadata, Launcher } from "./lib/Launcher";
+import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import {
     connectAndEmptyCollection,
@@ -13,8 +13,8 @@ import {
 import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
-let client1: ConnectorWithMetadata;
-let client2: ConnectorWithMetadata;
+let client1: ConnectorClientWithMetadata;
+let client2: ConnectorClientWithMetadata;
 let client1Address: string;
 let client2Address: string;
 
