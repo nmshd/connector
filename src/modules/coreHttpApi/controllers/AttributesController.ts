@@ -77,9 +77,9 @@ export class AttributesController extends BaseController {
     @GET
     @Path("/Own/Repository")
     @Accept("application/json")
-    public async getOwnRepositoryAttributes(@QueryParam("onlyLatestVersions") onlyLatestVersions: string): Promise<Envelope> {
+    public async getOwnRepositoryAttributes(@QueryParam("onlyLatestVersions") onlyLatestVersions?: string): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.getRepositoryAttributes({
-            onlyLatestVersions: onlyLatestVersions === "true"
+            onlyLatestVersions: onlyLatestVersions?.toLowerCase() === "true"
         });
         return this.ok(result);
     }
@@ -89,9 +89,9 @@ export class AttributesController extends BaseController {
     @Accept("application/json")
     public async getOwnSharedIdentityAttributes(
         @QueryParam("peer") peer: string,
-        @QueryParam("hideTechnical") hideTechnical: string,
-        @QueryParam("onlyLatestVersions") onlyLatestVersions: string,
-        @QueryParam("onlyValid") onlyValid: string
+        @QueryParam("hideTechnical") hideTechnical?: string,
+        @QueryParam("onlyLatestVersions") onlyLatestVersions?: string,
+        @QueryParam("onlyValid") onlyValid?: string
     ): Promise<Envelope> {
         const query: Record<string, any> = {};
 
@@ -103,10 +103,10 @@ export class AttributesController extends BaseController {
 
         const result = await this.consumptionServices.attributes.getOwnSharedAttributes({
             peer,
-            hideTechnical: hideTechnical.toLocaleLowerCase() === "true",
+            hideTechnical: hideTechnical?.toLowerCase() === "true",
             query: query,
-            onlyLatestVersions: onlyLatestVersions.toLocaleLowerCase() === "true",
-            onlyValid: onlyValid === "true"
+            onlyLatestVersions: onlyLatestVersions?.toLowerCase() === "true",
+            onlyValid: onlyValid?.toLowerCase() === "true"
         });
         return this.ok(result);
     }
@@ -116,9 +116,9 @@ export class AttributesController extends BaseController {
     @Accept("application/json")
     public async getPeerSharedIdentityAttributes(
         @QueryParam("peer") peer: string,
-        @QueryParam("hideTechnical") hideTechnical: string,
-        @QueryParam("onlyLatestVersions") onlyLatestVersions: string,
-        @QueryParam("onlyValid") onlyValid: string
+        @QueryParam("hideTechnical") hideTechnical?: string,
+        @QueryParam("onlyLatestVersions") onlyLatestVersions?: string,
+        @QueryParam("onlyValid") onlyValid?: string
     ): Promise<Envelope> {
         const query: Record<string, any> = {};
 
@@ -130,10 +130,10 @@ export class AttributesController extends BaseController {
 
         const result = await this.consumptionServices.attributes.getPeerSharedAttributes({
             peer,
-            hideTechnical: hideTechnical.toLocaleLowerCase() === "true",
+            hideTechnical: hideTechnical?.toLowerCase() === "true",
             query: query,
-            onlyLatestVersions: onlyLatestVersions.toLocaleLowerCase() === "true",
-            onlyValid: onlyValid.toLocaleLowerCase() === "true"
+            onlyLatestVersions: onlyLatestVersions?.toLowerCase() === "true",
+            onlyValid: onlyValid?.toLowerCase() === "true"
         });
         return this.ok(result);
     }
@@ -153,7 +153,7 @@ export class AttributesController extends BaseController {
     @Accept("application/json")
     public async getSharedVersionsOfRepositoryAttribute(
         @PathParam("id") attributeId: string,
-        @QueryParam("peers") peers: string | string[] | undefined,
+        @QueryParam("peers") peers?: string | string[],
         @QueryParam("onlyLatestVersions") onlyLatestVersions?: string
     ): Promise<Envelope> {
         if (typeof peers === "string") {

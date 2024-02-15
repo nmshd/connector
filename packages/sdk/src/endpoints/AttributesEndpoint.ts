@@ -62,7 +62,7 @@ export class AttributesEndpoint extends Endpoint {
     }
     public async getSharedVersionsOfRepositoryAttribute(
         attributeId: string,
-        request: GetSharedVersionsOfRepositoryAttributeRequest = { onlyLatestVersion: false }
+        request: GetSharedVersionsOfRepositoryAttributeRequest = { onlyLatestVersions: false }
     ): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get(`/api/v2/Attributes/${attributeId}/Versions/Shared`, request);
     }

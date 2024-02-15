@@ -769,7 +769,7 @@ paths:
             items:
               $ref: "#/components/schemas/Address"
         - in: query
-          name: onlyLatestVersion
+          name: onlyLatestVersions
           description: Whether to only get the latest version of the attribute for each peer
           required: false
           schema:

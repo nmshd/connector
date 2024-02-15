@@ -344,8 +344,8 @@ describe("Read Attribute and versions", () => {
         const allAttributesResponse = await client1.attributes.getOwnRepositoryAttributes({ onlyLatestVersions: false });
         expect(allAttributesResponse.result).toHaveLength(6);
 
-        const onylLatestAttributesResponse = await client1.attributes.getOwnRepositoryAttributes({ onlyLatestVersions: true });
-        expect(onylLatestAttributesResponse.result).toHaveLength(5);
+        const onlyLatestAttributesResponse = await client1.attributes.getOwnRepositoryAttributes({ onlyLatestVersions: true });
+        expect(onlyLatestAttributesResponse.result).toHaveLength(5);
     });
 
     test("should get all own/peer shared identity attributes", async () => {
@@ -455,24 +455,24 @@ describe("Read Attribute and versions", () => {
         expect(allVersions.result).toHaveLength(6);
 
         const allSharedVersions = await client1.attributes.getSharedVersionsOfRepositoryAttribute(initialRepositoryAttributeId, {
-            onlyLatestVersion: false
+            onlyLatestVersions: false
         });
         expect(allSharedVersions.result).toHaveLength(12);
 
         const allOfMultiplePeersSharedVersions = await client1.attributes.getSharedVersionsOfRepositoryAttribute(initialRepositoryAttributeId, {
-            onlyLatestVersion: false,
+            onlyLatestVersions: false,
             peers: [client2Address, client3Address]
         });
 
         expect(allOfMultiplePeersSharedVersions.result).toHaveLength(12);
         const allOfOnePeersSharedVersions = await client1.attributes.getSharedVersionsOfRepositoryAttribute(initialRepositoryAttributeId, {
-            onlyLatestVersion: false,
+            onlyLatestVersions: false,
             peers: [client2Address]
         });
 
         expect(allOfOnePeersSharedVersions.result).toHaveLength(6);
         const latestOfAllPeersSharedVersions = await client1.attributes.getSharedVersionsOfRepositoryAttribute(initialRepositoryAttributeId, {
-            onlyLatestVersion: true,
+            onlyLatestVersions: true,
             peers: [client2Address, client3Address]
         });
 
