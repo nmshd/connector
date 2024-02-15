@@ -60,8 +60,8 @@
         }
     },
     "dependencies": {
-        "@google-cloud/pubsub": "4.3.1",
-        "@js-soft/docdb-access-mongo": "1.1.6",
+        "@google-cloud/pubsub": "4.3.2",
+        "@js-soft/docdb-access-mongo": "1.1.7",
         "@js-soft/node-logger": "1.1.1",
         "@js-soft/ts-utils": "^2.3.3",
         "@nmshd/iql": "^1.0.1",
@@ -75,6 +75,7 @@
         "helmet": "7.1.0",
         "json-stringify-safe": "5.0.1",
         "jsonschema": "1.4.1",
+        "mqtt": "^5.3.5",
         "multer": "^1.4.5-lts.1",
         "nconf": "0.12.1",
         "on-headers": "1.0.2",
@@ -100,7 +101,7 @@
         "@types/lodash": "^4.14.202",
         "@types/luxon": "^3.4.2",
         "@types/nconf": "^0.10.6",
-        "@types/node": "^20.11.17",
+        "@types/node": "^20.11.18",
         "@types/on-headers": "^1.0.3",
         "@types/swagger-ui-express": "^4.1.6",
         "@types/yamljs": "^0.2.34",
