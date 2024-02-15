@@ -30,7 +30,7 @@ export class AttributesController extends BaseController {
         if (typeof request?.content?.owner !== "undefined") delete request.content.owner;
         if (request?.content?.["@type"] === "IdentityAttribute") delete request.content["@type"];
 
-        const result = await this.consumptionServices.attributes.createIdentityAttribute(request);
+        const result = await this.consumptionServices.attributes.createRepositoryAttribute(request);
         return this.created(result);
     }
 
@@ -45,7 +45,7 @@ export class AttributesController extends BaseController {
         const predecessor = result.value;
 
         if (predecessor.content["@type"] === "IdentityAttribute") {
-            const result = await this.consumptionServices.attributes.succeedIdentityAttribute({
+            const result = await this.consumptionServices.attributes.succeedRepositoryAttribute({
                 predecessorId: predecessorId,
                 ...request
             });
@@ -62,8 +62,8 @@ export class AttributesController extends BaseController {
     @POST
     @Path("/:attributeId/NotifyPeer")
     @Accept("application/json")
-    public async notifyPeerAboutIdentityAttributeSuccession(@PathParam("attributeId") attributeId: string, request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.notifyPeerAboutIdentityAttributeSuccession({ attributeId: attributeId, peer: request.peer });
+    public async notifyPeerAboutRepositoryAttributeSuccession(@PathParam("attributeId") attributeId: string, request: any): Promise<Return.NewResource<Envelope>> {
+        const result = await this.consumptionServices.attributes.notifyPeerAboutRepositoryAttributeSuccession({ attributeId: attributeId, peer: request.peer });
         return this.created(result);
     }
 
