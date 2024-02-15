@@ -9,4 +9,3 @@ export * from "./relationshipTemplates";
 export * from "./relationships";
 export * from "./requests";
 export * from "./tokens";
-export type TODO = any;

@@ -1,7 +1,7 @@
 import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionServices, RuntimeErrors, TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "typescript-rest";
+import { Accept, GET, POST, Path, PathParam, QueryParam, Return } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -69,19 +69,17 @@ export class AttributesController extends BaseController {
 
     @GET
     @Accept("application/json")
-    public async getAttributes(@Context context: ServiceContext): Promise<Envelope> {
-        const result = await this.consumptionServices.attributes.getAttributes({ query: context.request.query });
+    public async getAttributes(): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.getAttributes({ query: this.context.request.query });
         return this.ok(result);
     }
 
     @GET
     @Path("/Own/Repository")
     @Accept("application/json")
-    public async getOwnRepositoryAttributes(@Context context: ServiceContext): Promise<Envelope> {
-        const onlyLatestVersionsQuery = context.request.query.onlyLatestVersions;
-        const onlyLatestVersions: boolean | undefined = typeof onlyLatestVersionsQuery === "string" ? onlyLatestVersionsQuery === "true" : false;
+    public async getOwnRepositoryAttributes(@QueryParam("onlyLatestVersions") onlyLatestVersions: string): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.getRepositoryAttributes({
-            onlyLatestVersions
+            onlyLatestVersions: onlyLatestVersions === "true"
         });
         return this.ok(result);
     }
@@ -89,23 +87,26 @@ export class AttributesController extends BaseController {
     @GET
     @Path("/Own/Shared/Identity")
     @Accept("application/json")
-    public async getOwnSharedIdentityAttributes(@Context context: ServiceContext): Promise<Envelope> {
-        const urlQuery = context.request.query;
-
+    public async getOwnSharedIdentityAttributes(
+        @QueryParam("peer") peer: string,
+        @QueryParam("hideTechnical") hideTechnical: string,
+        @QueryParam("onlyLatestVersions") onlyLatestVersions: string,
+        @QueryParam("onlyValid") onlyValid: string
+    ): Promise<Envelope> {
         const query: Record<string, any> = {};
 
-        Object.entries(urlQuery).forEach(([key, value]) => {
+        Object.entries(this.context.request.query).forEach(([key, value]) => {
             if (key.startsWith("query.")) {
                 query[key.replace("query.", "")] = typeof value === "string" ? value : "";
             }
         });
 
         const result = await this.consumptionServices.attributes.getOwnSharedAttributes({
-            peer: typeof urlQuery.peer === "string" ? urlQuery.peer : "",
-            hideTechnical: typeof urlQuery.hideTechnical === "string" ? urlQuery.hideTechnical === "true" : false,
+            peer,
+            hideTechnical: hideTechnical.toLocaleLowerCase() === "true",
             query: query,
-            onlyLatestVersions: typeof urlQuery.onlyLatestVersions === "string" ? urlQuery.onlyLatestVersions === "true" : false,
-            onlyValid: typeof urlQuery.onlyValid === "string" ? urlQuery.onlyValid === "true" : false
+            onlyLatestVersions: onlyLatestVersions.toLocaleLowerCase() === "true",
+            onlyValid: onlyValid === "true"
         });
         return this.ok(result);
     }
@@ -113,23 +114,26 @@ export class AttributesController extends BaseController {
     @GET
     @Path("/Peer/Shared/Identity")
     @Accept("application/json")
-    public async getPeerSharedIdentityAttributes(@Context context: ServiceContext): Promise<Envelope> {
-        const urlQuery = context.request.query;
-
+    public async getPeerSharedIdentityAttributes(
+        @QueryParam("peer") peer: string,
+        @QueryParam("hideTechnical") hideTechnical: string,
+        @QueryParam("onlyLatestVersions") onlyLatestVersions: string,
+        @QueryParam("onlyValid") onlyValid: string
+    ): Promise<Envelope> {
         const query: Record<string, any> = {};
 
-        Object.entries(urlQuery).forEach(([key, value]) => {
+        Object.entries(this.context.request.query).forEach(([key, value]) => {
             if (key.startsWith("query.")) {
                 query[key.replace("query.", "")] = typeof value === "string" ? value : "";
             }
         });
 
         const result = await this.consumptionServices.attributes.getPeerSharedAttributes({
-            peer: typeof urlQuery.peer === "string" ? urlQuery.peer : "",
-            hideTechnical: typeof urlQuery.hideTechnical === "string" ? urlQuery.hideTechnical === "true" : false,
+            peer,
+            hideTechnical: hideTechnical.toLocaleLowerCase() === "true",
             query: query,
-            onlyLatestVersions: typeof urlQuery.onlyLatestVersions === "string" ? urlQuery.onlyLatestVersions === "true" : false,
-            onlyValid: typeof urlQuery.onlyValid === "string" ? urlQuery.onlyValid === "true" : false
+            onlyLatestVersions: onlyLatestVersions.toLocaleLowerCase() === "true",
+            onlyValid: onlyValid.toLocaleLowerCase() === "true"
         });
         return this.ok(result);
     }
@@ -149,8 +153,8 @@ export class AttributesController extends BaseController {
     @Accept("application/json")
     public async getSharedVersionsOfRepositoryAttribute(
         @PathParam("id") attributeId: string,
-        @QueryParam("peers") peers?: string | string[],
-        @QueryParam("onlyLatestVersion") onlyLatestVersion?: string
+        @QueryParam("peers") peers: string | string[] | undefined,
+        @QueryParam("onlyLatestVersions") onlyLatestVersions?: string
     ): Promise<Envelope> {
         if (typeof peers === "string") {
             peers = [peers];
@@ -158,7 +162,7 @@ export class AttributesController extends BaseController {
 
         const result = await this.consumptionServices.attributes.getSharedVersionsOfRepositoryAttribute({
             attributeId,
-            onlyLatestVersions: onlyLatestVersion ? onlyLatestVersion === "true" : undefined,
+            onlyLatestVersions: onlyLatestVersions ? onlyLatestVersions === "true" : undefined,
             peers
         });
         return this.ok(result);
@@ -167,8 +171,8 @@ export class AttributesController extends BaseController {
     @GET
     @Path("/Valid")
     @Accept("application/json")
-    public async getValidAttributes(@Context context: ServiceContext): Promise<Envelope> {
-        const result = await this.consumptionServices.attributes.getAttributes({ query: context.request.query, onlyValid: true });
+    public async getValidAttributes(): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.getAttributes({ query: this.context.request.query, onlyValid: true });
         return this.ok(result);
     }
 
