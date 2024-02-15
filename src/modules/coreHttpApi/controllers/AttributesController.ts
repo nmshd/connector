@@ -1,7 +1,7 @@
 import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionServices, RuntimeErrors, TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
-import { Accept, GET, POST, Path, PathParam, QueryParam, Return } from "typescript-rest";
+import { Accept, Context, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -69,8 +69,8 @@ export class AttributesController extends BaseController {
 
     @GET
     @Accept("application/json")
-    public async getAttributes(): Promise<Envelope> {
-        const result = await this.consumptionServices.attributes.getAttributes({ query: this.context.request.query });
+    public async getAttributes(@Context context: ServiceContext): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.getAttributes({ query: context.request.query });
         return this.ok(result);
     }
 
@@ -88,6 +88,7 @@ export class AttributesController extends BaseController {
     @Path("/Own/Shared/Identity")
     @Accept("application/json")
     public async getOwnSharedIdentityAttributes(
+        @Context context: ServiceContext,
         @QueryParam("peer") peer: string,
         @QueryParam("hideTechnical") hideTechnical?: string,
         @QueryParam("onlyLatestVersions") onlyLatestVersions?: string,
@@ -95,7 +96,7 @@ export class AttributesController extends BaseController {
     ): Promise<Envelope> {
         const query: Record<string, any> = {};
 
-        Object.entries(this.context.request.query).forEach(([key, value]) => {
+        Object.entries(context.request.query).forEach(([key, value]) => {
             if (key.startsWith("query.")) {
                 query[key.replace("query.", "")] = typeof value === "string" ? value : "";
             }
@@ -115,6 +116,7 @@ export class AttributesController extends BaseController {
     @Path("/Peer/Shared/Identity")
     @Accept("application/json")
     public async getPeerSharedIdentityAttributes(
+        @Context context: ServiceContext,
         @QueryParam("peer") peer: string,
         @QueryParam("hideTechnical") hideTechnical?: string,
         @QueryParam("onlyLatestVersions") onlyLatestVersions?: string,
@@ -122,7 +124,7 @@ export class AttributesController extends BaseController {
     ): Promise<Envelope> {
         const query: Record<string, any> = {};
 
-        Object.entries(this.context.request.query).forEach(([key, value]) => {
+        Object.entries(context.request.query).forEach(([key, value]) => {
             if (key.startsWith("query.")) {
                 query[key.replace("query.", "")] = typeof value === "string" ? value : "";
             }
@@ -171,8 +173,8 @@ export class AttributesController extends BaseController {
     @GET
     @Path("/Valid")
     @Accept("application/json")
-    public async getValidAttributes(): Promise<Envelope> {
-        const result = await this.consumptionServices.attributes.getAttributes({ query: this.context.request.query, onlyValid: true });
+    public async getValidAttributes(@Context context: ServiceContext): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.getAttributes({ query: context.request.query, onlyValid: true });
         return this.ok(result);
     }
 
