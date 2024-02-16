@@ -21,16 +21,6 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
                 variable.key = variable.key.replace(/__/g, ":");
                 variable.value = parseString(variable.value);
 
-                // REVISIT: This is a workaround for the issue that nconf does not parse JSON objects correctly
-                try {
-                    const newValue = JSON.parse(variable.value);
-                    if (typeof newValue === "object") {
-                        variable.value = newValue;
-                    }
-                } catch (e) {
-                    // Do nothing
-                }
-
                 return variable;
             }
         })
@@ -70,21 +60,13 @@ function applyAlias(variable: { key: string; value: any }) {
     }
 }
 
-function isNumeric(value: string) {
-    if (typeof value !== "string") return false;
-
-    return !isNaN(value as any) && !isNaN(parseFloat(value));
-}
-
 function parseString(value: string) {
-    if (value === "true") {
-        return true;
-    } else if (value === "false") {
-        return false;
-    } else if (isNumeric(value)) {
-        return parseFloat(value);
+    // REVISIT: This is a workaround for the issue that nconf does not parse JSON objects correctly
+    try {
+        value = JSON.parse(value);
+    } catch (e) {
+        // Do nothing
     }
-
     return value;
 }
 
