@@ -65,7 +65,7 @@ export async function syncUntilHasMessageWithRequest(client: ConnectorClient, re
         return syncResult.messages.filter((m: ConnectorMessage) => isRequest(m.content));
     };
 
-    const name = Launcher.randomString();
+    const name = await new Launcher().randomString();
     startEventLog(name);
     const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
     let events = getEvents(name);
@@ -86,7 +86,7 @@ export async function syncUntilHasMessageWithNotification(client: ConnectorClien
     const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
         return syncResult.messages.filter((m: ConnectorMessage) => isNotification(m.content));
     };
-    const name = Launcher.randomString();
+    const name = await new Launcher().randomString();
     startEventLog(name);
     const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
     let events = getEvents(name);
@@ -104,7 +104,7 @@ export async function syncUntilHasMessageWithResponse(client: ConnectorClient, r
         return syncResult.messages.filter((m: ConnectorMessage) => isResponse(m.content));
     };
 
-    const name = Launcher.randomString();
+    const name = await new Launcher().randomString();
     startEventLog(name);
     const syncResult = await syncUntil(client, (syncResult) => {
         return filterRequestMessagesByRequestId(syncResult).length !== 0;
