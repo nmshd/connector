@@ -1,9 +1,5 @@
 # Changelog
 
-## 3.7.4
-
--   Tests are now more stable by waiting for events of message handling
-
 ## 3.7.3
 
 -   the webhooksV2 module is now named webhooks

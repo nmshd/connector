@@ -21,6 +21,16 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
                 variable.key = variable.key.replace(/__/g, ":");
                 variable.value = parseString(variable.value);
 
+                // REVISIT: This is a workaround for the issue that nconf does not parse JSON objects correctly
+                try {
+                    const newValue = JSON.parse(variable.value);
+                    if (typeof newValue === "object") {
+                        variable.value = newValue;
+                    }
+                } catch (e) {
+                    // Do nothing
+                }
+
                 return variable;
             }
         })

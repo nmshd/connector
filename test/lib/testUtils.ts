@@ -17,9 +17,8 @@ import {
 } from "@nmshd/connector-sdk";
 import fs from "fs";
 import { DateTime } from "luxon";
-import { Launcher } from "./Launcher";
+import { ConnectorClientWithMetadata, Launcher } from "./Launcher";
 import { ValidationSchema } from "./validation";
-import { getEvents, startEventLog, stopEventLog } from "./webhookServer";
 
 export async function syncUntil(client: ConnectorClient, until: (syncResult: ConnectorSyncResult) => boolean): Promise<ConnectorSyncResult> {
     const syncResponse = await client.account.sync();
@@ -59,24 +58,24 @@ export async function syncUntilHasMessages(client: ConnectorClient, expectedNumb
     return syncResult.messages;
 }
 
-export async function syncUntilHasMessageWithRequest(client: ConnectorClient, requestId: string): Promise<ConnectorMessage> {
+export async function syncUntilHasMessageWithRequest(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorMessage> {
     const isRequest = (content: any) => content["@type"] === "Request" && content.id === requestId;
     const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
         return syncResult.messages.filter((m: ConnectorMessage) => isRequest(m.content));
     };
 
     const name = await new Launcher().randomString();
-    startEventLog(name);
+    client._events.startEventLog(name);
     const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
-    let events = getEvents(name);
+    let events = client._events.getEvents(name);
     while (!events.some((e) => e.trigger === "consumption.messageProcessed" && isRequest(e.data.message?.content))) {
         await sleep(500);
-        events = getEvents(name);
+        events = client._events.getEvents(name);
     }
-    stopEventLog(name);
+    client._events.stopEventLog(name);
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
-export async function syncUntilHasMessageWithNotification(client: ConnectorClient, notificationId: string): Promise<ConnectorMessage> {
+export async function syncUntilHasMessageWithNotification(client: ConnectorClientWithMetadata, notificationId: string): Promise<ConnectorMessage> {
     const isNotification = (content: any) => {
         if (!content) {
             return false;
@@ -87,34 +86,34 @@ export async function syncUntilHasMessageWithNotification(client: ConnectorClien
         return syncResult.messages.filter((m: ConnectorMessage) => isNotification(m.content));
     };
     const name = await new Launcher().randomString();
-    startEventLog(name);
+    client._events.startEventLog(name);
     const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
-    let events = getEvents(name);
+    let events = client._events.getEvents(name);
     while (!events.some((e) => e.trigger === "consumption.messageProcessed" && isNotification(e.data.message?.content))) {
         await sleep(500);
-        events = getEvents(name);
+        events = client._events.getEvents(name);
     }
-    stopEventLog(name);
+    client._events.stopEventLog(name);
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
 
-export async function syncUntilHasMessageWithResponse(client: ConnectorClient, requestId: string): Promise<ConnectorMessage> {
+export async function syncUntilHasMessageWithResponse(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorMessage> {
     const isResponse = (content: any) => content["@type"] === "ResponseWrapper" && content.requestId === requestId;
     const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
         return syncResult.messages.filter((m: ConnectorMessage) => isResponse(m.content));
     };
 
     const name = await new Launcher().randomString();
-    startEventLog(name);
+    client._events.startEventLog(name);
     const syncResult = await syncUntil(client, (syncResult) => {
         return filterRequestMessagesByRequestId(syncResult).length !== 0;
     });
-    let events = getEvents(name);
+    let events = client._events.getEvents(name);
     while (!events.some((e) => e.trigger === "consumption.messageProcessed" && isResponse(e.data.message?.content))) {
         await sleep(500);
-        events = getEvents(name);
+        events = client._events.getEvents(name);
     }
-    stopEventLog(name);
+    client._events.stopEventLog(name);
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
 
@@ -289,8 +288,8 @@ export async function createRepositoryAttribute(client: ConnectorClient, request
  * Returns the sender's own shared relationship attribute.
  */
 export async function executeFullCreateAndShareRelationshipAttributeFlow(
-    sender: ConnectorClient,
-    recipient: ConnectorClient,
+    sender: ConnectorClientWithMetadata,
+    recipient: ConnectorClientWithMetadata,
     attributeContent: Omit<ConnectorRelationshipAttribute, "owner" | "@type">
 ): Promise<ConnectorAttribute> {
     const senderIdentityInfoResult = await sender.account.getIdentityInfo();
@@ -347,8 +346,8 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
  * Returns the sender's own shared identity attribute.
  */
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
-    sender: ConnectorClient,
-    recipient: ConnectorClient,
+    sender: ConnectorClientWithMetadata,
+    recipient: ConnectorClientWithMetadata,
     attributeContent: ConnectorIdentityAttribute
 ): Promise<ConnectorAttribute> {
     const recipientIdentityInfoResult = await recipient.account.getIdentityInfo();

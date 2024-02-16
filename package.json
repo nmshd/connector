@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/connector",
-    "version": "3.7.4",
+    "version": "3.7.3",
     "private": true,
     "description": "The Enmeshed Connector",
     "homepage": "https://enmeshed.eu/integrate",
@@ -46,8 +46,7 @@
         "setupFilesAfterEnv": [
             "jest-expect-message",
             "./test/lib/validation.ts",
-            "./test/lib/customMatcher.ts",
-            "./test/lib/webhookServer.ts"
+            "./test/lib/customMatcher.ts"
         ],
         "testEnvironment": "node",
         "testTimeout": 60000,

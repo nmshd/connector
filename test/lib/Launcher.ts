@@ -1,15 +1,48 @@
 import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Random, RandomCharacterRange } from "@nmshd/transport";
 import { ChildProcess, spawn } from "child_process";
+import express from "express";
+import { Server } from "http";
 import path from "path";
 import getPort from "./getPort";
 import waitForConnector from "./waitForConnector";
 
-export class Launcher {
-    private readonly _processes: ChildProcess[] = [];
-    private readonly apiKey = "xxx";
+interface EventData {
+    trigger: string;
+    data: any;
+}
 
-    private spawnConnector(port: number, accountName: string) {
+export type ConnectorClientWithMetadata = ConnectorClient & {
+    /* eslint-disable @typescript-eslint/naming-convention */
+    _metadata?: Record<string, string>;
+    _events: {
+        getEvents(name: string): EventData[];
+        startEventLog(name: string): void;
+        stopEventLog(name: string): void;
+    };
+    /* eslint-enable @typescript-eslint/naming-convention */
+};
+
+export class Launcher {
+    private readonly _processes: { connector: ChildProcess; webhookServer: Server }[] = [];
+    private readonly apiKey = "xxx";
+    private readonly events: Record<string, EventData[] | undefined> = {};
+
+    private startWebHookServer(port: number): Server {
+        const app = express();
+
+        app.use(express.json());
+        app.use((req, res) => {
+            Object.keys(this.events).forEach((key) => {
+                this.events[key]?.push(req.body);
+            });
+            res.send("OK");
+        });
+
+        return app.listen(port);
+    }
+
+    private async spawnConnector(port: number, accountName: string) {
         const env = process.env;
         env["infrastructure:httpServer:port"] = port.toString();
         env["infrastructure:httpServer:apiKey"] = this.apiKey;
@@ -26,35 +59,63 @@ export class Launcher {
         env.NODE_CONFIG_ENV = "test";
         env.DATABASE_NAME = accountName;
 
-        return spawn("node", ["dist/index.js"], {
-            env: { ...process.env, ...env },
-            cwd: path.resolve(`${__dirname}/../..`),
-            stdio: "inherit"
-        });
+        const webhookServerPort = await getPort();
+        env["modules:webhooks:webhooks"] = JSON.stringify([
+            {
+                triggers: ["**"],
+                target: { url: `http://localhost:${webhookServerPort}` }
+            }
+        ]);
+        // `http://localhost:${webhookServerPort}`;
+
+        const webhookServer = this.startWebHookServer(webhookServerPort);
+
+        return {
+            connector: spawn("node", ["dist/index.js"], {
+                env: { ...process.env, ...env },
+                cwd: path.resolve(`${__dirname}/../..`),
+                stdio: "inherit"
+            }),
+            webhookServer
+        };
     }
 
     public async launchSimple(): Promise<string> {
         const port = await getPort();
         const accountName = await this.randomString();
 
-        this._processes.push(this.spawnConnector(port, accountName));
+        this._processes.push(await this.spawnConnector(port, accountName));
 
         await waitForConnector(port);
 
         return `http://localhost:${port}`;
     }
 
-    public async launch(count: number): Promise<ConnectorClient[]> {
-        const clients: ConnectorClient[] = [];
+    public async launch(count: number): Promise<ConnectorClientWithMetadata[]> {
+        const clients: ConnectorClientWithMetadata[] = [];
         const ports: number[] = [];
 
         for (let i = 0; i < count; i++) {
             const port = await getPort();
-            clients.push(ConnectorClient.create({ baseUrl: `http://localhost:${port}`, apiKey: this.apiKey }));
+            const connectorClient = ConnectorClient.create({ baseUrl: `http://localhost:${port}`, apiKey: this.apiKey }) as ConnectorClientWithMetadata;
+            connectorClient._events = {
+                getEvents: (name: string): EventData[] => {
+                    return this.events[name] ?? [];
+                },
+
+                startEventLog: (name: string): void => {
+                    this.events[name] = [];
+                },
+
+                stopEventLog: (name: string): void => {
+                    delete this.events[name];
+                }
+            };
+            clients.push(connectorClient);
             ports.push(port);
 
             const accountName = await this.randomString();
-            this._processes.push(this.spawnConnector(port, accountName));
+            this._processes.push(await this.spawnConnector(port, accountName));
         }
 
         await Promise.all(ports.map(waitForConnector));
@@ -66,6 +127,9 @@ export class Launcher {
     }
 
     public stop(): void {
-        this._processes.forEach((p) => p.kill());
+        this._processes.forEach((p) => {
+            p.connector.kill();
+            p.webhookServer.close();
+        });
     }
 }

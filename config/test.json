@@ -11,7 +11,7 @@
             },
             "console": {
                 "type": "logLevelFilter",
-                "level": "ERROR",
+                "level": "DEBUG",
                 "appender": "consoleAppender"
             }
         },
@@ -31,18 +31,11 @@
             }
         },
         "webhooks": {
-            "displayName": "Webhooks",
             "enabled": true,
-            "location": "webhooks/WebhooksModule",
-            "targets": {
-                "testTarget": {
-                    "url": "http://localhost:3769/"
-                }
-            },
             "webhooks": [
                 {
                     "triggers": ["**"],
-                    "target": "testTarget"
+                    "target": { "url": "http://localhost:3769/" }
                 }
             ]
         }
