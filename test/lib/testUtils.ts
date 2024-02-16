@@ -17,7 +17,9 @@ import {
 } from "@nmshd/connector-sdk";
 import fs from "fs";
 import { DateTime } from "luxon";
+import { Launcher } from "./Launcher";
 import { ValidationSchema } from "./validation";
+import { getEvents, startEventLog, stopEventLog } from "./webhookServer";
 
 export async function syncUntil(client: ConnectorClient, until: (syncResult: ConnectorSyncResult) => boolean): Promise<ConnectorSyncResult> {
     const syncResponse = await client.account.sync();
@@ -58,31 +60,61 @@ export async function syncUntilHasMessages(client: ConnectorClient, expectedNumb
 }
 
 export async function syncUntilHasMessageWithRequest(client: ConnectorClient, requestId: string): Promise<ConnectorMessage> {
+    const isRequest = (content: any) => content["@type"] === "Request" && content.id === requestId;
     const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
-        return syncResult.messages.filter((m: ConnectorMessage) => (m.content as any)["@type"] === "Request" && (m.content as any).id === requestId);
+        return syncResult.messages.filter((m: ConnectorMessage) => isRequest(m.content));
     };
+
+    const name = Launcher.randomString();
+    startEventLog(name);
     const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
+    let events = getEvents(name);
+    while (!events.some((e) => e.trigger === "consumption.messageProcessed" && isRequest(e.data.message?.content))) {
+        await sleep(500);
+        events = getEvents(name);
+    }
+    stopEventLog(name);
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
 export async function syncUntilHasMessageWithNotification(client: ConnectorClient, notificationId: string): Promise<ConnectorMessage> {
-    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
-        return syncResult.messages.filter((m: ConnectorMessage) => (m.content as any)["@type"] === "Notification" && (m.content as any).id === notificationId);
+    const isNotification = (content: any) => {
+        if (!content) {
+            return false;
+        }
+        return content["@type"] === "Notification" && content.id === notificationId;
     };
+    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
+        return syncResult.messages.filter((m: ConnectorMessage) => isNotification(m.content));
+    };
+    const name = Launcher.randomString();
+    startEventLog(name);
     const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
+    let events = getEvents(name);
+    while (!events.some((e) => e.trigger === "consumption.messageProcessed" && isNotification(e.data.message?.content))) {
+        await sleep(500);
+        events = getEvents(name);
+    }
+    stopEventLog(name);
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
 
 export async function syncUntilHasMessageWithResponse(client: ConnectorClient, requestId: string): Promise<ConnectorMessage> {
+    const isResponse = (content: any) => content["@type"] === "ResponseWrapper" && content.requestId === requestId;
     const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
-        return syncResult.messages.filter((m: ConnectorMessage) => {
-            const matcher = (m.content as any)["@type"] === "ResponseWrapper" && (m.content as any).requestId === requestId;
-            return matcher;
-        });
+        return syncResult.messages.filter((m: ConnectorMessage) => isResponse(m.content));
     };
+
+    const name = Launcher.randomString();
+    startEventLog(name);
     const syncResult = await syncUntil(client, (syncResult) => {
-        const length = filterRequestMessagesByRequestId(syncResult).length;
-        return length !== 0;
+        return filterRequestMessagesByRequestId(syncResult).length !== 0;
     });
+    let events = getEvents(name);
+    while (!events.some((e) => e.trigger === "consumption.messageProcessed" && isResponse(e.data.message?.content))) {
+        await sleep(500);
+        events = getEvents(name);
+    }
+    stopEventLog(name);
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
 

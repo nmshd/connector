@@ -34,7 +34,7 @@ export class Launcher {
 
     public async launchSimple(): Promise<string> {
         const port = await getPort();
-        const accountName = this.randomString();
+        const accountName = Launcher.randomString();
 
         this._processes.push(this.spawnConnector(port, accountName));
 
@@ -52,7 +52,7 @@ export class Launcher {
             clients.push(ConnectorClient.create({ baseUrl: `http://localhost:${port}`, apiKey: this.apiKey }));
             ports.push(port);
 
-            const accountName = this.randomString();
+            const accountName = Launcher.randomString();
             this._processes.push(this.spawnConnector(port, accountName));
         }
 
@@ -60,7 +60,7 @@ export class Launcher {
         return clients;
     }
 
-    private randomString(): string {
+    public static randomString(): string {
         return Math.random().toString(36).substring(7);
     }
 

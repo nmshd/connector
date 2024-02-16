@@ -11,7 +11,7 @@
             },
             "console": {
                 "type": "logLevelFilter",
-                "level": "WARN",
+                "level": "ERROR",
                 "appender": "consoleAppender"
             }
         },
@@ -24,5 +24,27 @@
         }
     },
     "infrastructure": { "httpServer": { "enabled": true } },
-    "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
+    "modules": {
+        "coreHttpApi": {
+            "docs": {
+                "enabled": true
+            }
+        },
+        "webhooks": {
+            "displayName": "Webhooks",
+            "enabled": true,
+            "location": "webhooks/WebhooksModule",
+            "targets": {
+                "testTarget": {
+                    "url": "http://localhost:3769/"
+                }
+            },
+            "webhooks": [
+                {
+                    "triggers": ["**"],
+                    "target": "testTarget"
+                }
+            ]
+        }
+    }
 }
