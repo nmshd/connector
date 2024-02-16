@@ -10,13 +10,13 @@ import {
     PubSubConnectorConfiguration
 } from "./connectors";
 
-export type Brokers =
+export type Broker =
     | { type: "MQTT"; configuration: MQTTConnectorConfiguration }
     | { type: "AMQP"; configuration: AMQPConnectorConfiguration }
     | { type: "PubSub"; configuration: PubSubConnectorConfiguration };
 
 export interface MessageBrokerPublisherModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
-    brokers: Brokers[];
+    brokers: Broker[];
 }
 
 export default class MessageBrokerPublisherModule extends ConnectorRuntimeModule<MessageBrokerPublisherModuleConfiguration> {
