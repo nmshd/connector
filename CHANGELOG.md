@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.3
+
+-   the webhooksV2 module is now named webhooks
+
+    => configuring webhooksV2 is deprecated and will be removed in a future version
+
 ## 3.7.2
 
 -> SDK 4.0.0
