@@ -7,7 +7,7 @@ import { ConfigModel, Webhook } from "./ConfigModel";
 import { ConfigParser } from "./ConfigParser";
 import { WebhooksModuleConfiguration } from "./WebhooksModuleConfiguration";
 
-export default class WebhooksModuleV2 extends ConnectorRuntimeModule<WebhooksModuleConfiguration> {
+export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfiguration> {
     private axios: AxiosInstance;
     private configModel: ConfigModel;
 
