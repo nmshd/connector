@@ -4,9 +4,6 @@ import nconf from "nconf";
 import { ConnectorRuntime } from "./ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 
-import http from "http";
-import https from "https";
-
 export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRuntimeConfig {
     nconf
         .overrides(overrides)
@@ -37,7 +34,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
         // eslint-disable-next-line no-console
         console.warn("The 'webhooksV2' configuration is deprecated. Please use 'webhooks' instead.");
 
-        connectorConfig.modules.webhooks = _.defaultsDeep(connectorConfig.modules.webhooks, connectorConfig.modules.webhooksV2);
+        connectorConfig.modules.webhooks = _.defaultsDeep(connectorConfig.modules.webhooksV2, connectorConfig.modules.webhooks);
         delete connectorConfig.modules.webhooksV2;
     }
 
@@ -82,12 +79,6 @@ function parseString(value: string) {
 }
 
 async function run() {
-    // console.log(http.globalAgent.maxSockets);
-    http.globalAgent.maxSockets = 10000;
-
-    // console.log(https.globalAgent.maxSockets);
-    https.globalAgent.maxSockets = 10000;
-
     const config = createConnectorConfig();
     const runtime = await ConnectorRuntime.create(config);
     await runtime.start();
