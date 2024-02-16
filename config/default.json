@@ -95,10 +95,10 @@
                 }
             }
         },
-        "webhooksV2": {
+        "webhooks": {
             "displayName": "Webhooks",
             "enabled": false,
-            "location": "webhooksV2/WebhooksModuleV2",
+            "location": "webhooks/WebhooksModule",
             "targets": {},
             "webhooks": []
         },

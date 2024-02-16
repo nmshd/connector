@@ -1,5 +1,5 @@
-import { ConfigParser } from "../../../src/modules/webhooksV2/ConfigParser";
-import { WebhooksModuleConfiguration } from "../../../src/modules/webhooksV2/WebhooksModuleConfiguration";
+import { ConfigParser } from "../../../src/modules/webhooks/ConfigParser";
+import { WebhooksModuleConfiguration } from "../../../src/modules/webhooks/WebhooksModuleConfiguration";
 
 describe("ConfigParser", () => {
     test("parses webhooks with inline targets", () => {
@@ -79,7 +79,7 @@ describe("ConfigParser", () => {
         const parseResult = ConfigParser.parse(config);
 
         expect(parseResult.isError).toBeTruthy();
-        expect(parseResult.error.code).toBe("error.runtime.modules.webhooksV2.invalidTargetReference");
+        expect(parseResult.error.code).toBe("error.runtime.modules.webhooks.invalidTargetReference");
     });
 
     test("returns an error when an inline target has an invalid url", () => {
@@ -102,7 +102,7 @@ describe("ConfigParser", () => {
         const parseResult = ConfigParser.parse(config);
 
         expect(parseResult.isError).toBeTruthy();
-        expect(parseResult.error.code).toBe("error.runtime.modules.webhooksV2.invalidUrlFormat");
+        expect(parseResult.error.code).toBe("error.runtime.modules.webhooks.invalidUrlFormat");
     });
 
     test("returns an error when a named target has an invalid url", () => {
@@ -128,6 +128,6 @@ describe("ConfigParser", () => {
         const parseResult = ConfigParser.parse(config);
 
         expect(parseResult.isError).toBeTruthy();
-        expect(parseResult.error.code).toBe("error.runtime.modules.webhooksV2.invalidUrlFormat");
+        expect(parseResult.error.code).toBe("error.runtime.modules.webhooks.invalidUrlFormat");
     });
 });

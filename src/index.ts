@@ -1,4 +1,5 @@
 import { RuntimeConfig } from "@nmshd/runtime";
+import _ from "lodash";
 import nconf from "nconf";
 import { ConnectorRuntime } from "./ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
@@ -28,6 +29,15 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
         .file("default-file", { file: "config/default.json" });
 
     const connectorConfig = nconf.get();
+
+    if (typeof connectorConfig.modules.webhooksV2 !== "undefined") {
+        // eslint-disable-next-line no-console
+        console.warn("The 'webhooksV2' configuration is deprecated. Please use 'webhooks' instead.");
+
+        connectorConfig.modules.webhooks = _.defaultsDeep(connectorConfig.modules.webhooksV2, connectorConfig.modules.webhooks);
+        delete connectorConfig.modules.webhooksV2;
+    }
+
     return connectorConfig;
 }
 

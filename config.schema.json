@@ -112,7 +112,7 @@
                     },
                     "type": "object"
                 },
-                "webhooksV2": {
+                "webhooks": {
                     "type": "object",
                     "properties": {
                         "enabled": {
