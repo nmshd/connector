@@ -14,23 +14,6 @@ export class AttributesController extends BaseController {
         super();
     }
 
-    private stringToBoolean(value: string | undefined): boolean | undefined {
-        if (value === undefined) {
-            return undefined;
-        }
-
-        return value.toLowerCase() === "true";
-    }
-
-    private extractQuery(query: ServiceContext["request"]["query"], nonQueryParams: string[]): Record<string, any> {
-        return Object.entries(query)
-            .filter(([key, _]) => !nonQueryParams.includes(key))
-            .reduce<Record<string, any>>((previous, [key, value]) => {
-                previous[key] = value as string | string[];
-                return previous;
-            }, {});
-    }
-
     @POST
     @Accept("application/json")
     public async createRepositoryAttribute(request: any): Promise<Return.NewResource<Envelope>> {
@@ -229,5 +212,22 @@ export class AttributesController extends BaseController {
     public async getAttribute(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.getAttribute({ id });
         return this.ok(result);
+    }
+
+    private stringToBoolean(value: string | undefined): boolean | undefined {
+        if (value === undefined) {
+            return undefined;
+        }
+
+        return value.toLowerCase() === "true";
+    }
+
+    private extractQuery(query: ServiceContext["request"]["query"], nonQueryParams: string[]): Record<string, any> {
+        return Object.entries(query)
+            .filter(([key, _]) => !nonQueryParams.includes(key))
+            .reduce<Record<string, any>>((previous, [key, value]) => {
+                previous[key] = value as string | string[];
+                return previous;
+            }, {});
     }
 }
