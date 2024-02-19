@@ -1,4 +1,4 @@
-import { sleep } from "@js-soft/ts-utils";
+import { DataEvent, EventBus, SubscriptionTarget, sleep } from "@js-soft/ts-utils";
 import {
     ConnectorAttribute,
     ConnectorClient,
@@ -17,7 +17,7 @@ import {
 } from "@nmshd/connector-sdk";
 import fs from "fs";
 import { DateTime } from "luxon";
-import { ConnectorClientWithMetadata, Launcher } from "./Launcher";
+import { ConnectorClientWithMetadata } from "./Launcher";
 import { ValidationSchema } from "./validation";
 
 export async function syncUntil(client: ConnectorClient, until: (syncResult: ConnectorSyncResult) => boolean): Promise<ConnectorSyncResult> {
@@ -64,15 +64,9 @@ export async function syncUntilHasMessageWithRequest(client: ConnectorClientWith
         return syncResult.messages.filter((m: ConnectorMessage) => isRequest(m.content));
     };
 
-    const name = await new Launcher().randomString();
-    client._events.startEventLog(name);
     const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
-    let events = client._events.getEvents(name);
-    while (!events.some((e) => e.trigger === "consumption.messageProcessed" && isRequest(e.data.message?.content))) {
-        await sleep(500);
-        events = client._events.getEvents(name);
-    }
-    client._events.stopEventLog(name);
+    await client._eventBus!.waitForEvent<DataEvent<any>>("consumption.messageProcessed", (e) => isRequest(e.data.message?.content));
+
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
 export async function syncUntilHasMessageWithNotification(client: ConnectorClientWithMetadata, notificationId: string): Promise<ConnectorMessage> {
@@ -82,18 +76,13 @@ export async function syncUntilHasMessageWithNotification(client: ConnectorClien
         }
         return content["@type"] === "Notification" && content.id === notificationId;
     };
-    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
-        return syncResult.messages.filter((m: ConnectorMessage) => isNotification(m.content));
-    };
-    const name = await new Launcher().randomString();
-    client._events.startEventLog(name);
+
+    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => syncResult.messages.filter((m: ConnectorMessage) => isNotification(m.content));
+
     const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
-    let events = client._events.getEvents(name);
-    while (!events.some((e) => e.trigger === "consumption.messageProcessed" && isNotification(e.data.message?.content))) {
-        await sleep(500);
-        events = client._events.getEvents(name);
-    }
-    client._events.stopEventLog(name);
+
+    await client._eventBus!.waitForEvent<DataEvent<any>>("consumption.messageProcessed", (e) => isNotification(e.data.message?.content));
+
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
 
@@ -103,17 +92,10 @@ export async function syncUntilHasMessageWithResponse(client: ConnectorClientWit
         return syncResult.messages.filter((m: ConnectorMessage) => isResponse(m.content));
     };
 
-    const name = await new Launcher().randomString();
-    client._events.startEventLog(name);
-    const syncResult = await syncUntil(client, (syncResult) => {
-        return filterRequestMessagesByRequestId(syncResult).length !== 0;
-    });
-    let events = client._events.getEvents(name);
-    while (!events.some((e) => e.trigger === "consumption.messageProcessed" && isResponse(e.data.message?.content))) {
-        await sleep(500);
-        events = client._events.getEvents(name);
-    }
-    client._events.stopEventLog(name);
+    const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
+
+    await client._eventBus!.waitForEvent<DataEvent<any>>("consumption.messageProcessed", (e) => isResponse(e.data.message?.content));
+
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
 
@@ -432,4 +414,35 @@ export function combinations<T>(...arrays: T[][]): T[][] {
         }
     }
     return result;
+}
+
+export async function waitForEvent<TEvent>(
+    eventBus: EventBus,
+    subscriptionTarget: SubscriptionTarget<TEvent>,
+    assertionFunction?: (t: TEvent) => boolean,
+    timeout = 5000
+): Promise<TEvent> {
+    let subscriptionId: number;
+
+    const eventPromise = new Promise<TEvent>((resolve) => {
+        subscriptionId = eventBus.subscribe(subscriptionTarget, (event: TEvent) => {
+            if (assertionFunction && !assertionFunction(event)) return;
+
+            resolve(event);
+        });
+    });
+    if (!timeout) return await eventPromise.finally(() => eventBus.unsubscribe(subscriptionId));
+
+    let timeoutId: NodeJS.Timeout;
+    const timeoutPromise = new Promise<TEvent>((_resolve, reject) => {
+        timeoutId = setTimeout(
+            () => reject(new Error(`timeout exceeded for waiting for event ${typeof subscriptionTarget === "string" ? subscriptionTarget : subscriptionTarget.name}`)),
+            timeout
+        );
+    });
+
+    return await Promise.race([eventPromise, timeoutPromise]).finally(() => {
+        eventBus.unsubscribe(subscriptionId);
+        clearTimeout(timeoutId);
+    });
 }
