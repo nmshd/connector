@@ -486,67 +486,67 @@ paths:
       tags:
         - Attributes
       parameters:
-        - name: query.createdAt
+        - name: createdAt
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/DateFilter"
-        - name: query.content.@type
+        - name: content.@type
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.content.tags
+        - name: content.tags
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.content.validFrom
+        - name: content.validFrom
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/DateFilter"
-        - name: query.content.validTo
+        - name: content.validTo
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/DateFilter"
-        - name: query.content.key
+        - name: content.key
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.content.isTechnical
+        - name: content.isTechnical
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/BooleanFilter"
-        - name: query.content.confidentiality
+        - name: content.confidentiality
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.content.value.@type
+        - name: content.value.@type
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.shareInfo
+        - name: shareInfo
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.shareInfo.requestReference
+        - name: shareInfo.requestReference
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.shareInfo.notificationReference
+        - name: shareInfo.notificationReference
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.shareInfo.sourceAttribute
+        - name: shareInfo.sourceAttribute
           in: query
           required: false
           schema:
@@ -607,62 +607,62 @@ paths:
         - Attributes
 
       parameters:
-        - name: query.createdAt
+        - name: createdAt
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/DateFilter"
-        - name: query.content.@type
+        - name: content.@type
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.content.tags
+        - name: content.tags
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.content.validFrom
+        - name: content.validFrom
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/DateFilter"
-        - name: query.content.validTo
+        - name: content.validTo
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/DateFilter"
-        - name: query.content.key
+        - name: content.key
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.content.isTechnical
+        - name: content.isTechnical
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/BooleanFilter"
-        - name: query.content.confidentiality
+        - name: content.confidentiality
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.content.value.@type
+        - name: content.value.@type
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.shareInfo
+        - name: shareInfo
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.shareInfo.requestReference
+        - name: shareInfo.requestReference
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: query.shareInfo.notificationReference
+        - name: shareInfo.notificationReference
           in: query
           required: false
           schema:

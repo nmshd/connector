@@ -14,12 +14,21 @@ export class AttributesController extends BaseController {
         super();
     }
 
-    public stringToBoolean(value: string | undefined): boolean | undefined {
+    private stringToBoolean(value: string | undefined): boolean | undefined {
         if (value === undefined) {
             return undefined;
         }
 
         return value.toLowerCase() === "true";
+    }
+
+    private extractQuery(query: ServiceContext["request"]["query"], nonQueryParams: string[]): Record<string, any> {
+        return Object.entries(query)
+            .filter(([key, _]) => !nonQueryParams.includes(key))
+            .reduce<Record<string, any>>((previous, [key, value]) => {
+                previous[key] = value as string | string[];
+                return previous;
+            }, {});
     }
 
     @POST
@@ -102,18 +111,12 @@ export class AttributesController extends BaseController {
         @QueryParam("onlyLatestVersions") onlyLatestVersions?: string,
         @QueryParam("onlyValid") onlyValid?: string
     ): Promise<Envelope> {
-        const query: Record<string, any> = {};
-
-        Object.entries(context.request.query).forEach(([key, value]) => {
-            if (key.startsWith("query.")) {
-                query[key.replace("query.", "")] = typeof value === "string" ? value : "";
-            }
-        });
+        const query: Record<string, any> = this.extractQuery(context.request.query, ["peer", "hideTechnical", "onlyLatestVersions", "onlyValid"]);
 
         const result = await this.consumptionServices.attributes.getOwnSharedAttributes({
             peer,
             hideTechnical: this.stringToBoolean(hideTechnical),
-            query: query,
+            query,
             onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
             onlyValid: this.stringToBoolean(onlyValid)
         });
@@ -130,18 +133,12 @@ export class AttributesController extends BaseController {
         @QueryParam("onlyLatestVersions") onlyLatestVersions?: string,
         @QueryParam("onlyValid") onlyValid?: string
     ): Promise<Envelope> {
-        const query: Record<string, any> = {};
-        // TODO: make this more beautifull
-        Object.entries(context.request.query).forEach(([key, value]) => {
-            if (key.startsWith("query.")) {
-                query[key.replace("query.", "")] = typeof value === "string" ? value : "";
-            }
-        });
+        const query: Record<string, any> = this.extractQuery(context.request.query, ["peer", "hideTechnical", "onlyLatestVersions", "onlyValid"]);
 
         const result = await this.consumptionServices.attributes.getPeerSharedAttributes({
             peer,
             hideTechnical: this.stringToBoolean(hideTechnical),
-            query: query,
+            query,
             onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
             onlyValid: this.stringToBoolean(onlyValid)
         });
