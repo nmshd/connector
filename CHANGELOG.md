@@ -11,6 +11,12 @@
     -   `GET /api/v2/Attributes/{id}/Versions` Get all versions of one repository attribute
     -   `GET /api/v2/Attributes/{id}/Versions/Shared` Get all shard versions of one repository attribute
 
+## 3.7.3
+
+-   the webhooksV2 module is now named webhooks
+
+    => configuring webhooksV2 is deprecated and will be removed in a future version
+
 ## 3.7.2
 
 -> SDK 4.0.0

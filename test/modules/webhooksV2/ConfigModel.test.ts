@@ -1,4 +1,4 @@
-import { WebhookUrlTemplate } from "../../../src/modules/webhooksV2/ConfigModel";
+import { WebhookUrlTemplate } from "../../../src/modules/webhooks/ConfigModel";
 
 describe("WebhookModel", () => {
     describe("WebhookUrlTemplate", () => {
