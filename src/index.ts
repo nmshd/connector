@@ -61,13 +61,11 @@ function applyAlias(variable: { key: string; value: any }) {
 }
 
 function parseString(value: string) {
-    // REVISIT: This is a workaround for the issue that nconf does not parse JSON objects correctly
     try {
-        value = JSON.parse(value);
-    } catch (e) {
-        // Do nothing
+        return JSON.parse(value);
+    } catch (_) {
+        return value;
     }
-    return value;
 }
 
 async function run() {
