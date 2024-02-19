@@ -1,4 +1,4 @@
 export interface GetSharedVersionsOfRepositoryAttributeRequest {
     peers?: string[];
-    onlyLatestVersions: boolean;
+    onlyLatestVersions?: boolean;
 }

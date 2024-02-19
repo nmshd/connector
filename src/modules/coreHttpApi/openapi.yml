@@ -453,6 +453,7 @@ paths:
           required: false
           schema:
             type: boolean
+            default: true
       responses:
         200:
           description: Success
@@ -566,10 +567,12 @@ paths:
           schema:
             type: boolean
         - name: onlyLatestVersions
+          description: Whether to only get the latest version of the attribute for each peer
           in: query
           required: false
           schema:
             type: boolean
+            default: true
 
       responses:
         200:
@@ -680,10 +683,13 @@ paths:
           schema:
             type: boolean
         - name: onlyLatestVersions
+          description: Whether to only get the latest version of the attribute for each peer
           in: query
           required: false
           schema:
             type: boolean
+            default: true
+
       responses:
         200:
           description: Success

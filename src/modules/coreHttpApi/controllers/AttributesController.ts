@@ -14,6 +14,14 @@ export class AttributesController extends BaseController {
         super();
     }
 
+    public stringToBoolean(value: string | undefined): boolean | undefined {
+        if (value === undefined) {
+            return undefined;
+        }
+
+        return value.toLowerCase() === "true";
+    }
+
     @POST
     @Accept("application/json")
     public async createRepositoryAttribute(request: any): Promise<Return.NewResource<Envelope>> {
@@ -79,7 +87,7 @@ export class AttributesController extends BaseController {
     @Accept("application/json")
     public async getOwnRepositoryAttributes(@QueryParam("onlyLatestVersions") onlyLatestVersions?: string): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.getRepositoryAttributes({
-            onlyLatestVersions: onlyLatestVersions?.toLowerCase() === "true"
+            onlyLatestVersions: this.stringToBoolean(onlyLatestVersions)
         });
         return this.ok(result);
     }
@@ -104,10 +112,10 @@ export class AttributesController extends BaseController {
 
         const result = await this.consumptionServices.attributes.getOwnSharedAttributes({
             peer,
-            hideTechnical: hideTechnical?.toLowerCase() === "true",
+            hideTechnical: this.stringToBoolean(hideTechnical),
             query: query,
-            onlyLatestVersions: onlyLatestVersions?.toLowerCase() === "true",
-            onlyValid: onlyValid?.toLowerCase() === "true"
+            onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
+            onlyValid: this.stringToBoolean(onlyValid)
         });
         return this.ok(result);
     }
@@ -123,7 +131,7 @@ export class AttributesController extends BaseController {
         @QueryParam("onlyValid") onlyValid?: string
     ): Promise<Envelope> {
         const query: Record<string, any> = {};
-
+        // TODO: make this more beautifull
         Object.entries(context.request.query).forEach(([key, value]) => {
             if (key.startsWith("query.")) {
                 query[key.replace("query.", "")] = typeof value === "string" ? value : "";
@@ -132,10 +140,10 @@ export class AttributesController extends BaseController {
 
         const result = await this.consumptionServices.attributes.getPeerSharedAttributes({
             peer,
-            hideTechnical: hideTechnical?.toLowerCase() === "true",
+            hideTechnical: this.stringToBoolean(hideTechnical),
             query: query,
-            onlyLatestVersions: onlyLatestVersions?.toLowerCase() === "true",
-            onlyValid: onlyValid?.toLowerCase() === "true"
+            onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
+            onlyValid: this.stringToBoolean(onlyValid)
         });
         return this.ok(result);
     }
@@ -164,7 +172,7 @@ export class AttributesController extends BaseController {
 
         const result = await this.consumptionServices.attributes.getSharedVersionsOfRepositoryAttribute({
             attributeId,
-            onlyLatestVersions: onlyLatestVersions ? onlyLatestVersions === "true" : undefined,
+            onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
             peers
         });
         return this.ok(result);
