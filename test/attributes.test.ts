@@ -1,5 +1,5 @@
-import { ConnectorClient, ConnectorRelationshipAttribute } from "@nmshd/connector-sdk";
-import { Launcher } from "./lib/Launcher";
+import { ConnectorRelationshipAttribute } from "@nmshd/connector-sdk";
+import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import {
     createRepositoryAttribute,
@@ -12,8 +12,8 @@ import {
 import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
-let client1: ConnectorClient;
-let client2: ConnectorClient;
+let client1: ConnectorClientWithMetadata;
+let client2: ConnectorClientWithMetadata;
 let client1Address: string;
 let client2Address: string;
 
@@ -24,6 +24,11 @@ beforeAll(async () => {
     client2Address = (await client2.account.getIdentityInfo()).result.address;
 }, 30000);
 afterAll(() => launcher.stop());
+
+beforeEach(() => {
+    client1._eventBus?.reset();
+    client2._eventBus?.reset();
+});
 
 describe("Attributes", () => {
     test("should create a repository attribute", async () => {

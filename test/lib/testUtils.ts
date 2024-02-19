@@ -1,4 +1,4 @@
-import { sleep } from "@js-soft/ts-utils";
+import { DataEvent, EventBus, SubscriptionTarget, sleep } from "@js-soft/ts-utils";
 import {
     ConnectorAttribute,
     ConnectorClient,
@@ -17,6 +17,7 @@ import {
 } from "@nmshd/connector-sdk";
 import fs from "fs";
 import { DateTime } from "luxon";
+import { ConnectorClientWithMetadata } from "./Launcher";
 import { ValidationSchema } from "./validation";
 
 export async function syncUntil(client: ConnectorClient, until: (syncResult: ConnectorSyncResult) => boolean): Promise<ConnectorSyncResult> {
@@ -57,32 +58,44 @@ export async function syncUntilHasMessages(client: ConnectorClient, expectedNumb
     return syncResult.messages;
 }
 
-export async function syncUntilHasMessageWithRequest(client: ConnectorClient, requestId: string): Promise<ConnectorMessage> {
+export async function syncUntilHasMessageWithRequest(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorMessage> {
+    const isRequest = (content: any) => content["@type"] === "Request" && content.id === requestId;
     const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
-        return syncResult.messages.filter((m: ConnectorMessage) => (m.content as any)["@type"] === "Request" && (m.content as any).id === requestId);
+        return syncResult.messages.filter((m: ConnectorMessage) => isRequest(m.content));
     };
+
     const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
+    await client._eventBus!.waitForEvent<DataEvent<any>>("consumption.messageProcessed", (e) => isRequest(e.data.message?.content));
+
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
-export async function syncUntilHasMessageWithNotification(client: ConnectorClient, notificationId: string): Promise<ConnectorMessage> {
-    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
-        return syncResult.messages.filter((m: ConnectorMessage) => (m.content as any)["@type"] === "Notification" && (m.content as any).id === notificationId);
+export async function syncUntilHasMessageWithNotification(client: ConnectorClientWithMetadata, notificationId: string): Promise<ConnectorMessage> {
+    const isNotification = (content: any) => {
+        if (!content) {
+            return false;
+        }
+        return content["@type"] === "Notification" && content.id === notificationId;
     };
+
+    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => syncResult.messages.filter((m: ConnectorMessage) => isNotification(m.content));
+
     const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
+
+    await client._eventBus!.waitForEvent<DataEvent<any>>("consumption.messageProcessed", (e) => isNotification(e.data.message?.content));
+
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
 
-export async function syncUntilHasMessageWithResponse(client: ConnectorClient, requestId: string): Promise<ConnectorMessage> {
+export async function syncUntilHasMessageWithResponse(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorMessage> {
+    const isResponse = (content: any) => content["@type"] === "ResponseWrapper" && content.requestId === requestId;
     const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
-        return syncResult.messages.filter((m: ConnectorMessage) => {
-            const matcher = (m.content as any)["@type"] === "ResponseWrapper" && (m.content as any).requestId === requestId;
-            return matcher;
-        });
+        return syncResult.messages.filter((m: ConnectorMessage) => isResponse(m.content));
     };
-    const syncResult = await syncUntil(client, (syncResult) => {
-        const length = filterRequestMessagesByRequestId(syncResult).length;
-        return length !== 0;
-    });
+
+    const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
+
+    await client._eventBus!.waitForEvent<DataEvent<any>>("consumption.messageProcessed", (e) => isResponse(e.data.message?.content));
+
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
 
@@ -257,8 +270,8 @@ export async function createRepositoryAttribute(client: ConnectorClient, request
  * Returns the sender's own shared relationship attribute.
  */
 export async function executeFullCreateAndShareRelationshipAttributeFlow(
-    sender: ConnectorClient,
-    recipient: ConnectorClient,
+    sender: ConnectorClientWithMetadata,
+    recipient: ConnectorClientWithMetadata,
     attributeContent: Omit<ConnectorRelationshipAttribute, "owner" | "@type">
 ): Promise<ConnectorAttribute> {
     const senderIdentityInfoResult = await sender.account.getIdentityInfo();
@@ -315,8 +328,8 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
  * Returns the sender's own shared identity attribute.
  */
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
-    sender: ConnectorClient,
-    recipient: ConnectorClient,
+    sender: ConnectorClientWithMetadata,
+    recipient: ConnectorClientWithMetadata,
     attributeContent: ConnectorIdentityAttribute
 ): Promise<ConnectorAttribute> {
     const recipientIdentityInfoResult = await recipient.account.getIdentityInfo();
@@ -401,4 +414,35 @@ export function combinations<T>(...arrays: T[][]): T[][] {
         }
     }
     return result;
+}
+
+export async function waitForEvent<TEvent>(
+    eventBus: EventBus,
+    subscriptionTarget: SubscriptionTarget<TEvent>,
+    assertionFunction?: (t: TEvent) => boolean,
+    timeout = 5000
+): Promise<TEvent> {
+    let subscriptionId: number;
+
+    const eventPromise = new Promise<TEvent>((resolve) => {
+        subscriptionId = eventBus.subscribe(subscriptionTarget, (event: TEvent) => {
+            if (assertionFunction && !assertionFunction(event)) return;
+
+            resolve(event);
+        });
+    });
+    if (!timeout) return await eventPromise.finally(() => eventBus.unsubscribe(subscriptionId));
+
+    let timeoutId: NodeJS.Timeout;
+    const timeoutPromise = new Promise<TEvent>((_resolve, reject) => {
+        timeoutId = setTimeout(
+            () => reject(new Error(`timeout exceeded for waiting for event ${typeof subscriptionTarget === "string" ? subscriptionTarget : subscriptionTarget.name}`)),
+            timeout
+        );
+    });
+
+    return await Promise.race([eventPromise, timeoutPromise]).finally(() => {
+        eventBus.unsubscribe(subscriptionId);
+        clearTimeout(timeoutId);
+    });
 }
