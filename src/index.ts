@@ -60,22 +60,12 @@ function applyAlias(variable: { key: string; value: any }) {
     }
 }
 
-function isNumeric(value: string) {
-    if (typeof value !== "string") return false;
-
-    return !isNaN(value as any) && !isNaN(parseFloat(value));
-}
-
 function parseString(value: string) {
-    if (value === "true") {
-        return true;
-    } else if (value === "false") {
-        return false;
-    } else if (isNumeric(value)) {
-        return parseFloat(value);
+    try {
+        return JSON.parse(value);
+    } catch (_) {
+        return value;
     }
-
-    return value;
 }
 
 async function run() {

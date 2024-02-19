@@ -26,6 +26,11 @@ beforeAll(async () => {
 }, 30000);
 afterAll(() => launcher.stop());
 
+beforeEach(() => {
+    client1._eventBus?.reset();
+    client2._eventBus?.reset();
+});
+
 describe("Attributes", () => {
     test("should create a repository attribute", async () => {
         const createAttributeResponse = await client1.attributes.createRepositoryAttribute({
