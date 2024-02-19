@@ -9,11 +9,6 @@ import { MockEventBus } from "./MockEventBus";
 import getPort from "./getPort";
 import waitForConnector from "./waitForConnector";
 
-interface EventData {
-    trigger: string;
-    data: any;
-}
-
 export type ConnectorClientWithMetadata = ConnectorClient & {
     /* eslint-disable @typescript-eslint/naming-convention */
     _metadata?: Record<string, string>;
@@ -24,7 +19,6 @@ export type ConnectorClientWithMetadata = ConnectorClient & {
 export class Launcher {
     private readonly _processes: { connector: ChildProcess; webhookServer: Server | undefined }[] = [];
     private readonly apiKey = "xxx";
-    private readonly events: Record<string, EventData[] | undefined> = {};
 
     public async launchSimple(): Promise<string> {
         const port = await getPort();
