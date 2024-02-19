@@ -82,13 +82,8 @@ export class Launcher {
         let webhookServer: Server | undefined;
         if (eventBus) {
             const webhookServerPort = await getPort();
-            env["modules:webhooks:webhooks"] = JSON.stringify([
-                {
-                    triggers: ["**"],
-                    target: { url: `http://localhost:${webhookServerPort}` }
-                }
-            ]);
-
+            env["modules:webhooks:enabled"] = "true";
+            env["modules:webhooks:targets:test:url"] = `http://localhost:${webhookServerPort}`;
             webhookServer = this.startWebHookServer(webhookServerPort, eventBus);
         }
 

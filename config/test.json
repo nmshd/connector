@@ -25,19 +25,11 @@
     },
     "infrastructure": { "httpServer": { "enabled": true } },
     "modules": {
-        "coreHttpApi": {
-            "docs": {
-                "enabled": true
-            }
-        },
+        "coreHttpApi": { "docs": { "enabled": true } },
         "webhooks": {
-            "enabled": true,
-            "webhooks": [
-                {
-                    "triggers": ["**"],
-                    "target": { "url": "http://localhost:3769/" }
-                }
-            ]
+            "enabled": false,
+            "webhooks": [{ "triggers": ["**"], "target": "test" }],
+            "targets": { "test": {} }
         }
     }
 }
