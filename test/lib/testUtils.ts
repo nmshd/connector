@@ -97,8 +97,6 @@ export async function syncUntilHasMessageWithNotification(client: ConnectorClien
 
     await client._eventBus!.waitForEvent<DataEvent<any>>("consumption.messageProcessed", (e) => isNotification(e.data.message?.content));
 
-    console.log(client._eventBus!.publishedEvents.map((a) => a.namespace));
-
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
 
