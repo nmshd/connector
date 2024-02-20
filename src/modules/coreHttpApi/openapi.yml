@@ -442,6 +442,371 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  /api/v2/Attributes/Own/Repository:
+    get:
+      operationId: getOwnRepositoryAttributes
+      tags:
+        - Attributes
+      parameters:
+        - name: onlyLatestVersions
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Attribute"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v2/Attributes/Own/Shared/Identity:
+    get:
+      operationId: getOwnSharedIdentityAttributes
+      tags:
+        - Attributes
+      parameters:
+        - name: createdAt
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: content.@type
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: content.tags
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: content.validFrom
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: content.validTo
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: content.key
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: content.isTechnical
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
+        - name: content.confidentiality
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: content.value.@type
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: shareInfo
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: shareInfo.requestReference
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: shareInfo.notificationReference
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: shareInfo.sourceAttribute
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: peer
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+        - name: onlyValid
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: hideTechnical
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: onlyLatestVersions
+          description: Whether to only get the latest version of the attribute for each peer
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Attribute"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v2/Attributes/Peer/Shared/Identity:
+    get:
+      operationId: getPeerSharedIdentityAttributes
+      tags:
+        - Attributes
+
+      parameters:
+        - name: createdAt
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: content.@type
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: content.tags
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: content.validFrom
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: content.validTo
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: content.key
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: content.isTechnical
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
+        - name: content.confidentiality
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: content.value.@type
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: shareInfo
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: shareInfo.requestReference
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: shareInfo.notificationReference
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: peer
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+        - name: onlyValid
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: hideTechnical
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: onlyLatestVersions
+          description: Whether to only get the latest version of the attribute for each peer
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Attribute"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v2/Attributes/{id}/Versions:
+    get:
+      operationId: getVersionsOfAttribute
+      tags:
+        - Attributes
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Attribute.
+          required: true
+          schema:
+            $ref: "#/components/schemas/AttributeID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Attribute"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  /api/v2/Attributes/{id}/Versions/Shared:
+    get:
+      operationId: getSharedVersionsOfRepositoryAttribute
+      tags:
+        - Attributes
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Attribute.
+          required: true
+          schema:
+            $ref: "#/components/schemas/AttributeID"
+        - in: query
+          name: peers
+          description: An array of peers
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Address"
+        - in: query
+          name: onlyLatestVersions
+          description: Whether to only get the latest version of the attribute for each peer
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Attribute"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
   /api/v2/Attributes/{predecessorId}/Succeed:
     post:
       operationId: succeedAttribute

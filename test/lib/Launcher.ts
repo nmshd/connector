@@ -37,14 +37,15 @@ export class Launcher {
 
         for (let i = 0; i < count; i++) {
             const port = await getPort();
+            const accountName = await this.randomString();
             const connectorClient = ConnectorClient.create({ baseUrl: `http://localhost:${port}`, apiKey: this.apiKey }) as ConnectorClientWithMetadata;
+            connectorClient["_metadata"] = { accountName: `acc-${accountName}` };
 
             connectorClient._eventBus = new MockEventBus();
 
             clients.push(connectorClient);
             ports.push(port);
 
-            const accountName = await this.randomString();
             this._processes.push(await this.spawnConnector(port, accountName, connectorClient._eventBus));
         }
 

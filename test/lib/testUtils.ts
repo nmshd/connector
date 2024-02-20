@@ -1,3 +1,4 @@
+import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { DataEvent, EventBus, SubscriptionTarget, sleep } from "@js-soft/ts-utils";
 import {
     ConnectorAttribute,
@@ -19,6 +20,19 @@ import fs from "fs";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata } from "./Launcher";
 import { ValidationSchema } from "./validation";
+
+export async function connectAndEmptyCollection(databaseName: string, collectionName: string): Promise<void> {
+    const connection = new MongoDbConnection(process.env.DATABASE_CONNECTION_STRING!);
+    try {
+        await connection.connect();
+
+        const database = await connection.getDatabase(databaseName);
+        const collection = await database.getCollection(collectionName);
+        await collection.delete({});
+    } finally {
+        await connection.close();
+    }
+}
 
 export async function syncUntil(client: ConnectorClient, until: (syncResult: ConnectorSyncResult) => boolean): Promise<ConnectorSyncResult> {
     const syncResponse = await client.account.sync();
@@ -331,51 +345,71 @@ export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClientWithMetadata,
     recipient: ConnectorClientWithMetadata,
     attributeContent: ConnectorIdentityAttribute
-): Promise<ConnectorAttribute> {
-    const recipientIdentityInfoResult = await recipient.account.getIdentityInfo();
-    expect(recipientIdentityInfoResult.isSuccess).toBe(true);
-    const recipientAddress = recipientIdentityInfoResult.result.address;
-
+): Promise<ConnectorAttribute>;
+export async function executeFullCreateAndShareRepositoryAttributeFlow(
+    sender: ConnectorClient,
+    recipient: ConnectorClient[],
+    attributeContent: ConnectorIdentityAttribute
+): Promise<ConnectorAttribute[]>;
+export async function executeFullCreateAndShareRepositoryAttributeFlow(
+    sender: ConnectorClient,
+    recipients: ConnectorClient | ConnectorClient[],
+    attributeContent: ConnectorIdentityAttribute
+): Promise<ConnectorAttribute | ConnectorAttribute[]> {
     const createAttributeRequestResult = await sender.attributes.createRepositoryAttribute({ content: { value: attributeContent.value } });
     const attribute = createAttributeRequestResult.result;
 
-    const shareAttributeRequest: CreateOutgoingRequestRequest = {
-        peer: recipientAddress,
-        content: {
-            items: [
-                {
-                    "@type": "ShareAttributeRequestItem",
-                    mustBeAccepted: true,
-                    sourceAttributeId: attribute.id,
-                    attribute: attributeContent
-                }
-            ]
-        }
-    };
-
-    const createRequestResult = await sender.outgoingRequests.createRequest(shareAttributeRequest);
-
-    const sendMessageResponse = await sender.messages.sendMessage({
-        recipients: [recipientAddress],
-        content: createRequestResult.result.content
-    });
-
-    const requestId = (sendMessageResponse.result.content as any).id;
-    await syncUntilHasMessageWithRequest(recipient, requestId);
-
-    let recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
-    while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {
-        await sleep(500);
-        recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
+    if (!Array.isArray(recipients)) {
+        recipients = [recipients];
     }
 
-    await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
+    const results: ConnectorAttribute[] = [];
 
-    const responseMessage = await syncUntilHasMessageWithResponse(sender, requestId);
-    const sharedAttributeId = (responseMessage as any).content.response.items[0].attributeId;
+    for (const recipient of recipients) {
+        const recipientIdentityInfoResult = await recipient.account.getIdentityInfo();
+        expect(recipientIdentityInfoResult.isSuccess).toBe(true);
+        const recipientAddress = recipientIdentityInfoResult.result.address;
 
-    const senderOwnSharedIdentityAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
-    return senderOwnSharedIdentityAttribute;
+        const shareAttributeRequest: CreateOutgoingRequestRequest = {
+            peer: recipientAddress,
+            content: {
+                items: [
+                    {
+                        "@type": "ShareAttributeRequestItem",
+                        mustBeAccepted: true,
+                        sourceAttributeId: attribute.id,
+                        attribute: attributeContent
+                    }
+                ]
+            }
+        };
+
+        const createRequestResult = await sender.outgoingRequests.createRequest(shareAttributeRequest);
+
+        const sendMessageResponse = await sender.messages.sendMessage({
+            recipients: [recipientAddress],
+            content: createRequestResult.result.content
+        });
+
+        const requestId = (sendMessageResponse.result.content as any).id;
+        await syncUntilHasMessageWithRequest(recipient, requestId);
+
+        let recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
+        while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {
+            await sleep(500);
+            recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
+        }
+
+        await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
+
+        const responseMessage = await syncUntilHasMessageWithResponse(sender, requestId);
+        const sharedAttributeId = (responseMessage as any).content.response.items[0].attributeId;
+
+        const senderOwnSharedIdentityAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
+        results.push(senderOwnSharedIdentityAttribute);
+    }
+
+    return results.length === 1 ? results[0] : results;
 }
 
 /**
