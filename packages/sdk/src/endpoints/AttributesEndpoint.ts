@@ -8,6 +8,10 @@ import {
     ExecuteRelationshipAttributeQueryRequest,
     ExecuteThirdPartyRelationshipAttributeQueryRequest,
     GetAttributesRequest,
+    GetOwnRepositoryAttributesRequest,
+    GetOwnSharedIdentityAttributesRequest,
+    GetPeerSharedIdentityAttributesRequest,
+    GetSharedVersionsOfRepositoryAttributeRequest,
     GetValidAttributesRequest,
     NotifyPeerAboutRepositoryAttributeSuccessionRequest,
     NotifyPeerAboutRepositoryAttributeSuccessionResponse,
@@ -42,6 +46,25 @@ export class AttributesEndpoint extends Endpoint {
 
     public async getValidAttributes(request: GetValidAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Valid", request);
+    }
+
+    public async getOwnRepositoryAttributes(request?: GetOwnRepositoryAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
+        return await this.get("/api/v2/Attributes/Own/Repository", request);
+    }
+    public async getOwnSharedIdentityAttributes(request?: GetOwnSharedIdentityAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
+        return await this.get("/api/v2/Attributes/Own/Shared/Identity", request);
+    }
+    public async getPeerSharedIdentityAttributes(request?: GetPeerSharedIdentityAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
+        return await this.get("/api/v2/Attributes/Peer/Shared/Identity", request);
+    }
+    public async getVersionsOfAttribute(attributeId: string): Promise<ConnectorResponse<ConnectorAttributes>> {
+        return await this.get(`/api/v2/Attributes/${attributeId}/Versions`);
+    }
+    public async getSharedVersionsOfRepositoryAttribute(
+        attributeId: string,
+        request: GetSharedVersionsOfRepositoryAttributeRequest
+    ): Promise<ConnectorResponse<ConnectorAttributes>> {
+        return await this.get(`/api/v2/Attributes/${attributeId}/Versions/Shared`, request);
     }
 
     public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
