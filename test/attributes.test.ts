@@ -1,5 +1,6 @@
 import { DataEvent } from "@js-soft/ts-utils";
 import { ConnectorAttribute, ConnectorRelationshipAttribute, ConnectorResponse } from "@nmshd/connector-sdk";
+import { SuccessionEventData } from "@nmshd/runtime";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import {
@@ -133,8 +134,9 @@ describe("Attributes", () => {
         expect(notificationResponse.isSuccess).toBe(true);
 
         await syncUntilHasMessageWithNotification(client2, notificationResponse.result.notificationId);
-        await client2._eventBus!.waitForEvent<DataEvent<any>>("consumption.peerSharedAttributeSucceeded");
-        console.log(client2._eventBus!.publishedEvents.map((a) => a.namespace));
+        await client2._eventBus!.waitForEvent<DataEvent<any>>("consumption.peerSharedAttributeSucceeded", (event: DataEvent<SuccessionEventData>) => {
+            return event.data.successor.id === notificationResponse.result.successor.id;
+        });
 
         const succeededAttributeResponse = await client2.attributes.getAttribute(notificationResponse.result.successor.id);
 
