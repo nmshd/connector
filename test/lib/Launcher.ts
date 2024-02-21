@@ -105,8 +105,10 @@ export class Launcher {
 
     public stop(): void {
         this._processes.forEach((p) => {
+            p.connector.on("exit", () => {
+                p.webhookServer?.close();
+            });
             p.connector.kill();
-            p.webhookServer?.close();
         });
     }
 }
