@@ -1,4 +1,5 @@
 import { IDatabaseConnection } from "@js-soft/docdb-access-abstractions";
+import { LokiJsConnection } from "@js-soft/docdb-access-loki";
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { ILogger } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
@@ -100,6 +101,16 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
+        if (this.runtimeConfig.database.driver === "lokijs") {
+            if (!this.runtimeConfig.debug) throw new Error("LokiJS is only available in debug mode.");
+
+            const folder = this.runtimeConfig.database.folder;
+            if (!folder) throw new Error("No folder provided for LokiJS database.");
+
+            this.databaseConnection = new LokiJsConnection(folder, undefined, { autoload: true, autosave: true });
+            return this.databaseConnection;
+        }
+
         if (!this.runtimeConfig.database.connectionString) {
             this.logger.error(`No database connection string provided. See ${DocumentationLink.operate__configuration("database")} on how to configure the database connection.`);
             process.exit(1);
@@ -146,13 +157,15 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         } = await this.login(this.accountController, consumptionController));
 
         this.healthChecker = HealthChecker.create(
-            new MongoDbConnection(this.runtimeConfig.database.connectionString, {
-                connectTimeoutMS: 1000,
-                socketTimeoutMS: 1000,
-                maxIdleTimeMS: 1000,
-                waitQueueTimeoutMS: 1000,
-                serverSelectionTimeoutMS: 1000
-            }),
+            this.runtimeConfig.database.driver === "lokijs"
+                ? undefined
+                : new MongoDbConnection(this.runtimeConfig.database.connectionString, {
+                      connectTimeoutMS: 1000,
+                      socketTimeoutMS: 1000,
+                      maxIdleTimeMS: 1000,
+                      waitQueueTimeoutMS: 1000,
+                      serverSelectionTimeoutMS: 1000
+                  }),
             axios.create({ baseURL: this.transport.config.baseUrl }),
             this.accountController.authenticator,
             this.loggerFactory.getLogger("HealthChecker")
@@ -176,7 +189,14 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     private sanitizeConfig(config: ConnectorRuntimeConfig) {
-        config.database.connectionString = "***";
+        switch (config.database.driver) {
+            case "lokijs":
+                config.database.folder = "***";
+                break;
+            case "mongodb":
+                config.database.connectionString = "***";
+                break;
+        }
 
         const httpServer = config.infrastructure.httpServer as any;
         if (httpServer?.apiKey) {

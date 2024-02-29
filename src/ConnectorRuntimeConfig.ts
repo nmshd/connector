@@ -2,13 +2,20 @@ import { RuntimeConfig } from "@nmshd/runtime";
 import * as log4js from "log4js";
 import { ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
 
+export interface MongoDBSettings {
+    driver: "mongodb";
+    connectionString: string;
+}
+
+export interface LokiJsSettings {
+    driver: "lokijs";
+    folder: string;
+}
+
 export interface ConnectorRuntimeConfig extends RuntimeConfig {
     debug: boolean;
 
-    database: {
-        connectionString: string;
-        dbName: string;
-    };
+    database: (MongoDBSettings | LokiJsSettings) & { dbName: string };
 
     logging: log4js.Configuration;
 
