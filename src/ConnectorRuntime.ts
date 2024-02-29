@@ -191,7 +191,6 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private sanitizeConfig(config: ConnectorRuntimeConfig) {
         switch (config.database.driver) {
             case "lokijs":
-                config.database.folder = "***";
                 break;
             case "mongodb":
                 config.database.connectionString = "***";
