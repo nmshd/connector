@@ -7,13 +7,13 @@ import { AxiosInstance } from "axios";
 
 export class HealthChecker {
     private constructor(
-        private readonly dbConnection: MongoDbConnection,
+        private readonly dbConnection: MongoDbConnection | undefined,
         private readonly axiosInstance: AxiosInstance,
         private readonly authenticator: Authenticator,
         private readonly logger: ILogger
     ) {}
 
-    public static create(dbConnection: MongoDbConnection, axiosInstance: AxiosInstance, authenticator: Authenticator, logger: ILogger): HealthChecker {
+    public static create(dbConnection: MongoDbConnection | undefined, axiosInstance: AxiosInstance, authenticator: Authenticator, logger: ILogger): HealthChecker {
         const healthCheck = new HealthChecker(dbConnection, axiosInstance, authenticator, logger);
 
         return healthCheck;
@@ -72,6 +72,8 @@ export class HealthChecker {
     }
 
     private async checkDatabaseConnection(): Promise<boolean> {
+        if (!this.dbConnection) return true;
+
         try {
             await this.dbConnection.connect();
             return true;
