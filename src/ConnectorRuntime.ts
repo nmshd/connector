@@ -30,7 +30,7 @@ interface SupportInformation {
 export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private static readonly MODULES_DIRECTORY = path.join(__dirname, "modules");
 
-    private mongodbConnection?: MongoDbConnection;
+    private databaseConnection?: IDatabaseConnection;
     private accountController: AccountController;
 
     private _transportServices: TransportServices;
@@ -105,14 +105,14 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             process.exit(1);
         }
 
-        if (this.mongodbConnection) {
+        if (this.databaseConnection) {
             throw new Error("The database connection was already created.");
         }
 
-        this.mongodbConnection = new MongoDbConnection(this.runtimeConfig.database.connectionString);
+        const mongodbConnection = new MongoDbConnection(this.runtimeConfig.database.connectionString);
 
         try {
-            await this.mongodbConnection.connect();
+            await mongodbConnection.connect();
         } catch (e) {
             this.logger.error("Could not connect to the configured database. Try to check the connection string and the database status. Root error: ", e);
 
@@ -120,7 +120,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         }
         this.logger.debug("Finished initialization of Mongo DB connection.");
 
-        return this.mongodbConnection;
+        this.databaseConnection = mongodbConnection;
+        return this.databaseConnection;
     }
 
     protected async initAccount(): Promise<void> {
@@ -285,7 +286,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         }
 
         try {
-            await this.mongodbConnection?.close();
+            await this.databaseConnection?.close();
         } catch (e) {
             this.logger.error(e);
         }
