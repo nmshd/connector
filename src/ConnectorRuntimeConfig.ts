@@ -7,7 +7,7 @@ export interface MongoDBSettings {
     connectionString: string;
 }
 
-export interface LokiJsSettings {
+export interface LokiJSSettings {
     driver: "lokijs";
     folder: string;
 }
@@ -15,7 +15,7 @@ export interface LokiJsSettings {
 export interface ConnectorRuntimeConfig extends RuntimeConfig {
     debug: boolean;
 
-    database: (MongoDBSettings | LokiJsSettings) & { dbName: string };
+    database: (MongoDBSettings | LokiJSSettings) & { dbName: string };
 
     logging: log4js.Configuration;
 
