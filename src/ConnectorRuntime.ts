@@ -107,7 +107,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             const folder = this.runtimeConfig.database.folder;
             if (!folder) throw new Error("No folder provided for LokiJS database.");
 
-            this.databaseConnection = new LokiJsConnection(folder, undefined, { autoload: true, autosave: true });
+            this.databaseConnection = new LokiJsConnection(folder, undefined, { autoload: true, autosave: true, persistenceMethod: "fs" });
             return this.databaseConnection;
         }
 
