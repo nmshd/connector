@@ -2,13 +2,20 @@
 // To regenerate the json schema, execute the following command:
 // npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t "ConnectorConfig" --no-top-ref
 
+export interface MongoDBSettings {
+    driver: "mongodb";
+    connectionString: string;
+}
+
+export interface LokiJsSettings {
+    driver: "lokijs";
+    folder: string;
+}
+
 export interface ConnectorConfig {
     debug: boolean;
 
-    database: {
-        connectionString: string;
-        dbName: string;
-    };
+    database: (MongoDBSettings | LokiJsSettings) & { dbName: string };
 
     transportLibrary: IConfigOverwrite;
 
