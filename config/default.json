@@ -4,7 +4,7 @@
         "realm": "id1"
     },
     "database": {
-        "connectionString": "default-connection-string",
+        "driver": "mongodb",
         "dbName": "default"
     },
     "logging": {

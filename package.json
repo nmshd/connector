@@ -61,6 +61,7 @@
     },
     "dependencies": {
         "@google-cloud/pubsub": "4.3.1",
+        "@js-soft/docdb-access-loki": "^1.0.6",
         "@js-soft/docdb-access-mongo": "1.1.6",
         "@js-soft/node-logger": "1.1.1",
         "@js-soft/ts-utils": "^2.3.3",
