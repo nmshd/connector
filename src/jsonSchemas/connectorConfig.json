@@ -2,21 +2,46 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {},
     "properties": {
+        "database": {
+            "anyOf": [
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "connectionString": {
+                            "type": "string"
+                        },
+                        "dbName": {
+                            "type": "string"
+                        },
+                        "driver": {
+                            "const": "mongodb",
+                            "type": "string"
+                        }
+                    },
+                    "required": ["connectionString", "dbName", "driver"],
+                    "type": "object"
+                },
+                {
+                    "additionalProperties": false,
+                    "properties": {
+                        "dbName": {
+                            "type": "string"
+                        },
+                        "driver": {
+                            "const": "lokijs",
+                            "type": "string"
+                        },
+                        "folder": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["dbName", "driver", "folder"],
+                    "type": "object"
+                }
+            ]
+        },
         "debug": {
             "type": "boolean"
-        },
-        "database": {
-            "additionalProperties": false,
-            "properties": {
-                "connectionString": {
-                    "type": "string"
-                },
-                "dbName": {
-                    "type": "string"
-                }
-            },
-            "required": ["connectionString", "dbName"],
-            "type": "object"
         },
         "infrastructure": {
             "additionalProperties": false,
@@ -1031,6 +1056,9 @@
                 "datawalletEnabled": {
                     "type": "boolean"
                 },
+                "debug": {
+                    "type": "boolean"
+                },
                 "platformAdditionalHeaders": {
                     "type": "object"
                 },
@@ -1052,9 +1080,6 @@
                 "realm": {
                     "enum": ["dev", "id0", "id1"],
                     "type": "string"
-                },
-                "debug": {
-                    "type": "boolean"
                 }
             },
             "type": "object"
