@@ -4,12 +4,12 @@
 
 -> SDK 4.1.0
 
--   add routes for querying versions of attrbutes
+-   add routes for querying versions of attributes
     -   `GET /api/v2/Attributes/Own/Repository` Get all the repository attributes
-    -   `GET /api/v2/Attributes/Own/Shared/Identity` Get all own shared indentity attributes
+    -   `GET /api/v2/Attributes/Own/Shared/Identity` Get all own shared identity attributes
     -   `GET /api/v2/Attributes/Peer/Shared/Identity` Get all peer shared identity attributes
     -   `GET /api/v2/Attributes/{id}/Versions` Get all versions of one repository attribute
-    -   `GET /api/v2/Attributes/{id}/Versions/Shared` Get all shard versions of one repository attribute
+    -   `GET /api/v2/Attributes/{id}/Versions/Shared` Get all shared versions of one repository attribute
 
 ## 3.7.3
 
