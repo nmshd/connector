@@ -106,7 +106,7 @@ npm run test:local -- testSuiteName
           "platformClientId": "...",
           "platformClientSecret": "..."
       },
-      "database": { "driver": "lokijs", "folder": "./" },
+      "database": { "driver": "lokijs", "folder": "./", "dbName": "local" },
       "logging": { "categories": { "default": { "appenders": ["console"] } } },
       "infrastructure": { "httpServer": { "apiKey": "xxx", port: 8080 } },
       "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
