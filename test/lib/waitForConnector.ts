@@ -1,9 +1,11 @@
 import { sleep } from "@js-soft/ts-utils";
 import axios from "axios";
+import inspector from "inspector";
 
 export default async function waitForConnector(port: number): Promise<void> {
     const maxRetries = 10;
-    const timeout = 1000;
+    const debug = inspector.url() !== undefined;
+    const timeout = debug ? 999999999 : 1000;
 
     const axiosInstance = axios.create({
         baseURL: `http://localhost:${port}`,
