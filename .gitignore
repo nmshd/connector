@@ -11,3 +11,4 @@ helmChart/charts
 !.dev/.env.example
 
 tui.env
+local.config.json
