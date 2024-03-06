@@ -60,7 +60,6 @@
         }
     },
     "dependencies": {
-        "@apidevtools/swagger-parser": "^10.1.0",
         "@google-cloud/pubsub": "4.3.1",
         "@js-soft/docdb-access-loki": "^1.0.6",
         "@js-soft/docdb-access-mongo": "1.1.6",
@@ -89,6 +88,7 @@
         "yamljs": "0.3.0"
     },
     "devDependencies": {
+        "@apidevtools/swagger-parser": "^10.1.0",
         "@js-soft/eslint-config-ts": "1.6.6",
         "@js-soft/license-check": "1.0.9",
         "@nmshd/connector-sdk": "*",
