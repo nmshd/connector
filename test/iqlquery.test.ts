@@ -1,6 +1,7 @@
 import { ConnectorClient, ConnectorIdentityAttribute, ExecuteIQLQueryRequest, IQLQuery, ProposeAttributeRequestItem, ReadAttributeRequestItem } from "@nmshd/connector-sdk";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
+import { getTimeout } from "./lib/setTimeout";
 import { getTemplateToken, syncUntil, syncUntilHasMessages, syncUntilHasRelationships } from "./lib/testUtils";
 
 /* Disable timeout errors if we're debugging */
@@ -62,7 +63,7 @@ beforeAll(async () => {
         /* Sanity check */
         throw new Error("Connector relationship bootstrap failed :(");
     }
-}, 3000000);
+}, getTimeout(3000000));
 afterAll(() => launcher.stop());
 
 test("Local IQL Query", async () => {

@@ -46,7 +46,8 @@
         "setupFilesAfterEnv": [
             "jest-expect-message",
             "./test/lib/validation.ts",
-            "./test/lib/customMatcher.ts"
+            "./test/lib/customMatcher.ts",
+            "./test/lib/setTimeout.ts"
         ],
         "testEnvironment": "node",
         "testTimeout": 60000,

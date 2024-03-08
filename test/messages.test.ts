@@ -1,8 +1,9 @@
-import { ConnectorClient } from "@nmshd/connector-sdk";
-import { Launcher } from "./lib/Launcher";
-import { QueryParamConditions } from "./lib/QueryParamConditions";
-import { establishRelationship, exchangeMessage, getRelationship, syncUntilHasMessages, uploadFile } from "./lib/testUtils";
-import { ValidationSchema } from "./lib/validation";
+import { ConnectorClient } from "@nmshd/connector-sdk"
+import { Launcher } from "./lib/Launcher"
+import { QueryParamConditions } from "./lib/QueryParamConditions"
+import { getTimeout } from "./lib/setTimeout"
+import { establishRelationship, exchangeMessage, getRelationship, syncUntilHasMessages, uploadFile } from "./lib/testUtils"
+import { ValidationSchema } from "./lib/validation"
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -15,7 +16,7 @@ beforeAll(async () => {
 
     const relationship = await getRelationship(client1);
     connector2Address = relationship.peer;
-}, 30000);
+}, getTimeout(30000));
 
 afterAll(() => launcher.stop());
 
