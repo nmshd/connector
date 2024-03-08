@@ -3,6 +3,7 @@ import { ConnectorAttribute, ConnectorRelationshipAttribute, ConnectorResponse }
 import { SuccessionEventData } from "@nmshd/runtime";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
+import { getTimeout } from "./lib/setTimeout";
 import {
     connectAndEmptyCollection,
     createRepositoryAttribute,
@@ -25,7 +26,7 @@ beforeAll(async () => {
     await establishRelationship(client1, client2);
     client1Address = (await client1.account.getIdentityInfo()).result.address;
     client2Address = (await client2.account.getIdentityInfo()).result.address;
-}, 30000);
+}, getTimeout(30000));
 afterAll(() => launcher.stop());
 
 beforeEach(() => {

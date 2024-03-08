@@ -1,6 +1,7 @@
 import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
+import { getTimeout } from "./lib/setTimeout";
 import { exchangeToken, uploadOwnToken } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
@@ -8,7 +9,7 @@ const launcher = new Launcher();
 let client1: ConnectorClient;
 let client2: ConnectorClient;
 
-beforeAll(async () => ([client1, client2] = await launcher.launch(2)), 30000);
+beforeAll(async () => ([client1, client2] = await launcher.launch(2)), getTimeout(30000));
 afterAll(() => launcher.stop());
 
 describe("Tokens query", () => {

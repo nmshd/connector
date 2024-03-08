@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { Launcher } from "./lib/Launcher";
+import { getTimeout } from "./lib/setTimeout";
 import { validateSchema, ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
@@ -11,7 +12,7 @@ beforeAll(async () => {
         baseURL: baseUrl,
         validateStatus: (_) => true
     });
-}, 30000);
+}, getTimeout(30000));
 
 afterAll(() => launcher.stop());
 
