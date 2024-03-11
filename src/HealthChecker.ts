@@ -1,8 +1,7 @@
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { ILogger } from "@js-soft/logging-abstractions";
 import { RuntimeHealth } from "@nmshd/runtime";
-import { CoreDate } from "@nmshd/transport";
-import { AbstractAuthenticator } from "@nmshd/transport/dist/core/backbone/Authenticator";
+import { AbstractAuthenticator, CoreDate } from "@nmshd/transport";
 import { AxiosInstance } from "axios";
 
 export class HealthChecker {
