@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.8.1
+
+-   upgrade the runtime version to 4.3.6 - When querying attributes by tag, single tags will now work properly
+
 ## 3.8.0
 
 -> SDK 4.1.0
