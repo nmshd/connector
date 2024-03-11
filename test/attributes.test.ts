@@ -186,7 +186,8 @@ describe("Attributes Query", () => {
                     value: {
                         "@type": "GivenName",
                         value: "AGivenName"
-                    }
+                    },
+                    tags: ["content:edu.de"]
                 }
             })
         ).result;
