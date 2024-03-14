@@ -19,7 +19,7 @@ export class AMQPConnector extends MessageBrokerConnector<AMQPConnectorConfigura
         });
 
         this.channel = await this.connection.createChannel().catch((e) => {
-            throw new Error(`Could not create a channel for RabbitMQ' (${e.message})`);
+            throw new Error(`Could not create a channel for RabbitMQ (${e.message})`);
         });
 
         const exchange = this.configuration.exchange ?? "";
