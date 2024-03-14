@@ -80,6 +80,7 @@
         "nconf": "0.12.1",
         "on-headers": "1.0.2",
         "rapidoc": "9.3.4",
+        "redis": "^4.6.13",
         "reflect-metadata": "0.2.1",
         "swagger-ui-express": "5.0.0",
         "typescript-ioc": "3.2.2",

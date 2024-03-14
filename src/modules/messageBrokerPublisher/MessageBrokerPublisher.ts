@@ -7,13 +7,16 @@ import {
     MQTTConnectorConfiguration,
     MessageBrokerConnector,
     PubSubConnector,
-    PubSubConnectorConfiguration
+    PubSubConnectorConfiguration,
+    RedisConnector,
+    RedisConnectorConfiguration
 } from "./connectors";
 
 export type Broker =
     | { type: "MQTT"; configuration: MQTTConnectorConfiguration }
     | { type: "AMQP"; configuration: AMQPConnectorConfiguration }
-    | { type: "PubSub"; configuration: PubSubConnectorConfiguration };
+    | { type: "PubSub"; configuration: PubSubConnectorConfiguration }
+    | { type: "Redis"; configuration: RedisConnectorConfiguration };
 
 export interface MessageBrokerPublisherModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     brokers: Broker[];
@@ -33,6 +36,9 @@ export default class MessageBrokerPublisherModule extends ConnectorRuntimeModule
                     break;
                 case "PubSub":
                     this.connectors.push(new PubSubConnector(broker.configuration, this.logger));
+                    break;
+                case "Redis":
+                    this.connectors.push(new RedisConnector(broker.configuration, this.logger));
                     break;
             }
         }
