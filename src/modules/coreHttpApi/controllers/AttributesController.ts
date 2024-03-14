@@ -1,7 +1,7 @@
 import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionServices, RuntimeErrors, TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, DELETE, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -211,6 +211,13 @@ export class AttributesController extends BaseController {
     @Accept("application/json")
     public async getAttribute(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.getAttribute({ id });
+        return this.ok(result);
+    }
+
+    @DELETE
+    @Path("/:id")
+    public async deleteOwnSharedAttributeAndNotifyPeerUseCase(@PathParam("id") attributeId: string): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.deleteOwnSharedAttributeAndNotifyPeer({ attributeId });
         return this.ok(result);
     }
 

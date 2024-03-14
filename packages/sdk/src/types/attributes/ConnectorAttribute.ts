@@ -4,7 +4,20 @@ export interface ConnectorAttribute {
     content: ConnectorIdentityAttribute | ConnectorRelationshipAttribute;
     succeeds?: string;
     succeededBy?: string;
+    deletionInfo?: ConnectorAttributeDeletionInfo;
     shareInfo?: ConnectorAttributeShareInfo;
+}
+
+export enum ConnectorDeletionStatus {
+    ToBeDeleted = "ToBeDeleted",
+    ToBeDeletedByPeer = "ToBeDeletedByPeer",
+    DeletedByPeer = "DeletedByPeer",
+    DeletedByOwner = "DeletedByOwner"
+}
+
+export interface ConnectorAttributeDeletionInfo {
+    deletionStatus: ConnectorDeletionStatus;
+    deletionDate: string;
 }
 
 export interface ConnectorAttributeShareInfoForRequest {

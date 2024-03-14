@@ -1,6 +1,7 @@
 import { DataEvent } from "@js-soft/ts-utils";
 import { ConnectorAttribute, ConnectorRelationshipAttribute, ConnectorResponse } from "@nmshd/connector-sdk";
-import { SuccessionEventData } from "@nmshd/runtime";
+import { DeletionStatus } from "@nmshd/consumption";
+import { LocalAttributeDTO, SuccessionEventData } from "@nmshd/runtime";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
@@ -491,5 +492,34 @@ describe("Read Attribute and versions", () => {
         expect(latestOfAllPeersSharedVersions.result).toHaveLength(2);
 
         newLauncher.stop();
+    });
+});
+
+describe("Delete attributes", () => {
+    test.only("should delete an own shared attribute and notify peer", async () => {
+        const ownSharedIdentityAttribute = await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
+            "@type": "IdentityAttribute",
+            value: {
+                "@type": "GivenName",
+                value: "AGivenName"
+            },
+            owner: client1Address
+        });
+        const repositoryAttributeId = ownSharedIdentityAttribute.shareInfo!.sourceAttribute!;
+
+        const deleteResponse = await client1.attributes.deleteOwnSharedAttributeAndNotifyPeer(ownSharedIdentityAttribute.id);
+        expect(deleteResponse.isSuccess).toBe(true);
+        client2._eventBus?.reset();
+        await syncUntilHasMessageWithNotification(client2, deleteResponse.result.id);
+        await client2._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.ownSharedAttributeDeletedByOwner", (event: any) => {
+            return event.data.id === ownSharedIdentityAttribute.id;
+        });
+
+        const client1DeletedAttribute = await client1.attributes.getAttribute(ownSharedIdentityAttribute.id);
+        expect(client1DeletedAttribute.isSuccess).toBe(false);
+        const client2DeletedAttribute = await client2.attributes.getAttribute(ownSharedIdentityAttribute.id);
+        expect(client2DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(DeletionStatus.DeletedByOwner);
+        const client1RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
+        expect(client1RepositoryAttribute.isSuccess).toBe(true);
     });
 });

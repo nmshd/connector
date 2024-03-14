@@ -986,6 +986,38 @@ paths:
           $ref: "#/components/responses/Forbidden"
         404:
           $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteOwnSharedAttributeAndNotifyPeerUseCase
+      description: Delete an own shared attribute and notify the peer.
+      responses:
+        201:
+          description: |
+            Success. Deleting an own shared attribute and notifying the peer returns the notification sent to the peer.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - result
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Notification"
+
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
 
   /api/v2/Attributes/Valid:
     get:
@@ -4180,6 +4212,8 @@ components:
           description: The date and time when the attribute was created.
         shareInfo:
           "$ref": "#/components/schemas/AttributeShareInfo"
+        deletionInfo:
+          "$ref": "#/components/schemas/AttributeDeletionInfo"
         succeededBy:
           type: string
           allOf:
@@ -4221,6 +4255,20 @@ components:
       required:
         - requestReference
         - peer
+
+    AttributeDeletionInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        deletionStatus:
+          type: string
+          description: The status of the deletion process
+        deletionDate:
+          type: string
+          description: The date of the deletion
+      required:
+        - deletionStatus
+        - deletionDate
 
     AttributeValue:
       type: object
@@ -4911,6 +4959,20 @@ components:
 
     MessageContent:
       type: object
+
+    Notification:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - items
+      properties:
+        id:
+          $ref: "#/components/schemas/NotificationID"
+        items:
+          type: array
+          items:
+            type: object
 
     Relationship:
       type: object
