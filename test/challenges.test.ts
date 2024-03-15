@@ -1,5 +1,6 @@
 import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Launcher } from "./lib/Launcher";
+import { getTimeout } from "./lib/setTimeout";
 import { establishRelationship, getRelationship } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
@@ -16,7 +17,7 @@ beforeAll(async () => {
 
     relationshipId = (await getRelationship(client1)).id;
     client1Address = (await client1.account.getIdentityInfo()).result.address;
-}, 30000);
+}, getTimeout(30000));
 afterAll(() => launcher.stop());
 
 describe("Create challenge", () => {

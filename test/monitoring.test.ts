@@ -1,11 +1,12 @@
 import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Launcher } from "./lib/Launcher";
+import { getTimeout } from "./lib/setTimeout";
 import { validateSchema, ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client: ConnectorClient;
 
-beforeAll(async () => ([client] = await launcher.launch(1)), 30000);
+beforeAll(async () => ([client] = await launcher.launch(1)), getTimeout(30000));
 afterAll(() => launcher.stop());
 
 describe("Monitoring Endpoints", () => {

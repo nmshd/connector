@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/connector",
-    "version": "3.7.2",
+    "version": "3.8.1",
     "private": true,
     "description": "The Enmeshed Connector",
     "homepage": "https://enmeshed.eu/integrate",
@@ -46,7 +46,8 @@
         "setupFilesAfterEnv": [
             "jest-expect-message",
             "./test/lib/validation.ts",
-            "./test/lib/customMatcher.ts"
+            "./test/lib/customMatcher.ts",
+            "./test/lib/setTimeout.ts"
         ],
         "testEnvironment": "node",
         "testTimeout": 60000,
@@ -60,18 +61,19 @@
         }
     },
     "dependencies": {
-        "@google-cloud/pubsub": "4.3.2",
+        "@google-cloud/pubsub": "4.3.3",
+        "@js-soft/docdb-access-loki": "^1.0.6",
         "@js-soft/docdb-access-mongo": "1.1.7",
         "@js-soft/node-logger": "1.1.1",
         "@js-soft/ts-utils": "^2.3.3",
-        "@nmshd/iql": "^1.0.1",
-        "@nmshd/runtime": "4.0.0",
+        "@nmshd/iql": "^1.0.2",
+        "@nmshd/runtime": "4.3.6",
         "agentkeepalive": "4.5.0",
         "amqplib": "^0.10.3",
         "axios": "^1.6.7",
         "compression": "1.7.4",
         "cors": "2.8.5",
-        "express": "4.18.2",
+        "express": "4.18.3",
         "helmet": "7.1.0",
         "json-stringify-safe": "5.0.1",
         "jsonschema": "1.4.1",
@@ -89,10 +91,11 @@
         "yamljs": "0.3.0"
     },
     "devDependencies": {
-        "@js-soft/eslint-config-ts": "1.6.6",
+        "@apidevtools/swagger-parser": "^10.1.0",
+        "@js-soft/eslint-config-ts": "1.6.7",
         "@js-soft/license-check": "1.0.9",
         "@nmshd/connector-sdk": "*",
-        "@types/amqplib": "^0.10.4",
+        "@types/amqplib": "^0.10.5",
         "@types/compression": "^1.7.5",
         "@types/cors": "^2.8.17",
         "@types/express": "4.17.21",
@@ -102,23 +105,23 @@
         "@types/lodash": "^4.14.202",
         "@types/luxon": "^3.4.2",
         "@types/nconf": "^0.10.6",
-        "@types/node": "^20.11.18",
+        "@types/node": "^20.11.25",
         "@types/on-headers": "^1.0.3",
         "@types/swagger-ui-express": "^4.1.6",
         "@types/yamljs": "^0.2.34",
         "cpx2": "^7.0.1",
-        "eslint": "^8.56.0",
+        "eslint": "^8.57.0",
         "jest": "^29.7.0",
         "jest-expect-message": "^1.1.3",
         "jest-json-schema": "^6.1.0",
         "lodash": "^4.17.21",
-        "nodemon": "^3.0.3",
+        "nodemon": "^3.1.0",
         "npm-run-all": "^4.1.5",
         "prettier": "^3.2.5",
         "ts-jest": "^29.1.2",
         "ts-node": "^10.9.2",
-        "typescript": "^5.3.3",
-        "typescript-rest-swagger": "github:nmshd/typescript-rest-swagger#1.1.7"
+        "typescript": "~5.3.3",
+        "typescript-rest-swagger": "github:nmshd/typescript-rest-swagger#1.2.1"
     },
     "overrides": {
         "typescript-rest": {

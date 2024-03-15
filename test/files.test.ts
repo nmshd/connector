@@ -2,6 +2,7 @@ import { ConnectorClient, ConnectorFile } from "@nmshd/connector-sdk";
 import fs from "fs";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
+import { getTimeout } from "./lib/setTimeout";
 import { exchangeFile, makeUploadRequest, uploadFile } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
@@ -12,7 +13,7 @@ let client2: ConnectorClient;
 const UNKOWN_FILE_ID = "FILXXXXXXXXXXXXXXXXX";
 const UNKOWN_TOKEN_ID = "TOKXXXXXXXXXXXXXXXXX";
 
-beforeAll(async () => ([client1, client2] = await launcher.launch(2)), 30000);
+beforeAll(async () => ([client1, client2] = await launcher.launch(2)), getTimeout(30000));
 afterAll(() => launcher.stop());
 
 describe("File Upload", () => {

@@ -91,6 +91,32 @@ If you only want to run a single test suite you can use the following command:
 npm run test:local -- testSuiteName
 ```
 
+## Run the Connector without Docker MongoDB or other Dependencies
+
+1. clone this repository `git clone https://github.com/nmshd/connector.git`
+2. change into the directory `cd connector`
+3. install the npm dependencies `npm i`
+4. build the connector `npm run build`
+5. create a config file (for example `local.config.json`)
+    ```
+    {
+      "debug": true,
+      "transportLibrary": {
+          "baseUrl": "...",
+          "platformClientId": "...",
+          "platformClientSecret": "..."
+      },
+      "database": { "driver": "lokijs", "folder": "./" },
+      "logging": { "categories": { "default": { "appenders": ["console"] } } },
+      "infrastructure": { "httpServer": { "apiKey": "xxx", port: 8080 } },
+      "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
+    }
+    ```
+6. replace ... in the config with real values
+7. start the connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/index.js`
+
+It's now possible to access the connector on port 8080. Validating this is possible by accessing `http://localhost:8080/docs/swagger` in the browser.
+
 # Connector SDK development
 
 ## Build

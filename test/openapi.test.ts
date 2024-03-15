@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { Launcher } from "./lib/Launcher";
+import { getTimeout } from "./lib/setTimeout";
 
 const launcher = new Launcher();
 let axiosClient: AxiosInstance;
@@ -7,7 +8,7 @@ let axiosClient: AxiosInstance;
 beforeAll(async () => {
     const baseURL = await launcher.launchSimple();
     axiosClient = axios.create({ baseURL, maxRedirects: 0, validateStatus: (_) => true });
-}, 30000);
+}, getTimeout(30000));
 
 afterAll(() => launcher.stop());
 

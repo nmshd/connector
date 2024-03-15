@@ -1,8 +1,9 @@
 import { sleep } from "@js-soft/ts-utils";
 import axios from "axios";
+import { getTimeout as getRetryCount } from "./setTimeout";
 
 export default async function waitForConnector(port: number): Promise<void> {
-    const maxRetries = 10;
+    const maxRetries = getRetryCount(10);
     const timeout = 1000;
 
     const axiosInstance = axios.create({

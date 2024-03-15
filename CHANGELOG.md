@@ -1,5 +1,26 @@
 # Changelog
 
+## 3.8.1
+
+-   upgrade the runtime version to 4.3.6 - When querying attributes by tag, single tags will now work properly
+
+## 3.8.0
+
+-> SDK 4.1.0
+
+-   add routes for querying versions of attributes
+    -   `GET /api/v2/Attributes/Own/Repository` Get all the repository attributes
+    -   `GET /api/v2/Attributes/Own/Shared/Identity` Get all own shared identity attributes
+    -   `GET /api/v2/Attributes/Peer/Shared/Identity` Get all peer shared identity attributes
+    -   `GET /api/v2/Attributes/{id}/Versions` Get all versions of one repository attribute
+    -   `GET /api/v2/Attributes/{id}/Versions/Shared` Get all shared versions of one repository attribute
+
+## 3.7.3
+
+-   the webhooksV2 module is now named webhooks
+
+    => configuring webhooksV2 is deprecated and will be removed in a future version
+
 ## 3.7.2
 
 -> SDK 4.0.0

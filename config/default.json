@@ -4,7 +4,7 @@
         "realm": "id1"
     },
     "database": {
-        "connectionString": "default-connection-string",
+        "driver": "mongodb",
         "dbName": "default"
     },
     "logging": {
@@ -95,10 +95,10 @@
                 }
             }
         },
-        "webhooksV2": {
+        "webhooks": {
             "displayName": "Webhooks",
             "enabled": false,
-            "location": "webhooksV2/WebhooksModuleV2",
+            "location": "webhooks/WebhooksModule",
             "targets": {},
             "webhooks": []
         },

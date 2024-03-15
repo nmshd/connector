@@ -24,5 +24,12 @@
         }
     },
     "infrastructure": { "httpServer": { "enabled": true } },
-    "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
+    "modules": {
+        "coreHttpApi": { "docs": { "enabled": true } },
+        "webhooks": {
+            "enabled": false,
+            "webhooks": [{ "triggers": ["**"], "target": "test" }],
+            "targets": { "test": {} }
+        }
+    }
 }

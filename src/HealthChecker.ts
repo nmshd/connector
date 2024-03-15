@@ -1,19 +1,18 @@
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { ILogger } from "@js-soft/logging-abstractions";
 import { RuntimeHealth } from "@nmshd/runtime";
-import { CoreDate } from "@nmshd/transport";
-import { Authenticator } from "@nmshd/transport/dist/core/backbone/Authenticator";
+import { AbstractAuthenticator, CoreDate } from "@nmshd/transport";
 import { AxiosInstance } from "axios";
 
 export class HealthChecker {
     private constructor(
-        private readonly dbConnection: MongoDbConnection,
+        private readonly dbConnection: MongoDbConnection | undefined,
         private readonly axiosInstance: AxiosInstance,
-        private readonly authenticator: Authenticator,
+        private readonly authenticator: AbstractAuthenticator,
         private readonly logger: ILogger
     ) {}
 
-    public static create(dbConnection: MongoDbConnection, axiosInstance: AxiosInstance, authenticator: Authenticator, logger: ILogger): HealthChecker {
+    public static create(dbConnection: MongoDbConnection | undefined, axiosInstance: AxiosInstance, authenticator: AbstractAuthenticator, logger: ILogger): HealthChecker {
         const healthCheck = new HealthChecker(dbConnection, axiosInstance, authenticator, logger);
 
         return healthCheck;
@@ -59,7 +58,7 @@ export class HealthChecker {
     private async checkBackboneAuthentication() {
         if (this.isAuthenticatedUntil?.isAfter(CoreDate.utc())) return true;
 
-        const authenticatorClone = Object.assign(Object.create(Object.getPrototypeOf(this.authenticator)), this.authenticator) as Authenticator;
+        const authenticatorClone = Object.assign(Object.create(Object.getPrototypeOf(this.authenticator)), this.authenticator) as AbstractAuthenticator;
 
         try {
             authenticatorClone.clear();
@@ -72,6 +71,8 @@ export class HealthChecker {
     }
 
     private async checkDatabaseConnection(): Promise<boolean> {
+        if (!this.dbConnection) return true;
+
         try {
             await this.dbConnection.connect();
             return true;
