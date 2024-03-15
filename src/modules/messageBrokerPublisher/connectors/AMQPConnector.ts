@@ -1,3 +1,4 @@
+import { ILogger } from "@js-soft/logging-abstractions";
 import amqp from "amqplib";
 import { MessageBrokerConnector } from "./MessageBrokerConnector";
 
@@ -10,6 +11,12 @@ export interface AMQPConnectorConfiguration {
 export class AMQPConnector extends MessageBrokerConnector<AMQPConnectorConfiguration> {
     private connection?: amqp.Connection;
     private channel?: amqp.Channel;
+
+    public constructor(configuration: AMQPConnectorConfiguration, logger: ILogger) {
+        super(configuration, logger);
+
+        if (!this.configuration.url) throw new Error("Cannot start the module, the ampq url is not defined.");
+    }
 
     public async init(): Promise<void> {
         const url = this.configuration.url;
