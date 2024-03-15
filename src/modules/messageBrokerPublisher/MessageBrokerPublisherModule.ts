@@ -26,6 +26,10 @@ export default class MessageBrokerPublisherModule extends ConnectorRuntimeModule
     private readonly connectors: MessageBrokerConnector<any>[] = [];
 
     public async init(): Promise<void> {
+        if (this.configuration.brokers.length === 0) {
+            throw new Error("At least one broker must be configured");
+        }
+
         for (const broker of this.configuration.brokers) {
             switch (broker.type) {
                 case "MQTT":
