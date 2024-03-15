@@ -114,6 +114,12 @@
             "projectId": "",
             "topic": "",
             "keyFile": ""
+        },
+        "messageBrokerPublisher": {
+            "enabled": false,
+            "displayName": "Message Broker Publisher",
+            "location": "messageBrokerPublisher/MessageBrokerPublisherModule",
+            "brokers": []
         }
     }
 }
