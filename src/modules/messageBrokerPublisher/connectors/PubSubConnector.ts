@@ -36,12 +36,11 @@ export class PubSubConnector extends MessageBrokerConnector<PubSubConnectorConfi
     }
 
     public async publish(namespace: string, data: Buffer): Promise<void> {
-        await this.topic
-            .publishMessage({
-                attributes: { namespace },
-                data
-            })
-            .catch((e) => this.logger.error(`Could not publish message with namespace '${namespace}'`, e));
+        try {
+            await this.topic.publishMessage({ attributes: { namespace }, data });
+        } catch (e) {
+            this.logger.error(`Could not publish message with namespace '${namespace}'`, e);
+        }
     }
 
     public async close(): Promise<void> {

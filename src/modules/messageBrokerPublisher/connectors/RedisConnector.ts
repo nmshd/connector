@@ -18,7 +18,11 @@ export class RedisConnector extends MessageBrokerConnector<RedisConnectorConfigu
     }
 
     public async publish(namespace: string, data: Buffer): Promise<void> {
-        await this.publisher.publish(namespace, data.toString());
+        try {
+            await this.publisher.publish(namespace, data.toString());
+        } catch (e) {
+            this.logger.error(`Publishing event '${namespace}' failed: ${e}`);
+        }
     }
 
     public async close(): Promise<void> {

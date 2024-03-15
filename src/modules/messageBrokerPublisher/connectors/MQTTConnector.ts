@@ -13,7 +13,11 @@ export class MQTTConnector extends MessageBrokerConnector<MQTTConnectorConfigura
     }
 
     public async publish(namespace: string, data: Buffer): Promise<void> {
-        await this.client.publishAsync(namespace.replaceAll(".", "/"), data);
+        try {
+            await this.client.publishAsync(namespace.replaceAll(".", "/"), data);
+        } catch (e) {
+            this.logger.error(`Publishing event '${namespace}' failed: ${e}`);
+        }
     }
 
     public async close(): Promise<void> {
