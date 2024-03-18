@@ -69,7 +69,11 @@ export class AttributesEndpoint extends Endpoint {
     }
 
     public async deleteOwnSharedAttributeAndNotifyPeer(attributeId: string): Promise<ConnectorResponse<ConnectorNotification>> {
-        return await this.delete(`/api/v2/Attributes/${attributeId}`);
+        return await this.delete(`/api/v2/Attributes/Own/Shared/${attributeId}`);
+    }
+
+    public async deletePeerSharedAttributeAndNotifyOwner(attributeId: string): Promise<ConnectorResponse<ConnectorNotification>> {
+        return await this.delete(`/api/v2/Attributes/Peer/Shared/${attributeId}`);
     }
 
     public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttributes>> {

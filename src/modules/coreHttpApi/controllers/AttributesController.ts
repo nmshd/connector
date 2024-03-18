@@ -215,9 +215,16 @@ export class AttributesController extends BaseController {
     }
 
     @DELETE
-    @Path("/:id")
-    public async deleteOwnSharedAttributeAndNotifyPeerUseCase(@PathParam("id") attributeId: string): Promise<Envelope> {
+    @Path("/Own/Shared/:id")
+    public async deleteOwnSharedAttributeAndNotifyPeer(@PathParam("id") attributeId: string): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.deleteOwnSharedAttributeAndNotifyPeer({ attributeId });
+        return this.ok(result);
+    }
+
+    @DELETE
+    @Path("/Peer/Shared/:id")
+    public async deletePeerSharedAttributeAndNotifyOwner(@PathParam("id") attributeId: string): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.deletePeerSharedAttributeAndNotifyOwner({ attributeId });
         return this.ok(result);
     }
 

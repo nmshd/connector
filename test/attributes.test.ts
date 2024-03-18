@@ -496,7 +496,7 @@ describe("Read Attribute and versions", () => {
 });
 
 describe("Delete attributes", () => {
-    test.only("should delete an own shared attribute and notify peer", async () => {
+    test("should delete an own shared attribute and notify peer", async () => {
         const ownSharedIdentityAttribute = await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
             "@type": "IdentityAttribute",
             value: {
@@ -509,7 +509,6 @@ describe("Delete attributes", () => {
 
         const deleteResponse = await client1.attributes.deleteOwnSharedAttributeAndNotifyPeer(ownSharedIdentityAttribute.id);
         expect(deleteResponse.isSuccess).toBe(true);
-        client2._eventBus?.reset();
         await syncUntilHasMessageWithNotification(client2, deleteResponse.result.id);
         await client2._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.ownSharedAttributeDeletedByOwner", (event: any) => {
             return event.data.id === ownSharedIdentityAttribute.id;
@@ -521,5 +520,31 @@ describe("Delete attributes", () => {
         expect(client2DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(DeletionStatus.DeletedByOwner);
         const client1RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
         expect(client1RepositoryAttribute.isSuccess).toBe(true);
+    });
+
+    test("should delete an peer shared attribute and notify owner", async () => {
+        const ownSharedIdentityAttribute = await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
+            "@type": "IdentityAttribute",
+            value: {
+                "@type": "GivenName",
+                value: "AGivenName"
+            },
+            owner: client1Address
+        });
+        const repositoryAttributeId = ownSharedIdentityAttribute.shareInfo!.sourceAttribute!;
+
+        const deleteResponse = await client2.attributes.deletePeerSharedAttributeAndNotifyOwner(ownSharedIdentityAttribute.id);
+        expect(deleteResponse.isSuccess).toBe(true);
+        await syncUntilHasMessageWithNotification(client1, deleteResponse.result.id);
+        await client1._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.peerSharedAttributeDeletedByPeer", (event: any) => {
+            return event.data.id === ownSharedIdentityAttribute.id;
+        });
+
+        const client2DeletedAttribute = await client2.attributes.getAttribute(ownSharedIdentityAttribute.id);
+        expect(client2DeletedAttribute.isSuccess).toBe(false);
+        const client1DeletedAttribute = await client1.attributes.getAttribute(ownSharedIdentityAttribute.id);
+        expect(client1DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(DeletionStatus.DeletedByPeer);
+        const client2RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
+        expect(client2RepositoryAttribute.isSuccess).toBe(true);
     });
 });
