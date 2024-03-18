@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.9.1
+
+-   upgrade the runtime version to 4.3.7
+
+## 3.9.0
+
+-   add new module `messageBrokerPublisher` (see https://enmeshed.eu/operate/configuration#messagebrokerpublisher for more details on how to configure it)
+    -   the `amqpPublisher` module is now deprecated
+    -   the `pubSubPublisher` module is now deprecated
+
 ## 3.8.1
 
 -   upgrade the runtime version to 4.3.6 - When querying attributes by tag, single tags will now work properly
