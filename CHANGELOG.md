@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.9.2
+
+-   align the url configuration of the `messageBrokerPublisher`s mqtt implementation
+
 ## 3.9.1
 
 -   upgrade the runtime version to 4.3.7
