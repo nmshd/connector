@@ -547,4 +547,19 @@ describe("Delete attributes", () => {
         const client2RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
         expect(client2RepositoryAttribute.isSuccess).toBe(true);
     });
+    test("should delete an repository attribute", async () => {
+        const attribute = await client1.attributes.createRepositoryAttribute({
+            content: {
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
+                }
+            }
+        });
+
+        const deleteResponse = await client1.attributes.deleteRepositoryAttribute(attribute.result.id);
+        expect(deleteResponse.isSuccess).toBe(true);
+        const getAttributeResponse = await client1.attributes.getAttribute(attribute.result.id);
+        expect(getAttributeResponse.isSuccess).toBe(false);
+    });
 });

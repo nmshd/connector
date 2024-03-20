@@ -986,6 +986,35 @@ paths:
           $ref: "#/components/responses/Forbidden"
         404:
           $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteRepositoryAttribute
+      description: Delete an repository attribute.
+      tags:
+        - Attributes
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the repository attribute to delete.
+          required: true
+          schema:
+            $ref: "#/components/schemas/AttributeID"
+      responses:
+        200:
+          description: |
+            Success. Deleting an repository attribute.
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
 
   /api/v2/Attributes/Own/Shared/{id}:
     delete:

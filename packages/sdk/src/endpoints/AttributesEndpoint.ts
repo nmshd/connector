@@ -75,6 +75,9 @@ export class AttributesEndpoint extends Endpoint {
     public async deletePeerSharedAttributeAndNotifyOwner(attributeId: string): Promise<ConnectorResponse<ConnectorNotification>> {
         return await this.delete(`/api/v2/Attributes/Peer/Shared/${attributeId}`);
     }
+    public async deleteRepositoryAttribute(attributeId: string): Promise<ConnectorResponse<void>> {
+        return await this.delete(`/api/v2/Attributes/${attributeId}`);
+    }
 
     public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.post("/api/v2/Attributes/ExecuteIdentityAttributeQuery", request, 200);

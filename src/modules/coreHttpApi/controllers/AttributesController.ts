@@ -228,6 +228,13 @@ export class AttributesController extends BaseController {
         return this.ok(result);
     }
 
+    @DELETE
+    @Path("/:id")
+    public async deleteRepositoryAttribute(@PathParam("id") attributeId: string): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.deleteRepositoryAttribute({ attributeId });
+        return this.ok(result);
+    }
+
     private stringToBoolean(value: string | undefined): boolean | undefined {
         if (value === undefined) {
             return undefined;
