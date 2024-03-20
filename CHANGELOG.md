@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.10.0
+
+-   add routes for deleting attributes
+    -   `DELETE /api/v2/Attributes/Own/Shared/{id}` Delete a own shared attribute and notify Peer
+    -   `DELETE /api/v2/Attributes/Peer/Shared/{id}` Delete a peer shared attribute and notify Owner
+    -   `DELETE /api/v2/Attributes/{id}` Delete a repository attribute
+
 ## 3.9.1
 
 -   upgrade the runtime version to 4.3.7
