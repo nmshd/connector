@@ -59,9 +59,7 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-      - uses: azure/setup-helm@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: azure/setup-helm@v4
       - run: echo "$PASSWORD" | helm registry login -u $USER --password-stdin https://ghcr.io
         env:
           USER: ${{ github.actor }}
