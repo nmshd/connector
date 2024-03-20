@@ -13,8 +13,8 @@ import {
 } from "./connectors";
 
 export type Broker =
-    | { type: "MQTT"; configuration: MQTTConnectorConfiguration }
     | { type: "AMQP"; configuration: AMQPConnectorConfiguration }
+    | { type: "MQTT"; configuration: MQTTConnectorConfiguration }
     | { type: "PubSub"; configuration: PubSubConnectorConfiguration }
     | { type: "Redis"; configuration: RedisConnectorConfiguration };
 
@@ -32,11 +32,11 @@ export default class MessageBrokerPublisherModule extends ConnectorRuntimeModule
 
         for (const broker of this.configuration.brokers) {
             switch (broker.type) {
-                case "MQTT":
-                    this.connectors.push(new MQTTConnector(broker.configuration, this.logger));
-                    break;
                 case "AMQP":
                     this.connectors.push(new AMQPConnector(broker.configuration, this.logger));
+                    break;
+                case "MQTT":
+                    this.connectors.push(new MQTTConnector(broker.configuration, this.logger));
                     break;
                 case "PubSub":
                     this.connectors.push(new PubSubConnector(broker.configuration, this.logger));
