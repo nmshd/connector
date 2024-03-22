@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.9.3
+
+-   errors resulting from the backbone will now be correctly return a `500` http status code
+
 ## 3.9.2
 
 -   align the url configuration of the `messageBrokerPublisher`s mqtt implementation
