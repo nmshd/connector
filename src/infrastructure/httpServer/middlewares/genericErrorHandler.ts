@@ -62,6 +62,8 @@ export function genericErrorHandler(connectorMode: ConnectorMode) {
                 let statusCode;
                 if (error.equals(RuntimeErrors.general.recordNotFound()) || error.equals(TransportCoreErrors.general.recordNotFound("", ""))) {
                     statusCode = 404;
+                } else if (error.code.startsWith("error.platform.")) {
+                    statusCode = 500;
                 } else {
                     statusCode = 400;
                 }
