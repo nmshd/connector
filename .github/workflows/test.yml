@@ -44,6 +44,7 @@ jobs:
       - uses: js-soft/ferretdb-github-action@1.1.0
         with:
           ferretdb-telemetry: "enabled"
+          ferretdb-version: "1.20.1"
       - run: npm run test:ci
         env:
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017
@@ -62,7 +63,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: azure/setup-helm@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: azure/setup-helm@v4
       - run: helm lint ./helmChart

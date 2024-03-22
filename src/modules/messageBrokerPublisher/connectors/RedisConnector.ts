@@ -3,7 +3,6 @@ import { MessageBrokerConnector } from "./MessageBrokerConnector";
 
 export interface RedisConnectorConfiguration {
     url: string;
-    database?: string;
 }
 
 export class RedisConnector extends MessageBrokerConnector<RedisConnectorConfiguration> {
