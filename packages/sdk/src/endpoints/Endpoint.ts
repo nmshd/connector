@@ -28,6 +28,11 @@ export abstract class Endpoint {
         return this.makeResult(response);
     }
 
+    protected async delete<T>(path: string, params?: unknown): Promise<ConnectorResponse<T>> {
+        const response = await this.httpClient.delete(path, { params });
+        return this.makeResult(response);
+    }
+
     protected makeResult<T>(httpResponse: AxiosResponse<any>, expectedStatus?: number): ConnectorResponse<T> {
         if (!expectedStatus) {
             switch (httpResponse.config.method?.toUpperCase()) {
