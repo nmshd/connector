@@ -44,6 +44,7 @@ jobs:
       - uses: js-soft/ferretdb-github-action@1.1.0
         with:
           ferretdb-telemetry: "enabled"
+          ferretdb-version: "1.20.1"
       - run: npm run test:ci
         env:
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017

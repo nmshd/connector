@@ -7,6 +7,14 @@
     -   `DELETE /api/v2/Attributes/Peer/Shared/{id}` Delete a peer shared attribute and notify Owner
     -   `DELETE /api/v2/Attributes/{id}` Delete a repository attribute
 
+## 3.9.3
+
+-   errors resulting from the backbone will now be correctly return a `500` http status code
+
+## 3.9.2
+
+-   align the url configuration of the `messageBrokerPublisher`s mqtt implementation
+
 ## 3.9.1
 
 -   upgrade the runtime version to 4.3.7
