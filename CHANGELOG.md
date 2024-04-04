@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.9.4
+
+-   the `https_proxy` environment variable is now respected by the connector
+
 ## 3.9.3
 
 -   errors resulting from the backbone will now be correctly return a `500` http status code
