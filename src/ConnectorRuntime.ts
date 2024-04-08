@@ -9,6 +9,7 @@ import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleC
 import { AccountController, CoreErrors as TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import fs from "fs";
+import { HttpsProxyAgent } from "https-proxy-agent";
 import { validate as validateSchema } from "jsonschema";
 import path from "path";
 import { ConnectorMode } from "./ConnectorMode";
@@ -84,6 +85,11 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
         ConnectorLoggerFactory.init(loggerFactory);
+
+        if (process.env.https_proxy) {
+            const httpsProxy = process.env.https_proxy;
+            connectorConfig.transportLibrary.httpsAgent = new HttpsProxyAgent(httpsProxy);
+        }
 
         const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
         await runtime.init();
