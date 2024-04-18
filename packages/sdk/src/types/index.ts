@@ -5,6 +5,7 @@ export * from "./attributes";
 export * from "./challenges";
 export * from "./files";
 export * from "./messages";
+export * from "./notification";
 export * from "./relationshipTemplates";
 export * from "./relationships";
 export * from "./requests";

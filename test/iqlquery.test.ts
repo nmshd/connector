@@ -39,6 +39,15 @@ beforeAll(async () => {
                 value: "AGivenName"
             },
             tags: ["language:de", "content:edu.de.higher"]
+        },
+        {
+            "@type": "IdentityAttribute",
+            owner: client1Address,
+            value: {
+                "@type": "GivenName",
+                value: "AGivenName"
+            },
+            tags: ["urn:meinbildungsraum-de:ablage:tags:v1:SCH-Z-ABI"]
         }
     ];
     attributeIds = [];
@@ -70,7 +79,8 @@ test("Local IQL Query", async () => {
     const table = [
         { iqlQuery: "#content:edu.de.higher", matches: [1] },
         { iqlQuery: "#content:edu.de.higher || #language:en", matches: [0, 1] },
-        { iqlQuery: "#content:edu.de.higher && ( #language:de || #language:en )", matches: [1] }
+        { iqlQuery: "#content:edu.de.higher && ( #language:de || #language:en )", matches: [1] },
+        { iqlQuery: "#urn:meinbildungsraum-de:ablage:tags:v1:SCH-Z-ABI", matches: [2] }
     ];
 
     for (const e of table) {

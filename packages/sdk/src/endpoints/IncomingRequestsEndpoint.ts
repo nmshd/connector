@@ -1,5 +1,6 @@
+import { AcceptIncomingRequestRequest as AcceptIncomingRequestRequestNew } from "@nmshd/runtime";
 import {
-    AcceptIncomingRequestRequest,
+    AcceptIncomingRequestRequest as AcceptIncomingRequestRequestOld,
     CanAcceptIncomingRequestRequest,
     CanRejectIncomingRequestRequest,
     ConnectorRequest,
@@ -16,7 +17,10 @@ export class IncomingRequestsEndpoint extends Endpoint {
         return await this.put(`/api/v2/Requests/Incoming/${requestId}/CanAccept`, request);
     }
 
-    public async accept(requestId: string, request: AcceptIncomingRequestRequest): Promise<ConnectorResponse<ConnectorRequest>> {
+    public async accept(requestId: string, request: Omit<AcceptIncomingRequestRequestNew, "requestId">): Promise<ConnectorResponse<ConnectorRequest>> {
+        return await this.put(`/api/v2/Requests/Incoming/${requestId}/Accept`, request);
+    }
+    public async acceptold(requestId: string, request: AcceptIncomingRequestRequestOld): Promise<ConnectorResponse<ConnectorRequest>> {
         return await this.put(`/api/v2/Requests/Incoming/${requestId}/Accept`, request);
     }
 

@@ -9,7 +9,14 @@
     "author": "j&s-soft GmbH",
     "workspaces": [
         ".",
-        "packages/sdk"
+        "packages/sdk",
+        "packages/runtime",
+        "packages/runtime/packages/consumption",
+        "packages/runtime/packages/content",
+        "packages/runtime/packages/iql",
+        "packages/runtime/packages/runtime",
+        "packages/runtime/packages/app-runtime",
+        "packages/runtime/packages/transport"
     ],
     "scripts": {
         "lint": "npm run lint:tsc && npm run lint:prettier && npm run lint:eslint",
@@ -50,6 +57,10 @@
             "./test/lib/setTimeout.ts"
         ],
         "testEnvironment": "node",
+        "testPathIgnorePatterns": [
+            "/node_modules/",
+            "/packages/runtime/.*"
+        ],
         "testTimeout": 60000,
         "transform": {
             "^.+\\.ts$": [
@@ -121,7 +132,7 @@
         "ts-jest": "^29.1.2",
         "ts-node": "^10.9.2",
         "typescript": "^5.4.2",
-        "typescript-rest-swagger": "github:nmshd/typescript-rest-swagger#1.2.1"
+        "typescript-rest-swagger": "file:../typescript-rest-swagger"
     },
     "overrides": {
         "typescript-rest": {
