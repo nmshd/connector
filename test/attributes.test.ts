@@ -26,14 +26,12 @@ import { ValidationSchema } from "./lib/validation";
 const launcher = new Launcher();
 let client1: ConnectorClientWithMetadata;
 let client2: ConnectorClientWithMetadata;
-let client3: ConnectorClientWithMetadata;
 let client1Address: string;
 let client2Address: string;
 
 beforeAll(async () => {
-    [client1, client2, client3] = await launcher.launch(3);
+    [client1, client2] = await launcher.launch(3);
     await establishRelationship(client1, client2);
-    await establishRelationship(client3, client2);
     client1Address = (await client1.account.getIdentityInfo()).result.address;
     client2Address = (await client2.account.getIdentityInfo()).result.address;
 }, getTimeout(30000));
@@ -42,7 +40,6 @@ afterAll(() => launcher.stop());
 beforeEach(() => {
     client1._eventBus?.reset();
     client2._eventBus?.reset();
-    client3._eventBus?.reset();
 });
 
 describe("Attributes", () => {
@@ -574,6 +571,10 @@ describe("Delete attributes", () => {
     });
 
     test("should delete an third party attribute and notify owner", async () => {
+        const [client3] = await launcher.launch(1);
+
+        await establishRelationship(client3, client2);
+
         const ownSharedIdentityAttribute = await executeFullCreateAndShareRelationshipAttributeFlow(client1, client2, {
             value: {
                 "@type": "ProprietaryString",
