@@ -9,14 +9,7 @@
     "author": "j&s-soft GmbH",
     "workspaces": [
         ".",
-        "packages/sdk",
-        "packages/runtime",
-        "packages/runtime/packages/consumption",
-        "packages/runtime/packages/content",
-        "packages/runtime/packages/iql",
-        "packages/runtime/packages/runtime",
-        "packages/runtime/packages/app-runtime",
-        "packages/runtime/packages/transport"
+        "packages/sdk"
     ],
     "scripts": {
         "lint": "npm run lint:tsc && npm run lint:prettier && npm run lint:eslint",
@@ -84,8 +77,9 @@
         "axios": "^1.6.8",
         "compression": "1.7.4",
         "cors": "2.8.5",
-        "express": "4.18.3",
+        "express": "4.19.2",
         "helmet": "7.1.0",
+        "https-proxy-agent": "^7.0.4",
         "json-stringify-safe": "5.0.1",
         "jsonschema": "1.4.1",
         "mqtt": "^5.5.0",
@@ -94,7 +88,7 @@
         "on-headers": "1.0.2",
         "rapidoc": "9.3.4",
         "redis": "^4.6.13",
-        "reflect-metadata": "0.2.1",
+        "reflect-metadata": "0.2.2",
         "swagger-ui-express": "5.0.0",
         "typescript-ioc": "3.2.2",
         "typescript-rest": "3.0.4",
@@ -116,7 +110,7 @@
         "@types/lodash": "^4.17.0",
         "@types/luxon": "^3.4.2",
         "@types/nconf": "^0.10.6",
-        "@types/node": "^20.11.30",
+        "@types/node": "^20.11.28",
         "@types/on-headers": "^1.0.3",
         "@types/swagger-ui-express": "^4.1.6",
         "@types/yamljs": "^0.2.34",
@@ -132,7 +126,7 @@
         "ts-jest": "^29.1.2",
         "ts-node": "^10.9.2",
         "typescript": "^5.4.2",
-        "typescript-rest-swagger": "file:../typescript-rest-swagger"
+        "typescript-rest-swagger": "github:nmshd/typescript-rest-swagger#1.2.1"
     },
     "overrides": {
         "typescript-rest": {

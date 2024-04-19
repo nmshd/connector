@@ -7,6 +7,10 @@
     -   `DELETE /api/v2/Attributes/Peer/Shared/{id}` Delete a peer shared attribute and notify Owner
     -   `DELETE /api/v2/Attributes/{id}` Delete a repository attribute
 
+## 3.9.4
+
+-   the `https_proxy` environment variable is now respected by the connector
+
 ## 3.9.3
 
 -   errors resulting from the backbone will now be correctly return a `500` http status code

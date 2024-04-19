@@ -65,7 +65,7 @@ services:
 
   seed-client:
     container_name: seed-client
-    image: ghcr.io/nmshd/backbone-admin-cli:v2.2.1
+    image: ghcr.io/nmshd/backbone-admin-cli:${ADMINCLI_TAG}
     depends_on:
       consumer-api:
         condition: service_healthy
