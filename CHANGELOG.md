@@ -7,6 +7,7 @@
     -   `DELETE /api/v2/Attributes/Peer/Shared/{id}` Delete a peer shared attribute and notify Owner
     -   `DELETE /api/v2/Attributes/{id}` Delete a repository attribute
     -   `DELETE /api/v2/Attributes/Third/Party/{id}` Delete a Third Party attribute and notify Peer
+-   upgrade the runtime version to 4.6.0
 
 ## 3.9.4
 
