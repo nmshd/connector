@@ -2,6 +2,8 @@
 
 ## 3.10.0
 
+-> SDK 4.2.0
+
 -   add routes for deleting attributes
     -   `DELETE /api/v2/Attributes/Own/Shared/{id}` Delete a own shared attribute and notify Peer
     -   `DELETE /api/v2/Attributes/Peer/Shared/{id}` Delete a peer shared attribute and notify Owner
