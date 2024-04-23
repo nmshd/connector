@@ -1,9 +1,11 @@
 import {
     ConnectorAttribute,
     ConnectorAttributes,
-    ConnectorNotificationId,
     ConnectorResponse,
     CreateRepositoryAttributeRequest,
+    DeleteOwnSharedAttributeAndNotifyPeerResponse,
+    DeletePeerSharedAttributeAndNotifyOwnerResponse,
+    DeleteThirdPartyAttributeAndNotifyOwnerResponse,
     ExecuteIQLQueryRequest,
     ExecuteIdentityAttributeQueryRequest,
     ExecuteRelationshipAttributeQueryRequest,
@@ -68,17 +70,17 @@ export class AttributesEndpoint extends Endpoint {
         return await this.get(`/api/v2/Attributes/${attributeId}/Versions/Shared`, request);
     }
 
-    public async deleteOwnSharedAttributeAndNotifyPeer(attributeId: string): Promise<ConnectorResponse<ConnectorNotificationId>> {
+    public async deleteOwnSharedAttributeAndNotifyPeer(attributeId: string): Promise<ConnectorResponse<DeleteOwnSharedAttributeAndNotifyPeerResponse>> {
         return await this.delete(`/api/v2/Attributes/Own/Shared/${attributeId}`);
     }
 
-    public async deletePeerSharedAttributeAndNotifyOwner(attributeId: string): Promise<ConnectorResponse<ConnectorNotificationId>> {
+    public async deletePeerSharedAttributeAndNotifyOwner(attributeId: string): Promise<ConnectorResponse<DeletePeerSharedAttributeAndNotifyOwnerResponse>> {
         return await this.delete(`/api/v2/Attributes/Peer/Shared/${attributeId}`);
     }
     public async deleteRepositoryAttribute(attributeId: string): Promise<ConnectorResponse<void>> {
         return await this.delete(`/api/v2/Attributes/${attributeId}`);
     }
-    public async deleteThirdPartyAttributeAndNotifyOwner(attributeId: string): Promise<ConnectorResponse<ConnectorNotificationId>> {
+    public async deleteThirdPartyAttributeAndNotifyOwner(attributeId: string): Promise<ConnectorResponse<DeleteThirdPartyAttributeAndNotifyOwnerResponse>> {
         return await this.delete(`/api/v2/Attributes/Third/Party/${attributeId}`);
     }
 
