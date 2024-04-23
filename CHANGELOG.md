@@ -6,6 +6,7 @@
     -   `DELETE /api/v2/Attributes/Own/Shared/{id}` Delete a own shared attribute and notify Peer
     -   `DELETE /api/v2/Attributes/Peer/Shared/{id}` Delete a peer shared attribute and notify Owner
     -   `DELETE /api/v2/Attributes/{id}` Delete a repository attribute
+    -   `DELETE /api/v2/Attributes/Third/Party/{id}` Delete a Third Party attribute and notify Peer
 
 ## 3.9.4
 
