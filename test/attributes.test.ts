@@ -30,7 +30,7 @@ let client1Address: string;
 let client2Address: string;
 
 beforeAll(async () => {
-    [client1, client2] = await launcher.launch(3);
+    [client1, client2] = await launcher.launch(2);
     await establishRelationship(client1, client2);
     client1Address = (await client1.account.getIdentityInfo()).result.address;
     client2Address = (await client2.account.getIdentityInfo()).result.address;
