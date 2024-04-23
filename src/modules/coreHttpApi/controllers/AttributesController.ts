@@ -229,8 +229,8 @@ export class AttributesController extends BaseController {
     }
 
     @DELETE
-    @Path("/Third/Party/:id")
-    public async deleteThirdPartyAttributeAndNotifyOwner(@PathParam("id") attributeId: string): Promise<Envelope> {
+    @Path("/ThirdParty/:id")
+    public async deleteThirdPartyAttributeAndNotifyPeer(@PathParam("id") attributeId: string): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer({ attributeId });
         return this.ok(result);
     }

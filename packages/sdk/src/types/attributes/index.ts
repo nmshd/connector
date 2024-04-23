@@ -7,7 +7,7 @@ export * from "./ThirdPartyRelationshipAttributeQuery";
 export * from "./requests/CreateRepositoryAttributeRequest";
 export * from "./requests/DeleteOwnSharedAttributeAndNotifyPeerResponse";
 export * from "./requests/DeletePeerSharedAttributeAndNotifyOwnerResponse";
-export * from "./requests/DeleteThirdPartyAttributeAndNotifyOwnerResponse";
+export * from "./requests/DeleteThirdPartyAttributeAndNotifyPeerResponse";
 export * from "./requests/ExecuteIQLQueryRequest";
 export * from "./requests/ExecuteIdentityAttributeQueryRequest";
 export * from "./requests/ExecuteRelationshipAttributeQueryRequest";

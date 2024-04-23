@@ -1114,9 +1114,9 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/Third/Party/{id}:
+  /api/v2/Attributes/ThirdParty/{id}:
     delete:
-      operationId: deleteThirdPartyAttributeAndNotifyOwner
+      operationId: deleteThirdPartyAttributeAndNotifyPeer
       description: Delete an third party relationship attribute and notify the owner.
       tags:
         - Attributes
