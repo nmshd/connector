@@ -1,11 +1,6 @@
 import { DataEvent } from "@js-soft/ts-utils";
 import { ConnectorAttribute, ConnectorRelationshipAttribute, ConnectorResponse } from "@nmshd/connector-sdk";
-import {
-    AcceptReadAttributeRequestItemParametersWithExistingAttributeJSON,
-    DeletionStatus,
-    IncomingRequestStatusChangedEvent,
-    ThirdPartyOwnedRelationshipAttributeDeletedByPeerEvent
-} from "@nmshd/consumption";
+import { DeletionStatus, IncomingRequestStatusChangedEvent, ThirdPartyOwnedRelationshipAttributeDeletedByPeerEvent } from "@nmshd/consumption";
 import { LocalAttributeDTO, SuccessionEventData } from "@nmshd/runtime";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
@@ -618,7 +613,7 @@ describe("Delete attributes", () => {
                 {
                     accept: true,
                     existingAttributeId: ownSharedIdentityAttribute.id
-                } as AcceptReadAttributeRequestItemParametersWithExistingAttributeJSON
+                }
             ]
         });
 
