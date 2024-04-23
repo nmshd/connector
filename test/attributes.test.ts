@@ -1,5 +1,5 @@
 import { DataEvent } from "@js-soft/ts-utils";
-import { ConnectorAttribute, ConnectorDeletionStatus, ConnectorRelationshipAttribute, ConnectorResponse } from "@nmshd/connector-sdk";
+import { ConnectorAttribute, ConnectorAttributeDeletionStatus, ConnectorRelationshipAttribute, ConnectorResponse } from "@nmshd/connector-sdk";
 import { IncomingRequestStatusChangedEvent, LocalAttributeDTO, SuccessionEventData, ThirdPartyOwnedRelationshipAttributeDeletedByPeerEvent } from "@nmshd/runtime";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
@@ -518,7 +518,7 @@ describe("Delete attributes", () => {
         const client1DeletedAttribute = await client1.attributes.getAttribute(ownSharedIdentityAttribute.id);
         expect(client1DeletedAttribute.isSuccess).toBe(false);
         const client2DeletedAttribute = await client2.attributes.getAttribute(ownSharedIdentityAttribute.id);
-        expect(client2DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(ConnectorDeletionStatus.DeletedByOwner);
+        expect(client2DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(ConnectorAttributeDeletionStatus.DeletedByOwner);
         const client1RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
         expect(client1RepositoryAttribute.isSuccess).toBe(true);
     });
@@ -544,7 +544,7 @@ describe("Delete attributes", () => {
         const client2DeletedAttribute = await client2.attributes.getAttribute(ownSharedIdentityAttribute.id);
         expect(client2DeletedAttribute.isSuccess).toBe(false);
         const client1DeletedAttribute = await client1.attributes.getAttribute(ownSharedIdentityAttribute.id);
-        expect(client1DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(ConnectorDeletionStatus.DeletedByPeer);
+        expect(client1DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(ConnectorAttributeDeletionStatus.DeletedByPeer);
         const client2RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
         expect(client2RepositoryAttribute.isSuccess).toBe(true);
     });

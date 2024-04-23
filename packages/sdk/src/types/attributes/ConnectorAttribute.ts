@@ -8,7 +8,7 @@ export interface ConnectorAttribute {
     shareInfo?: ConnectorAttributeShareInfo;
 }
 
-export enum ConnectorDeletionStatus {
+export enum ConnectorAttributeDeletionStatus {
     ToBeDeleted = "ToBeDeleted",
     ToBeDeletedByPeer = "ToBeDeletedByPeer",
     DeletedByPeer = "DeletedByPeer",
@@ -16,7 +16,7 @@ export enum ConnectorDeletionStatus {
 }
 
 export interface ConnectorAttributeDeletionInfo {
-    deletionStatus: ConnectorDeletionStatus;
+    deletionStatus: ConnectorAttributeDeletionStatus;
     deletionDate: string;
 }
 
