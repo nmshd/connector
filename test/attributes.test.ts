@@ -1,7 +1,7 @@
 import { DataEvent } from "@js-soft/ts-utils";
 import { ConnectorAttribute, ConnectorRelationshipAttribute, ConnectorResponse } from "@nmshd/connector-sdk";
-import { DeletionStatus, IncomingRequestStatusChangedEvent, ThirdPartyOwnedRelationshipAttributeDeletedByPeerEvent } from "@nmshd/consumption";
-import { LocalAttributeDTO, SuccessionEventData } from "@nmshd/runtime";
+import { DeletionStatus } from "@nmshd/consumption";
+import { IncomingRequestStatusChangedEvent, LocalAttributeDTO, SuccessionEventData, ThirdPartyOwnedRelationshipAttributeDeletedByPeerEvent } from "@nmshd/runtime";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
