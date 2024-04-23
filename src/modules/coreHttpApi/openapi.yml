@@ -1116,7 +1116,7 @@ paths:
 
   /api/v2/Attributes/ThirdParty/{id}:
     delete:
-      operationId: deleteThirdPartyAttributeAndNotifyPeer
+      operationId: deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer
       description: Delete an third party relationship attribute and notify the owner.
       tags:
         - Attributes

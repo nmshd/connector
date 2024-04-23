@@ -624,7 +624,7 @@ describe("Delete attributes", () => {
 
         const thirdPartyRelationshipAttribute = (await client3.attributes.getAttribute((message.content as any).response.items[0].attributeId)).result;
 
-        const deleteResponse = await client3.attributes.deleteThirdPartyAttributeAndNotifyPeer(thirdPartyRelationshipAttribute.id);
+        const deleteResponse = await client3.attributes.deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer(thirdPartyRelationshipAttribute.id);
 
         await syncUntilHasMessageWithNotification(client2, deleteResponse.result.notificationId);
         await client2._eventBus?.waitForEvent<ThirdPartyOwnedRelationshipAttributeDeletedByPeerEvent>("consumption.thirdPartyOwnedRelationshipAttributeDeletedByPeer", (event) => {
