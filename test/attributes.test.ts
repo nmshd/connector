@@ -1,6 +1,6 @@
 import { DataEvent } from "@js-soft/ts-utils";
-import { ConnectorAttribute, ConnectorRelationshipAttribute, ConnectorResponse } from "@nmshd/connector-sdk";
-import { SuccessionEventData } from "@nmshd/runtime";
+import { ConnectorAttribute, ConnectorAttributeDeletionStatus, ConnectorRelationshipAttribute, ConnectorResponse } from "@nmshd/connector-sdk";
+import { IncomingRequestStatusChangedEvent, LocalAttributeDTO, SuccessionEventData, ThirdPartyOwnedRelationshipAttributeDeletedByPeerEvent } from "@nmshd/runtime";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
@@ -11,6 +11,8 @@ import {
     executeFullCreateAndShareRelationshipAttributeFlow,
     executeFullCreateAndShareRepositoryAttributeFlow,
     syncUntilHasMessageWithNotification,
+    syncUntilHasMessageWithRequest,
+    syncUntilHasMessageWithResponse,
     syncUntilHasMessages
 } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
@@ -491,5 +493,144 @@ describe("Read Attribute and versions", () => {
         expect(latestOfAllPeersSharedVersions.result).toHaveLength(2);
 
         newLauncher.stop();
+    });
+});
+
+describe("Delete attributes", () => {
+    test("should delete an own shared attribute and notify peer", async () => {
+        const ownSharedIdentityAttribute = await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
+            "@type": "IdentityAttribute",
+            value: {
+                "@type": "GivenName",
+                value: "AGivenName"
+            },
+            owner: client1Address
+        });
+        const repositoryAttributeId = ownSharedIdentityAttribute.shareInfo!.sourceAttribute!;
+
+        const deleteResponse = await client1.attributes.deleteOwnSharedAttributeAndNotifyPeer(ownSharedIdentityAttribute.id);
+        expect(deleteResponse.isSuccess).toBe(true);
+        await syncUntilHasMessageWithNotification(client2, deleteResponse.result.notificationId);
+        await client2._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.ownSharedAttributeDeletedByOwner", (event: any) => {
+            return event.data.id === ownSharedIdentityAttribute.id;
+        });
+
+        const client1DeletedAttribute = await client1.attributes.getAttribute(ownSharedIdentityAttribute.id);
+        expect(client1DeletedAttribute.isSuccess).toBe(false);
+        const client2DeletedAttribute = await client2.attributes.getAttribute(ownSharedIdentityAttribute.id);
+        expect(client2DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(ConnectorAttributeDeletionStatus.DeletedByOwner);
+        const client1RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
+        expect(client1RepositoryAttribute.isSuccess).toBe(true);
+    });
+
+    test("should delete an peer shared attribute and notify owner", async () => {
+        const ownSharedIdentityAttribute = await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
+            "@type": "IdentityAttribute",
+            value: {
+                "@type": "GivenName",
+                value: "AGivenName"
+            },
+            owner: client1Address
+        });
+        const repositoryAttributeId = ownSharedIdentityAttribute.shareInfo!.sourceAttribute!;
+
+        const deleteResponse = await client2.attributes.deletePeerSharedAttributeAndNotifyOwner(ownSharedIdentityAttribute.id);
+        expect(deleteResponse.isSuccess).toBe(true);
+        await syncUntilHasMessageWithNotification(client1, deleteResponse.result.notificationId);
+        await client1._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.peerSharedAttributeDeletedByPeer", (event: any) => {
+            return event.data.id === ownSharedIdentityAttribute.id;
+        });
+
+        const client2DeletedAttribute = await client2.attributes.getAttribute(ownSharedIdentityAttribute.id);
+        expect(client2DeletedAttribute.isSuccess).toBe(false);
+        const client1DeletedAttribute = await client1.attributes.getAttribute(ownSharedIdentityAttribute.id);
+        expect(client1DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(ConnectorAttributeDeletionStatus.DeletedByPeer);
+        const client2RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
+        expect(client2RepositoryAttribute.isSuccess).toBe(true);
+    });
+    test("should delete an repository attribute", async () => {
+        const attribute = await client1.attributes.createRepositoryAttribute({
+            content: {
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
+                }
+            }
+        });
+
+        const deleteResponse = await client1.attributes.deleteRepositoryAttribute(attribute.result.id);
+        expect(deleteResponse.isSuccess).toBe(true);
+        const getAttributeResponse = await client1.attributes.getAttribute(attribute.result.id);
+        expect(getAttributeResponse.isSuccess).toBe(false);
+    });
+
+    test("should delete an third party attribute and notify owner", async () => {
+        const [client3] = await launcher.launch(1);
+
+        await establishRelationship(client3, client2);
+
+        const ownSharedIdentityAttribute = await executeFullCreateAndShareRelationshipAttributeFlow(client1, client2, {
+            value: {
+                "@type": "ProprietaryString",
+                title: "text",
+                value: "ANewGivenName"
+            },
+            key: "randomKey",
+            confidentiality: "public"
+        });
+
+        const outgoingRequests = await client3.outgoingRequests.createRequest({
+            content: {
+                items: [
+                    {
+                        "@type": "ReadAttributeRequestItem",
+                        query: {
+                            "@type": "ThirdPartyRelationshipAttributeQuery",
+                            key: "randomKey",
+                            owner: client2Address,
+                            thirdParty: [client1Address]
+                        },
+                        mustBeAccepted: true
+                    }
+                ]
+            },
+            peer: client2Address
+        });
+
+        await client3.messages.sendMessage({
+            recipients: [client2Address],
+            content: outgoingRequests.result.content
+        });
+
+        await syncUntilHasMessageWithRequest(client2, outgoingRequests.result.id);
+        await client2._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>("consumption.incomingRequestStatusChanged", (event) => {
+            return event.data.request.id.toString() === outgoingRequests.result.id && event.data.newStatus === "ManualDecisionRequired";
+        });
+
+        await client2.incomingRequests.accept(outgoingRequests.result.id, {
+            items: [
+                {
+                    accept: true,
+                    existingAttributeId: ownSharedIdentityAttribute.id
+                }
+            ]
+        });
+
+        const message = await syncUntilHasMessageWithResponse(client3, outgoingRequests.result.id);
+        await client3._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>("consumption.outgoingRequestStatusChanged", (event) => {
+            return event.data.request.id.toString() === outgoingRequests.result.id && event.data.newStatus === "Completed";
+        });
+
+        const thirdPartyRelationshipAttribute = (await client3.attributes.getAttribute((message.content as any).response.items[0].attributeId)).result;
+
+        const deleteResponse = await client3.attributes.deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer(thirdPartyRelationshipAttribute.id);
+
+        await syncUntilHasMessageWithNotification(client2, deleteResponse.result.notificationId);
+        await client2._eventBus?.waitForEvent<ThirdPartyOwnedRelationshipAttributeDeletedByPeerEvent>("consumption.thirdPartyOwnedRelationshipAttributeDeletedByPeer", (event) => {
+            return event.data.id.toString() === thirdPartyRelationshipAttribute.id;
+        });
+
+        const client3DeletedAttribute = await client3.attributes.getAttribute(thirdPartyRelationshipAttribute.id);
+        expect(client3DeletedAttribute.isError).toBe(true);
     });
 });

@@ -1,7 +1,7 @@
 import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionServices, RuntimeErrors, TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, DELETE, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -211,6 +211,34 @@ export class AttributesController extends BaseController {
     @Accept("application/json")
     public async getAttribute(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.getAttribute({ id });
+        return this.ok(result);
+    }
+
+    @DELETE
+    @Path("/Own/Shared/:id")
+    public async deleteOwnSharedAttributeAndNotifyPeer(@PathParam("id") attributeId: string): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.deleteOwnSharedAttributeAndNotifyPeer({ attributeId });
+        return this.ok(result);
+    }
+
+    @DELETE
+    @Path("/Peer/Shared/:id")
+    public async deletePeerSharedAttributeAndNotifyOwner(@PathParam("id") attributeId: string): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.deletePeerSharedAttributeAndNotifyOwner({ attributeId });
+        return this.ok(result);
+    }
+
+    @DELETE
+    @Path("/ThirdParty/:id")
+    public async deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer(@PathParam("id") attributeId: string): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer({ attributeId });
+        return this.ok(result);
+    }
+
+    @DELETE
+    @Path("/:id")
+    public async deleteRepositoryAttribute(@PathParam("id") attributeId: string): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.deleteRepositoryAttribute({ attributeId });
         return this.ok(result);
     }
 

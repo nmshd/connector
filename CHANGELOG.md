@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.10.0
+
+-> SDK 4.2.0
+
+-   add routes for deleting attributes
+    -   `DELETE /api/v2/Attributes/Own/Shared/{id}` Delete a own shared attribute and notify Peer
+    -   `DELETE /api/v2/Attributes/Peer/Shared/{id}` Delete a peer shared attribute and notify Owner
+    -   `DELETE /api/v2/Attributes/{id}` Delete a repository attribute
+    -   `DELETE /api/v2/Attributes/Third/Party/{id}` Delete a Third Party attribute and notify Peer
+-   upgrade the runtime version to 4.6.0
+
 ## 3.9.4
 
 -   the `https_proxy` environment variable is now respected by the connector

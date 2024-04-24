@@ -10,6 +10,7 @@ export type DecideRequestItem = AcceptRequestItem | RejectRequestItem;
 
 export interface AcceptRequestItem {
     accept: true;
+    [key: string]: any;
 }
 
 export interface RejectRequestItem {

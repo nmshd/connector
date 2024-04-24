@@ -12,3 +12,6 @@ helmChart/charts
 
 tui.env
 local.config.json
+.gitmodules
+packages/runtime
+!packages/runtime/*
