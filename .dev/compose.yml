@@ -35,7 +35,7 @@ services:
     environment:
       - CUSTOM_CONFIG_LOCATION=/config.json
       - SYNC_ENABLED=${SYNC_ENABLED:-false}
-      - DATABASE_NAME=${DATABASE_NAME_PREFIX}-2
+      - DATABASE_NAME=${DATABASE_NAME_PREFIX:-connector}-2
       - transportLibrary__baseUrl
       - transportLibrary__platformClientId
       - transportLibrary__platformClientSecret
