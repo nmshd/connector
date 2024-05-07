@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.10.1
+
+-   the prefix `acc-` that is appended to the configured dbName in the config is now configurable via the key `database:dbNamePrefix`
+
 ## 3.10.0
 
 -> SDK 4.2.0
