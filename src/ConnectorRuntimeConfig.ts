@@ -15,7 +15,7 @@ export interface LokiJSSettings {
 export interface ConnectorRuntimeConfig extends RuntimeConfig {
     debug: boolean;
 
-    database: (MongoDBSettings | LokiJSSettings) & { dbName: string };
+    database: (MongoDBSettings | LokiJSSettings) & { dbName: string; dbNamePrefix: string };
 
     logging: log4js.Configuration;
 
