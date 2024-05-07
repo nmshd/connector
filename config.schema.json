@@ -32,6 +32,10 @@
                     "type": "string",
                     "default": "default",
                     "minLength": 1
+                },
+                "dbNamePrefix": {
+                    "type": "string",
+                    "default": "acc-"
                 }
             },
             "required": ["connectionString"],
