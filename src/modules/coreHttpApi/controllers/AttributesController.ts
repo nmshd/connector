@@ -77,9 +77,11 @@ export class AttributesController extends BaseController {
     @GET
     @Path("/Own/Repository")
     @Accept("application/json")
-    public async getOwnRepositoryAttributes(@QueryParam("onlyLatestVersions") onlyLatestVersions?: string): Promise<Envelope> {
+    public async getOwnRepositoryAttributes(@Context context: ServiceContext, @QueryParam("onlyLatestVersions") onlyLatestVersions?: string): Promise<Envelope> {
+        const query: Record<string, any> = this.extractQuery(context.request.query, ["onlyLatestVersions"]);
         const result = await this.consumptionServices.attributes.getRepositoryAttributes({
-            onlyLatestVersions: this.stringToBoolean(onlyLatestVersions)
+            onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
+            query
         });
         return this.ok(result);
     }

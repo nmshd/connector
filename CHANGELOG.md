@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.11.0
+
+-> SDK 4.3.0
+
+-   add query parameter to `GET /api/v2/Attributes/Own/Repository`
+-   upgrade the runtime version to 4.7.1
+
 ## 3.10.1
 
 -   the prefix `acc-` that is appended to the configured dbName in the config is now configurable via the key `database:dbNamePrefix`
