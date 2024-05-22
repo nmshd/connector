@@ -1,0 +1,89 @@
+{
+    "name": "@nmshd/connector-admin-cli",
+    "description": "Admin cli for the enmeshed connector",
+    "version": "0.0.0",
+    "author": "j&s-soft GmbH",
+    "bin": {
+        "connector-admin": "./bin/run.js"
+    },
+    "bugs": "https://github.com/packages/connector-admin-cli/issues",
+    "dependencies": {
+        "@oclif/core": "^3.26.6",
+        "@oclif/plugin-help": "^6.0.21",
+        "@oclif/plugin-plugins": "^5.0.19",
+        "@oclif/plugin-autocomplete": "3.0.17",
+        "@nmshd/runtime": "^4.7.1",
+        "@nmshd/connector": "^3.10.1"
+    },
+    "devDependencies": {
+        "@oclif/prettier-config": "^0.2.1",
+        "@oclif/test": "^3.2.13",
+        "eslint-config-oclif": "^5",
+        "eslint-config-oclif-typescript": "^3",
+        "eslint-config-prettier": "^9",
+        "oclif": "^4",
+        "shx": "^0.3.3"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "files": [
+        "/bin",
+        "/dist",
+        "/oclif.manifest.json"
+    ],
+    "homepage": "https://github.com/packages/connector-admin-cli",
+    "keywords": [
+        "oclif"
+    ],
+    "license": "MIT",
+    "main": "dist/index.js",
+    "oclif": {
+        "bin": "connector-admin",
+        "dirname": "connector-admin",
+        "commands": "./dist/commands",
+        "plugins": [
+            "@oclif/plugin-help",
+            "@oclif/plugin-autocomplete"
+        ],
+        "topicSeparator": " ",
+        "topics": {
+            "hello": {
+                "description": "Say hello to the world and others"
+            }
+        },
+        "hooks": {
+            "init": "./dist/hooks/init/init"
+        }
+    },
+    "repository": "packages/connector-admin-cli",
+    "scripts": {
+        "build": "shx rm -rf dist tsconfig.tsbuildinfo && tsc -b",
+        "build:watch": "shx rm -rf dist tsconfig.tsbuildinfo && tsc -b --watch",
+        "lint": "eslint . --ext .ts",
+        "postpack": "shx rm -f oclif.manifest.json",
+        "posttest": "npm run lint",
+        "prepack": "oclif manifest && oclif readme",
+        "test": "jest",
+        "version": "oclif readme && git add README.md"
+    },
+    "jest": {
+        "maxWorkers": 2,
+        "preset": "ts-jest",
+        "setupFilesAfterEnv": [],
+        "testEnvironment": "node",
+        "testPathIgnorePatterns": [
+            "/node_modules/"
+        ],
+        "testTimeout": 60000,
+        "transform": {
+            "^.+\\.ts$": [
+                "ts-jest",
+                {
+                    "tsconfig": "test/tsconfig.json"
+                }
+            ]
+        }
+    },
+    "types": "dist/index.d.ts"
+}
