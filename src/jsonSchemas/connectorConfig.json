@@ -1056,6 +1056,9 @@
         "transportLibrary": {
             "additionalProperties": false,
             "properties": {
+                "allowIdentityCreation": {
+                    "type": "boolean"
+                },
                 "baseUrl": {
                     "type": "string"
                 },

@@ -1,7 +1,8 @@
 {
     "debug": true,
     "transportLibrary": {
-        "debug": true
+        "debug": true,
+        "allowIdentityCreation": true
     },
     "logging": {
         "appenders": {
@@ -11,7 +12,7 @@
             },
             "console": {
                 "type": "logLevelFilter",
-                "level": "WARN",
+                "level": "INFO",
                 "appender": "consoleAppender"
             }
         },
@@ -28,8 +29,12 @@
         "coreHttpApi": { "docs": { "enabled": true } },
         "webhooks": {
             "enabled": false,
-            "webhooks": [{ "triggers": ["**"], "target": "test" }],
-            "targets": { "test": {} }
+            "webhooks": [{ "triggers": ["consumption.outgoingRequestCreated", "transport.relationshipChanged", "transport.messageReceived"], "target": "test" }],
+            "targets": {
+                "test": {
+                    "headers": { "Content-Type": "application/json" }
+                }
+            }
         }
     }
 }

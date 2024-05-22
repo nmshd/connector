@@ -63,11 +63,10 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     private healthChecker: HealthChecker;
 
-    private constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory) {
+    protected constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory) {
         super(connectorConfig, loggerFactory);
     }
-
-    public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
+    public static async validateConfig(connectorConfig: ConnectorRuntimeConfig) {
         const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
         const runtimeConfigSchemaString = fs.readFileSync(schemaPath).toString();
         const runtimeConfigSchema = JSON.parse(runtimeConfigSchemaString);
@@ -80,6 +79,10 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             console.error(errorMessage); // eslint-disable-line no-console
             throw new Error(errorMessage);
         }
+    }
+
+    public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
+        ConnectorRuntime.validateConfig(connectorConfig);
 
         this.forceEnableMandatoryModules(connectorConfig);
 
@@ -100,7 +103,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         return runtime;
     }
 
-    private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
+    protected static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
         connectorConfig.modules.decider.enabled = true;
         connectorConfig.modules.request.enabled = true;
         connectorConfig.modules.attributeListener.enabled = true;
