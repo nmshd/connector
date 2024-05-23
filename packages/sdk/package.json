@@ -38,7 +38,7 @@
     "devDependencies": {
         "@types/form-data": "^2.5.0",
         "@types/qs": "^6.9.11",
-        "ts-json-schema-generator": "^1.5.0"
+        "ts-json-schema-generator": "^2.1.1"
     },
     "publishConfig": {
         "access": "public",
