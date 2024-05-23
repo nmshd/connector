@@ -41,6 +41,10 @@ updates:
       update-docker-dependencies:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "node"
+        versions:
+          - ">20"
     reviewers:
       - "jkoenig134"
       - "sebbi08"
