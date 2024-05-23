@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.11.1
+
+-   upgrade nodejs to 20.13.1
+
 ## 3.11.0
 
 -> SDK 4.3.0
