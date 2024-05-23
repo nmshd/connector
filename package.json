@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/connector",
-    "version": "3.10.1",
+    "version": "3.11.0",
     "private": true,
     "description": "The Enmeshed Connector",
     "homepage": "https://enmeshed.eu/integrate",
@@ -71,7 +71,7 @@
         "@js-soft/node-logger": "1.1.1",
         "@js-soft/ts-utils": "^2.3.3",
         "@nmshd/iql": "^1.0.2",
-        "@nmshd/runtime": "4.6.0",
+        "@nmshd/runtime": "4.7.1",
         "agentkeepalive": "4.5.0",
         "amqplib": "^0.10.3",
         "axios": "^1.6.8",

@@ -448,6 +448,46 @@ paths:
       tags:
         - Attributes
       parameters:
+        - name: createdAt
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: content.tags
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: content.validFrom
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: content.validTo
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DateFilter"
+        - name: content.value.@type
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: deletionInfo
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: deletionInfo.deletionStatus
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: deletionInfo.deletionDate"
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
         - name: onlyLatestVersions
           in: query
           required: false

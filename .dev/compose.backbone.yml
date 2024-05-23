@@ -1,6 +1,6 @@
 services:
   consumer-api:
-    image: ghcr.io/nmshd/backbone-consumer-api:${CONSUMERAPI_TAG}
+    image: ghcr.io/nmshd/backbone-consumer-api:${BACKBONE_VERSION}
     container_name: consumer-api
     hostname: consumer-api
     environment:
@@ -16,6 +16,36 @@ services:
         condition: service_completed_successfully
       azure-storage-emulator:
         condition: service_started
+      database-migrator:
+        condition: service_completed_successfully
+    configs:
+      - source: Config
+        target: app/appsettings.override.json
+
+  event-handler-service:
+    image: ghcr.io/nmshd/backbone-event-handler:${BACKBONE_VERSION}
+    container_name: event-handler-service
+    depends_on:
+      database:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      database-migrator:
+        condition: service_completed_successfully
+    configs:
+      - source: Config
+        target: app/appsettings.override.json
+
+  database-migrator:
+    container_name: database-migrator-test
+    image: ghcr.io/nmshd/backbone-database-migrator:${BACKBONE_VERSION}
+    depends_on:
+      seed-database:
+        condition: service_completed_successfully
+    environment:
+      Infrastructure__SqlDatabase__Provider: Postgres
+      Infrastructure__SqlDatabase__ConnectionString: "Server=postgres;Database=enmeshed;User Id=postgres;Password=Passw0rd;Port=5432"
+      ASPNETCORE_ENVIRONMENT: Development
     configs:
       - source: Config
         target: app/appsettings.override.json
@@ -55,17 +85,18 @@ services:
   ### seeds ###
 
   seed-database:
+    container_name: seed-database
     image: postgres
     environment:
       - PGPASSWORD=Passw0rd
-    command: /bin/bash -c 'env && apt update -y && apt install -y wget && wget https://raw.githubusercontent.com/nmshd/backbone/capi/${CONSUMERAPI_TAG}/setup-db/setup-postgres.sql -O /setup-postgres.sql && psql -h postgres -U postgres -d enmeshed -f /setup-postgres.sql'
+    command: /bin/bash -c 'env && apt update -y && apt install -y wget && wget https://raw.githubusercontent.com/nmshd/backbone/${BACKBONE_VERSION}/setup-db/setup-postgres.sql -O /setup-postgres.sql && psql -h postgres -U postgres -d enmeshed -f /setup-postgres.sql'
     depends_on:
       database:
         condition: service_healthy
 
   seed-client:
     container_name: seed-client
-    image: ghcr.io/nmshd/backbone-admin-cli:${ADMINCLI_TAG}
+    image: ghcr.io/nmshd/backbone-admin-cli:${BACKBONE_VERSION}
     depends_on:
       consumer-api:
         condition: service_healthy

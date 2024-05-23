@@ -38,7 +38,11 @@ export async function syncUntil(client: ConnectorClient, until: (syncResult: Con
     const syncResponse = await client.account.sync();
     expect(syncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
 
-    const connectorSyncResult: ConnectorSyncResult = { messages: [...syncResponse.result.messages], relationships: [...syncResponse.result.relationships] };
+    const connectorSyncResult: ConnectorSyncResult = {
+        messages: [...syncResponse.result.messages],
+        relationships: [...syncResponse.result.relationships],
+        identityDeletionProcesses: [...syncResponse.result.identityDeletionProcesses]
+    };
 
     let iterationNumber = 0;
     while (!until(connectorSyncResult) && iterationNumber < 25) {

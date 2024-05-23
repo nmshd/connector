@@ -91,7 +91,8 @@ describe("test openapi spec against routes", () => {
         const pathsWithDBQueries = [
             { path: "/api/v2/Attributes/Own/Shared/Identity", method: "get" },
             { path: "/api/v2/Attributes/Peer/Shared/Identity", method: "get" },
-            { path: "/api/v2/Attributes/Own/Shared/Identity", method: "get" }
+            { path: "/api/v2/Attributes/Own/Shared/Identity", method: "get" },
+            { path: "/api/v2/Attributes/Own/Repository", method: "get" }
         ];
 
         const generatedPaths = getPaths(generatedOpenApiSpec);
