@@ -47,6 +47,7 @@ interface InfrastructureConfiguration {
 // ================================ Transport Library ================================
 
 interface IConfigOverwrite {
+    allowIdentityCreation?: boolean;
     platformClientId?: string;
     platformClientSecret?: string;
     platformTimeout?: number;

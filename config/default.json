@@ -1,7 +1,8 @@
 {
     "debug": false,
     "transportLibrary": {
-        "realm": "id1"
+        "realm": "id1",
+        "allowIdentityCreation": false
     },
     "database": {
         "driver": "mongodb",
