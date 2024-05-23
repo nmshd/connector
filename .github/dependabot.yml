@@ -32,22 +32,9 @@ updates:
 
   ##### Docker #####
   - package-ecosystem: "docker"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    groups:
-      update-docker-dependencies:
-        patterns:
-          - "*"
-    reviewers:
-      - "jkoenig134"
-      - "sebbi08"
-    labels:
-      - "dependencies"
-
-  ##### Docker #####
-  - package-ecosystem: "docker"
-    directory: "/.dev"
+    directories:
+      - "/"
+      - "/.dev"
     schedule:
       interval: "weekly"
     groups:
