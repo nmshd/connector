@@ -11,6 +11,7 @@ export interface ConnectorIdentityDeletionProcess {
     rejectedAt?: string;
     rejectedByDevice?: string;
 }
+
 export enum ConnectorIdentityDeletionProcessStatus {
     WaitingForApproval = "WaitingForApproval",
     Rejected = "Rejected",

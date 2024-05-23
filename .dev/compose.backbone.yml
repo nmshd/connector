@@ -36,26 +36,6 @@ services:
       - source: Config
         target: app/appsettings.override.json
 
-  # Not needed currently
-  # admin-ui:
-  #   image: ghcr.io/nmshd/backbone-admin-ui:${BACKBONE_VERSION}
-  #   container_name: admin-ui
-  #   hostname: admin-ui
-  #   ports:
-  #     - "8091:8080"
-  #   depends_on:
-  #     database:
-  #       condition: service_started
-  #     rabbitmq:
-  #       condition: service_started
-  #     consumer-api:
-  #       condition: service_healthy
-  #     database-migrator:
-  #       condition: service_completed_successfully
-  #   configs:
-  #     - source: Config
-  #       target: app/appsettings.override.json
-
   database-migrator:
     container_name: database-migrator-test
     image: ghcr.io/nmshd/backbone-database-migrator:${BACKBONE_VERSION}

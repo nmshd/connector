@@ -9,6 +9,7 @@ helmChart/charts
 .dev/.env
 .dev/.env.*
 !.dev/.env.example
+!.dev/.env.local
 
 tui.env
 local.config.json

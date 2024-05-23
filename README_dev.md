@@ -41,6 +41,16 @@ connector-1  | [2021-01-25T11:27:41.241] [INFO] Runtime - Started all modules.
 
 You can access the Swagger UI of the Connector under http://localhost:3000/docs.
 
+To use an local backbone, that can be started with `npm run start:backbone`, you can use the `.env.local` in the `.dev` folder
+
+```shell
+docker compose -f .dev/compose.yml --env-file .env.local up --build connector-1
+```
+
+```shell
+docker compose -f .dev/compose.yml --env-file .env.local up --build connector-1 connector-2
+```
+
 ## How to debug
 
 1. Execute the VS Code task `Compile`. This task executes `tsc -w` (watches the code and compiles on change).
