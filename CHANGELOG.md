@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.11.2
+
+-   upgrade nodejs to 22.2.0
+
 ## 3.11.1
 
 -   upgrade nodejs to 20.13.1
