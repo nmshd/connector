@@ -1,10 +1,9 @@
-import * as ts from "typescript";
 import yamljs from "yamljs";
 
+import { OpenAPIV3 } from "openapi-types";
 import { MetadataGenerator, SpecGenerator, Swagger } from "typescript-rest-swagger";
 
 import swaggerParser from "@apidevtools/swagger-parser";
-import tsConfigBase from "../tsconfig.json";
 
 describe("test openapi spec against routes", () => {
     let manualOpenApiSpec: Swagger.Spec;
@@ -14,9 +13,7 @@ describe("test openapi spec against routes", () => {
         manualOpenApiSpec = yamljs.load("src/modules/coreHttpApi/openapi.yml");
 
         const files = "src/modules/**/*.ts";
-
-        const tsConfig = ts.convertCompilerOptionsFromJson(tsConfigBase.compilerOptions, process.cwd()).options;
-        const metadata = new MetadataGenerator([files], tsConfig).generate();
+        const metadata = new MetadataGenerator([files], "tsconfig.json").generate();
         const defaultOptions = {
             basePath: "/",
             collectionFormat: "",
@@ -30,7 +27,7 @@ describe("test openapi spec against routes", () => {
             yaml: false
         };
         const generator = new SpecGenerator(metadata, defaultOptions);
-        generatedOpenApiSpec = await generator.getOpenApiSpec();
+        generatedOpenApiSpec = generator.getOpenApiSpec();
         generatedOpenApiSpec = (await swaggerParser.dereference(generatedOpenApiSpec as any)) as Swagger.Spec;
         manualOpenApiSpec = (await swaggerParser.dereference(manualOpenApiSpec as any)) as Swagger.Spec;
         harmonizeSpec(manualOpenApiSpec);
@@ -41,7 +38,7 @@ describe("test openapi spec against routes", () => {
         const generatedPaths = getPaths(generatedOpenApiSpec);
 
         generatedPaths.forEach((path) => {
-            expect(manualPaths).toContain(path);
+            expect(manualPaths, "The route is programmed but not in the API spec").toContain(path);
         });
 
         manualPaths.forEach((path) => {
@@ -68,18 +65,23 @@ describe("test openapi spec against routes", () => {
             if (ignorePaths.includes(path)) {
                 return;
             }
-            const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path])
+            // eslint-disable-next-line jest/no-if
+            if (!generatedOpenApiSpec.paths[path]) {
+                // This case would result in an error in the previous test
+                return;
+            }
+            const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path]!)
                 .map((method) => method.toLocaleLowerCase())
                 .sort();
-            const manualMethods = Object.keys(manualOpenApiSpec.paths[path])
+            const manualMethods = Object.keys(manualOpenApiSpec.paths[path]!)
                 .map((method) => method.toLocaleLowerCase())
                 .sort();
 
             expect(generatedMethods, `Path ${path} do not have the same methods`).toStrictEqual(manualMethods);
 
-            Object.keys(manualOpenApiSpec.paths[path]).forEach((method) => {
+            Object.keys(manualOpenApiSpec.paths[path]!).forEach((method) => {
                 const key = method as "get" | "put" | "post" | "delete" | "options" | "head" | "patch";
-                const manualResponses = Object.keys(manualOpenApiSpec.paths[path][key]?.responses ?? {});
+                const manualResponses = Object.keys(manualOpenApiSpec.paths[path]![key]?.responses ?? {});
                 let expectedResponseCode = key === "post" ? "201" : "200";
                 expectedResponseCode = returnCodeOverwrite[path] ?? expectedResponseCode;
                 expect(manualResponses, `Path ${path} and method ${method} does not contain response code ${expectedResponseCode}`).toContainEqual(expectedResponseCode);
@@ -97,34 +99,39 @@ describe("test openapi spec against routes", () => {
 
         const generatedPaths = getPaths(generatedOpenApiSpec);
         generatedPaths.forEach((path) => {
-            const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path])
+            const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path]!)
                 .map((method) => method.toLowerCase())
-                .sort() as (keyof Swagger.Path)[];
-            generatedMethods.forEach((method: keyof Swagger.Path) => {
-                const generatedOperation = generatedOpenApiSpec.paths[path][method];
-                if (!isOperation(generatedOperation) || !generatedOperation.parameters) {
+                .sort() as OpenAPIV3.HttpMethods[];
+            generatedMethods.forEach((method: OpenAPIV3.HttpMethods) => {
+                const generatedOperation = generatedOpenApiSpec.paths[path]![method];
+                if (!isOperation(generatedOperation) || !generatedOperation.parameters || generatedOperation.parameters.length === 0) {
                     return;
                 }
-
-                const manualOperation = manualOpenApiSpec.paths[path][method];
+                const generatedParameters = generatedOperation.parameters as OpenAPIV3.ParameterObject[];
+                if (!manualOpenApiSpec.paths[path]) {
+                    // This case would result in an error in the previous test
+                    return;
+                }
+                const manualOperation = manualOpenApiSpec.paths[path]![method];
                 if (!isOperation(manualOperation) || !manualOperation.parameters) {
                     throw new Error(`${path} ${method} does not contain parameters but generated do`);
                 }
+                const manualParameters = manualOperation.parameters as OpenAPIV3.ParameterObject[];
 
                 // DBQuery are used via context.query and not by injection as QueryParameter so they will not be generated and the length will be different
                 if (!pathsWithDBQueries.some((p) => p.path === path && p.method.toLowerCase() === method.toLowerCase())) {
                     // eslint-disable-next-line jest/no-conditional-expect
-                    expect(generatedOperation.parameters, `Parameter length for ${method.toUpperCase()} ${path} is wrong`).toHaveLength(manualOperation.parameters.length);
+                    expect(generatedParameters, `Parameter length for ${method.toUpperCase()} ${path} is wrong`).toHaveLength(manualParameters.length);
                 }
 
-                const manualPathParams = manualOperation.parameters.filter((param) => param.in === "path");
-                const generatedPathParams = generatedOperation.parameters.filter((param) => param.in === "path");
+                const manualPathParams = manualParameters.filter((param) => param.in === "path");
+                const generatedPathParams = generatedParameters.filter((param) => param.in === "path");
                 expect(generatedPathParams).toHaveLength(manualPathParams.length);
 
-                generatedOperation.parameters
+                generatedParameters
                     .filter((param) => param.in === "query")
                     .forEach((param) => {
-                        const manualParameter = manualOperation.parameters!.find((manualParam) => manualParam.name === param.name);
+                        const manualParameter = manualParameters.find((manualParam) => manualParam.name === param.name);
 
                         expect(manualParameter, `${path} ${method} should contain param with name ${param.name}`).toBeDefined();
 
@@ -132,6 +139,10 @@ describe("test openapi spec against routes", () => {
                         expect(param.in).toBe(manualParameter!.in);
                         expect(param.required).toBe(manualParameter!.required);
                     });
+
+                const manualRequestBody = manualOperation.requestBody as OpenAPIV3.RequestBodyObject | undefined;
+                const generatedRequestBody = generatedOperation.requestBody as OpenAPIV3.RequestBodyObject | undefined;
+                expect(!!generatedRequestBody, `${path} ${method} request bodys do not match`).toBe(!!manualRequestBody);
             });
         });
     });
@@ -153,6 +164,6 @@ function getPaths(spec: Swagger.Spec) {
     return Object.keys(spec.paths).filter((paths) => !ignorePaths.includes(paths));
 }
 
-function isOperation(obj: any): obj is Swagger.Operation {
+function isOperation(obj: any): obj is OpenAPIV3.OperationObject {
     return obj.responses !== undefined;
 }

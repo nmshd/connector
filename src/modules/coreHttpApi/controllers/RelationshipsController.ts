@@ -4,10 +4,6 @@ import { Accept, Context, GET, Path, PathParam, POST, PUT, Return, ServiceContex
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
-class RelationshipChangeAnswer {
-    public content: any;
-}
-
 @Path("/api/v2/Relationships")
 export class RelationshipsController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
@@ -22,25 +18,21 @@ export class RelationshipsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/Changes/:changeId/Accept")
+    @Path(":id/Accept")
     @Accept("application/json")
-    public async acceptRelationshipChange(@PathParam("id") id: string, @PathParam("changeId") changeId: string, body?: RelationshipChangeAnswer): Promise<Envelope> {
-        const result = await this.transportServices.relationships.acceptRelationshipChange({
-            relationshipId: id,
-            changeId,
-            content: body?.content
+    public async acceptRelationship(@PathParam("id") id: string): Promise<Envelope> {
+        const result = await this.transportServices.relationships.acceptRelationship({
+            relationshipId: id
         });
         return this.ok(result);
     }
 
     @PUT
-    @Path(":id/Changes/:changeId/Reject")
+    @Path(":id/Reject")
     @Accept("application/json")
-    public async rejectRelationshipChange(@PathParam("id") id: string, @PathParam("changeId") changeId: string, body?: RelationshipChangeAnswer): Promise<Envelope> {
-        const result = await this.transportServices.relationships.rejectRelationshipChange({
-            relationshipId: id,
-            changeId,
-            content: body?.content
+    public async rejectRelationship(@PathParam("id") id: string): Promise<Envelope> {
+        const result = await this.transportServices.relationships.rejectRelationship({
+            relationshipId: id
         });
         return this.ok(result);
     }

@@ -15,7 +15,6 @@ afterAll(() => launcher.stop());
 describe("Create Relationship", () => {
     let templateId: string;
     let relationshipId: string;
-    let relationshipChangeId: string;
 
     test("load relationship Template in connector 2", async () => {
         const token = await getTemplateToken(client1);
@@ -28,7 +27,7 @@ describe("Create Relationship", () => {
     test("create relationship", async () => {
         expect(templateId).toBeDefined();
 
-        const response = await client2.relationships.createRelationship({ templateId, content: { a: "b" } });
+        const response = await client2.relationships.createRelationship({ templateId, creationContent: { a: "b" } });
         expect(response).toBeSuccessful(ValidationSchema.Relationship);
     });
 
@@ -39,14 +38,12 @@ describe("Create Relationship", () => {
         expect(relationships).toHaveLength(1);
 
         relationshipId = relationships[0].id;
-        relationshipChangeId = relationships[0].changes[0].id;
     });
 
     test("accept relationship", async () => {
         expect(relationshipId).toBeDefined();
-        expect(relationshipChangeId).toBeDefined();
 
-        const response = await client1.relationships.acceptRelationshipChange(relationshipId, relationshipChangeId, { content: { a: "b" } });
+        const response = await client1.relationships.acceptRelationship(relationshipId);
         expect(response).toBeSuccessful(ValidationSchema.Relationship);
     });
 

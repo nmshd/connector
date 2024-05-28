@@ -50,12 +50,11 @@ beforeAll(async () => {
     /* Initialize relationship. */
     const token = await getTemplateToken(client1);
     const templateId = (await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.truncatedReference })).result.id;
-    await client2.relationships.createRelationship({ templateId, content: { a: "b" } });
+    await client2.relationships.createRelationship({ templateId, creationContent: { a: "b" } });
     for (const c of [client1, client2]) {
         const relationships = await syncUntilHasRelationships(c);
         const relationshipId = relationships[0].id;
-        const relationshipChangeId = relationships[0].changes[0].id;
-        await c.relationships.acceptRelationshipChange(relationshipId, relationshipChangeId, { content: { a: "b" } });
+        await c.relationships.acceptRelationship(relationshipId);
     }
     const relId1 = (await client1.relationships.getRelationships()).result[0].id;
     const relId2 = (await client2.relationships.getRelationships()).result[0].id;

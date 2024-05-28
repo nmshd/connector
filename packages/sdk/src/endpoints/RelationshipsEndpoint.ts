@@ -1,13 +1,4 @@
-import {
-    AcceptRelationshipChangeRequest,
-    ConnectorAttributes,
-    ConnectorRelationship,
-    ConnectorRelationships,
-    ConnectorResponse,
-    CreateRelationshipRequest,
-    GetRelationshipsRequest,
-    RejectRelationshipChangeRequest
-} from "../types";
+import { ConnectorAttributes, ConnectorRelationship, ConnectorRelationships, ConnectorResponse, CreateRelationshipRequest, GetRelationshipsRequest } from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class RelationshipsEndpoint extends Endpoint {
@@ -23,20 +14,12 @@ export class RelationshipsEndpoint extends Endpoint {
         return await this.get(`/api/v2/Relationships/${relationshipId}`);
     }
 
-    public async acceptRelationshipChange(
-        relationshipId: string,
-        changeId: string,
-        request: AcceptRelationshipChangeRequest = { content: {} }
-    ): Promise<ConnectorResponse<ConnectorRelationship>> {
-        return await this.put(`/api/v2/Relationships/${relationshipId}/Changes/${changeId}/Accept`, request);
+    public async acceptRelationship(relationshipId: string): Promise<ConnectorResponse<ConnectorRelationship>> {
+        return await this.put(`/api/v2/Relationships/${relationshipId}/Accept`);
     }
 
-    public async rejectRelationshipChange(
-        relationshipId: string,
-        changeId: string,
-        request: RejectRelationshipChangeRequest = { content: {} }
-    ): Promise<ConnectorResponse<ConnectorRelationship>> {
-        return await this.put(`/api/v2/Relationships/${relationshipId}/Changes/${changeId}/Reject`, request);
+    public async rejectRelationship(relationshipId: string): Promise<ConnectorResponse<ConnectorRelationship>> {
+        return await this.put(`/api/v2/Relationships/${relationshipId}/Reject`);
     }
 
     public async getAttributesForRelationship(relationshipId: string): Promise<ConnectorResponse<ConnectorAttributes>> {
