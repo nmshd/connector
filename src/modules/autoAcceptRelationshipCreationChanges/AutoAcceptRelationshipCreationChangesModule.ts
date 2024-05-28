@@ -1,4 +1,4 @@
-import { RelationshipChangedEvent } from "@nmshd/runtime";
+import { RelationshipChangedEvent, RelationshipStatus } from "@nmshd/runtime";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
 export interface AutoAcceptRelationshipCreationChangesModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
@@ -20,8 +20,7 @@ export default class AutoAcceptRelationshipCreationChangesModule extends Connect
     }
 
     private async handleRelationshipChanged(event: RelationshipChangedEvent) {
-        // TODO: check how to reenable this
-        // if (!this.isIncomingPendingRelationshipCreationChange(event)) return;
+        if (!this.isIncomingPendingRelationshipCreationChange(event)) return;
 
         this.logger.info("Incoming relationship creation change detected.");
 
@@ -36,13 +35,14 @@ export default class AutoAcceptRelationshipCreationChangesModule extends Connect
         }
     }
 
-    // private isIncomingPendingRelationshipCreationChange(event: RelationshipChangedEvent) {
-    //     const data = event.data;
-    //     if (data.changes.length !== 1) return false;
+    private isIncomingPendingRelationshipCreationChange(event: RelationshipChangedEvent) {
+        const data = event.data;
+        if (data.status !== RelationshipStatus.Pending) return false;
 
-    //     const creationChange = event.data.changes[0];
-    //     return creationChange.request.createdBy !== this.currentIdentity && creationChange.status === RelationshipChangeStatus.Pending;
-    // }
+        const creationChange = event.data.auditLog.find((log) => !log.oldStatus && log.newStatus === RelationshipStatus.Pending);
+        if (!creationChange) return false;
+        return creationChange.createdBy !== this.currentIdentity;
+    }
 
     public stop(): void {
         this.unsubscribeFromAllEvents();

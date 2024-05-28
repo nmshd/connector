@@ -16,3 +16,4 @@ local.config.json
 .gitmodules
 packages/runtime
 !packages/runtime/*
+test/manualTest.ts

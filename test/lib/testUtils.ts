@@ -263,13 +263,13 @@ export async function getRelationship(client: ConnectorClient): Promise<Connecto
 export async function establishRelationship(client1: ConnectorClient, client2: ConnectorClient): Promise<void> {
     const template = await exchangeTemplate(client1, client2);
 
-    const createRelationshipResponse = await client2.relationships.createRelationship({ templateId: template.id, content: { a: "b" } });
+    const createRelationshipResponse = await client2.relationships.createRelationship({ templateId: template.id, creationContent: { a: "b" } });
     expect(createRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
     const relationships = await syncUntilHasRelationships(client1);
     expect(relationships).toHaveLength(1);
 
-    const acceptResponse = await client1.relationships.acceptRelationshipChange(relationships[0].id, relationships[0].changes[0].id, { content: { a: "b" } });
+    const acceptResponse = await client1.relationships.acceptRelationship(relationships[0].id);
     expect(acceptResponse).toBeSuccessful(ValidationSchema.Relationship);
 
     const relationships2 = await syncUntilHasRelationships(client2);
