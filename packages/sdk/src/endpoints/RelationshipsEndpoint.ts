@@ -22,6 +22,10 @@ export class RelationshipsEndpoint extends Endpoint {
         return await this.put(`/api/v2/Relationships/${relationshipId}/Reject`);
     }
 
+    public async revokeRelationship(relationshipId: string): Promise<ConnectorResponse<ConnectorRelationship>> {
+        return await this.put(`/api/v2/Relationships/${relationshipId}/Revoke`);
+    }
+
     public async getAttributesForRelationship(relationshipId: string): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get(`/api/v2/Relationships/${relationshipId}/Attributes`);
     }

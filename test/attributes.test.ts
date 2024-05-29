@@ -587,7 +587,7 @@ describe("Delete attributes", () => {
                         query: {
                             "@type": "ThirdPartyRelationshipAttributeQuery",
                             key: "randomKey",
-                            owner: client2Address,
+                            owner: "",
                             thirdParty: [client1Address]
                         },
                         mustBeAccepted: true

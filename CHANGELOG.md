@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.0.0
+
+-   New route to revoke relationship
+    -   `PUT /api/v2/Relationships/{id}/Revoke`
+-   Remove relationship changes in favor of new routes
+
+    -   REMOVED `PUT /api/v2/Relationships/{id}/Changes/{changeId}/Reject`
+    -   NEW `PUT /api/v2/Relationships/{id}/Reject`
+    -   REMOVED `PUT /api/v2/Relationships/{id}/Changes/{changeId}/Accept`
+    -   NEW `PUT /api/v2/Relationships/{id}/Accept`
+
+-   update runtime version to 5.0.0
+
 ## 3.11.2
 
 -   upgrade nodejs to 22.2.0
