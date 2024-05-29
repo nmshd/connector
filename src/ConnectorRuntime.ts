@@ -88,7 +88,12 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         if (process.env.https_proxy) {
             const httpsProxy = process.env.https_proxy;
-            connectorConfig.transportLibrary.httpsAgent = new HttpsProxyAgent(httpsProxy);
+            connectorConfig.transportLibrary.httpsAgent = new HttpsProxyAgent(httpsProxy, {
+                keepAlive: true,
+                maxSockets: 5,
+                maxFreeSockets: 2,
+                ...connectorConfig.transportLibrary.httpsAgentOptions
+            });
         }
 
         const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
