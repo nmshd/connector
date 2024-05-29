@@ -1,4 +1,6 @@
 export * from "./ConnectorRelationship";
+export * from "./ConnectorRelationshipAuditLogEntry";
+export * from "./ConnectorRelationshipAuditLogEntryReason";
 export * from "./ConnectorRelationshipStatus";
 export * from "./ConnectorRelationships";
 export * from "./requests/AcceptRelationshipChangeRequest";
