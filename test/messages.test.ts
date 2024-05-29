@@ -93,7 +93,7 @@ describe("Messaging", () => {
 });
 
 describe("Message errors", () => {
-    const fakeAddress = "did:e:fakeAddress:dids:0123456789012345678912";
+    const fakeAddress = "did:e:a-domain:dids:0000000000000000000000";
     test("should throw correct error for empty 'to' in the Message", async () => {
         const result = await client1.messages.sendMessage({
             recipients: [fakeAddress],

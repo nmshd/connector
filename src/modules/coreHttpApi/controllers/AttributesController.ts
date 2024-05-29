@@ -152,7 +152,7 @@ export class AttributesController extends BaseController {
             peers = [peers];
         }
 
-        const result = await this.consumptionServices.attributes.getSharedVersionsOfRepositoryAttribute({
+        const result = await this.consumptionServices.attributes.getSharedVersionsOfAttribute({
             attributeId,
             onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
             peers

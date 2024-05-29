@@ -38,10 +38,10 @@ export default class AutoAcceptRelationshipCreationChangesModule extends Connect
     private isIncomingPendingRelationshipCreationChange(event: RelationshipChangedEvent) {
         const data = event.data;
         if (data.status !== RelationshipStatus.Pending) return false;
+        if (data.auditLog.length !== 1) return false;
 
-        const creationChange = event.data.auditLog.find((log) => !log.oldStatus && log.newStatus === RelationshipStatus.Pending);
-        if (!creationChange) return false;
-        return creationChange.createdBy !== this.currentIdentity;
+        const auditLogEntry = data.auditLog[0];
+        return auditLogEntry.createdBy !== this.currentIdentity;
     }
 
     public stop(): void {
