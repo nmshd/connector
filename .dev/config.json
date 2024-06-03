@@ -1,7 +1,7 @@
 {
     "debug": true,
     "database": {
-        "connectionString": "mongodb://mongo:27017/?readPreference=primary&appname=connector&ssl=false"
+        "connectionString": "mongodb://mongo:27017"
     },
     "infrastructure": {
         "httpServer": {
