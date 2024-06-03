@@ -121,6 +121,11 @@
             "displayName": "Message Broker Publisher",
             "location": "messageBrokerPublisher/MessageBrokerPublisherModule",
             "brokers": []
+        },
+        "sse": {
+            "enabled": false,
+            "displayName": "Server Sent Events",
+            "location": "sse/SseModule"
         }
     }
 }
