@@ -74,8 +74,6 @@ async function run() {
     await runtime.start();
 }
 
-if (process.env.HTTPS_PROXY && !process.env.https_proxy) process.env.https_proxy = process.env.HTTPS_PROXY;
-
 run()
     .then()
     .catch((e) => {
