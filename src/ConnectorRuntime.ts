@@ -230,6 +230,10 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         };
     }
 
+    public async getBackboneAuthenticationToken(): Promise<string> {
+        return await this.accountController.authenticator.getToken();
+    }
+
     protected async loadModule(moduleConfiguration: ModuleConfiguration): Promise<void> {
         const connectorModuleConfiguration = moduleConfiguration as ConnectorRuntimeModuleConfiguration;
 
