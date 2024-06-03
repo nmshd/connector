@@ -27,7 +27,7 @@ export default class SseModule extends ConnectorRuntimeModule {
     }
 
     public async start(): Promise<void> {
-        // TODO: run a sync here
+        // TODO: run a sync after every other module is started
 
         const baseUrl = this.connectorMode === "debug" && process.env.USE_LOCAL_SSE ? "http://host.docker.internal:3333" : this.runtime["runtimeConfig"].transportLibrary.baseUrl;
         const sseUrl = `${baseUrl}/sse`;
@@ -42,7 +42,6 @@ export default class SseModule extends ConnectorRuntimeModule {
             headers: { authorization: `Bearer ${token}` }
         });
 
-        // wait for connected with promise
         await new Promise<void>((resolve, reject) => {
             this.eventSource.onopen = () => {
                 this.logger.info("Connected to SSE endpoint");
