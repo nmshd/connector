@@ -15,6 +15,9 @@ services:
       - transportLibrary__baseUrl
       - transportLibrary__platformClientId
       - transportLibrary__platformClientSecret
+      - modules__sse__enabled=${modules__sse__enabled:-false}
+      # TODO: remove this when the backbone supports sse
+      - USE_LOCAL_SSE=true
     volumes:
       - ..:/usr/app
       - ./config.json:/config.json:ro
@@ -39,6 +42,7 @@ services:
       - transportLibrary__baseUrl
       - transportLibrary__platformClientId
       - transportLibrary__platformClientSecret
+      - modules__sse__enabled
     volumes:
       - ..:/usr/app
       - ./config.json:/config.json:ro

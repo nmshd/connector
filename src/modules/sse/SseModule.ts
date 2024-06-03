@@ -29,7 +29,12 @@ export default class SseModule extends ConnectorRuntimeModule {
     public async start(): Promise<void> {
         // TODO: run a sync after every other module is started
 
-        const baseUrl = this.connectorMode === "debug" && process.env.USE_LOCAL_SSE ? "http://host.docker.internal:3333" : this.runtime["runtimeConfig"].transportLibrary.baseUrl;
+        const baseUrl =
+            // TODO: remove this when the backbone supports sse
+            this.connectorMode === "debug" && process.env.USE_LOCAL_SSE
+                ? "http://host.docker.internal:3333"
+                : // this should stay
+                  this.runtime["runtimeConfig"].transportLibrary.baseUrl;
         const sseUrl = `${baseUrl}/sse`;
 
         this.logger.info(`Connecting to SSE endpoint: ${sseUrl}`);
