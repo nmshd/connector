@@ -74,6 +74,8 @@ async function run() {
     await runtime.start();
 }
 
+if (process.env.HTTP_PROXY) process.env.http_proxy = process.env.HTTP_PROXY;
+
 run()
     .then()
     .catch((e) => {
