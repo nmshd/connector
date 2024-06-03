@@ -2,7 +2,7 @@
 
 ## 3.11.3
 
--   upgrade the runtime version to 4.10.4
+-   upgrade the runtime version to 4.10.5
 
 ## 3.11.2
 
