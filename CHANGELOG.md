@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.11.3
+
+-   upgrade the runtime version to 4.10.6
+
 ## 3.11.2
 
 -   upgrade nodejs to 22.2.0
