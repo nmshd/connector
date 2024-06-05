@@ -17,13 +17,17 @@ updates:
 
   ##### npm #####
   - package-ecosystem: "npm"
-    directory: "/"
+    directories:
+      - "/"
+      - "/packages/sdk"
     schedule:
       interval: "weekly"
     groups:
       update-npm-dependencies:
         patterns:
           - "*"
+        exclude-patterns:
+          - "@nmshd/runtime"
     reviewers:
       - "jkoenig134"
       - "sebbi08"

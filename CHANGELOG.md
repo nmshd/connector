@@ -1,17 +1,16 @@
 # Changelog
 
-## 4.0.0
+## Discontinued
 
--   New route to revoke relationship
-    -   `PUT /api/v2/Relationships/{id}/Revoke`
--   Remove relationship changes in favor of new routes
+This changelog is discontinued in favor of the [GitHub Releases](https://github.com/nmshd/connector/releases)
 
-    -   REMOVED `PUT /api/v2/Relationships/{id}/Changes/{changeId}/Reject`
-    -   NEW `PUT /api/v2/Relationships/{id}/Reject`
-    -   REMOVED `PUT /api/v2/Relationships/{id}/Changes/{changeId}/Accept`
-    -   NEW `PUT /api/v2/Relationships/{id}/Accept`
+## 3.11.4
 
--   update runtime version to 5.0.0
+-   health checks now use `https_proxy` if set
+
+## 3.11.3
+
+-   upgrade the runtime version to 4.10.6
 
 ## 3.11.2
 
