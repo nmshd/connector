@@ -1,6 +1,5 @@
 {
     "name": "@nmshd/connector",
-    "version": "3.11.4",
     "private": true,
     "description": "The Enmeshed Connector",
     "homepage": "https://enmeshed.eu/integrate",
