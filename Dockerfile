@@ -1,7 +1,7 @@
 FROM node:22.2.0 as builder
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
-ARG PACKAGE_VERSION
+ARG VERSION
 
 WORKDIR /usr/app
 COPY package.json package-lock.json tsconfig.json ./
