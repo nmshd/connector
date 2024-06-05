@@ -6,6 +6,11 @@ if [ -z "$(which jq)" ]; then
     exit 1
 fi
 
+if [ -z "$VERSION" ]; then
+    echo "The environment variable 'VERSION' must be set."
+    exit 1
+fi
+
 case "$VERSION" in
 *-alpha*) BASE_TAG=alpha ;;
 *-beta*) BASE_TAG=beta ;;
