@@ -24,11 +24,27 @@ updates:
       update-npm-dependencies:
         patterns:
           - "*"
+        exclude-patterns:
+          - "@nmshd/runtime"
     reviewers:
       - "jkoenig134"
       - "sebbi08"
     labels:
       - "dependencies"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      update-npm-dependencies:
+        patterns:
+          - "@nmshd/runtime"
+    reviewers:
+      - "jkoenig134"
+      - "sebbi08"
+    labels:
+      - "runtime-upgrade"
 
   ##### Docker #####
   - package-ecosystem: "docker"
