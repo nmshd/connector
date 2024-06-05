@@ -1,5 +1,9 @@
 # Changelog
 
+## Discontinued
+
+This changelog is discontinued in favor of the [GitHub Releases](https://github.com/nmshd/connector/releases)
+
 ## 3.11.4
 
 -   health checks now use `https_proxy` if set
