@@ -34,20 +34,6 @@ updates:
     labels:
       - "dependencies"
 
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    groups:
-      update-npm-dependencies:
-        patterns:
-          - "@nmshd/runtime"
-    reviewers:
-      - "jkoenig134"
-      - "sebbi08"
-    labels:
-      - "runtime-upgrade"
-
   ##### Docker #####
   - package-ecosystem: "docker"
     directories:
