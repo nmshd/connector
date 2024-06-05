@@ -1,10 +1,5 @@
 {
     "name": "@nmshd/connector-sdk",
-    "//version": [
-        "The version is set at runtime but has to be set to any version for the ts-json-schema-generator to work.",
-        "Can be removed as soon https://github.com/vega/ts-json-schema-generator/issues/1986 is fixed."
-    ],
-    "version": "0.0.0",
     "description": "the enmeshed connector sdk",
     "keywords": [
         "enmeshed",
@@ -42,7 +37,7 @@
     "devDependencies": {
         "@types/form-data": "^2.5.0",
         "@types/qs": "^6.9.15",
-        "ts-json-schema-generator": "^2.2.0"
+        "ts-json-schema-generator": "^2.3.0"
     },
     "publishConfig": {
         "access": "public",
