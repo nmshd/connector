@@ -42,9 +42,6 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
 }
 
 const envKeyMapping: Record<string, string> = {
-    // The DATABASE__DB_NAME env variable was called ACCOUNT in the past - we need to keep an alias for backwards compatibility.
-    ACCOUNT: "database:dbName", // eslint-disable-line @typescript-eslint/naming-convention
-
     DATABASE_NAME: "database:dbName", // eslint-disable-line @typescript-eslint/naming-convention
     API_KEY: "infrastructure:httpServer:apiKey", // eslint-disable-line @typescript-eslint/naming-convention
     DATABASE_CONNECTION_STRING: "database:connectionString", // eslint-disable-line @typescript-eslint/naming-convention
