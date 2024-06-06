@@ -103,19 +103,6 @@
             "targets": {},
             "webhooks": []
         },
-        "amqpPublisher": {
-            "enabled": false,
-            "displayName": "AMQP Publisher",
-            "location": "amqpPublisher/AMQPPublisherModule"
-        },
-        "PubSubPublisher": {
-            "enabled": false,
-            "displayName": "PubSub Publisher",
-            "location": "pubSubPublisher/PubSubPublisherModule",
-            "projectId": "",
-            "topic": "",
-            "keyFile": ""
-        },
         "messageBrokerPublisher": {
             "enabled": false,
             "displayName": "Message Broker Publisher",
