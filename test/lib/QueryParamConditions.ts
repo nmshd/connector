@@ -142,6 +142,7 @@ export class QueryParamConditions {
         if (!positiveValueArray || positiveValueArray.length === 0) {
             return this;
         }
+
         const positiveValue = positiveValueArray[0];
 
         this._conditions.push({

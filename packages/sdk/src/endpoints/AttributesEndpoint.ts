@@ -54,15 +54,19 @@ export class AttributesEndpoint extends Endpoint {
     public async getOwnRepositoryAttributes(request?: GetOwnRepositoryAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Own/Repository", request);
     }
+
     public async getOwnSharedIdentityAttributes(request?: GetOwnSharedIdentityAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Own/Shared/Identity", request);
     }
+
     public async getPeerSharedIdentityAttributes(request?: GetPeerSharedIdentityAttributesRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Peer/Shared/Identity", request);
     }
+
     public async getVersionsOfAttribute(attributeId: string): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get(`/api/v2/Attributes/${attributeId}/Versions`);
     }
+
     public async getSharedVersionsOfAttribute(attributeId: string, request: GetSharedVersionsOfRepositoryAttributeRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get(`/api/v2/Attributes/${attributeId}/Versions/Shared`, request);
     }
@@ -74,9 +78,11 @@ export class AttributesEndpoint extends Endpoint {
     public async deletePeerSharedAttributeAndNotifyOwner(attributeId: string): Promise<ConnectorResponse<DeletePeerSharedAttributeAndNotifyOwnerResponse>> {
         return await this.delete(`/api/v2/Attributes/Peer/Shared/${attributeId}`);
     }
+
     public async deleteRepositoryAttribute(attributeId: string): Promise<ConnectorResponse<void>> {
         return await this.delete(`/api/v2/Attributes/${attributeId}`);
     }
+
     public async deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer(
         attributeId: string
     ): Promise<ConnectorResponse<DeleteThirdPartyOwnedRelationshipAttributeAndNotifyPeerResponse>> {

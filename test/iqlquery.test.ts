@@ -56,6 +56,7 @@ beforeAll(async () => {
         const relationshipId = relationships[0].id;
         await c.relationships.acceptRelationship(relationshipId);
     }
+
     const relId1 = (await client1.relationships.getRelationships()).result[0].id;
     const relId2 = (await client2.relationships.getRelationships()).result[0].id;
     if (relId1 !== relId2) {

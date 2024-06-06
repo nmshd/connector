@@ -28,6 +28,7 @@ export class AttributesController extends BaseController {
         if (result.isError) {
             throw RuntimeErrors.general.recordNotFoundWithMessage(`Predecessor attribute '${predecessorId}' not found.`);
         }
+
         const predecessor = result.value;
 
         if (predecessor.content["@type"] === "IdentityAttribute") {

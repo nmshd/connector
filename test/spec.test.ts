@@ -70,6 +70,7 @@ describe("test openapi spec against routes", () => {
                 // This case would result in an error in the previous test
                 return;
             }
+
             const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path]!)
                 .map((method) => method.toLocaleLowerCase())
                 .sort();
@@ -107,15 +108,18 @@ describe("test openapi spec against routes", () => {
                 if (!isOperation(generatedOperation) || !generatedOperation.parameters || generatedOperation.parameters.length === 0) {
                     return;
                 }
+
                 const generatedParameters = generatedOperation.parameters as OpenAPIV3.ParameterObject[];
                 if (!manualOpenApiSpec.paths[path]) {
                     // This case would result in an error in the previous test
                     return;
                 }
+
                 const manualOperation = manualOpenApiSpec.paths[path]![method];
                 if (!isOperation(manualOperation) || !manualOperation.parameters) {
                     throw new Error(`${path} ${method} does not contain parameters but generated do`);
                 }
+
                 const manualParameters = manualOperation.parameters as OpenAPIV3.ParameterObject[];
 
                 // DBQuery are used via context.query and not by injection as QueryParameter so they will not be generated and the length will be different

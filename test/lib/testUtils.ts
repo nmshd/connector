@@ -87,11 +87,11 @@ export async function syncUntilHasMessageWithRequest(client: ConnectorClientWith
 
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
+
 export async function syncUntilHasMessageWithNotification(client: ConnectorClientWithMetadata, notificationId: string): Promise<ConnectorMessage> {
     const isNotification = (content: any) => {
-        if (!content) {
-            return false;
-        }
+        if (!content) return false;
+
         return content["@type"] === "Notification" && content.id === notificationId;
     };
 
@@ -275,6 +275,7 @@ export async function establishRelationship(client1: ConnectorClient, client2: C
     const relationships2 = await syncUntilHasRelationships(client2);
     expect(relationships2).toHaveLength(1);
 }
+
 export async function createRepositoryAttribute(client: ConnectorClient, request: CreateRepositoryAttributeRequest): Promise<ConnectorAttribute> {
     const response = await client.attributes.createRepositoryAttribute(request);
     expect(response).toBeSuccessful(ValidationSchema.ConnectorAttribute);
@@ -325,6 +326,7 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
         await sleep(500);
         recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
     }
+
     await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
 
     const responseMessage = await syncUntilHasMessageWithResponse(sender, requestId);
@@ -451,6 +453,7 @@ export function combinations<T>(...arrays: T[][]): T[][] {
             result.push([elem, ...combination]);
         }
     }
+
     return result;
 }
 

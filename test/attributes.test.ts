@@ -316,6 +316,7 @@ describe("Read Attribute and versions", () => {
             });
             expect(newAtt).toBeSuccessful(ValidationSchema.ConnectorAttribute);
         }
+
         await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
             "@type": "IdentityAttribute",
             value: {

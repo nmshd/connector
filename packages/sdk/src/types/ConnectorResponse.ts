@@ -12,6 +12,7 @@ export class ConnectorResponse<T> {
         if (_isSuccess && error) {
             throw new Error("InvalidOperation: A result cannot be successful and contain an error");
         }
+
         if (!_isSuccess && !error) {
             throw new Error("InvalidOperation: A failing result needs to contain an error");
         }

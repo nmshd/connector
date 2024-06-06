@@ -123,6 +123,7 @@ export abstract class Endpoint {
             if (!data.hasOwnProperty(key)) {
                 continue;
             }
+
             const value = data[key];
 
             if (value instanceof Buffer) {
