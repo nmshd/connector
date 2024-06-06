@@ -1,4 +1,3 @@
-import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionServices, RuntimeErrors, TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
 import { Accept, Context, DELETE, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "typescript-rest";
@@ -17,19 +16,6 @@ export class AttributesController extends BaseController {
     @POST
     @Accept("application/json")
     public async createRepositoryAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const selfAddress = (await this.transportServices.account.getIdentityInfo()).value.address;
-        if (request?.content?.owner && request?.content?.owner !== selfAddress) {
-            throw new ApplicationError(
-                "error.connector.attributes.cannotCreateNotSelfOwnedRepositoryAttribute",
-                "You are not allowed to create an attribute that is not owned by yourself"
-            );
-        }
-        /* We left 'owner' and '@type' optional in the openapi spec for
-         * backwards compatibility. If set, they have to be removed here or the runtime
-         * use case will throw an error. */
-        if (typeof request?.content?.owner !== "undefined") delete request.content.owner;
-        if (request?.content?.["@type"] === "IdentityAttribute") delete request.content["@type"];
-
         const result = await this.consumptionServices.attributes.createRepositoryAttribute(request);
         return this.created(result);
     }
