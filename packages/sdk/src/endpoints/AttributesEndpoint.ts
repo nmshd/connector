@@ -63,10 +63,7 @@ export class AttributesEndpoint extends Endpoint {
     public async getVersionsOfAttribute(attributeId: string): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get(`/api/v2/Attributes/${attributeId}/Versions`);
     }
-    public async getSharedVersionsOfRepositoryAttribute(
-        attributeId: string,
-        request: GetSharedVersionsOfRepositoryAttributeRequest
-    ): Promise<ConnectorResponse<ConnectorAttributes>> {
+    public async getSharedVersionsOfAttribute(attributeId: string, request: GetSharedVersionsOfRepositoryAttributeRequest): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get(`/api/v2/Attributes/${attributeId}/Versions/Shared`, request);
     }
 

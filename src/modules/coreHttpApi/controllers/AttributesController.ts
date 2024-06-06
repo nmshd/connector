@@ -129,7 +129,7 @@ export class AttributesController extends BaseController {
     @GET
     @Path("/:id/Versions/Shared")
     @Accept("application/json")
-    public async getSharedVersionsOfRepositoryAttribute(
+    public async getSharedVersionsOfAttribute(
         @PathParam("id") attributeId: string,
         @QueryParam("peers") peers?: string | string[],
         @QueryParam("onlyLatestVersions") onlyLatestVersions?: string

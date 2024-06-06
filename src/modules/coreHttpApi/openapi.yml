@@ -796,7 +796,7 @@ paths:
 
   /api/v2/Attributes/{id}/Versions/Shared:
     get:
-      operationId: getSharedVersionsOfRepositoryAttribute
+      operationId: getSharedVersionsOfAttribute
       tags:
         - Attributes
       parameters:
