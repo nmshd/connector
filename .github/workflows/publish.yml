@@ -2,7 +2,7 @@ name: Publish
 
 on:
   push:
-    branches: [main, release/**]
+    tags: "*"
 
 jobs:
   run-checks:
@@ -27,6 +27,7 @@ jobs:
       - run: bash .ci/publishNpm.sh
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION: ${{ github.ref_name }}
     needs: ["run-checks"]
 
   publish-docker:
@@ -50,6 +51,7 @@ jobs:
         env:
           BUILD_NUMBER: ${{ github.run_number }}
           COMMIT_HASH: ${{ github.sha }}
+          VERSION: ${{ github.ref_name }}
     needs: ["run-checks"]
 
   publish-helm:
@@ -65,4 +67,6 @@ jobs:
           USER: ${{ github.actor }}
           PASSWORD: ${{ secrets.GITHUB_TOKEN }}
       - run: bash .ci/publishHelmChart.sh
+        env:
+          VERSION: ${{ github.ref_name }}
     needs: ["publish-docker"]

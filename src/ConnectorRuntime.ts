@@ -9,6 +9,7 @@ import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleC
 import { AccountController, CoreErrors as TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import fs from "fs";
+import { HttpsProxyAgent } from "https-proxy-agent";
 import { validate as validateSchema } from "jsonschema";
 import path from "path";
 import { ConnectorMode } from "./ConnectorMode";
@@ -156,6 +157,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             dataViewExpander: this._dataViewExpander
         } = await this.login(this.accountController, consumptionController));
 
+        const httpsProxy = process.env.https_proxy ?? process.env.HTTPS_PROXY;
         this.healthChecker = HealthChecker.create(
             this.runtimeConfig.database.driver === "lokijs"
                 ? undefined
@@ -166,7 +168,11 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
                       waitQueueTimeoutMS: 1000,
                       serverSelectionTimeoutMS: 1000
                   }),
-            axios.create({ baseURL: this.transport.config.baseUrl }),
+            axios.create({
+                baseURL: this.transport.config.baseUrl,
+                proxy: false,
+                httpsAgent: httpsProxy ? new HttpsProxyAgent(httpsProxy) : undefined
+            }),
             this.accountController.authenticator,
             this.loggerFactory.getLogger("HealthChecker")
         );
