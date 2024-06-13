@@ -316,6 +316,7 @@ describe("Read Attribute and versions", () => {
             });
             expect(newAtt).toBeSuccessful(ValidationSchema.ConnectorAttribute);
         }
+
         await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
             "@type": "IdentityAttribute",
             value: {
@@ -468,24 +469,24 @@ describe("Read Attribute and versions", () => {
         const allVersions = await client1.attributes.getVersionsOfAttribute(initialRepositoryAttributeId);
         expect(allVersions.result).toHaveLength(6);
 
-        const allSharedVersions = await client1.attributes.getSharedVersionsOfRepositoryAttribute(initialRepositoryAttributeId, {
+        const allSharedVersions = await client1.attributes.getSharedVersionsOfAttribute(initialRepositoryAttributeId, {
             onlyLatestVersions: false
         });
         expect(allSharedVersions.result).toHaveLength(12);
 
-        const allOfMultiplePeersSharedVersions = await client1.attributes.getSharedVersionsOfRepositoryAttribute(initialRepositoryAttributeId, {
+        const allOfMultiplePeersSharedVersions = await client1.attributes.getSharedVersionsOfAttribute(initialRepositoryAttributeId, {
             onlyLatestVersions: false,
             peers: [client2Address, client3Address]
         });
 
         expect(allOfMultiplePeersSharedVersions.result).toHaveLength(12);
-        const allOfOnePeersSharedVersions = await client1.attributes.getSharedVersionsOfRepositoryAttribute(initialRepositoryAttributeId, {
+        const allOfOnePeersSharedVersions = await client1.attributes.getSharedVersionsOfAttribute(initialRepositoryAttributeId, {
             onlyLatestVersions: false,
             peers: [client2Address]
         });
 
         expect(allOfOnePeersSharedVersions.result).toHaveLength(6);
-        const latestOfAllPeersSharedVersions = await client1.attributes.getSharedVersionsOfRepositoryAttribute(initialRepositoryAttributeId, {
+        const latestOfAllPeersSharedVersions = await client1.attributes.getSharedVersionsOfAttribute(initialRepositoryAttributeId, {
             onlyLatestVersions: true,
             peers: [client2Address, client3Address]
         });
@@ -587,7 +588,7 @@ describe("Delete attributes", () => {
                         query: {
                             "@type": "ThirdPartyRelationshipAttributeQuery",
                             key: "randomKey",
-                            owner: client2Address,
+                            owner: "",
                             thirdParty: [client1Address]
                         },
                         mustBeAccepted: true

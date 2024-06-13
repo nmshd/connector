@@ -12,6 +12,7 @@ export class ConnectorResponse<T> {
         if (_isSuccess && error) {
             throw new Error("InvalidOperation: A result cannot be successful and contain an error");
         }
+
         if (!_isSuccess && !error) {
             throw new Error("InvalidOperation: A failing result needs to contain an error");
         }
@@ -38,7 +39,9 @@ export class ConnectorResponse<T> {
 
     public get result(): T {
         if (!this.isSuccess) {
-            throw new Error(`Can't get the value of an error Response. Use 'error' instead. Root error: ${this.error.code} - ${this.error.message}`);
+            throw new Error(
+                `Can't get the value of an error Response. Use 'error' instead. Root error: ${this.error.code} - ${this.error.stacktrace?.length ? this.error.stacktrace.join("\n") : this.error.message}`
+            );
         }
 
         return this._result!;

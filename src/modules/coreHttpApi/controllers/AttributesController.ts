@@ -28,6 +28,7 @@ export class AttributesController extends BaseController {
         if (result.isError) {
             throw RuntimeErrors.general.recordNotFoundWithMessage(`Predecessor attribute '${predecessorId}' not found.`);
         }
+
         const predecessor = result.value;
 
         if (predecessor.content["@type"] === "IdentityAttribute") {
@@ -129,7 +130,7 @@ export class AttributesController extends BaseController {
     @GET
     @Path("/:id/Versions/Shared")
     @Accept("application/json")
-    public async getSharedVersionsOfRepositoryAttribute(
+    public async getSharedVersionsOfAttribute(
         @PathParam("id") attributeId: string,
         @QueryParam("peers") peers?: string | string[],
         @QueryParam("onlyLatestVersions") onlyLatestVersions?: string
@@ -138,7 +139,7 @@ export class AttributesController extends BaseController {
             peers = [peers];
         }
 
-        const result = await this.consumptionServices.attributes.getSharedVersionsOfRepositoryAttribute({
+        const result = await this.consumptionServices.attributes.getSharedVersionsOfAttribute({
             attributeId,
             onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
             peers
