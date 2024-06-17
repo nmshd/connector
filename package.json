@@ -64,7 +64,7 @@
         }
     },
     "dependencies": {
-        "@google-cloud/pubsub": "4.4.1",
+        "@google-cloud/pubsub": "4.5.0",
         "@js-soft/docdb-access-loki": "^1.1.0",
         "@js-soft/docdb-access-mongo": "1.1.8",
         "@js-soft/node-logger": "1.1.1",
