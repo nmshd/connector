@@ -17,3 +17,5 @@ local.config.json
 packages/runtime
 !packages/runtime/*
 test/manualTest.ts
+.env
+.local/

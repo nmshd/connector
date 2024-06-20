@@ -29,4 +29,24 @@ export class RelationshipsEndpoint extends Endpoint {
     public async getAttributesForRelationship(relationshipId: string): Promise<ConnectorResponse<ConnectorAttributes>> {
         return await this.get(`/api/v2/Relationships/${relationshipId}/Attributes`);
     }
+
+    public async terminateRelationship(relationshipId: string): Promise<ConnectorResponse<ConnectorRelationship>> {
+        return await this.put(`/api/v2/Relationships/${relationshipId}/Terminate`);
+    }
+
+    public async requestRelationshipReactivation(relationshipId: string): Promise<ConnectorResponse<ConnectorRelationship>> {
+        return await this.put(`/api/v2/Relationships/${relationshipId}/Reactivate/Request`);
+    }
+
+    public async acceptRelationshipReactivation(relationshipId: string): Promise<ConnectorResponse<ConnectorRelationship>> {
+        return await this.put(`/api/v2/Relationships/${relationshipId}/Reactivate/Accept`);
+    }
+
+    public async rejectRelationshipReactivation(relationshipId: string): Promise<ConnectorResponse<ConnectorRelationship>> {
+        return await this.put(`/api/v2/Relationships/${relationshipId}/Reactivate/Reject`);
+    }
+
+    public async revokeRelationshipReactivation(relationshipId: string): Promise<ConnectorResponse<ConnectorRelationship>> {
+        return await this.put(`/api/v2/Relationships/${relationshipId}/Reactivate/Revoke`);
+    }
 }
