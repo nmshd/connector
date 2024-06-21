@@ -16,6 +16,6 @@ local.config.json
 .gitmodules
 packages/runtime
 !packages/runtime/*
-test/manualTest.ts
 .env
-.local/
+.local
+test/manualTest.ts
