@@ -1,4 +1,4 @@
-import { ConnectorClient } from "@nmshd/connector-sdk";
+import { ConnectorClient, ConnectorRelationshipAuditLogEntryReason, ConnectorRelationshipStatus } from "@nmshd/connector-sdk";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
@@ -113,4 +113,102 @@ describe("Relationships", () => {
         expect(client2GetRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
         expect(client2GetRelationshipResponse.result.status).toBe("Revoked");
     });
+
+    test("terminate relationship and reactivate it", async () => {
+        await establishRelationship(client1, client2);
+        const relationship = await getRelationship(client1);
+
+        const terminateRelationshipResponse = await client1.relationships.terminateRelationship(relationship.id);
+        expect(terminateRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
+
+        await syncUntilHasRelationships(client2);
+
+        await expectRelationshipToHaveStatusAndReason(client1, relationship.id, ConnectorRelationshipStatus.Terminated);
+        await expectRelationshipToHaveStatusAndReason(client2, relationship.id, ConnectorRelationshipStatus.Terminated);
+
+        const reactivateResponse = await client1.relationships.requestRelationshipReactivation(relationship.id);
+        expect(reactivateResponse).toBeSuccessful(ValidationSchema.Relationship);
+        await syncUntilHasRelationships(client2);
+
+        await expectRelationshipToHaveStatusAndReason(
+            client1,
+            relationship.id,
+            ConnectorRelationshipStatus.Terminated,
+            ConnectorRelationshipAuditLogEntryReason.ReactivationRequested
+        );
+        await expectRelationshipToHaveStatusAndReason(
+            client2,
+            relationship.id,
+            ConnectorRelationshipStatus.Terminated,
+            ConnectorRelationshipAuditLogEntryReason.ReactivationRequested
+        );
+
+        const rejectReactivationResponse = await client2.relationships.rejectRelationshipReactivation(relationship.id);
+        expect(rejectReactivationResponse).toBeSuccessful(ValidationSchema.Relationship);
+
+        await syncUntilHasRelationships(client1);
+
+        await expectRelationshipToHaveStatusAndReason(
+            client1,
+            relationship.id,
+            ConnectorRelationshipStatus.Terminated,
+            ConnectorRelationshipAuditLogEntryReason.RejectionOfReactivation
+        );
+        await expectRelationshipToHaveStatusAndReason(
+            client2,
+            relationship.id,
+            ConnectorRelationshipStatus.Terminated,
+            ConnectorRelationshipAuditLogEntryReason.RejectionOfReactivation
+        );
+
+        await client1.relationships.requestRelationshipReactivation(relationship.id);
+        await syncUntilHasRelationships(client2);
+        const revokeReactivationResponse = await client1.relationships.revokeRelationshipReactivation(relationship.id);
+        expect(revokeReactivationResponse).toBeSuccessful(ValidationSchema.Relationship);
+        await syncUntilHasRelationships(client2);
+
+        await expectRelationshipToHaveStatusAndReason(
+            client1,
+            relationship.id,
+            ConnectorRelationshipStatus.Terminated,
+            ConnectorRelationshipAuditLogEntryReason.RevocationOfReactivation
+        );
+        await expectRelationshipToHaveStatusAndReason(
+            client2,
+            relationship.id,
+            ConnectorRelationshipStatus.Terminated,
+            ConnectorRelationshipAuditLogEntryReason.RevocationOfReactivation
+        );
+
+        await client1.relationships.requestRelationshipReactivation(relationship.id);
+        await syncUntilHasRelationships(client2);
+        const acceptReactivationResponse = await client2.relationships.acceptRelationshipReactivation(relationship.id);
+        expect(acceptReactivationResponse).toBeSuccessful(ValidationSchema.Relationship);
+        await syncUntilHasRelationships(client1);
+
+        await expectRelationshipToHaveStatusAndReason(
+            client1,
+            relationship.id,
+            ConnectorRelationshipStatus.Active,
+            ConnectorRelationshipAuditLogEntryReason.AcceptanceOfReactivation
+        );
+        await expectRelationshipToHaveStatusAndReason(
+            client2,
+            relationship.id,
+            ConnectorRelationshipStatus.Active,
+            ConnectorRelationshipAuditLogEntryReason.AcceptanceOfReactivation
+        );
+    });
 });
+
+async function expectRelationshipToHaveStatusAndReason(
+    client: ConnectorClient,
+    relationshipId: string,
+    status?: ConnectorRelationshipStatus,
+    reason?: ConnectorRelationshipAuditLogEntryReason
+) {
+    const response = await client.relationships.getRelationship(relationshipId);
+    expect(response).toBeSuccessful(ValidationSchema.Relationship);
+    if (status) expect(response.result.status).toBe(status);
+    if (reason) expect(response.result.auditLog.at(-1)!.reason).toBe(reason);
+}
