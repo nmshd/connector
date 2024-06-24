@@ -108,7 +108,7 @@
         "@types/lodash": "^4.17.5",
         "@types/luxon": "^3.4.2",
         "@types/nconf": "^0.10.6",
-        "@types/node": "^20.14.5",
+        "@types/node": "^20.14.8",
         "@types/on-headers": "^1.0.3",
         "@types/swagger-ui-express": "^4.1.6",
         "@types/yamljs": "^0.2.34",
@@ -123,7 +123,7 @@
         "prettier": "^3.3.2",
         "ts-jest": "^29.1.5",
         "ts-node": "^10.9.2",
-        "typescript": "^5.4.5",
+        "typescript": "^5.5.2",
         "typescript-rest-swagger": "github:nmshd/typescript-rest-swagger#1.2.1"
     },
     "overrides": {
