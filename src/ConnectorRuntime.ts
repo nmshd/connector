@@ -77,6 +77,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             for (const error of result.errors) {
                 errorMessage += `\r\n  - ${error.stack}`;
             }
+
             console.error(errorMessage); // eslint-disable-line no-console
             throw new Error(errorMessage);
         }
@@ -130,6 +131,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
             process.exit(1);
         }
+
         this.logger.debug("Finished initialization of Mongo DB connection.");
 
         this.databaseConnection = mongodbConnection;
@@ -281,6 +283,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             if (e.code === "MODULE_NOT_FOUND" && e.message.includes(`Cannot find module '${moduleName}'`)) {
                 return;
             }
+
             this.logger.error(e);
             throw e;
         }

@@ -131,8 +131,7 @@ function sanitizeStatus(status: any): number {
 }
 
 function stackTraceFromError(error: any) {
-    if (error.stack) {
-        return error.stack.split("\n");
-    }
+    if (error.stack) return error.stack.split("\n");
+
     return ["<There is no stacktrace>"];
 }
