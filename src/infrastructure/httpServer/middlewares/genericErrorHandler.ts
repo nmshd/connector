@@ -54,24 +54,6 @@ export function genericErrorHandler(connectorMode: ConnectorMode) {
                 return;
             }
 
-            if (error instanceof ApplicationError) {
-                logger.debug(`Handling ${ApplicationError.name}...`);
-
-                const payload = Envelope.error(new HttpError(error.code, error.message, error.stack?.split("\n")), connectorMode);
-
-                let statusCode;
-                if (error.equals(RuntimeErrors.general.recordNotFound()) || error.equals(TransportCoreErrors.general.recordNotFound("", ""))) {
-                    statusCode = 404;
-                } else if (error.code.startsWith("error.platform.")) {
-                    statusCode = 500;
-                } else {
-                    statusCode = 400;
-                }
-
-                res.status(statusCode).json(payload);
-                return;
-            }
-
             const stacktrace = stackTraceFromError(error);
 
             let details: string;
@@ -92,6 +74,24 @@ export function genericErrorHandler(connectorMode: ConnectorMode) {
 
                 // Sanitize the status (prevent express errors)
                 res.status(sanitizeStatus(error.status)).json(payload);
+                return;
+            }
+
+            if (error instanceof ApplicationError) {
+                logger.debug(`Handling ${ApplicationError.name}...`);
+
+                const payload = Envelope.error(new HttpError(error.code, error.message, error.stack?.split("\n")), connectorMode);
+
+                let statusCode;
+                if (error.equals(RuntimeErrors.general.recordNotFound()) || error.equals(TransportCoreErrors.general.recordNotFound("", ""))) {
+                    statusCode = 404;
+                } else if (error.code.startsWith("error.platform.")) {
+                    statusCode = 500;
+                } else {
+                    statusCode = 400;
+                }
+
+                res.status(statusCode).json(payload);
                 return;
             }
 
