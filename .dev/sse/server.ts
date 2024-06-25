@@ -3,7 +3,7 @@ import express from "express";
 
 const app = express();
 
-app.get("/sse", async (req, res) => {
+app.get("/api/v1/sse", async (req, res) => {
     console.log("connected");
 
     console.log(req.headers);

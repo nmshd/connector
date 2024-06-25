@@ -31,11 +31,11 @@ export default class SseModule extends ConnectorRuntimeModule {
 
         const baseUrl =
             // TODO: remove this when the backbone supports sse
-            this.connectorMode === "debug" && process.env.USE_LOCAL_SSE
-                ? "http://host.docker.internal:3333"
-                : // this should stay
-                  this.runtime["runtimeConfig"].transportLibrary.baseUrl;
-        const sseUrl = `${baseUrl}/sse`;
+            // this.connectorMode === "debug" && process.env.USE_LOCAL_SSE
+            //     ? "http://host.docker.internal:3333"
+            //     : // this should stay
+            this.runtime["runtimeConfig"].transportLibrary.baseUrl;
+        const sseUrl = `${baseUrl}/api/v1/sse`;
 
         this.logger.info(`Connecting to SSE endpoint: ${sseUrl}`);
 
@@ -69,31 +69,15 @@ export default class SseModule extends ConnectorRuntimeModule {
             }
         };
 
-        this.eventSource.addEventListener("message", async ({ data }) => {
-            if (typeof data !== "string") {
+        this.eventSource.addEventListener("ExternalEventCreated", async () => {
+            const services = this.runtime.getServices();
+
+            const syncResult = await services.transportServices.account.syncEverything();
+            if (syncResult.isError) {
+                this.logger.error(syncResult);
                 return;
             }
-
-            const content = JSON.parse(data) as IBackboneEventContent;
-            await this.handleEvent(content).catch((error) => {
-                this.logger.error(error);
-            });
         });
-    }
-
-    private async handleEvent(content: IBackboneEventContent): Promise<void> {
-        const services = this.runtime.getServices();
-
-        if (content.eventName !== "ExternalEventCreated") {
-            this.logger.debug(`Received event '${content.eventName}' that will be ignored.`);
-            return;
-        }
-
-        const syncResult = await services.transportServices.account.syncEverything();
-        if (syncResult.isError) {
-            this.logger.error(syncResult);
-            return;
-        }
     }
 
     public stop(): void {
