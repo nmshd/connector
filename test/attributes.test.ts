@@ -603,9 +603,11 @@ describe("Delete attributes", () => {
         });
 
         await syncUntilHasMessageWithRequest(client2, outgoingRequests.result.id);
-        await client2._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>("consumption.incomingRequestStatusChanged", (event) => {
-            return event.data.request.id.toString() === outgoingRequests.result.id && event.data.newStatus === "ManualDecisionRequired";
-        });
+        await client2._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>(
+            "consumption.incomingRequestStatusChanged",
+            // eslint-disable-next-line jest/no-conditional-in-test
+            (event) => event.data.request.id === outgoingRequests.result.id && event.data.newStatus === "ManualDecisionRequired"
+        );
 
         await client2.incomingRequests.accept(outgoingRequests.result.id, {
             items: [
@@ -617,9 +619,11 @@ describe("Delete attributes", () => {
         });
 
         const message = await syncUntilHasMessageWithResponse(client3, outgoingRequests.result.id);
-        await client3._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>("consumption.outgoingRequestStatusChanged", (event) => {
-            return event.data.request.id.toString() === outgoingRequests.result.id && event.data.newStatus === "Completed";
-        });
+        await client3._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>(
+            "consumption.outgoingRequestStatusChanged",
+            // eslint-disable-next-line jest/no-conditional-in-test
+            (event) => event.data.request.id.toString() === outgoingRequests.result.id && event.data.newStatus === "Completed"
+        );
 
         const thirdPartyRelationshipAttribute = (await client3.attributes.getAttribute((message.content as any).response.items[0].attributeId)).result;
 
