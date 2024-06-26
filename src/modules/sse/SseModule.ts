@@ -36,11 +36,7 @@ export default class SseModule extends ConnectorRuntimeModule {
         }
 
         const baseUrl =
-            // TODO: remove this when the backbone supports sse
-            // this.connectorMode === "debug" && process.env.USE_LOCAL_SSE
-            //     ? "http://host.docker.internal:3333"
-            //     : // this should stay
-            this.runtime["runtimeConfig"].transportLibrary.baseUrl;
+            this.connectorMode === "debug" && process.env.SSE_BASEURL_OVERRIDE ? process.env.SSE_BASEURL_OVERRIDE : this.runtime["runtimeConfig"].transportLibrary.baseUrl;
         const sseUrl = `${baseUrl}/api/v1/sse`;
 
         this.logger.info(`Connecting to SSE endpoint: ${sseUrl}`);
