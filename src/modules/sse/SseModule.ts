@@ -53,10 +53,22 @@ export default class SseModule extends ConnectorRuntimeModule {
             headers: { authorization: `Bearer ${token}` }
         });
 
+        this.eventSource.addEventListener("ExternalEventCreated", async () => {
+            const syncResult = await services.transportServices.account.syncEverything();
+            if (syncResult.isError) {
+                this.logger.error(syncResult);
+                return;
+            }
+        });
+
         await new Promise<void>((resolve, reject) => {
             this.eventSource.onopen = () => {
                 this.logger.info("Connected to SSE endpoint");
                 resolve();
+
+                this.eventSource.onopen = () => {
+                    // noop
+                };
             };
 
             this.eventSource.onerror = (error) => {
@@ -74,16 +86,6 @@ export default class SseModule extends ConnectorRuntimeModule {
                 return;
             }
         };
-
-        this.eventSource.addEventListener("ExternalEventCreated", async () => {
-            const services = this.runtime.getServices();
-
-            const syncResult = await services.transportServices.account.syncEverything();
-            if (syncResult.isError) {
-                this.logger.error(syncResult);
-                return;
-            }
-        });
     }
 
     public stop(): void {
