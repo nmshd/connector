@@ -27,7 +27,13 @@ export default class SseModule extends ConnectorRuntimeModule {
     }
 
     public async start(): Promise<void> {
-        // TODO: run a sync after every other module is started
+        const services = this.runtime.getServices();
+
+        const syncResult = await services.transportServices.account.syncEverything();
+        if (syncResult.isError) {
+            this.logger.error(syncResult);
+            return;
+        }
 
         const baseUrl =
             // TODO: remove this when the backbone supports sse
