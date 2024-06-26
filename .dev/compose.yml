@@ -15,8 +15,7 @@ services:
       - transportLibrary__platformClientId
       - transportLibrary__platformClientSecret
       - modules__sse__enabled=${modules__sse__enabled:-false}
-      # TODO: remove this when the backbone supports sse
-      - USE_LOCAL_SSE=true
+      - SSE_BASEURL_OVERRIDE
     volumes:
       - ..:/usr/app
       - ./config.json:/config.json:ro
@@ -41,7 +40,8 @@ services:
       - transportLibrary__baseUrl
       - transportLibrary__platformClientId
       - transportLibrary__platformClientSecret
-      - modules__sse__enabled
+      - modules__sse__enabled=${modules__sse__enabled:-false}
+      - SSE_BASEURL_OVERRIDE
     volumes:
       - ..:/usr/app
       - ./config.json:/config.json:ro
@@ -75,3 +75,8 @@ services:
 
 volumes:
   mongo_data:
+
+networks:
+  default:
+    name: nmshd
+    external: true
