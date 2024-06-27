@@ -15,7 +15,7 @@ services:
       - transportLibrary__platformClientId
       - transportLibrary__platformClientSecret
       - modules__sse__enabled=${modules__sse__enabled:-false}
-      - SSE_BASEURL_OVERRIDE
+      - modules__sse__baseUrlOverride
     volumes:
       - ..:/usr/app
       - ./config.json:/config.json:ro
@@ -41,7 +41,7 @@ services:
       - transportLibrary__platformClientId
       - transportLibrary__platformClientSecret
       - modules__sse__enabled=${modules__sse__enabled:-false}
-      - SSE_BASEURL_OVERRIDE
+      - modules__sse__baseUrlOverride
     volumes:
       - ..:/usr/app
       - ./config.json:/config.json:ro

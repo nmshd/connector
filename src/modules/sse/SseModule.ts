@@ -15,7 +15,11 @@ export interface IBackboneEventContent {
     payload: any;
 }
 
-export default class SseModule extends ConnectorRuntimeModule {
+export interface SseModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
+    baseUrlOverride?: string;
+}
+
+export default class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
     private eventSource: eventSourceModule | undefined;
 
     public constructor(runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) {
@@ -23,7 +27,9 @@ export default class SseModule extends ConnectorRuntimeModule {
     }
 
     public init(): void | Promise<void> {
-        // Nothing to do here
+        if (this.configuration.baseUrlOverride && this.connectorMode !== "debug") {
+            throw new Error("baseUrlOverride is only allowed in debug mode");
+        }
     }
 
     public async start(): Promise<void> {
@@ -41,8 +47,7 @@ export default class SseModule extends ConnectorRuntimeModule {
             }
         }
 
-        const baseUrlOverride = this.connectorMode === "debug" && process.env.SSE_BASEURL_OVERRIDE ? process.env.SSE_BASEURL_OVERRIDE : null;
-        const baseUrl = baseUrlOverride ?? this.runtime["runtimeConfig"].transportLibrary.baseUrl;
+        const baseUrl = this.configuration.baseUrlOverride ?? this.runtime["runtimeConfig"].transportLibrary.baseUrl;
         const sseUrl = `${baseUrl}/api/v1/sse`;
 
         this.logger.info(`Connecting to SSE endpoint: ${sseUrl}`);
@@ -79,6 +84,8 @@ export default class SseModule extends ConnectorRuntimeModule {
     }
 
     private async runSync(): Promise<void> {
+        this.logger.info("Running sync");
+
         const services = this.runtime.getServices();
 
         const syncResult = await services.transportServices.account.syncEverything();
