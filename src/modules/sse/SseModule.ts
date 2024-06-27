@@ -41,8 +41,8 @@ export default class SseModule extends ConnectorRuntimeModule {
             }
         }
 
-        const baseURLOverride = this.connectorMode === "debug" && process.env.SSE_BASEURL_OVERRIDE ? process.env.SSE_BASEURL_OVERRIDE : null;
-        const baseUrl = baseURLOverride ?? this.runtime["runtimeConfig"].transportLibrary.baseUrl;
+        const baseUrlOverride = this.connectorMode === "debug" && process.env.SSE_BASEURL_OVERRIDE ? process.env.SSE_BASEURL_OVERRIDE : null;
+        const baseUrl = baseUrlOverride ?? this.runtime["runtimeConfig"].transportLibrary.baseUrl;
         const sseUrl = `${baseUrl}/api/v1/sse`;
 
         this.logger.info(`Connecting to SSE endpoint: ${sseUrl}`);
