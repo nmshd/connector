@@ -75,8 +75,3 @@ services:
 
 volumes:
   mongo_data:
-
-networks:
-  default:
-    name: nmshd
-    external: true
