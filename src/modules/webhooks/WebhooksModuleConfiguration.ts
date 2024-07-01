@@ -3,6 +3,7 @@ import { ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModul
 export interface WebhooksModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     targets?: Record<string, WebhooksModuleConfigurationTarget>;
     webhooks?: WebhooksModuleConfigurationWebhook[];
+    skipTlsCheck?: boolean;
 }
 
 export interface WebhooksModuleConfigurationTarget {

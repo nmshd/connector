@@ -2,7 +2,10 @@ import { Result } from "@js-soft/ts-utils";
 import { WebhooksModuleApplicationErrors } from "./WebhooksModuleApplicationErrors";
 
 export class ConfigModel {
-    public constructor(public readonly webhooks: Webhook[]) {}
+    public constructor(
+        public readonly webhooks: Webhook[],
+        public readonly skipTlsCheck: boolean
+    ) {}
 }
 
 export class Webhook {
