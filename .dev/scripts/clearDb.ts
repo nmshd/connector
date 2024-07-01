@@ -3,7 +3,7 @@
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 
 async function clearDb() {
-    const connectionString = "mongodb://localhost:27017/?readPreference=primary&appname=clearDb&ssl=false";
+    const connectionString = "mongodb://localhost:27017";
     const dbConnection: MongoDbConnection = new MongoDbConnection(connectionString);
     await dbConnection.connect();
 
