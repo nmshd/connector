@@ -53,7 +53,8 @@ export abstract class Endpoint {
                 docs: errorPayload.docs,
                 time: errorPayload.time,
                 code: errorPayload.code,
-                message: errorPayload.message
+                message: errorPayload.message,
+                stacktrace: errorPayload.stacktrace
             });
         }
 
@@ -122,6 +123,7 @@ export abstract class Endpoint {
             if (!data.hasOwnProperty(key)) {
                 continue;
             }
+
             const value = data[key];
 
             if (value instanceof Buffer) {

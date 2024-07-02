@@ -24,6 +24,7 @@ export class ConnectorInfrastructureRegistry {
         if (this.infrastructure[infrastructure.name.toLowerCase()]) {
             throw new Error(`The infrastructure '${infrastructure.name}' is already registered.`);
         }
+
         this.infrastructure[infrastructure.name.toLowerCase()] = infrastructure;
     }
 
