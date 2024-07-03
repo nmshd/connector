@@ -604,6 +604,7 @@ describe("Delete attributes", () => {
 
         await syncUntilHasMessageWithRequest(client2, outgoingRequests.result.id);
         await client2._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>("consumption.incomingRequestStatusChanged", (event) => {
+            // eslint-disable-next-line jest/no-conditional-in-test
             return event.data.request.id.toString() === outgoingRequests.result.id && event.data.newStatus === "ManualDecisionRequired";
         });
 
@@ -618,6 +619,7 @@ describe("Delete attributes", () => {
 
         const message = await syncUntilHasMessageWithResponse(client3, outgoingRequests.result.id);
         await client3._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>("consumption.outgoingRequestStatusChanged", (event) => {
+            // eslint-disable-next-line jest/no-conditional-in-test
             return event.data.request.id.toString() === outgoingRequests.result.id && event.data.newStatus === "Completed";
         });
 
