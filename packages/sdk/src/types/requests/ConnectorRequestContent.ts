@@ -17,7 +17,6 @@ export interface ConnectorRequestContentItemGroup {
     "@type"?: "RequestItemGroup";
     title?: string;
     description?: string;
-    mustBeAccepted: boolean;
     metadata?: object;
     items: CreateOutgoingRequestRequestContentItemDerivations[];
 }
