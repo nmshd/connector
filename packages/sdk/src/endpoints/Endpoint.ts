@@ -47,7 +47,10 @@ export abstract class Endpoint {
 
         if (httpResponse.status !== expectedStatus) {
             const errorPayload = httpResponse.data.error;
-
+            if (!errorPayload) {
+                const fullUrl = `${httpResponse.request.protocol}//${httpResponse.request.getHeader("host")}${httpResponse.request.path}`;
+                throw new Error(`Http request to connector route ${fullUrl} failed with: ${httpResponse.status} ${httpResponse.statusText} ${httpResponse.data}`);
+            }
             return ConnectorResponse.error({
                 id: errorPayload.id,
                 docs: errorPayload.docs,
