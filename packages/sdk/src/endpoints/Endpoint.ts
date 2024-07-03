@@ -48,8 +48,9 @@ export abstract class Endpoint {
         if (httpResponse.status !== expectedStatus) {
             const errorPayload = httpResponse.data.error;
             if (!errorPayload) {
-                const fullUrl = `${httpResponse.request.protocol}//${httpResponse.request.getHeader("host")}${httpResponse.request.path}`;
-                throw new Error(`The http request to connector route '${fullUrl}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`);
+                throw new Error(
+                    `The http request to connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
+                );
             }
             return ConnectorResponse.error({
                 id: errorPayload.id,
@@ -71,6 +72,12 @@ export abstract class Endpoint {
         if (httpResponse.status !== 200) {
             // Manually parse data because responseType is "arrayBuffer"
             const errorPayload = JSON.parse(httpResponse.data).error;
+
+            if (!errorPayload) {
+                throw new Error(
+                    `The http request to connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
+                );
+            }
 
             return ConnectorResponse.error({
                 id: errorPayload.id,
@@ -106,6 +113,12 @@ export abstract class Endpoint {
         const expectedStatus = method === "GET" ? 200 : 201;
         if (httpResponse.status !== expectedStatus) {
             const errorPayload = httpResponse.data.error;
+
+            if (!errorPayload) {
+                throw new Error(
+                    `The http request to connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
+                );
+            }
 
             return ConnectorResponse.error({
                 id: errorPayload.id,
