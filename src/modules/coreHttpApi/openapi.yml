@@ -2807,7 +2807,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Reactivate/Request:
+  /api/v2/Relationships/{id}/Reactivate:
     put:
       operationId: requestRelationshipReactivation
       description: Request the relationship reactivation.

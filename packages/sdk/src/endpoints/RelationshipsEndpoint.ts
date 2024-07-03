@@ -35,7 +35,7 @@ export class RelationshipsEndpoint extends Endpoint {
     }
 
     public async requestRelationshipReactivation(relationshipId: string): Promise<ConnectorResponse<ConnectorRelationship>> {
-        return await this.put(`/api/v2/Relationships/${relationshipId}/Reactivate/Request`);
+        return await this.put(`/api/v2/Relationships/${relationshipId}/Reactivate`);
     }
 
     public async acceptRelationshipReactivation(relationshipId: string): Promise<ConnectorResponse<ConnectorRelationship>> {

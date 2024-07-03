@@ -83,7 +83,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/Reactivate/Request")
+    @Path(":id/Reactivate")
     @Accept("application/json")
     public async requestRelationshipReactivation(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.requestRelationshipReactivation({
