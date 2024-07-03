@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: ./Dockerfile.debug
     container_name: connector-1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "3000:80" # Webserver
       - "9229:9229" # Debugger
@@ -28,6 +30,8 @@ services:
       context: .
       dockerfile: ./Dockerfile.debug
     container_name: connector-2
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "3001:80" # Webserver
       - "9231:9229" # Debugger
