@@ -2642,14 +2642,14 @@ paths:
 
   /api/v2/Relationships/{id}/Accept:
     put:
-      operationId: acceptRelationshipChange
-      description: Accepts the Relationship request.
+      operationId: acceptRelationship
+      description: Accepts the pending Relationship.
       tags:
         - Relationships
       parameters:
         - in: path
           name: id
-          description: The ID of the relationship which contains the change.
+          description: The ID of the relationship.
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipID"
@@ -2683,14 +2683,14 @@ paths:
 
   /api/v2/Relationships/{id}/Reject:
     put:
-      operationId: rejectRelationshipChange
-      description: Rejects the Relationship request.
+      operationId: rejectRelationship
+      description: Rejects the pending Relationship.
       tags:
         - Relationships
       parameters:
         - in: path
           name: id
-          description: The ID of the relationship which contains the change.
+          description: The ID of the relationship.
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipID"
@@ -2725,14 +2725,14 @@ paths:
 
   /api/v2/Relationships/{id}/Revoke:
     put:
-      operationId: revokeRelationshipChange
-      description: Revoke the relationship request. If the relationship was created by another identity the request will return with the error code 500.
+      operationId: revokeRelationship
+      description: Revoke the pending relationship. If the relationship was created by another identity the request will return with the error code 500.
       tags:
         - Relationships
       parameters:
         - in: path
           name: id
-          description: The ID of the relationship request to revoke.
+          description: The ID of the relationship.
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipID"
@@ -5051,17 +5051,17 @@ components:
             source:
               type: object
               nullable: true
-              description: The source of this response. Can be a `Message` or a `RelationshipChange`.
+              description: The source of this response. Can be a `Message` or a `Relationship`.
               properties:
                 type:
                   type: string
-                  enum: ["Message", "RelationshipChange"]
+                  enum: ["Message", "Relationship"]
                   nullable: false
                   description: The type of the source of this response.
                 reference:
                   type: string
                   nullable: false
-                  description: The id of the `Message` or the `RelationshipChange`.
+                  description: The id of the `Message` or the `Relationship`.
               required:
                 - type
                 - reference
@@ -5389,7 +5389,6 @@ components:
         - template
         - status
         - peer
-        - changes
 
     RelationshipRequestContent:
       type: object
