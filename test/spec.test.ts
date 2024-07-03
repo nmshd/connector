@@ -44,13 +44,11 @@ describe("test openapi spec against routes", () => {
             expect(manualPaths).toContain(path);
         });
 
-        manualPaths.forEach((path) => {
-            if (ignorePaths.includes(path)) {
-                return;
-            }
-
-            expect(generatedPaths).toContain(path);
-        });
+        manualPaths
+            .filter((path) => ignorePaths.includes(path))
+            .forEach((path) => {
+                expect(generatedPaths).toContain(path);
+            });
     });
     test("all routes should have the same HTTP methods", () => {
         const manualPaths = getPaths(manualOpenApiSpec);
@@ -64,27 +62,29 @@ describe("test openapi spec against routes", () => {
         };
         /* eslint-enable @typescript-eslint/naming-convention */
 
-        manualPaths.forEach((path) => {
-            if (ignorePaths.includes(path)) {
-                return;
-            }
-            const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path])
-                .map((method) => method.toLocaleLowerCase())
-                .sort();
-            const manualMethods = Object.keys(manualOpenApiSpec.paths[path])
-                .map((method) => method.toLocaleLowerCase())
-                .sort();
+        manualPaths
+            .filter((path) => ignorePaths.includes(path))
+            .forEach((path) => {
+                const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path])
+                    .map((method) => method.toLocaleLowerCase())
+                    .sort();
+                const manualMethods = Object.keys(manualOpenApiSpec.paths[path])
+                    .map((method) => method.toLocaleLowerCase())
+                    .sort();
 
-            expect(generatedMethods, `Path ${path} do not have the same methods`).toStrictEqual(manualMethods);
+                expect(generatedMethods, `Path ${path} do not have the same methods`).toStrictEqual(manualMethods);
 
-            Object.keys(manualOpenApiSpec.paths[path]).forEach((method) => {
-                const key = method as "get" | "put" | "post" | "delete" | "options" | "head" | "patch";
-                const manualResponses = Object.keys(manualOpenApiSpec.paths[path][key]?.responses ?? {});
-                let expectedResponseCode = key === "post" ? "201" : "200";
-                expectedResponseCode = returnCodeOverwrite[path] ?? expectedResponseCode;
-                expect(manualResponses, `Path ${path} and method ${method} does not contain response code ${expectedResponseCode}`).toContainEqual(expectedResponseCode);
+                Object.keys(manualOpenApiSpec.paths[path]).forEach((method) => {
+                    const key = method as "get" | "put" | "post" | "delete" | "options" | "head" | "patch";
+                    // eslint-disable-next-line jest/no-conditional-in-test
+                    const manualResponses = Object.keys(manualOpenApiSpec.paths[path][key]?.responses ?? {});
+                    // eslint-disable-next-line jest/no-conditional-in-test
+                    let expectedResponseCode = key === "post" ? "201" : "200";
+                    // eslint-disable-next-line jest/no-conditional-in-test
+                    expectedResponseCode = returnCodeOverwrite[path] ?? expectedResponseCode;
+                    expect(manualResponses, `Path ${path} and method ${method} does not contain response code ${expectedResponseCode}`).toContainEqual(expectedResponseCode);
+                });
             });
-        });
     });
 
     test("all generated params should be in the manual spec", () => {
@@ -102,16 +102,19 @@ describe("test openapi spec against routes", () => {
                 .sort() as (keyof Swagger.Path)[];
             generatedMethods.forEach((method: keyof Swagger.Path) => {
                 const generatedOperation = generatedOpenApiSpec.paths[path][method];
+                // eslint-disable-next-line jest/no-conditional-in-test
                 if (!isOperation(generatedOperation) || !generatedOperation.parameters) {
                     return;
                 }
 
                 const manualOperation = manualOpenApiSpec.paths[path][method];
+                // eslint-disable-next-line jest/no-conditional-in-test
                 if (!isOperation(manualOperation) || !manualOperation.parameters) {
                     throw new Error(`${path} ${method} does not contain parameters but generated do`);
                 }
 
                 // DBQuery are used via context.query and not by injection as QueryParameter so they will not be generated and the length will be different
+                // eslint-disable-next-line jest/no-conditional-in-test
                 if (!pathsWithDBQueries.some((p) => p.path === path && p.method.toLowerCase() === method.toLowerCase())) {
                     // eslint-disable-next-line jest/no-conditional-expect
                     expect(generatedOperation.parameters, `Parameter length for ${method.toUpperCase()} ${path} is wrong`).toHaveLength(manualOperation.parameters.length);
