@@ -2483,7 +2483,7 @@ paths:
                   nullable: false
                 content:
                   allOf:
-                    - $ref: "#/components/schemas/RelationshipChangeRequestContent"
+                    - $ref: "#/components/schemas/RelationshipRequestContent"
                   nullable: false
                   example:
                     prop1: value
@@ -2768,13 +2768,13 @@ paths:
   /api/v2/Relationships/{id}/Terminate:
     put:
       operationId: terminateRelationship
-      description: Terminate the relationship request.
+      description: Terminate the relationship.
       tags:
         - Relationships
       parameters:
         - in: path
           name: id
-          description: The ID of the relationship request to terminate.
+          description: The ID of the relationship to terminate.
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipID"
@@ -2810,13 +2810,13 @@ paths:
   /api/v2/Relationships/{id}/Reactivate/Request:
     put:
       operationId: requestRelationshipReactivation
-      description: Request the reactivation of an relationship.
+      description: Request the relationship reactivation.
       tags:
         - Relationships
       parameters:
         - in: path
           name: id
-          description: The ID of the relationship request to request reactivation.
+          description: The ID of the relationship to request reactivation of.
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipID"
@@ -2852,13 +2852,13 @@ paths:
   /api/v2/Relationships/{id}/Reactivate/Accept:
     put:
       operationId: acceptRelationshipReactivation
-      description: Accept an relationship reactivation.
+      description: Accept a relationship reactivation.
       tags:
         - Relationships
       parameters:
         - in: path
           name: id
-          description: The ID of the relationship to accept the reactivation.
+          description: The ID of the relationship to accept the reactivation of.
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipID"
@@ -2894,13 +2894,13 @@ paths:
   /api/v2/Relationships/{id}/Reactivate/Reject:
     put:
       operationId: rejectRelationshipReactivation
-      description: Reject an relationship reactivation.
+      description: Reject a relationship reactivation.
       tags:
         - Relationships
       parameters:
         - in: path
           name: id
-          description: The ID of the relationship to reject the reactivation.
+          description: The ID of the relationship to reject the reactivation of.
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipID"
@@ -2936,13 +2936,13 @@ paths:
   /api/v2/Relationships/{id}/Reactivate/Revoke:
     put:
       operationId: revokeRelationshipReactivation
-      description: Revoke an relationship reactivation.
+      description: Revoke a relationship reactivation.
       tags:
         - Relationships
       parameters:
         - in: path
           name: id
-          description: The ID of the relationship to revoke the reactivation.
+          description: The ID of the relationship to revoke the reactivation of.
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipID"
@@ -4461,14 +4461,6 @@ components:
       example: REL_________________
       description: The ID of a relationship.
 
-    RelationshipChangeID:
-      type: string
-      format: RelationshipChangeID
-      minLength: 20
-      maxLength: 20
-      example: RCH_________________
-      description: The ID of a relationship change.
-
     RelationshipTemplateID:
       type: string
       format: RelationshipTemplateID
@@ -5392,11 +5384,6 @@ components:
             - $ref: "#/components/schemas/Address"
           nullable: false
           description: The address of the peer identity.
-        changes:
-          type: array
-          items:
-            $ref: "#/components/schemas/RelationshipChange"
-          nullable: false
       required:
         - id
         - template
@@ -5404,85 +5391,7 @@ components:
         - peer
         - changes
 
-    RelationshipChange:
-      type: object
-      properties:
-        id:
-          allOf:
-            - $ref: "#/components/schemas/RelationshipChangeID"
-          nullable: false
-        type:
-          type: string
-          nullable: false
-          enum: [Creation]
-        status:
-          type: string
-          nullable: false
-          enum: [Pending, Rejected, Accepted]
-        request:
-          $ref: "#/components/schemas/RelationshipChangeRequest"
-        response:
-          $ref: "#/components/schemas/RelationshipChangeResponse"
-      required:
-        - id
-        - type
-        - status
-        - request
-
-    RelationshipChangeRequest:
-      type: object
-      properties:
-        createdBy:
-          allOf:
-            - $ref: "#/components/schemas/Address"
-          nullable: false
-        createdByDevice:
-          allOf:
-            - $ref: "#/components/schemas/DeviceID"
-          nullable: false
-        createdAt:
-          type: string
-          format: date-time
-          nullable: false
-          description: A timestamp that describes when this `RelationshipChange` was created on the platform.
-          readOnly: true
-        content:
-          $ref: "#/components/schemas/RelationshipChangeRequestContent"
-      required:
-        - createdBy
-        - createdByDevice
-        - createdAt
-        - content
-
-    RelationshipChangeRequestContent:
-      type: object
-
-    RelationshipChangeResponse:
-      type: object
-      properties:
-        createdBy:
-          allOf:
-            - $ref: "#/components/schemas/Address"
-          nullable: false
-        createdByDevice:
-          allOf:
-            - $ref: "#/components/schemas/DeviceID"
-          nullable: false
-        createdAt:
-          type: string
-          format: date-time
-          nullable: false
-          description: A timestamp that describes when this `RelationshipChange` was created on the platform.
-          readOnly: true
-        content:
-          $ref: "#/components/schemas/RelationshipChangeResponseContent"
-      required:
-        - createdBy
-        - createdByDevice
-        - createdAt
-        - content
-
-    RelationshipChangeResponseContent:
+    RelationshipRequestContent:
       type: object
 
     RelationshipTemplateContent:
