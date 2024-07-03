@@ -4,7 +4,6 @@ export interface SyncModuleConfiguration extends ConnectorRuntimeModuleConfigura
     interval: number;
 }
 
-// TODO: deprecate this module
 export default class SyncModule extends ConnectorRuntimeModule<SyncModuleConfiguration> {
     private syncTimeout: NodeJS.Timeout;
 
