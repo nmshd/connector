@@ -1,9 +1,8 @@
-import yamljs from "yamljs";
-
+/* eslint-disable jest/no-conditional-in-test */
+import swaggerParser from "@apidevtools/swagger-parser";
 import { OpenAPIV3 } from "openapi-types";
 import { MetadataGenerator, SpecGenerator, Swagger } from "typescript-rest-swagger";
-
-import swaggerParser from "@apidevtools/swagger-parser";
+import yamljs from "yamljs";
 
 describe("test openapi spec against routes", () => {
     let manualOpenApiSpec: Swagger.Spec;
@@ -49,6 +48,7 @@ describe("test openapi spec against routes", () => {
             expect(generatedPaths).toContain(path);
         });
     });
+
     test("all routes should have the same HTTP methods", () => {
         const manualPaths = getPaths(manualOpenApiSpec);
         // Paths to ignore in regard to return code consistency (Post requests that return 200 due to no creation)
@@ -65,13 +65,13 @@ describe("test openapi spec against routes", () => {
             if (ignorePaths.includes(path)) {
                 return;
             }
-            // eslint-disable-next-line jest/no-if
+
             if (!generatedOpenApiSpec.paths[path]) {
                 // This case would result in an error in the previous test
                 return;
             }
 
-            const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path]!)
+            const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path])
                 .map((method) => method.toLocaleLowerCase())
                 .sort();
             const manualMethods = Object.keys(manualOpenApiSpec.paths[path]!)
@@ -115,7 +115,7 @@ describe("test openapi spec against routes", () => {
                     return;
                 }
 
-                const manualOperation = manualOpenApiSpec.paths[path]![method];
+                const manualOperation = manualOpenApiSpec.paths[path][method];
                 if (!isOperation(manualOperation) || !manualOperation.parameters) {
                     throw new Error(`${path} ${method} does not contain parameters but generated do`);
                 }
