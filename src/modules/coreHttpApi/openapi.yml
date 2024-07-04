@@ -5384,6 +5384,17 @@ components:
             - $ref: "#/components/schemas/Address"
           nullable: false
           description: The address of the peer identity.
+        creationContent:
+          allOf:
+            - $ref: "#/components/schemas/RelationshipTemplateContent"
+          nullable: false
+          description: The content at creation.
+        auditLog:
+          type: array
+          items:
+            $ref: "#/components/schemas/RelationshipAuditLogEntry"
+          nullable: false
+          description: The audit log of the relationship.
       required:
         - id
         - template
@@ -5481,6 +5492,45 @@ components:
           description: The base64 encoded truncated reference of the RelationshipTemplate.
       required:
         - reference
+
+    RelationshipAuditLogEntry:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+          nullable: false
+        createdBy:
+          type: string
+          format: date-time
+          nullable: false
+        createdByDevice:
+          $ref: "#/components/schemas/DeviceID"
+        reason:
+          $ref: "#/components/schemas/RelationshipAuditLogEntryReason"
+        oldStatus:
+          $ref: "#/components/schemas/RelationshipStatus"
+        newStatus:
+          $ref: "#/components/schemas/RelationshipStatus"
+
+    RelationshipAuditLogEntryReason:
+      type: string
+      enum:
+        [
+          Creation,
+          AcceptanceOfCreation,
+          RejectionOfCreation,
+          RevocationOfCreation,
+          Termination,
+          ReactivationRequested,
+          AcceptanceOfReactivation,
+          RejectionOfReactivation,
+          RevocationOfReactivation
+        ]
+
+    RelationshipStatus:
+      type: string
+      enum: [Pending, Active, Rejected, Revoked, Terminated]
 
     SignedChallenge:
       type: object
