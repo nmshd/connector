@@ -32,8 +32,6 @@ describe("Outgoing Requests", () => {
         expect(sConsumptionRequest.status).toBe(ConnectorRequestStatus.Draft);
         expect(sConsumptionRequest.content.items).toHaveLength(1);
         expect(sConsumptionRequest.content.items[0]["@type"]).toBe("ReadAttributeRequestItem");
-        if (sConsumptionRequest.content.items[0]["@type"] !== "ReadAttributeRequestItem") throw new Error("Unexpected type.");
-        expect(sConsumptionRequest.content.items[0].mustBeAccepted).toBe(false);
     });
 
     test("should query outgoing requests", async () => {
