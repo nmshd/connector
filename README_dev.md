@@ -63,6 +63,22 @@ If you're running on Windows you have to execute the `Restart` task after you sa
 
 ## How to test
 
+### Local Runtime
+
+To use a local runtime you need to create a `.env` file in the root folder of the project.
+
+This env file need to contain the path to the runtime mono-repository root folder, either relative to the root of the connector or absolute.
+
+```
+RUNTIME_PATH=.../path/to/local/runtime
+```
+
+Afterwards you can run `npm run link-runtime`
+
+This will copy the build result and sources from you local runtime in you node_modules folder.
+
+To use the npm version of the runtime again you need to run `npm run unlink-runtime` this will restore the version in the package.json
+
 ### Remote Backbone
 
 Set the following environment variables:

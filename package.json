@@ -23,6 +23,8 @@
         "sdk:schemas:watch": "npm run --workspace packages/sdk build:schemas:watch",
         "copy-additional-files": "cpx \"src/**/*.{json,yml,ico}\" dist",
         "copy-additional-files:watch": "cpx \"src/**/*.{json,yml,ico}\" dist --watch",
+        "link-runtime": "node --env-file=.env .dev/scripts/linkRuntime.js",
+        "unlink-runtime": "rm -rf node_modules/@nmshd && npm install",
         "tsc": "tsc",
         "tsc:watch": "tsc -w",
         "test:ci": "npm run build && jest -i",
