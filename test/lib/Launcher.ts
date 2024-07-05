@@ -16,11 +16,6 @@ export type ConnectorClientWithMetadata = ConnectorClient & {
     /* eslint-enable @typescript-eslint/naming-convention */
 };
 
-interface SpawnConnectorResult {
-    connector: ChildProcess;
-    webhookServer: Server | undefined;
-}
-
 export class Launcher {
     private readonly _processes: { connector: ChildProcess; webhookServer: Server | undefined }[] = [];
     private readonly apiKey = "xxx";
@@ -28,12 +23,15 @@ export class Launcher {
     public async launchSimple(): Promise<string> {
         const port = await getPort();
         const accountName = await this.randomString();
-        const connectorAndWebserver = await this.spawnConnector(port, accountName);
-        this._processes.push(connectorAndWebserver);
+        const { connector, webhookServer } = await this.spawnConnector(port, accountName);
+        this._processes.push({
+            connector,
+            webhookServer
+        });
         try {
-            await waitForConnector(port);
+            await waitForConnector(port, connector);
         } catch (e) {
-            this.stopClient(connectorAndWebserver);
+            this.stopClient(connector, webhookServer);
             throw e;
         }
 
@@ -55,15 +53,18 @@ export class Launcher {
 
             clients.push(connectorClient);
             ports.push(port);
-            const connectorAndWebserver = await this.spawnConnector(port, accountName, connectorClient._eventBus);
-            this._processes.push();
+            const { connector, webhookServer } = await this.spawnConnector(port, accountName, connectorClient._eventBus);
+            this._processes.push({
+                connector,
+                webhookServer
+            });
 
             startPromises.push(
                 new Promise((resolve, reject) => {
-                    waitForConnector(port)
+                    waitForConnector(port, connector)
                         .then(resolve)
                         .catch((e) => {
-                            this.stopClient(connectorAndWebserver);
+                            this.stopClient(connector, webhookServer);
                             reject(e);
                         });
                 })
@@ -78,7 +79,7 @@ export class Launcher {
         return await Random.string(7, RandomCharacterRange.Alphabet);
     }
 
-    private async spawnConnector(port: number, accountName: string, eventBus?: MockEventBus): Promise<SpawnConnectorResult> {
+    private async spawnConnector(port: number, accountName: string, eventBus?: MockEventBus) {
         const env = process.env;
         env["infrastructure:httpServer:port"] = port.toString();
         env["infrastructure:httpServer:apiKey"] = this.apiKey;
@@ -126,19 +127,20 @@ export class Launcher {
 
     public stop(): void {
         this._processes.forEach((p) => {
-            this.stopClient(p);
+            const { connector, webhookServer } = p;
+            this.stopClient(connector, webhookServer);
         });
     }
 
-    public stopClient(p: SpawnConnectorResult): void {
-        const exitCode = p.connector.exitCode;
+    public stopClient(connector: ChildProcess, webhookServer: Server | undefined): void {
+        const exitCode = connector.exitCode;
         if (exitCode !== null) {
-            p.webhookServer?.close();
+            webhookServer?.close();
             return;
         }
-        p.connector.on("exit", () => {
-            p.webhookServer?.close();
+        connector.on("exit", () => {
+            webhookServer?.close();
         });
-        p.connector.kill();
+        connector.kill();
     }
 }
