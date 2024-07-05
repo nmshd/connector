@@ -173,6 +173,10 @@ describe("Attributes", () => {
         expect(successionResponse.isSuccess).toBe(true);
 
         await syncUntilHasMessages(client2);
+        await client2._eventBus?.waitForEvent<DataEvent<SuccessionEventData>>(
+            "consumption.peerSharedAttributeSucceeded",
+            (event) => event.data.successor.id === successionResponse.result.successor.id
+        );
 
         const client2SuccessorResponse = await client2.attributes.getAttribute(successionResponse.result.successor.id);
 
