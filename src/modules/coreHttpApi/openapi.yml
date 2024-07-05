@@ -5516,21 +5516,24 @@ components:
     RelationshipAuditLogEntryReason:
       type: string
       enum:
-        [
-          Creation,
-          AcceptanceOfCreation,
-          RejectionOfCreation,
-          RevocationOfCreation,
-          Termination,
-          ReactivationRequested,
-          AcceptanceOfReactivation,
-          RejectionOfReactivation,
-          RevocationOfReactivation
-        ]
+        - Creation
+        - AcceptanceOfCreation
+        - RejectionOfCreation
+        - RevocationOfCreation
+        - Termination
+        - ReactivationRequested
+        - AcceptanceOfReactivation
+        - RejectionOfReactivation
+        - RevocationOfReactivation
 
     RelationshipStatus:
       type: string
-      enum: [Pending, Active, Rejected, Revoked, Terminated]
+      enum:
+        - Pending
+        - Active
+        - Rejected
+        - Revoked
+        - Terminated
 
     SignedChallenge:
       type: object
