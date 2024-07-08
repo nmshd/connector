@@ -85,14 +85,13 @@
                     },
                     "type": "object"
                 },
-                "autoAcceptRelationshipCreationChanges": {
+                "autoAcceptRelationships": {
                     "additionalProperties": false,
                     "properties": {
                         "enabled": {
                             "type": "boolean",
                             "default": false
-                        },
-                        "responseContent": {}
+                        }
                     },
                     "type": "object"
                 },

@@ -75,12 +75,10 @@
 
             "interval": 60
         },
-        "autoAcceptRelationshipCreationChanges": {
-            "displayName": "Auto Accept Relationship Creation Changes",
-            "location": "autoAcceptRelationshipCreationChanges/AutoAcceptRelationshipCreationChangesModule",
-            "enabled": false,
-
-            "responseContent": {}
+        "autoAcceptRelationships": {
+            "displayName": "Auto Accept Relationships",
+            "location": "autoAcceptRelationships/AutoAcceptRelationshipsModule",
+            "enabled": false
         },
         "coreHttpApi": {
             "displayName": "Core HTTP API",
