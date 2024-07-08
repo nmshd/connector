@@ -3056,7 +3056,7 @@ paths:
                   type: string
                   format: date-time
                   example: 2023-01-01
-                  description: A timestamp that describes when this relationship template expires. Expired templates cannot be used to create pending relationships anymore.
+                  description: A timestamp that describes when this relationship template expires. Expired templates cannot be used to create relationships anymore.
                 content:
                   allOf:
                     - $ref: "#/components/schemas/RelationshipTemplateContent"
