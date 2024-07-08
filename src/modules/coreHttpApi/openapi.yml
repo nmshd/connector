@@ -2482,8 +2482,7 @@ paths:
                     - $ref: "#/components/schemas/RelationshipTemplateID"
                   nullable: false
                 content:
-                  allOf:
-                    - $ref: "#/components/schemas/RelationshipRequestContent"
+                  type: object
                   nullable: false
                   example:
                     prop1: value
@@ -5375,18 +5374,14 @@ components:
             - $ref: "#/components/schemas/RelationshipTemplate"
           nullable: false
         status:
-          type: string
-          enum: [Pending, Active, Rejected]
-          nullable: false
-          description: The status of the relationship
+          $ref: "#/components/schemas/RelationshipStatus"
         peer:
           allOf:
             - $ref: "#/components/schemas/Address"
           nullable: false
           description: The address of the peer identity.
         creationContent:
-          allOf:
-            - $ref: "#/components/schemas/RelationshipTemplateContent"
+          type: object
           nullable: false
           description: The content at creation.
         auditLog:
@@ -5400,9 +5395,6 @@ components:
         - template
         - status
         - peer
-
-    RelationshipRequestContent:
-      type: object
 
     RelationshipTemplateContent:
       type: object
