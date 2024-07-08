@@ -65,17 +65,13 @@ If you're running on Windows you have to execute the `Restart` task after you sa
 
 ### Local Runtime
 
-To use a local runtime you need to create a `.env` file in the root folder of the project.
+To use a local runtime you need to set the envvar $RUNTIME_PATH (e.g. inside a local `.env` file in the root folder of the project). The $RUNTIME_PATH needs to contain the path to the runtime mono-repository root folder, either relative or absolute.
 
-This env file need to contain the path to the runtime mono-repository root folder, either relative to the root of the connector or absolute.
-
-```
-RUNTIME_PATH=.../path/to/local/runtime
+```bash
+export RUNTIME_PATH=.../path/to/local/runtime
 ```
 
-Afterwards you can run `npm run link-runtime`
-
-This will copy the build result and sources from you local runtime in you node_modules folder.
+Afterwards you can run `npm run link-runtime`. This will copy the build result and sources from you local runtime in you node_modules folder.
 
 To use the npm version of the runtime again you need to run `npm run unlink-runtime` this will restore the version in the package.json
 
