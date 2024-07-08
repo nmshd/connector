@@ -1,9 +1,9 @@
 import { RelationshipChangedEvent, RelationshipStatus } from "@nmshd/runtime";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
-export interface AutoAcceptRelationshipsModuleConfiguration extends ConnectorRuntimeModuleConfiguration {}
+export interface AutoAcceptPendingRelationshipsModuleConfiguration extends ConnectorRuntimeModuleConfiguration {}
 
-export default class AutoAcceptRelationshipsModule extends ConnectorRuntimeModule<AutoAcceptRelationshipsModuleConfiguration> {
+export default class AutoAcceptPendingRelationshipsModule extends ConnectorRuntimeModule<AutoAcceptPendingRelationshipsModuleConfiguration> {
     private currentIdentity: string;
 
     public init(): void {

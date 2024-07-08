@@ -75,9 +75,9 @@
 
             "interval": 60
         },
-        "autoAcceptRelationships": {
-            "displayName": "Auto Accept Relationships",
-            "location": "autoAcceptRelationships/AutoAcceptRelationshipsModule",
+        "autoAcceptPendingRelationships": {
+            "displayName": "Auto Accept Pending Relationships",
+            "location": "autoAcceptPendingRelationships/AutoAcceptPendingRelationshipsModule",
             "enabled": false
         },
         "coreHttpApi": {

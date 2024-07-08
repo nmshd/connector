@@ -85,7 +85,7 @@
                     },
                     "type": "object"
                 },
-                "autoAcceptRelationships": {
+                "autoAcceptPendingRelationships": {
                     "additionalProperties": false,
                     "properties": {
                         "enabled": {
