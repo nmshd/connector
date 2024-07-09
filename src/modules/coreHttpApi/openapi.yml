@@ -2482,8 +2482,7 @@ paths:
                     - $ref: "#/components/schemas/RelationshipTemplateID"
                   nullable: false
                 content:
-                  allOf:
-                    - $ref: "#/components/schemas/RelationshipChangeRequestContent"
+                  type: object
                   nullable: false
                   example:
                     prop1: value
@@ -2642,14 +2641,14 @@ paths:
 
   /api/v2/Relationships/{id}/Accept:
     put:
-      operationId: acceptRelationshipChange
-      description: Accepts the Relationship request.
+      operationId: acceptRelationship
+      description: Accepts the pending Relationship.
       tags:
         - Relationships
       parameters:
         - in: path
           name: id
-          description: The ID of the relationship which contains the change.
+          description: The ID of the relationship.
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipID"
@@ -2683,14 +2682,14 @@ paths:
 
   /api/v2/Relationships/{id}/Reject:
     put:
-      operationId: rejectRelationshipChange
-      description: Rejects the Relationship request.
+      operationId: rejectRelationship
+      description: Rejects the pending Relationship.
       tags:
         - Relationships
       parameters:
         - in: path
           name: id
-          description: The ID of the relationship which contains the change.
+          description: The ID of the relationship.
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipID"
@@ -2725,14 +2724,224 @@ paths:
 
   /api/v2/Relationships/{id}/Revoke:
     put:
-      operationId: revokeRelationshipChange
-      description: Revoke the relationship request. If the relationship was created by another identity the request will return with the error code 500.
+      operationId: revokeRelationship
+      description: Revoke the pending relationship. If the relationship was created by another identity the request will return with the error code 500.
       tags:
         - Relationships
       parameters:
         - in: path
           name: id
-          description: The ID of the relationship request to revoke.
+          description: The ID of the relationship.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Relationship"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v2/Relationships/{id}/Terminate:
+    put:
+      operationId: terminateRelationship
+      description: Terminate the relationship.
+      tags:
+        - Relationships
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the relationship to terminate.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Relationship"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v2/Relationships/{id}/Reactivate:
+    put:
+      operationId: requestRelationshipReactivation
+      description: Request the relationship reactivation.
+      tags:
+        - Relationships
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the relationship to request reactivation of.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Relationship"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v2/Relationships/{id}/Reactivate/Accept:
+    put:
+      operationId: acceptRelationshipReactivation
+      description: Accept a relationship reactivation.
+      tags:
+        - Relationships
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the relationship to accept the reactivation of.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Relationship"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v2/Relationships/{id}/Reactivate/Reject:
+    put:
+      operationId: rejectRelationshipReactivation
+      description: Reject a relationship reactivation.
+      tags:
+        - Relationships
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the relationship to reject the reactivation of.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Relationship"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v2/Relationships/{id}/Reactivate/Revoke:
+    put:
+      operationId: revokeRelationshipReactivation
+      description: Revoke a relationship reactivation.
+      tags:
+        - Relationships
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the relationship to revoke the reactivation of.
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipID"
@@ -2847,7 +3056,7 @@ paths:
                   type: string
                   format: date-time
                   example: 2023-01-01
-                  description: A timestamp that describes when this relationship template expires. Expired templates cannot be used to create relationship requests anymore.
+                  description: A timestamp that describes when this relationship template expires. Expired templates cannot be used to create relationships anymore.
                 content:
                   allOf:
                     - $ref: "#/components/schemas/RelationshipTemplateContent"
@@ -4251,14 +4460,6 @@ components:
       example: REL_________________
       description: The ID of a relationship.
 
-    RelationshipChangeID:
-      type: string
-      format: RelationshipChangeID
-      minLength: 20
-      maxLength: 20
-      example: RCH_________________
-      description: The ID of a relationship change.
-
     RelationshipTemplateID:
       type: string
       format: RelationshipTemplateID
@@ -4846,17 +5047,17 @@ components:
             source:
               type: object
               nullable: true
-              description: The source of this response. Can be a `Message` or a `RelationshipChange`.
+              description: The source of this response. Can be a `Message` or a `Relationship`.
               properties:
                 type:
                   type: string
-                  enum: ["Message", "RelationshipChange"]
+                  enum: ["Message", "Relationship"]
                   nullable: false
                   description: The type of the source of this response.
                 reference:
                   type: string
                   nullable: false
-                  description: The id of the `Message` or the `RelationshipChange`.
+                  description: The id of the `Message` or the `Relationship`.
               required:
                 - type
                 - reference
@@ -5170,107 +5371,27 @@ components:
             - $ref: "#/components/schemas/RelationshipTemplate"
           nullable: false
         status:
-          type: string
-          enum: [Pending, Active, Rejected]
-          nullable: false
-          description: The status of the relationship
+          $ref: "#/components/schemas/RelationshipStatus"
         peer:
           allOf:
             - $ref: "#/components/schemas/Address"
           nullable: false
           description: The address of the peer identity.
-        changes:
+        creationContent:
+          type: object
+          nullable: false
+          description: The content at creation.
+        auditLog:
           type: array
           items:
-            $ref: "#/components/schemas/RelationshipChange"
+            $ref: "#/components/schemas/RelationshipAuditLogEntry"
           nullable: false
+          description: The audit log of the relationship.
       required:
         - id
         - template
         - status
         - peer
-        - changes
-
-    RelationshipChange:
-      type: object
-      properties:
-        id:
-          allOf:
-            - $ref: "#/components/schemas/RelationshipChangeID"
-          nullable: false
-        type:
-          type: string
-          nullable: false
-          enum: [Creation]
-        status:
-          type: string
-          nullable: false
-          enum: [Pending, Rejected, Accepted]
-        request:
-          $ref: "#/components/schemas/RelationshipChangeRequest"
-        response:
-          $ref: "#/components/schemas/RelationshipChangeResponse"
-      required:
-        - id
-        - type
-        - status
-        - request
-
-    RelationshipChangeRequest:
-      type: object
-      properties:
-        createdBy:
-          allOf:
-            - $ref: "#/components/schemas/Address"
-          nullable: false
-        createdByDevice:
-          allOf:
-            - $ref: "#/components/schemas/DeviceID"
-          nullable: false
-        createdAt:
-          type: string
-          format: date-time
-          nullable: false
-          description: A timestamp that describes when this `RelationshipChange` was created on the platform.
-          readOnly: true
-        content:
-          $ref: "#/components/schemas/RelationshipChangeRequestContent"
-      required:
-        - createdBy
-        - createdByDevice
-        - createdAt
-        - content
-
-    RelationshipChangeRequestContent:
-      type: object
-
-    RelationshipChangeResponse:
-      type: object
-      properties:
-        createdBy:
-          allOf:
-            - $ref: "#/components/schemas/Address"
-          nullable: false
-        createdByDevice:
-          allOf:
-            - $ref: "#/components/schemas/DeviceID"
-          nullable: false
-        createdAt:
-          type: string
-          format: date-time
-          nullable: false
-          description: A timestamp that describes when this `RelationshipChange` was created on the platform.
-          readOnly: true
-        content:
-          $ref: "#/components/schemas/RelationshipChangeResponseContent"
-      required:
-        - createdBy
-        - createdByDevice
-        - createdAt
-        - content
-
-    RelationshipChangeResponseContent:
-      type: object
 
     RelationshipTemplateContent:
       type: object
@@ -5360,6 +5481,48 @@ components:
           description: The base64 encoded truncated reference of the RelationshipTemplate.
       required:
         - reference
+
+    RelationshipAuditLogEntry:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+          nullable: false
+        createdBy:
+          type: string
+          format: date-time
+          nullable: false
+        createdByDevice:
+          $ref: "#/components/schemas/DeviceID"
+        reason:
+          $ref: "#/components/schemas/RelationshipAuditLogEntryReason"
+        oldStatus:
+          $ref: "#/components/schemas/RelationshipStatus"
+        newStatus:
+          $ref: "#/components/schemas/RelationshipStatus"
+
+    RelationshipAuditLogEntryReason:
+      type: string
+      enum:
+        - Creation
+        - AcceptanceOfCreation
+        - RejectionOfCreation
+        - RevocationOfCreation
+        - Termination
+        - ReactivationRequested
+        - AcceptanceOfReactivation
+        - RejectionOfReactivation
+        - RevocationOfReactivation
+
+    RelationshipStatus:
+      type: string
+      enum:
+        - Pending
+        - Active
+        - Rejected
+        - Revoked
+        - Terminated
 
     SignedChallenge:
       type: object

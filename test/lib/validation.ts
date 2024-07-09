@@ -68,7 +68,7 @@ expect.extend({
         if (!valid) {
             return {
                 pass: false,
-                message: () => `expected a successful result to match the schema '${schemaName}', but got the following errors: ${JSON.stringify(validate.errors)}`
+                message: () => `expected a successful result to match the schema '${schemaName}', but got the following errors: ${JSON.stringify(validate.errors, null, 2)}`
             };
         }
 
