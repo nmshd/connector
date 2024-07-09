@@ -1,4 +1,4 @@
-import { ConnectorClient, ConnectorRequestStatus } from "@nmshd/connector-sdk";
+import { ConnectorClient, ConnectorRequestStatus, ReadAttributeRequestItem } from "@nmshd/connector-sdk";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
@@ -32,7 +32,7 @@ describe("Outgoing Requests", () => {
         expect(sConsumptionRequest.status).toBe(ConnectorRequestStatus.Draft);
         expect(sConsumptionRequest.content.items).toHaveLength(1);
         expect(sConsumptionRequest.content.items[0]["@type"]).toBe("ReadAttributeRequestItem");
-        expect(sConsumptionRequest.content.items[0].mustBeAccepted).toBe(false);
+        expect((sConsumptionRequest.content.items[0] as ReadAttributeRequestItem).mustBeAccepted).toBe(false);
     });
 
     test("should query outgoing requests", async () => {

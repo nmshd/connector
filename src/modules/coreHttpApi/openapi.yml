@@ -4901,13 +4901,10 @@ components:
             allOf:
               - $ref: "#/components/schemas/RequestItem"
           type: array
-        mustBeAccepted:
-          type: boolean
         responseMetadata:
           type: object
       required:
         - "@type"
-        - mustBeAccepted
         - items
 
     RequestContent:
