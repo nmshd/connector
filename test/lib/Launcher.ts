@@ -63,7 +63,7 @@ export class Launcher {
                 new Promise((resolve, reject) => {
                     waitForConnector(port, connector)
                         .then(resolve)
-                        .catch((e) => {
+                        .catch((e: Error) => {
                             this.stopClient(connector, webhookServer);
                             reject(e);
                         });
@@ -133,14 +133,7 @@ export class Launcher {
     }
 
     public stopClient(connector: ChildProcess, webhookServer: Server | undefined): void {
-        const exitCode = connector.exitCode;
-        if (exitCode !== null) {
-            webhookServer?.close();
-            return;
-        }
-        connector.on("exit", () => {
-            webhookServer?.close();
-        });
         connector.kill();
+        webhookServer?.close();
     }
 }
