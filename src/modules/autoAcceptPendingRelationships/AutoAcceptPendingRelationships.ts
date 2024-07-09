@@ -1,11 +1,9 @@
 import { RelationshipChangedEvent, RelationshipStatus } from "@nmshd/runtime";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
-export interface AutoAcceptRelationshipCreationChangesModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
-    responseContent: any;
-}
+export interface AutoAcceptPendingRelationshipsModuleConfiguration extends ConnectorRuntimeModuleConfiguration {}
 
-export default class AutoAcceptRelationshipCreationChangesModule extends ConnectorRuntimeModule<AutoAcceptRelationshipCreationChangesModuleConfiguration> {
+export default class AutoAcceptPendingRelationshipsModule extends ConnectorRuntimeModule<AutoAcceptPendingRelationshipsModuleConfiguration> {
     private currentIdentity: string;
 
     public init(): void {
@@ -20,7 +18,7 @@ export default class AutoAcceptRelationshipCreationChangesModule extends Connect
     }
 
     private async handleRelationshipChanged(event: RelationshipChangedEvent) {
-        if (!this.isIncomingPendingRelationshipCreationChange(event)) return;
+        if (!this.isIncomingPendingRelationship(event)) return;
 
         this.logger.info("Incoming relationship creation change detected.");
 
@@ -29,13 +27,13 @@ export default class AutoAcceptRelationshipCreationChangesModule extends Connect
         });
 
         if (result.isSuccess) {
-            this.logger.info("Incoming relationship creation change was accepted successfully.");
+            this.logger.info("Incoming pending relationship was accepted successfully.");
         } else {
-            this.logger.error("Error while accepting relationship creation change:", result.error);
+            this.logger.error("Error while accepting pending relationship:", result.error);
         }
     }
 
-    private isIncomingPendingRelationshipCreationChange(event: RelationshipChangedEvent) {
+    private isIncomingPendingRelationship(event: RelationshipChangedEvent) {
         const data = event.data;
         if (data.status !== RelationshipStatus.Pending) return false;
         if (data.auditLog.length !== 1) return false;

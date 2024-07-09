@@ -71,4 +71,54 @@ export class RelationshipsController extends BaseController {
         const result = await this.transportServices.relationships.getAttributesForRelationship({ id });
         return this.ok(result);
     }
+
+    @PUT
+    @Path(":id/Terminate")
+    @Accept("application/json")
+    public async terminateRelationship(@PathParam("id") id: string): Promise<Envelope> {
+        const result = await this.transportServices.relationships.terminateRelationship({
+            relationshipId: id
+        });
+        return this.ok(result);
+    }
+
+    @PUT
+    @Path(":id/Reactivate")
+    @Accept("application/json")
+    public async requestRelationshipReactivation(@PathParam("id") id: string): Promise<Envelope> {
+        const result = await this.transportServices.relationships.requestRelationshipReactivation({
+            relationshipId: id
+        });
+        return this.ok(result);
+    }
+
+    @PUT
+    @Path(":id/Reactivate/Accept")
+    @Accept("application/json")
+    public async acceptRelationshipReactivation(@PathParam("id") id: string): Promise<Envelope> {
+        const result = await this.transportServices.relationships.acceptRelationshipReactivation({
+            relationshipId: id
+        });
+        return this.ok(result);
+    }
+
+    @PUT
+    @Path(":id/Reactivate/Reject")
+    @Accept("application/json")
+    public async rejectRelationshipReactivation(@PathParam("id") id: string): Promise<Envelope> {
+        const result = await this.transportServices.relationships.rejectRelationshipReactivation({
+            relationshipId: id
+        });
+        return this.ok(result);
+    }
+
+    @PUT
+    @Path(":id/Reactivate/Revoke")
+    @Accept("application/json")
+    public async revokeRelationshipReactivation(@PathParam("id") id: string): Promise<Envelope> {
+        const result = await this.transportServices.relationships.revokeRelationshipReactivation({
+            relationshipId: id
+        });
+        return this.ok(result);
+    }
 }
