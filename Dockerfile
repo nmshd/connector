@@ -1,4 +1,4 @@
-FROM node:22.4.0 as builder
+FROM node:22.4.0 AS builder
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
 ARG VERSION
@@ -29,7 +29,7 @@ RUN npm ci --omit=dev
 
 COPY --from=builder /usr/app/dist/ dist/
 
-LABEL org.opencontainers.image.source = "https://github.com/nmshd/connector"
+LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
 
 USER node
 
