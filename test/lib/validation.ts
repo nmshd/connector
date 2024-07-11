@@ -1,6 +1,7 @@
 import { ConnectorResponse, getJSONSchemaDefinition } from "@nmshd/connector-sdk";
-import ajv from "ajv";
+import ajv, { ErrorObject } from "ajv";
 import { matchersWithOptions } from "jest-json-schema";
+import _ from "lodash";
 
 expect.extend(
     matchersWithOptions({
@@ -47,6 +48,7 @@ export function validateSchema(schemaName: ValidationSchema, obj: any): void {
 
 const schemaDefinition = getJSONSchemaDefinition();
 const ajvInstance = new ajv({ schemas: [schemaDefinition], allowUnionTypes: true });
+type ExtendetError = ErrorObject<string, Record<string, any>, unknown> & { value: any };
 
 expect.extend({
     toBeSuccessful(actual: ConnectorResponse<unknown>, schemaName: ValidationSchema) {
@@ -66,9 +68,12 @@ expect.extend({
         const valid = validate(actual.result);
 
         if (!valid) {
+            const extendedError: ExtendetError[] = validate.errors!.map((error): ExtendetError => {
+                return Object.assign(error, { value: _.get(actual.result, error.instancePath.replaceAll("/", ".").slice(1)) });
+            });
             return {
                 pass: false,
-                message: () => `expected a successful result to match the schema '${schemaName}', but got the following errors: ${JSON.stringify(validate.errors, null, 2)}`
+                message: () => `expected a successful result to match the schema '${schemaName}', but got the following errors: ${JSON.stringify(extendedError, null, 2)}`
             };
         }
 
