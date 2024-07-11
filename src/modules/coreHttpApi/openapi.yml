@@ -1028,7 +1028,7 @@ paths:
           $ref: "#/components/responses/NotFound"
     delete:
       operationId: deleteRepositoryAttribute
-      description: Delete an repository attribute.
+      description: Delete a repository attribute.
       tags:
         - Attributes
       parameters:
@@ -1040,7 +1040,7 @@ paths:
             $ref: "#/components/schemas/AttributeID"
       responses:
         204:
-          description: Success. Deleting an repository attribute.
+          description: Success. Deleting a repository attribute.
           headers:
             X-Response-Duration-ms:
               schema:

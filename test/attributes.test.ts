@@ -519,7 +519,7 @@ describe("Delete attributes", () => {
         const client2RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
         expect(client2RepositoryAttribute.isSuccess).toBe(true);
     });
-    test("should delete an repository attribute", async () => {
+    test("should delete a repository attribute", async () => {
         const attribute = await client1.attributes.createRepositoryAttribute({
             content: {
                 value: {
