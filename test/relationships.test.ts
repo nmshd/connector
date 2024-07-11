@@ -2,7 +2,14 @@ import { ConnectorClient, ConnectorRelationshipAuditLogEntryReason, ConnectorRel
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
-import { establishRelationship, getRelationship, getTemplateToken, syncUntilHasRelationships } from "./lib/testUtils";
+import {
+    establishRelationship,
+    executeFullCreateAndShareRelationshipAttributeFlow,
+    executeFullCreateAndShareRepositoryAttributeFlow,
+    getRelationship,
+    getTemplateToken,
+    syncUntilHasRelationships
+} from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
@@ -12,6 +19,7 @@ let client2: ConnectorClient;
 describe("Relationships", () => {
     beforeEach(async () => ([client1, client2] = await launcher.launch(2)), getTimeout(30000));
     afterEach(() => launcher.stop());
+
     test("should create a relationship", async () => {
         const token = await getTemplateToken(client1);
 
@@ -198,6 +206,43 @@ describe("Relationships", () => {
             ConnectorRelationshipStatus.Active,
             ConnectorRelationshipAuditLogEntryReason.AcceptanceOfReactivation
         );
+    });
+
+    test("terminate relationship and decompose it", async () => {
+        await establishRelationship(client1, client2);
+        const relationship = await getRelationship(client1);
+        const client2Address = (await client2.account.getIdentityInfo()).result.address;
+
+        await executeFullCreateAndShareRelationshipAttributeFlow(client1, client2, {
+            value: {
+                "@type": "ProprietaryString",
+                title: "text",
+                value: "AProprietaryString"
+            },
+            key: "randomKey",
+            confidentiality: "public"
+        });
+
+        await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
+            "@type": "GivenName",
+            value: "AGivenName"
+        });
+
+        const attributes = await client1.attributes.getAttributes({ shareInfo: { peer: client2Address } });
+        expect(attributes).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+        expect(attributes.result).toHaveLength(2);
+
+        const terminateRelationshipResponse = await client1.relationships.terminateRelationship(relationship.id);
+        expect(terminateRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
+
+        await syncUntilHasRelationships(client2);
+
+        const decompose = await client2.relationships.decomposeRelationship(relationship.id);
+        expect(decompose).toBeSuccessfulVoidResult();
+
+        const attributesAfterDecomposition = await client1.attributes.getAttributes({ shareInfo: { peer: client2Address } });
+        expect(attributesAfterDecomposition).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+        expect(attributesAfterDecomposition.result).toHaveLength(2);
     });
 });
 

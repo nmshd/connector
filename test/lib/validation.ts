@@ -75,6 +75,26 @@ expect.extend({
         return { pass: actual.isSuccess, message: () => "" };
     },
 
+    toBeSuccessfulVoidResult(actual: ConnectorResponse<unknown>) {
+        if (!(actual instanceof ConnectorResponse)) {
+            return { pass: false, message: () => "expected an instance of Result." };
+        }
+
+        if (!actual.isSuccess) {
+            const message = `expected a successful result; got an error result with the error message '${actual.error.message}'.`;
+            return { pass: false, message: () => message };
+        }
+
+        if (typeof actual.result !== "undefined") {
+            return {
+                pass: false,
+                message: () => `expected a successful result to to be a void result, but got the following result: ${JSON.stringify(actual.result, null, 2)}`
+            };
+        }
+
+        return { pass: actual.isSuccess, message: () => "" };
+    },
+
     toBeAnError(actual: ConnectorResponse<unknown>, expectedMessage: string | RegExp, expectedCode: string | RegExp) {
         if (!(actual instanceof ConnectorResponse)) {
             return {
@@ -112,6 +132,7 @@ declare global {
     namespace jest {
         interface Matchers<R> {
             toBeSuccessful(schema: ValidationSchema): R;
+            toBeSuccessfulVoidResult(): R;
             toBeAnError(expectedMessage: string | RegExp, expectedCode: string | RegExp): R;
         }
     }
