@@ -93,7 +93,7 @@ expect.extend({
         if (typeof actual.result !== "undefined") {
             return {
                 pass: false,
-                message: () => `expected a successful result to to be a void result, but got the following result: ${JSON.stringify(actual.result, null, 2)}`
+                message: () => `expected a successful result to be a void result, but got the following result: ${JSON.stringify(actual.result, null, 2)}`
             };
         }
 
