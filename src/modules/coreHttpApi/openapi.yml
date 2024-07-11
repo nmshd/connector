@@ -2600,13 +2600,13 @@ paths:
 
     delete:
       operationId: decomposeRelationship
-      description: Decompose the relationship. This action will remove the relationship and all related data.
+      description: Decompose a Relationship that has already been terminated. This action will remove the Relationship and all related data.
       tags:
         - Relationships
       parameters:
         - in: path
           name: id
-          description: The ID of the relationship to decompose.
+          description: The ID of the terminated Relationship to decompose.
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipID"
