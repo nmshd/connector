@@ -48,7 +48,7 @@ export function validateSchema(schemaName: ValidationSchema, obj: any): void {
 
 const schemaDefinition = getJSONSchemaDefinition();
 const ajvInstance = new ajv({ schemas: [schemaDefinition], allowUnionTypes: true });
-type ExtendetError = ErrorObject<string, Record<string, any>, unknown> & { value: any };
+type ExtendedError = ErrorObject<string, Record<string, any>, unknown> & { value: any };
 
 expect.extend({
     toBeSuccessful(actual: ConnectorResponse<unknown>, schemaName: ValidationSchema) {
@@ -68,7 +68,7 @@ expect.extend({
         const valid = validate(actual.result);
 
         if (!valid) {
-            const extendedError: ExtendetError[] = validate.errors!.map((error): ExtendetError => {
+            const extendedError: ExtendedError[] = validate.errors!.map((error): ExtendedError => {
                 return Object.assign(error, { value: _.get(actual.result, error.instancePath.replaceAll("/", ".").slice(1)) });
             });
             return {
