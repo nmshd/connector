@@ -1001,8 +1001,18 @@ paths:
           schema:
             $ref: "#/components/schemas/AttributeID"
       responses:
-        204:
+        200:
           description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/Attribute"
+                required:
+                  - result
           headers:
             X-Response-Duration-ms:
               schema:
@@ -1029,9 +1039,8 @@ paths:
           schema:
             $ref: "#/components/schemas/AttributeID"
       responses:
-        200:
-          description: |
-            Success. Deleting an repository attribute.
+        204:
+          description: Success. Deleting an repository attribute.
           headers:
             X-Response-Duration-ms:
               schema:
