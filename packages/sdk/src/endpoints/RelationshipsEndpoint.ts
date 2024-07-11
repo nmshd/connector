@@ -34,6 +34,10 @@ export class RelationshipsEndpoint extends Endpoint {
         return await this.put(`/api/v2/Relationships/${relationshipId}/Terminate`);
     }
 
+    public async decomposeRelationship(relationshipId: string): Promise<ConnectorResponse<void>> {
+        return await this.delete(`/api/v2/Relationships/${relationshipId}`, undefined, 204);
+    }
+
     public async requestRelationshipReactivation(relationshipId: string): Promise<ConnectorResponse<ConnectorRelationship>> {
         return await this.put(`/api/v2/Relationships/${relationshipId}/Reactivate`);
     }

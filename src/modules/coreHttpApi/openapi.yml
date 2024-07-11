@@ -1028,7 +1028,7 @@ paths:
           $ref: "#/components/responses/NotFound"
     delete:
       operationId: deleteRepositoryAttribute
-      description: Delete an repository attribute.
+      description: Delete a repository attribute.
       tags:
         - Attributes
       parameters:
@@ -1039,9 +1039,8 @@ paths:
           schema:
             $ref: "#/components/schemas/AttributeID"
       responses:
-        200:
-          description: |
-            Success. Deleting an repository attribute.
+        204:
+          description: Success. Deleting a repository attribute.
           headers:
             X-Response-Duration-ms:
               schema:
@@ -1157,7 +1156,7 @@ paths:
   /api/v2/Attributes/ThirdParty/{id}:
     delete:
       operationId: deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer
-      description: Delete an third party relationship attribute and notify the owner.
+      description: Delete a third party relationship attribute and notify the owner.
       tags:
         - Attributes
       parameters:
@@ -1170,7 +1169,7 @@ paths:
       responses:
         200:
           description: |
-            Success. Deleting an third party relationship attribute and notifying the owner returns the notificationId of the send notification.
+            Success. Deleting a third party relationship attribute and notifying the owner returns the notificationId of the send notification.
           content:
             application/json:
               schema:
@@ -2598,6 +2597,37 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         403:
           $ref: "#/components/responses/Forbidden"
+
+    delete:
+      operationId: decomposeRelationship
+      description: Decompose a Relationship that has already been terminated. This action will remove the Relationship and all related data.
+      tags:
+        - Relationships
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the terminated Relationship to decompose.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipID"
+      responses:
+        204:
+          description: Success
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
 
   /api/v2/Relationships/{id}/Attributes:
     get:

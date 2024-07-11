@@ -1,6 +1,7 @@
 import { ConnectorResponse, getJSONSchemaDefinition } from "@nmshd/connector-sdk";
-import ajv from "ajv";
+import ajv, { ErrorObject } from "ajv";
 import { matchersWithOptions } from "jest-json-schema";
+import _ from "lodash";
 
 expect.extend(
     matchersWithOptions({
@@ -47,6 +48,7 @@ export function validateSchema(schemaName: ValidationSchema, obj: any): void {
 
 const schemaDefinition = getJSONSchemaDefinition();
 const ajvInstance = new ajv({ schemas: [schemaDefinition], allowUnionTypes: true });
+type ExtendedError = ErrorObject<string, Record<string, any>, unknown> & { value: any };
 
 expect.extend({
     toBeSuccessful(actual: ConnectorResponse<unknown>, schemaName: ValidationSchema) {
@@ -66,9 +68,32 @@ expect.extend({
         const valid = validate(actual.result);
 
         if (!valid) {
+            const extendedError: ExtendedError[] = validate.errors!.map((error): ExtendedError => {
+                return Object.assign(error, { value: _.get(actual.result, error.instancePath.replaceAll("/", ".").slice(1)) });
+            });
             return {
                 pass: false,
-                message: () => `expected a successful result to match the schema '${schemaName}', but got the following errors: ${JSON.stringify(validate.errors, null, 2)}`
+                message: () => `expected a successful result to match the schema '${schemaName}', but got the following errors: ${JSON.stringify(extendedError, null, 2)}`
+            };
+        }
+
+        return { pass: actual.isSuccess, message: () => "" };
+    },
+
+    toBeSuccessfulVoidResult(actual: ConnectorResponse<unknown>) {
+        if (!(actual instanceof ConnectorResponse)) {
+            return { pass: false, message: () => "expected an instance of Result." };
+        }
+
+        if (!actual.isSuccess) {
+            const message = `expected a successful result; got an error result with the error message '${actual.error.message}'.`;
+            return { pass: false, message: () => message };
+        }
+
+        if (typeof actual.result !== "undefined") {
+            return {
+                pass: false,
+                message: () => `expected a successful result to be a void result, but got the following result: ${JSON.stringify(actual.result, null, 2)}`
             };
         }
 
@@ -112,6 +137,7 @@ declare global {
     namespace jest {
         interface Matchers<R> {
             toBeSuccessful(schema: ValidationSchema): R;
+            toBeSuccessfulVoidResult(): R;
             toBeAnError(expectedMessage: string | RegExp, expectedCode: string | RegExp): R;
         }
     }

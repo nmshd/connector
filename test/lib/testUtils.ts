@@ -2,9 +2,9 @@ import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { DataEvent, EventBus, SubscriptionTarget, sleep } from "@js-soft/ts-utils";
 import {
     ConnectorAttribute,
+    ConnectorAttributeValue,
     ConnectorClient,
     ConnectorFile,
-    ConnectorIdentityAttribute,
     ConnectorMessage,
     ConnectorRelationship,
     ConnectorRelationshipAttribute,
@@ -348,21 +348,21 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
  * Returns the sender's own shared identity attribute.
  */
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
-    sender: ConnectorClientWithMetadata,
-    recipient: ConnectorClientWithMetadata,
-    attributeContent: ConnectorIdentityAttribute
+    sender: ConnectorClient,
+    recipient: ConnectorClient,
+    attributeValue: ConnectorAttributeValue
 ): Promise<ConnectorAttribute>;
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipient: ConnectorClient[],
-    attributeContent: ConnectorIdentityAttribute
+    attributeValue: ConnectorAttributeValue
 ): Promise<ConnectorAttribute[]>;
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipients: ConnectorClient | ConnectorClient[],
-    attributeContent: ConnectorIdentityAttribute
+    attributeValue: ConnectorAttributeValue
 ): Promise<ConnectorAttribute | ConnectorAttribute[]> {
-    const createAttributeRequestResult = await sender.attributes.createRepositoryAttribute({ content: { value: attributeContent.value } });
+    const createAttributeRequestResult = await sender.attributes.createRepositoryAttribute({ content: { value: attributeValue } });
     const attribute = createAttributeRequestResult.result;
 
     if (!Array.isArray(recipients)) {
@@ -384,7 +384,7 @@ export async function executeFullCreateAndShareRepositoryAttributeFlow(
                         "@type": "ShareAttributeRequestItem",
                         mustBeAccepted: true,
                         sourceAttributeId: attribute.id,
-                        attribute: attributeContent
+                        attribute: attribute.content
                     }
                 ]
             }
