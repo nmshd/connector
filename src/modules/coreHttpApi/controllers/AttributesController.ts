@@ -226,9 +226,9 @@ export class AttributesController extends BaseController {
 
     @DELETE
     @Path("/:id")
-    public async deleteRepositoryAttribute(@PathParam("id") attributeId: string): Promise<Envelope> {
+    public async deleteRepositoryAttribute(@PathParam("id") attributeId: string): Promise<void> {
         const result = await this.consumptionServices.attributes.deleteRepositoryAttribute({ attributeId });
-        return this.ok(result);
+        return this.noContent(result);
     }
 
     private stringToBoolean(value: string | undefined): boolean | undefined {

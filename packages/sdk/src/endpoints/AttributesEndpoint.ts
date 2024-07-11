@@ -80,7 +80,7 @@ export class AttributesEndpoint extends Endpoint {
     }
 
     public async deleteRepositoryAttribute(attributeId: string): Promise<ConnectorResponse<void>> {
-        return await this.delete(`/api/v2/Attributes/${attributeId}`);
+        return await this.delete(`/api/v2/Attributes/${attributeId}`, undefined, 204);
     }
 
     public async deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer(
