@@ -535,7 +535,7 @@ describe("Delete attributes", () => {
         expect(getAttributeResponse.isSuccess).toBe(false);
     });
 
-    test("should delete an third party attribute and notify owner", async () => {
+    test("should delete a third party attribute and notify owner", async () => {
         const [client3] = await launcher.launch(1);
 
         await establishRelationship(client3, client2);

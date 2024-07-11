@@ -1156,7 +1156,7 @@ paths:
   /api/v2/Attributes/ThirdParty/{id}:
     delete:
       operationId: deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer
-      description: Delete an third party relationship attribute and notify the owner.
+      description: Delete a third party relationship attribute and notify the owner.
       tags:
         - Attributes
       parameters:
@@ -1169,7 +1169,7 @@ paths:
       responses:
         200:
           description: |
-            Success. Deleting an third party relationship attribute and notifying the owner returns the notificationId of the send notification.
+            Success. Deleting a third party relationship attribute and notifying the owner returns the notificationId of the send notification.
           content:
             application/json:
               schema:
