@@ -1,6 +1,6 @@
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
-import { Accept, Context, GET, Path, PathParam, POST, PUT, Return, ServiceContext } from "typescript-rest";
+import { Accept, Context, DELETE, GET, Path, PathParam, POST, PUT, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -78,6 +78,14 @@ export class RelationshipsController extends BaseController {
     public async terminateRelationship(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.terminateRelationship({ relationshipId: id });
         return this.ok(result);
+    }
+
+    @DELETE
+    @Path(":id")
+    @Accept("application/json")
+    public async decomposeRelationship(@PathParam("id") id: string): Promise<void> {
+        const result = await this.transportServices.relationships.decomposeRelationship({ relationshipId: id });
+        return this.noContent(result);
     }
 
     @PUT
