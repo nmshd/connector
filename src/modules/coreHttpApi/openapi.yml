@@ -1001,18 +1001,8 @@ paths:
           schema:
             $ref: "#/components/schemas/AttributeID"
       responses:
-        200:
+        204:
           description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    nullable: false
-                    $ref: "#/components/schemas/Attribute"
-                required:
-                  - result
           headers:
             X-Response-Duration-ms:
               schema:
