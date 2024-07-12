@@ -1,7 +1,7 @@
-FROM node:20.11.0 as builder
+FROM node:22.4.0 as builder
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
-ARG PACKAGE_VERSION
+ARG VERSION
 
 WORKDIR /usr/app
 COPY package.json package-lock.json tsconfig.json ./
@@ -13,7 +13,7 @@ COPY src src
 RUN npm run build
 RUN .ci/writeBuildInformation.sh
 
-FROM node:20.11.0-alpine
+FROM node:22.4.0-alpine
 ENV NODE_CONFIG_ENV=prod
 RUN apk add --no-cache tini
 RUN apk add libcap && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/node && apk del libcap

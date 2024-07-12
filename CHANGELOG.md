@@ -1,5 +1,25 @@
 # Changelog
 
+## Discontinued
+
+This changelog is discontinued in favor of the [GitHub Releases](https://github.com/nmshd/connector/releases)
+
+## 3.11.4
+
+-   health checks now use `https_proxy` if set
+
+## 3.11.3
+
+-   upgrade the runtime version to 4.10.6
+
+## 3.11.2
+
+-   upgrade nodejs to 22.2.0
+
+## 3.11.1
+
+-   upgrade nodejs to 20.13.1
+
 ## 3.11.0
 
 -> SDK 4.3.0

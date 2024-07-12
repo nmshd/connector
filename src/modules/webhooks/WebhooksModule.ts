@@ -12,14 +12,14 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
     private configModel: ConfigModel;
 
     public init(): void {
+        this.configModel = ConfigParser.parse(this.configuration).value;
+
         this.axios = axios.create({
             httpAgent: new agentKeepAlive(),
-            httpsAgent: new AgentKeepAliveHttps(),
+            httpsAgent: new AgentKeepAliveHttps({ rejectUnauthorized: !this.configModel.skipTlsCheck }),
             validateStatus: () => true,
             maxRedirects: 0
         });
-
-        this.configModel = ConfigParser.parse(this.configuration).value;
     }
 
     public start(): void {

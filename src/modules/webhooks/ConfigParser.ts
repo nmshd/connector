@@ -14,7 +14,7 @@ export class ConfigParser {
             return Result.fail(webhooks.error);
         }
 
-        const configModel = new ConfigModel(webhooks.value);
+        const configModel = new ConfigModel(webhooks.value, configJson.skipTlsCheck ?? false);
         return Result.ok(configModel);
     }
 

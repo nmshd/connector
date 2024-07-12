@@ -1,0 +1,52 @@
+version: 2
+updates:
+  ##### GitHub Actions #####
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      update-github-actions-dependencies:
+        patterns:
+          - "*"
+    reviewers:
+      - "jkoenig134"
+      - "sebbi08"
+    labels:
+      - "dependencies"
+
+  ##### npm #####
+  - package-ecosystem: "npm"
+    directories:
+      - "/"
+      - "/packages/sdk"
+    schedule:
+      interval: "weekly"
+    groups:
+      update-npm-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "@nmshd/runtime"
+    reviewers:
+      - "jkoenig134"
+      - "sebbi08"
+    labels:
+      - "dependencies"
+
+  ##### Docker #####
+  - package-ecosystem: "docker"
+    directories:
+      - "/"
+      - "/.dev"
+    schedule:
+      interval: "weekly"
+    groups:
+      update-docker-dependencies:
+        patterns:
+          - "*"
+    reviewers:
+      - "jkoenig134"
+      - "sebbi08"
+    labels:
+      - "dependencies"

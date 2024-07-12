@@ -13,7 +13,7 @@
         "@oclif/plugin-plugins": "^5.0.19",
         "@oclif/plugin-autocomplete": "3.0.17",
         "@nmshd/runtime": "^4.7.1",
-        "@nmshd/connector": "^3.10.1"
+        "@nmshd/connector": "*"
     },
     "devDependencies": {
         "@oclif/prettier-config": "^0.2.1",

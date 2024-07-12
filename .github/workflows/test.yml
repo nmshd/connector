@@ -18,7 +18,7 @@ jobs:
         run: npm run start:backbone
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: current
       - run: npm ci
       - run: npm run build:ci --workspaces --if-present
       - name: Start MongoDB
@@ -38,7 +38,7 @@ jobs:
         run: npm run start:backbone
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: current
       - run: npm ci
       - run: npm run build:ci --workspaces --if-present
       - uses: js-soft/ferretdb-github-action@1.1.0
