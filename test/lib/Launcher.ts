@@ -23,10 +23,17 @@ export class Launcher {
     public async launchSimple(): Promise<string> {
         const port = await getPort();
         const accountName = await this.randomString();
-
-        this._processes.push(await this.spawnConnector(port, accountName));
-
-        await waitForConnector(port);
+        const { connector, webhookServer } = await this.spawnConnector(port, accountName);
+        this._processes.push({
+            connector,
+            webhookServer
+        });
+        try {
+            await waitForConnector(port, connector);
+        } catch (e) {
+            this.stopClient(connector, webhookServer);
+            throw e;
+        }
 
         return `http://localhost:${port}`;
     }
@@ -34,6 +41,7 @@ export class Launcher {
     public async launch(count: number): Promise<ConnectorClientWithMetadata[]> {
         const clients: ConnectorClientWithMetadata[] = [];
         const ports: number[] = [];
+        const startPromises: Promise<void>[] = [];
 
         for (let i = 0; i < count; i++) {
             const port = await getPort();
@@ -45,11 +53,25 @@ export class Launcher {
 
             clients.push(connectorClient);
             ports.push(port);
+            const { connector, webhookServer } = await this.spawnConnector(port, accountName, connectorClient._eventBus);
+            this._processes.push({
+                connector,
+                webhookServer
+            });
 
-            this._processes.push(await this.spawnConnector(port, accountName, connectorClient._eventBus));
+            startPromises.push(
+                new Promise((resolve, reject) => {
+                    waitForConnector(port, connector)
+                        .then(resolve)
+                        .catch((e: Error) => {
+                            this.stopClient(connector, webhookServer);
+                            reject(e);
+                        });
+                })
+            );
         }
 
-        await Promise.all(ports.map(waitForConnector));
+        await Promise.all(startPromises);
         return clients;
     }
 
@@ -105,10 +127,13 @@ export class Launcher {
 
     public stop(): void {
         this._processes.forEach((p) => {
-            p.connector.on("exit", () => {
-                p.webhookServer?.close();
-            });
-            p.connector.kill();
+            const { connector, webhookServer } = p;
+            this.stopClient(connector, webhookServer);
         });
+    }
+
+    public stopClient(connector: ChildProcess, webhookServer: Server | undefined): void {
+        connector.kill();
+        webhookServer?.close();
     }
 }
