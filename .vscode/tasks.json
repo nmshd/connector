@@ -55,6 +55,15 @@
             }
         },
         {
+            "label": "Clear Connectors",
+            "command": "docker compose -f .dev/compose.yml down -v",
+            "type": "shell",
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
             "label": "Run 1",
             "command": "docker compose -f .dev/compose.yml --env-file .dev/.env${input:envFilePostfix} up connector-1",
             "type": "shell",
