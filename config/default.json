@@ -68,13 +68,6 @@
             "displayName": "Attribute Listener",
             "location": "@nmshd/runtime:AttributeListenerModule"
         },
-        "sync": {
-            "displayName": "Sync",
-            "location": "sync/SyncModule",
-            "enabled": false,
-
-            "interval": 60
-        },
         "autoAcceptPendingRelationships": {
             "displayName": "Auto Accept Pending Relationships",
             "location": "autoAcceptPendingRelationships/AutoAcceptPendingRelationshipsModule",
@@ -106,6 +99,18 @@
             "displayName": "Message Broker Publisher",
             "location": "messageBrokerPublisher/MessageBrokerPublisherModule",
             "brokers": []
+        },
+        "sync": {
+            "displayName": "Sync",
+            "location": "sync/SyncModule",
+            "enabled": false,
+
+            "interval": 60
+        },
+        "sse": {
+            "enabled": false,
+            "displayName": "Server Sent Events",
+            "location": "sse/SseModule"
         }
     }
 }

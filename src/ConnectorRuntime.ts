@@ -232,6 +232,10 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         };
     }
 
+    public async getBackboneAuthenticationToken(): Promise<string> {
+        return await this.accountController.authenticator.getToken();
+    }
+
     protected async loadModule(moduleConfiguration: ModuleConfiguration): Promise<void> {
         const connectorModuleConfiguration = moduleConfiguration as ConnectorRuntimeModuleConfiguration;
 
@@ -307,10 +311,16 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     protected async stop(): Promise<void> {
-        try {
-            await super.stop();
-        } catch (e) {
-            this.logger.error(e);
+        if (this.isStarted) {
+            try {
+                await super.stop();
+            } catch (e) {
+                this.logger.error(e);
+            }
+        } else if (this.connectorMode === "debug") {
+            this.logger.warn("It seemed like the connector runtime didn't do a proper startup. Closing infrastructure.");
+
+            await this.stopInfrastructure();
         }
 
         try {
