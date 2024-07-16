@@ -1,4 +1,4 @@
-FROM node:22.4.0 as builder
+FROM node:22.4.1 AS builder
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
 ARG VERSION
@@ -13,7 +13,7 @@ COPY src src
 RUN npm run build
 RUN .ci/writeBuildInformation.sh
 
-FROM node:22.4.0-alpine
+FROM node:22.4.1-alpine
 ENV NODE_CONFIG_ENV=prod
 RUN apk add --no-cache tini
 RUN apk add libcap && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/node && apk del libcap
@@ -29,7 +29,7 @@ RUN npm ci --omit=dev
 
 COPY --from=builder /usr/app/dist/ dist/
 
-LABEL org.opencontainers.image.source = "https://github.com/nmshd/connector"
+LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
 
 USER node
 
