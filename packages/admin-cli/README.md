@@ -20,7 +20,7 @@ $ npm install -g @nmshd/connector-admin-cli
 $ connector-admin COMMAND
 running command...
 $ connector-admin (--version)
-@nmshd/connector-admin-cli/0.0.0 linux-x64 node-v20.10.0
+@nmshd/connector-admin-cli/1.0.0 linux-x64 node-v22.2.0
 $ connector-admin --help [COMMAND]
 USAGE
   $ connector-admin COMMAND
@@ -30,10 +30,8 @@ USAGE
 # Commands
 <!-- commands -->
 * [`connector-admin autocomplete [SHELL]`](#connector-admin-autocomplete-shell)
-* [`connector-admin hello PERSON`](#connector-admin-hello-person)
-* [`connector-admin hello world`](#connector-admin-hello-world)
 * [`connector-admin help [COMMAND]`](#connector-admin-help-command)
-* [`connector-admin init [NAME]`](#connector-admin-init-name)
+* [`connector-admin identity init`](#connector-admin-identity-init)
 
 ## `connector-admin autocomplete [SHELL]`
 
@@ -66,48 +64,6 @@ EXAMPLES
 
 _See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v3.0.17/src/commands/autocomplete/index.ts)_
 
-## `connector-admin hello PERSON`
-
-Say hello
-
-```
-USAGE
-  $ connector-admin hello PERSON -f <value>
-
-ARGUMENTS
-  PERSON  Person to say hello to
-
-FLAGS
-  -f, --from=<value>  (required) Who is saying hello
-
-DESCRIPTION
-  Say hello
-
-EXAMPLES
-  $ connector-admin hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
-```
-
-_See code: [src/commands/hello/index.ts](https://github.com/packages/connector-admin-cli/blob/v0.0.0/src/commands/hello/index.ts)_
-
-## `connector-admin hello world`
-
-Say hello world
-
-```
-USAGE
-  $ connector-admin hello world
-
-DESCRIPTION
-  Say hello world
-
-EXAMPLES
-  $ connector-admin hello world
-  hello world! (./src/commands/hello/world.ts)
-```
-
-_See code: [src/commands/hello/world.ts](https://github.com/packages/connector-admin-cli/blob/v0.0.0/src/commands/hello/world.ts)_
-
 ## `connector-admin help [COMMAND]`
 
 Display help for connector-admin.
@@ -126,25 +82,25 @@ DESCRIPTION
   Display help for connector-admin.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.0.21/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.5/src/commands/help.ts)_
 
-## `connector-admin init [NAME]`
+## `connector-admin identity init`
 
-describe the command here
+Initialize an identity
 
 ```
 USAGE
-  $ connector-admin init [NAME]
+  $ connector-admin identity init [-c <value>]
 
-ARGUMENTS
-  NAME  (a|b) dir to read
+FLAGS
+  -c, --config=<value>  [default: ./config.json] config file
 
 DESCRIPTION
-  describe the command here
+  Initialize an identity
 
 EXAMPLES
-  $ connector-admin init
+  $ connector-admin identity init
 ```
 
-_See code: [src/commands/init.ts](https://github.com/packages/connector-admin-cli/blob/v0.0.0/src/commands/init.ts)_
+_See code: [dist/commands/identity/init.js](https://github.com/packages/connector-admin-cli/blob/v1.0.0/dist/commands/identity/init.js)_
 <!-- commandsstop -->

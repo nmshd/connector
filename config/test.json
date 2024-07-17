@@ -12,7 +12,7 @@
             },
             "console": {
                 "type": "logLevelFilter",
-                "level": "INFO",
+                "level": "WARN",
                 "appender": "consoleAppender"
             }
         },
@@ -29,12 +29,8 @@
         "coreHttpApi": { "docs": { "enabled": true } },
         "webhooks": {
             "enabled": false,
-            "webhooks": [{ "triggers": ["consumption.outgoingRequestCreated", "transport.relationshipChanged", "transport.messageReceived"], "target": "test" }],
-            "targets": {
-                "test": {
-                    "headers": { "Content-Type": "application/json" }
-                }
-            }
+            "webhooks": [{ "triggers": ["**"], "target": "test" }],
+            "targets": { "test": {} }
         }
     }
 }

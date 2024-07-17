@@ -66,7 +66,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     protected constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory) {
         super(connectorConfig, loggerFactory);
     }
-    public static async validateConfig(connectorConfig: ConnectorRuntimeConfig) {
+    public static validateConfig(connectorConfig: ConnectorRuntimeConfig): void {
         const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
         const runtimeConfigSchemaString = fs.readFileSync(schemaPath).toString();
         const runtimeConfigSchema = JSON.parse(runtimeConfigSchemaString);
@@ -98,7 +98,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         return runtime;
     }
 
-    protected static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
+    protected static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig): void {
         connectorConfig.modules.decider.enabled = true;
         connectorConfig.modules.request.enabled = true;
         connectorConfig.modules.attributeListener.enabled = true;
