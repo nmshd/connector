@@ -24,6 +24,7 @@ export interface ConnectorRequestContentItemGroup {
 
 export type CreateOutgoingRequestRequestContentItemDerivations =
     | CreateAttributeRequestItem
+    | DeleteAttributeRequestItem
     | ShareAttributeRequestItem
     | ProposeAttributeRequestItem
     | ReadAttributeRequestItem
@@ -80,4 +81,9 @@ export interface FreeTextRequestItem extends ConnectorRequestContentItem {
 export interface RegisterAttributeListenerRequestItem extends ConnectorRequestContentItem {
     "@type": "RegisterAttributeListenerRequestItem";
     query: IdentityAttributeQuery | ThirdPartyRelationshipAttributeQuery;
+}
+
+export interface DeleteAttributeRequestItem extends ConnectorRequestContentItem {
+    "@type": "DeleteAttributeRequestItem";
+    attributeId: string;
 }
