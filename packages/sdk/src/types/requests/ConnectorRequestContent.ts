@@ -7,7 +7,7 @@ export interface ConnectorRequestContent {
     "@type"?: string;
     id?: string;
     expiresAt?: string;
-    items: (CreateOutgoingRequestRequestContentItemDerivations | ConnectorRequestContentItemGroup)[];
+    items: (ConnectorRequestItemDerivation | ConnectorRequestContentItemGroup)[];
     title?: string;
     description?: string;
     metadata?: object;
@@ -18,11 +18,12 @@ export interface ConnectorRequestContentItemGroup {
     title?: string;
     description?: string;
     metadata?: object;
-    items: CreateOutgoingRequestRequestContentItemDerivations[];
+    items: ConnectorRequestItemDerivation[];
 }
 
-export type CreateOutgoingRequestRequestContentItemDerivations =
+export type ConnectorRequestItemDerivation =
     | CreateAttributeRequestItem
+    | DeleteAttributeRequestItem
     | ShareAttributeRequestItem
     | ProposeAttributeRequestItem
     | ReadAttributeRequestItem
@@ -79,4 +80,9 @@ export interface FreeTextRequestItem extends ConnectorRequestContentItem {
 export interface RegisterAttributeListenerRequestItem extends ConnectorRequestContentItem {
     "@type": "RegisterAttributeListenerRequestItem";
     query: IdentityAttributeQuery | ThirdPartyRelationshipAttributeQuery;
+}
+
+export interface DeleteAttributeRequestItem extends ConnectorRequestContentItem {
+    "@type": "DeleteAttributeRequestItem";
+    attributeId: string;
 }
