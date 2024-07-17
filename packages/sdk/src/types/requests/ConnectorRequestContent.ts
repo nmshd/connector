@@ -7,7 +7,7 @@ export interface ConnectorRequestContent {
     "@type"?: string;
     id?: string;
     expiresAt?: string;
-    items: (CreateOutgoingRequestRequestContentItemDerivations | ConnectorRequestContentItemGroup)[];
+    items: (ConnectorRequestItemDerivation | ConnectorRequestContentItemGroup)[];
     title?: string;
     description?: string;
     metadata?: object;
@@ -19,10 +19,10 @@ export interface ConnectorRequestContentItemGroup {
     description?: string;
     mustBeAccepted: boolean;
     metadata?: object;
-    items: CreateOutgoingRequestRequestContentItemDerivations[];
+    items: ConnectorRequestItemDerivation[];
 }
 
-export type CreateOutgoingRequestRequestContentItemDerivations =
+export type ConnectorRequestItemDerivation =
     | CreateAttributeRequestItem
     | DeleteAttributeRequestItem
     | ShareAttributeRequestItem
