@@ -8,9 +8,7 @@ export default class IdentityInit extends BaseCommand {
 
     public static readonly examples = ["<%= config.bin %> <%= command.id %>"];
 
-    public static override readonly flags = { ...BaseCommand.flags };
-
-    public async runInternal(): Promise<void> {
+    public async runInternal(): Promise<{ message: string }> {
         if (!this.transport || !this.connectorConfig) {
             throw new Error("Transport or connectorConfig not initialized");
         }
@@ -19,11 +17,12 @@ export default class IdentityInit extends BaseCommand {
         const identity = await identityCollection.get("identity");
         if (identity) {
             this.log("Identity already created!");
-            return;
+            return { message: "Identity already created!" };
         }
         const accoutController = new AccountController(this.transport, db, this.transport.config);
         await accoutController.init();
 
         this.log("Identity created successfully!");
+        return { message: "Identity created successfully!" };
     }
 }

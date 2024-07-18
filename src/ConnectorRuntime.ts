@@ -8,9 +8,7 @@ import { ConsumptionController } from "@nmshd/consumption";
 import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
 import { AccountController, CoreErrors as TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
-import fs from "fs";
 import { HttpsProxyAgent } from "https-proxy-agent";
-import { validate as validateSchema } from "jsonschema";
 import path from "path";
 import { ConnectorMode } from "./ConnectorMode";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
@@ -66,24 +64,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     protected constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory) {
         super(connectorConfig, loggerFactory);
     }
-    public static validateConfig(connectorConfig: ConnectorRuntimeConfig): void {
-        const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
-        const runtimeConfigSchemaString = fs.readFileSync(schemaPath).toString();
-        const runtimeConfigSchema = JSON.parse(runtimeConfigSchemaString);
-        const result = validateSchema(connectorConfig, runtimeConfigSchema);
-        if (!result.valid) {
-            let errorMessage = "The configuration is not valid:";
-            for (const error of result.errors) {
-                errorMessage += `\r\n  - ${error.stack}`;
-            }
-            console.error(errorMessage); // eslint-disable-line no-console
-            throw new Error(errorMessage);
-        }
-    }
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
-        ConnectorRuntime.validateConfig(connectorConfig);
-
         this.forceEnableMandatoryModules(connectorConfig);
 
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);

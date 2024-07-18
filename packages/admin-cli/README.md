@@ -62,7 +62,7 @@ EXAMPLES
   $ connector-admin autocomplete --refresh-cache
 ```
 
-_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v3.0.17/src/commands/autocomplete/index.ts)_
+_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v3.1.7/src/commands/autocomplete/index.ts)_
 
 ## `connector-admin help [COMMAND]`
 
@@ -82,7 +82,7 @@ DESCRIPTION
   Display help for connector-admin.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.5/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.6/src/commands/help.ts)_
 
 ## `connector-admin identity init`
 

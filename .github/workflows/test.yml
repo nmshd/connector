@@ -30,6 +30,26 @@ jobs:
           NMSHD_TEST_CLIENTID: test
           NMSHD_TEST_CLIENTSECRET: test
 
+  test-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start Backbone
+        run: npm run start:backbone
+      - uses: actions/setup-node@v4
+        with:
+          node-version: current
+      - run: npm ci
+      - run: npm run build --workspace=packages/admin-cli
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@v1
+      - run: npm run test:cli --workspaces=packages/admin-cli
+        env:
+          DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017
+          NMSHD_TEST_BASEURL: http://localhost:8090
+          NMSHD_TEST_CLIENTID: test
+          NMSHD_TEST_CLIENTSECRET: test
+
   test-ferret:
     runs-on: ubuntu-latest
     steps:

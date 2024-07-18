@@ -18,6 +18,7 @@
     "files": [
         "/bin",
         "/dist",
+        "/config",
         "/oclif.manifest.json"
     ],
     "scripts": {
@@ -25,11 +26,9 @@
         "build:watch": "shx rm -rf dist config tsconfig.tsbuildinfo && tsc -b --watch",
         "compile-connector": "ts-node connectorBundle.ts",
         "copy-statics": "shx cp -r ../../src/jsonSchemas dist/jsonSchemas && shx cp -r ../../config config",
-        "lint": "eslint .",
         "prepack": "oclif manifest && oclif readme",
         "postpack": "shx rm -f oclif.manifest.json",
-        "test": "jest",
-        "posttest": "npm run lint",
+        "test": "jest && shx rm -rf local-default.db",
         "version": "oclif readme && git add README.md"
     },
     "jest": {

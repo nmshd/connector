@@ -1,7 +1,10 @@
 import { RuntimeConfig } from "@nmshd/runtime";
+import fs from "fs";
+import { validate as validateSchema } from "jsonschema";
 import _ from "lodash";
 import * as log4js from "log4js";
 import nconf from "nconf";
+import path from "path";
 import { ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
 
 export interface MongoDBSettings {
@@ -64,7 +67,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
         connectorConfig.modules.webhooks = _.defaultsDeep(connectorConfig.modules.webhooksV2, connectorConfig.modules.webhooks);
         delete connectorConfig.modules.webhooksV2;
     }
-
+    validateConnectorConfig(connectorConfig);
     return connectorConfig;
 }
 
@@ -92,5 +95,20 @@ function parseString(value: string) {
         return JSON.parse(value);
     } catch (_) {
         return value;
+    }
+}
+
+function validateConnectorConfig(connectorConfig: ConnectorRuntimeConfig): void {
+    const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
+    const runtimeConfigSchemaString = fs.readFileSync(schemaPath).toString();
+    const runtimeConfigSchema = JSON.parse(runtimeConfigSchemaString);
+    const result = validateSchema(connectorConfig, runtimeConfigSchema);
+    if (!result.valid) {
+        let errorMessage = "The configuration is not valid:";
+        for (const error of result.errors) {
+            errorMessage += `\r\n  - ${error.stack}`;
+        }
+        console.error(errorMessage); // eslint-disable-line no-console
+        throw new Error(errorMessage);
     }
 }

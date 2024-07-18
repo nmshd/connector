@@ -8,9 +8,11 @@ import { Command, Flags } from "@oclif/core";
 import { ConnectorRuntimeConfig, createConnectorConfig, DocumentationLink } from "./connector";
 
 export abstract class BaseCommand extends Command {
-    public static readonly flags = {
+    public static readonly baseFlags = {
         config: Flags.string({ description: "config file", char: "c", default: "./config.json" })
     };
+
+    public static readonly enableJsonFlag = true;
 
     protected transport?: Transport;
     protected connectorConfig?: ConnectorRuntimeConfig;
@@ -42,7 +44,7 @@ export abstract class BaseCommand extends Command {
             this.transport = new Transport(databaseConnection, { ...this.connectorConfig.transportLibrary, supportedIdentityVersion: 1 }, eventBus, logger);
             await this.transport.init();
 
-            await this.runInternal();
+            return await this.runInternal();
         } catch (error: any) {
             this.log("Error creating identity: ", error.stack);
         } finally {
@@ -58,7 +60,7 @@ export abstract class BaseCommand extends Command {
         }
     }
 
-    public abstract runInternal(): Promise<void>;
+    public abstract runInternal(): Promise<any>;
 
     public static async createDBConnection(runtimeConfig: ConnectorRuntimeConfig): Promise<IDatabaseConnection> {
         if (runtimeConfig.database.driver === "lokijs") {
@@ -71,8 +73,7 @@ export abstract class BaseCommand extends Command {
         }
 
         if (!runtimeConfig.database.connectionString) {
-            this.error(`No database connection string provided. See ${DocumentationLink.operate__configuration("database")} on how to configure the database connection.`);
-            process.exit(1);
+            throw new Error(`No database connection string provided. See ${DocumentationLink.operate__configuration("database")} on how to configure the database connection.`);
         }
 
         const mongodbConnection = new MongoDbConnection(runtimeConfig.database.connectionString);
@@ -80,9 +81,7 @@ export abstract class BaseCommand extends Command {
         try {
             await mongodbConnection.connect();
         } catch (e) {
-            this.error(`Could not connect to the configured database. Try to check the connection string and the database status. Root error: ${e}`);
-
-            process.exit(1);
+            throw new Error(`Could not connect to the configured database. Try to check the connection string and the database status. Root error: ${e}`);
         }
 
         return mongodbConnection;
