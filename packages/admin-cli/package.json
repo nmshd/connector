@@ -23,7 +23,8 @@
     ],
     "scripts": {
         "build": "shx rm -rf dist tsconfig.tsbuildinfo && tsc -b && npm run compile-connector && npm run copy-statics",
-        "build:watch": "shx rm -rf dist config tsconfig.tsbuildinfo && tsc -b --watch",
+        "build:ci": "npm run build",
+        "build:watch": "npm run build && tsc -b --watch",
         "compile-connector": "ts-node connectorBundle.ts",
         "copy-statics": "shx cp -r ../../src/jsonSchemas dist/jsonSchemas && shx cp -r ../../config config",
         "prepack": "oclif manifest && oclif readme",
