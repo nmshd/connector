@@ -4,7 +4,7 @@ import { BaseCommand } from "../../BaseCommand";
 export default class IdentityInit extends BaseCommand {
     public static readonly args = {};
 
-    public static readonly description = "Initialize an identity";
+    public static readonly description = "Initialize an identity for a new connector";
 
     public static readonly examples = ["<%= config.bin %> <%= command.id %>"];
 
