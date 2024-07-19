@@ -69,13 +69,6 @@
             "displayName": "Attribute Listener",
             "location": "@nmshd/runtime:AttributeListenerModule"
         },
-        "sync": {
-            "displayName": "Sync",
-            "location": "sync/SyncModule",
-            "enabled": false,
-
-            "interval": 60
-        },
         "autoAcceptRelationshipCreationChanges": {
             "displayName": "Auto Accept Relationship Creation Changes",
             "location": "autoAcceptRelationshipCreationChanges/AutoAcceptRelationshipCreationChangesModule",
@@ -122,6 +115,18 @@
             "displayName": "Message Broker Publisher",
             "location": "messageBrokerPublisher/MessageBrokerPublisherModule",
             "brokers": []
+        },
+        "sync": {
+            "displayName": "Sync",
+            "location": "sync/SyncModule",
+            "enabled": false,
+
+            "interval": 60
+        },
+        "sse": {
+            "enabled": false,
+            "displayName": "Server Sent Events",
+            "location": "sse/SseModule"
         }
     }
 }
