@@ -1,5 +1,6 @@
-import { AccountController } from "@nmshd/transport";
+import { AccountController, Transport } from "@nmshd/transport";
 import { BaseCommand } from "../../BaseCommand";
+import { ConnectorRuntimeConfig } from "../../connector";
 
 export default class IdentityInit extends BaseCommand {
     public static readonly args = {};
@@ -8,18 +9,15 @@ export default class IdentityInit extends BaseCommand {
 
     public static readonly examples = ["<%= config.bin %> <%= command.id %>"];
 
-    public async runInternal(): Promise<{ message: string }> {
-        if (!this.transport || !this.connectorConfig) {
-            throw new Error("Transport or connectorConfig not initialized");
-        }
-        const db = await this.transport.createDatabase(`${this.connectorConfig.database.dbNamePrefix}${this.connectorConfig.database.dbName}`);
+    public async runInternal(transport: Transport, connectorConfig: ConnectorRuntimeConfig): Promise<{ message: string }> {
+        const db = await transport.createDatabase(`${connectorConfig.database.dbNamePrefix}${connectorConfig.database.dbName}`);
         const identityCollection = await db.getMap("AccountInfo");
         const identity = await identityCollection.get("identity");
         if (identity) {
             this.log("Identity already created!");
             return { message: "Identity already created!" };
         }
-        const accoutController = new AccountController(this.transport, db, this.transport.config);
+        const accoutController = new AccountController(transport, db, transport.config);
         await accoutController.init();
 
         this.log("Identity created successfully!");

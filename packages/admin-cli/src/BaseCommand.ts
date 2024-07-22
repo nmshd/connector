@@ -14,8 +14,8 @@ export abstract class BaseCommand extends Command {
 
     public static readonly enableJsonFlag = true;
 
-    protected transport?: Transport;
-    protected connectorConfig?: ConnectorRuntimeConfig;
+    private transport?: Transport;
+    private connectorConfig?: ConnectorRuntimeConfig;
 
     public async run(): Promise<void> {
         const { flags } = await this.parse(BaseCommand);
@@ -43,8 +43,7 @@ export abstract class BaseCommand extends Command {
 
             this.transport = new Transport(databaseConnection, { ...this.connectorConfig.transportLibrary, supportedIdentityVersion: 1 }, eventBus, logger);
             await this.transport.init();
-
-            return await this.runInternal();
+            return await this.runInternal(this.transport, this.connectorConfig);
         } catch (error: any) {
             this.log("Error creating identity: ", error.stack);
         } finally {
@@ -60,7 +59,7 @@ export abstract class BaseCommand extends Command {
         }
     }
 
-    public abstract runInternal(): Promise<any>;
+    public abstract runInternal(transport: Transport, connectorConfig: ConnectorRuntimeConfig): Promise<any>;
 
     public static async createDBConnection(runtimeConfig: ConnectorRuntimeConfig): Promise<IDatabaseConnection> {
         if (runtimeConfig.database.driver === "lokijs") {

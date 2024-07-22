@@ -1,14 +1,18 @@
 import { IDatabaseConnection } from "@js-soft/docdb-access-abstractions";
-import { ConsumptionServices, DataViewExpander, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
+import { ApplicationError } from "@js-soft/ts-utils";
+import { ConsumptionController } from "@nmshd/consumption";
+import { ConsumptionServices, DataViewExpander, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
+import { AccountController, CoreErrors as TransportCoreErrors } from "@nmshd/transport";
 import { BaseCommand } from "./BaseCommand";
 import { ConnectorRuntimeConfig } from "./connector";
 
 export class CLIRuntime extends Runtime<ConnectorRuntimeConfig> {
-    private readonly _transportServices: TransportServices;
-    private readonly _consumptionServices: ConsumptionServices;
-    private readonly _dataViewExpander: DataViewExpander;
-    private readonly connectorConfig: ConnectorRuntimeConfig;
-    private getServices(): RuntimeServices {
+    private _transportServices: TransportServices;
+    private _consumptionServices: ConsumptionServices;
+    private _dataViewExpander: DataViewExpander;
+    private accountController: AccountController;
+
+    public getServices(): RuntimeServices {
         return {
             transportServices: this._transportServices,
             consumptionServices: this._consumptionServices,
@@ -16,15 +20,53 @@ export class CLIRuntime extends Runtime<ConnectorRuntimeConfig> {
         };
     }
     protected createDatabaseConnection(): Promise<IDatabaseConnection> {
-        return BaseCommand.createDBConnection(this.connectorConfig);
+        return BaseCommand.createDBConnection(this.runtimeConfig);
     }
-    protected initAccount(): Promise<void> {
-        throw new Error("Method not implemented.");
+    protected async initAccount(): Promise<void> {
+        const db = await this.transport.createDatabase(`${this.runtimeConfig.database.dbNamePrefix}${this.runtimeConfig.database.dbName}`);
+
+        this.accountController = await new AccountController(this.transport, db, this.transport.config).init().catch((e) => {
+            if (e instanceof ApplicationError && e.code === "error.transport.general.platformClientInvalid") {
+                this.logger.error(TransportCoreErrors.general.platformClientInvalid().message);
+                process.exit(1);
+            }
+
+            throw e;
+        });
+        const consumptionController = await new ConsumptionController(this.transport, this.accountController).init();
+
+        await this.checkDeviceCredentials(this.accountController);
+
+        ({
+            transportServices: this._transportServices,
+            consumptionServices: this._consumptionServices,
+            dataViewExpander: this._dataViewExpander
+        } = await this.login(this.accountController, consumptionController));
     }
-    getHealth(): Promise<RuntimeHealth> {
-        throw new Error("Method not implemented.");
+
+    private async checkDeviceCredentials(accountController: AccountController) {
+        try {
+            await accountController.authenticator.getToken();
+        } catch (e) {
+            if (e instanceof ApplicationError && e.code === "error.transport.request.noAuthGrant") {
+                this.logger.error(TransportCoreErrors.general.platformClientInvalid().message);
+                process.exit(1);
+            }
+        }
     }
-    protected loadModule(moduleConfiguration: ModuleConfiguration): Promise<void> {
-        throw new Error("Method not implemented.");
+
+    public getHealth(): Promise<RuntimeHealth> {
+        return Promise.resolve({
+            isHealthy: true,
+            services: {
+                transport: "healthy"
+            }
+        });
+    }
+    protected loadModule(): Promise<void> {
+        return Promise.resolve();
+    }
+    public async stop(): Promise<void> {
+        await super.stop();
     }
 }
