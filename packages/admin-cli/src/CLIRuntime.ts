@@ -63,6 +63,7 @@ export class CLIRuntime extends Runtime<ConnectorRuntimeConfig> {
             }
         });
     }
+
     protected loadModule(): Promise<void> {
         return Promise.resolve();
     }

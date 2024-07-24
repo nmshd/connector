@@ -29,7 +29,7 @@
         "copy-statics": "shx cp -r ../../src/jsonSchemas dist/jsonSchemas && shx cp -r ../../config config",
         "prepack": "oclif manifest && oclif readme",
         "postpack": "shx rm -f oclif.manifest.json",
-        "test": "jest && shx rm -rf local-default.db",
+        "test": "shx rm -rf cliTest-*.db && jest",
         "version": "oclif readme && git add README.md"
     },
     "jest": {
@@ -73,7 +73,8 @@
         "@oclif/core": "^4.0.12",
         "@oclif/plugin-autocomplete": "3.1.7",
         "@oclif/plugin-help": "^6.2.6",
-        "@oclif/plugin-plugins": "^5.3.7"
+        "@oclif/plugin-plugins": "^5.3.7",
+        "shelljs": "^0.8.5"
     },
     "devDependencies": {
         "@oclif/prettier-config": "^0.2.1",

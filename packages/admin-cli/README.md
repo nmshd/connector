@@ -32,6 +32,11 @@ USAGE
 * [`connector-admin autocomplete [SHELL]`](#connector-admin-autocomplete-shell)
 * [`connector-admin help [COMMAND]`](#connector-admin-help-command)
 * [`connector-admin identity init`](#connector-admin-identity-init)
+* [`connector-admin identity status`](#connector-admin-identity-status)
+* [`connector-admin identityDeletion approve`](#connector-admin-identitydeletion-approve)
+* [`connector-admin identityDeletion cancel`](#connector-admin-identitydeletion-cancel)
+* [`connector-admin identityDeletion init`](#connector-admin-identitydeletion-init)
+* [`connector-admin identityDeletion reject`](#connector-admin-identitydeletion-reject)
 
 ## `connector-admin autocomplete [SHELL]`
 
@@ -86,21 +91,139 @@ _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.6
 
 ## `connector-admin identity init`
 
-Initialize an identity
+Initialize an identity for a new connector
 
 ```
 USAGE
-  $ connector-admin identity init [-c <value>]
+  $ connector-admin identity init [--json] [-c <value>]
 
 FLAGS
   -c, --config=<value>  [default: ./config.json] config file
 
+GLOBAL FLAGS
+  --json  Format output as json.
+
 DESCRIPTION
-  Initialize an identity
+  Initialize an identity for a new connector
 
 EXAMPLES
   $ connector-admin identity init
 ```
 
 _See code: [dist/commands/identity/init.js](https://github.com/packages/connector-admin-cli/blob/v1.0.0/dist/commands/identity/init.js)_
+
+## `connector-admin identity status`
+
+Get the current status of you identity
+
+```
+USAGE
+  $ connector-admin identity status [--json] [-c <value>]
+
+FLAGS
+  -c, --config=<value>  [default: ./config.json] config file
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Get the current status of you identity
+
+EXAMPLES
+  $ connector-admin identity status
+```
+
+_See code: [dist/commands/identity/status.js](https://github.com/packages/connector-admin-cli/blob/v1.0.0/dist/commands/identity/status.js)_
+
+## `connector-admin identityDeletion approve`
+
+Initialize an identity deletion
+
+```
+USAGE
+  $ connector-admin identityDeletion approve [--json] [-c <value>]
+
+FLAGS
+  -c, --config=<value>  [default: ./config.json] config file
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Initialize an identity deletion
+
+EXAMPLES
+  $ connector-admin identityDeletion approve
+```
+
+_See code: [dist/commands/identityDeletion/approve.js](https://github.com/packages/connector-admin-cli/blob/v1.0.0/dist/commands/identityDeletion/approve.js)_
+
+## `connector-admin identityDeletion cancel`
+
+Initialize an identity deletion
+
+```
+USAGE
+  $ connector-admin identityDeletion cancel [--json] [-c <value>]
+
+FLAGS
+  -c, --config=<value>  [default: ./config.json] config file
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Initialize an identity deletion
+
+EXAMPLES
+  $ connector-admin identityDeletion cancel
+```
+
+_See code: [dist/commands/identityDeletion/cancel.js](https://github.com/packages/connector-admin-cli/blob/v1.0.0/dist/commands/identityDeletion/cancel.js)_
+
+## `connector-admin identityDeletion init`
+
+Initialize an identity deletion
+
+```
+USAGE
+  $ connector-admin identityDeletion init [--json] [-c <value>]
+
+FLAGS
+  -c, --config=<value>  [default: ./config.json] config file
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Initialize an identity deletion
+
+EXAMPLES
+  $ connector-admin identityDeletion init
+```
+
+_See code: [dist/commands/identityDeletion/init.js](https://github.com/packages/connector-admin-cli/blob/v1.0.0/dist/commands/identityDeletion/init.js)_
+
+## `connector-admin identityDeletion reject`
+
+Initialize an identity deletion
+
+```
+USAGE
+  $ connector-admin identityDeletion reject [--json] [-c <value>]
+
+FLAGS
+  -c, --config=<value>  [default: ./config.json] config file
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Initialize an identity deletion
+
+EXAMPLES
+  $ connector-admin identityDeletion reject
+```
+
+_See code: [dist/commands/identityDeletion/reject.js](https://github.com/packages/connector-admin-cli/blob/v1.0.0/dist/commands/identityDeletion/reject.js)_
 <!-- commandsstop -->

@@ -38,6 +38,25 @@ services:
       - source: Config
         target: app/appsettings.override.json
 
+  admin-ui:
+    image: ghcr.io/nmshd/backbone-admin-ui:${BACKBONE_VERSION}
+    container_name: admin-ui
+    hostname: admin-ui
+    ports:
+      - "8091:8080"
+    depends_on:
+      database:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      consumer-api:
+        condition: service_healthy
+      database-migrator:
+        condition: service_completed_successfully
+    configs:
+      - source: Config
+        target: app/appsettings.override.json
+
   sse-server:
     image: ghcr.io/nmshd/backbone-sse-server:${BACKBONE_VERSION}
     container_name: sse-server
@@ -74,6 +93,8 @@ services:
     environment:
       - POSTGRES_PASSWORD=Passw0rd
       - POSTGRES_DB=enmeshed
+    ports:
+      - 5432:5432
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 5s
@@ -85,11 +106,15 @@ services:
     hostname: azurite
     image: mcr.microsoft.com/azure-storage/azurite
     command: azurite -d /data/debug.log -l /data --blobHost "0.0.0.0" --queueHost "0.0.0.0"
+    ports:
+      - "10000:10000"
 
   rabbitmq:
     container_name: bkb-rabbitmq
     hostname: rabbitmq
     image: rabbitmq:3.12.10-management-alpine
+    ports:
+      - "5672:5672"
 
   ### seeds ###
 
