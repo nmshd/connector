@@ -40,10 +40,10 @@ jobs:
         with:
           node-version: current
       - run: npm ci
-      - run: npm run build --workspace=packages/admin-cli
+      - run: npm run build:ci --workspaces
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@v1
-      - run: npm run test:cli --workspaces=packages/admin-cli
+      - run: npm run test --workspace=packages/admin-cli
         env:
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017
           NMSHD_TEST_BASEURL: http://localhost:8090
