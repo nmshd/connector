@@ -4,37 +4,46 @@ import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { EventEmitter2EventBus } from "@js-soft/ts-utils";
 import { Transport } from "@nmshd/transport";
-import { Command, Flags } from "@oclif/core";
+import yargs from "yargs";
 import { ConnectorRuntimeConfig, createConnectorConfig, DocumentationLink } from "./connector";
 
-export abstract class BaseCommand extends Command {
-    public static readonly baseFlags = {
-        config: Flags.string({ description: "config file", char: "c", default: "./config.json" })
-    };
+export interface ConfigFileOptions {
+    config: string | undefined;
+}
 
-    public static readonly enableJsonFlag = true;
+export const configOptionBuilder = (yargs: yargs.Argv<{}>): yargs.Argv<ConfigFileOptions> => {
+    return yargs.option("config", {
+        alias: "c",
+        describe: "Path to the custom configuration file",
+        type: "string",
+        demandOption: false
+    });
+};
 
+export abstract class BaseCommand {
     protected transport?: Transport;
     protected connectorConfig?: ConnectorRuntimeConfig;
+    protected log = console;
 
-    public async run(): Promise<void> {
-        const { flags } = await this.parse(BaseCommand);
-        process.env.CUSTOM_CONFIG_LOCATION = flags.config;
-
-        this.connectorConfig = createConnectorConfig();
-        this.connectorConfig.transportLibrary.allowIdentityCreation = true;
-        this.connectorConfig.logging = {
-            appenders: {
-                console: { type: "console" }
-            },
-            categories: {
-                default: { appenders: ["console"], level: "OFF" }
-            }
-        };
+    public async run(configPath: string | undefined): Promise<void> {
+        if (configPath) {
+            process.env.CUSTOM_CONFIG_LOCATION = configPath;
+        }
 
         let databaseConnection;
         let logger;
         try {
+            this.connectorConfig = createConnectorConfig();
+            this.connectorConfig.transportLibrary.allowIdentityCreation = true;
+            this.connectorConfig.logging = {
+                appenders: {
+                    console: { type: "console" }
+                },
+                categories: {
+                    default: { appenders: ["console"], level: "OFF" }
+                }
+            };
+
             const eventBus = new EventEmitter2EventBus(() => {
                 // ignore errors
             });
@@ -46,7 +55,7 @@ export abstract class BaseCommand extends Command {
 
             return await this.runInternal();
         } catch (error: any) {
-            this.log("Error creating identity: ", error.stack);
+            this.log.error("Error creating identity: ", error.message);
         } finally {
             if (databaseConnection) {
                 await databaseConnection.close();

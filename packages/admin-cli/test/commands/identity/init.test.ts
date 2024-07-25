@@ -1,15 +1,23 @@
 import { IDatabaseMap } from "@js-soft/docdb-access-abstractions";
-import { runCommand } from "@oclif/test";
 import { BaseCommand } from "../../../src/BaseCommand";
+import { identityInitHandler } from "../../../src/commands/identity/init";
 import { ConnectorRuntimeConfig, createConnectorConfig } from "../../../src/connector";
 import { setupEnviroment } from "../../setup";
 
 describe("identity init", () => {
     let accountInfo: IDatabaseMap;
     let config: ConnectorRuntimeConfig;
+    let originalArgv: any;
     beforeAll(() => {
         setupEnviroment();
         config = createConnectorConfig();
+    });
+
+    afterEach(() => {
+        jest.resetAllMocks();
+
+        // Set process arguments back to the original value
+        process.argv = originalArgv;
     });
 
     beforeEach(async () => {
@@ -24,20 +32,23 @@ describe("identity init", () => {
         }
         // need to close as the data is only written to disk when the connection is closed
         await dbConnection.close();
+
+        // Remove all cached modules. The cache needs to be cleared before running
+        // each command, otherwise you will see the same results from the command
+        // run in your first test in subsequent tests.
+        jest.resetModules();
+
+        // Each test overwrites process arguments so store the original arguments
+        originalArgv = process.argv;
     });
 
     test("identity creation", async () => {
-        let result = await runCommand("identity init");
-        expect(result.stdout.trim()).toContain("Identity created successfully!");
-
-        result = await runCommand("identity init");
-        expect(result.stdout.trim()).toContain("Identity already created!");
-    });
-    test("identity creation json output", async () => {
-        let result = await runCommand("identity init --json");
-        expect(result.result).toStrictEqual({ message: "Identity created successfully!" });
-
-        result = await runCommand("identity init --json");
-        expect(result.result).toStrictEqual({ message: "Identity already created!" });
+        const consoleSpy = jest.spyOn(console, "log");
+        await identityInitHandler({ config: undefined });
+        expect(consoleSpy).toHaveBeenCalledWith("Identity created successfully!");
+        expect(consoleSpy).toHaveBeenCalledTimes(1);
+        await identityInitHandler({ config: undefined });
+        expect(consoleSpy).toHaveBeenCalledWith("Identity already created!");
+        expect(consoleSpy).toHaveBeenCalledTimes(2);
     });
 });
