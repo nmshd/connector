@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 import yargs from "yargs";
-import { createLogger } from "./BaseCommand";
 import { yargsIdentityInitCommand } from "./commands/identity/init";
 
-const log = createLogger("admin-cli");
 const argv = yargs(process.argv.slice(2))
     .command({
         command: "identity",
@@ -22,6 +20,7 @@ const argv = yargs(process.argv.slice(2))
     .parse();
 
 Promise.resolve(argv).catch((e) => {
-    log.error(e);
+    // eslint-disable-next-line no-console
+    console.error(e);
     process.exit(1);
 });
