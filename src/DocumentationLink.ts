@@ -6,11 +6,11 @@ export class DocumentationLink {
         return this.build("integrate", "error-codes", anchor);
     }
 
-    public static operate__configuration(anchor?: string): string {
-        return this.build("operate", "configuration", anchor);
+    public static operate__configuration(anchor = ""): string {
+        return this.build("operate", "configuration", anchor.toLocaleLowerCase());
     }
 
     private static build(site: string, subSite: string, anchor = "") {
-        return `${DocumentationLink.baseUrl}/${site}/${subSite}#${anchor.toLowerCase()}`;
+        return `${DocumentationLink.baseUrl}/${site}/${subSite}#${anchor}`;
     }
 }
