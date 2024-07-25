@@ -50,7 +50,7 @@ describe("Errors", () => {
             }
         });
         expect(response.status).toBe(400);
-        expect(response.data.error.docs).toBe('https://enmeshed.eu/integrate/error-codes#error.runtime.validation.invalidPropertyValue');
+        expect(response.data.error.docs).toBe("https://enmeshed.eu/integrate/error-codes#error.runtime.validation.invalidPropertyValue");
         validateSchema(ValidationSchema.Error, response.data.error);
     });
 });
