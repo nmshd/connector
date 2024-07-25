@@ -13,13 +13,10 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "bin": {
-        "connector-admin": "./bin/run.js"
+        "connector-admin": "./dist/index.js"
     },
     "files": [
-        "/bin",
-        "/dist",
-        "/config",
-        "/oclif.manifest.json"
+        "/TODO"
     ],
     "scripts": {
         "build": "shx rm -rf dist tsconfig.tsbuildinfo && tsc -b && npm run compile-connector && npm run copy-statics",
@@ -50,41 +47,15 @@
             ]
         }
     },
-    "oclif": {
-        "bin": "connector-admin",
-        "commands": "./dist/commands",
-        "dirname": "connector-admin",
-        "hooks": {
-            "init": "./dist/hooks/init/init"
-        },
-        "plugins": [
-            "@oclif/plugin-help",
-            "@oclif/plugin-autocomplete"
-        ],
-        "topicSeparator": " ",
-        "topics": {
-            "hello": {
-                "description": "Say hello to the world and others"
-            }
-        }
-    },
     "dependencies": {
         "@nmshd/transport": "^2.8.2",
-        "@oclif/core": "^4.0.12",
-        "@oclif/plugin-autocomplete": "3.1.7",
-        "@oclif/plugin-help": "^6.2.6",
-        "@oclif/plugin-plugins": "^5.3.7",
-        "shelljs": "^0.8.5"
+        "@nmshd/runtime": "4.14.1",
+        "yargs": "^17.7.2"
     },
     "devDependencies": {
-        "@oclif/prettier-config": "^0.2.1",
-        "@oclif/test": "^4.0.4",
+        "shelljs": "^0.8.5",
+        "@types/yargs": "^17.0.32",
         "esbuild": "0.23.0",
-        "eslint": "^8.57.0",
-        "eslint-config-oclif": "^5",
-        "eslint-config-oclif-typescript": "^3",
-        "eslint-config-prettier": "^9",
-        "oclif": "^4",
         "shx": "^0.3.4"
     },
     "engines": {

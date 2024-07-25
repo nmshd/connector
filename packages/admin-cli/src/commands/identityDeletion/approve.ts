@@ -15,9 +15,9 @@ export default class ApproveIdentityDeletion extends BaseCommand {
         const identityDeletionApprovalResult = await this.cliRuitime.getServices().transportServices.identityDeletionProcesses.approveIdentityDeletionProcess();
 
         if (identityDeletionApprovalResult.isSuccess) {
-            this.log("Identity deletion approved");
+            this.log.log("Identity deletion approved");
             return identityDeletionApprovalResult.value;
         }
-        this.log(identityDeletionApprovalResult.error.toString());
+        this.log.log(identityDeletionApprovalResult.error.toString());
     }
 }

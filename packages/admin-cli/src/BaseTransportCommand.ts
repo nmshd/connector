@@ -5,10 +5,6 @@ import { BaseCommand } from "./BaseCommand";
 import { ConnectorRuntimeConfig } from "./connector";
 
 export abstract class BaseTransportCommand extends BaseCommand {
-    public static readonly baseFlags = {
-        ...BaseCommand.baseFlags
-    };
-
     private transport?: Transport;
 
     protected async runInternal(connectorConfig: ConnectorRuntimeConfig): Promise<void> {
@@ -25,7 +21,7 @@ export abstract class BaseTransportCommand extends BaseCommand {
             await this.transport.init();
             return await this.runInternalWithTransport(this.transport, connectorConfig);
         } catch (error: any) {
-            this.log("Error creating identity: ", error.stack);
+            this.log.log("Error creating identity: ", error.stack);
         } finally {
             if (databaseConnection) {
                 await databaseConnection.close();

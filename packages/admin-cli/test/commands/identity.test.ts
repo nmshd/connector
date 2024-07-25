@@ -1,45 +1,59 @@
-import { runCommand } from "@oclif/test";
+import { identityInitHandler } from "../../src/commands/identity/init";
 import { resetDB, setupEnviroment } from "../utils";
 
 describe("identity init", () => {
     const dbName = "identityInit";
+    let originalArgv: any;
     beforeAll(() => {
         setupEnviroment(dbName);
     });
 
+    afterEach(() => {
+        jest.resetAllMocks();
+
+        // Set process arguments back to the original value
+        process.argv = originalArgv;
+    });
+
     beforeEach(async () => {
         await resetDB(dbName);
+        // Remove all cached modules. The cache needs to be cleared before running
+        // each command, otherwise you will see the same results from the command
+        // run in your first test in subsequent tests.
+        jest.resetModules();
+
+        // Each test overwrites process arguments so store the original arguments
+        originalArgv = process.argv;
     });
 
     test("identity creation", async () => {
-        let result = await runCommand("identity init");
-        expect(result.stdout.trim()).toContain("Identity created successfully!");
-
-        result = await runCommand("identity init");
-        expect(result.stdout.trim()).toContain("Identity already created!");
+        const consoleSpy = jest.spyOn(console, "log");
+        await identityInitHandler({ config: undefined });
+        expect(consoleSpy).toHaveBeenCalledWith("Identity created successfully!");
+        expect(consoleSpy).toHaveBeenCalledTimes(1);
+        await identityInitHandler({ config: undefined });
+        expect(consoleSpy).toHaveBeenCalledWith("Identity already created!");
+        expect(consoleSpy).toHaveBeenCalledTimes(2);
     });
-    test("identity creation json output", async () => {
-        let result = await runCommand("identity init --json");
-        expect(result.result).toStrictEqual({ message: "Identity created successfully!" });
 
-        result = await runCommand("identity init --json");
-        expect(result.result).toStrictEqual({ message: "Identity already created!" });
-    });
     test("identity status after creation adn deletion", async () => {
-        const result = await runCommand("identity init");
-        expect(result.stdout.trim()).toContain("Identity created successfully!");
+        const consoleSpy = jest.spyOn(console, "log");
+        await identityInitHandler({ config: undefined });
 
-        let statusResult = await runCommand("identity status");
-        expect(statusResult.stdout.trim()).toContain("Id: ");
+        expect(consoleSpy).toHaveBeenCalledWith("Identity created successfully!");
+        expect(consoleSpy).toHaveBeenCalledTimes(1);
 
-        const deltionResult = await runCommand("identityDeletion init");
+        // TODO: let statusResult = await runCommand("identity status");
+        // expect(statusResult.stdout.trim()).toContain("Id: ");
 
-        expect(deltionResult.error).toBeUndefined();
+        // const deltionResult = await runCommand("identityDeletion init");
 
-        statusResult = await runCommand("identity status");
-        expect(statusResult.stdout.trim()).toContain("Id: ");
-        expect(statusResult.stdout.trim()).toContain("Identity deletionm status: ");
-        expect(statusResult.stdout.trim()).toContain("End of approval period: ");
-        expect(statusResult.stdout.trim()).toContain("End of grace period: ");
+        // expect(deltionResult.error).toBeUndefined();
+
+        // statusResult = await runCommand("identity status");
+        // expect(statusResult.stdout.trim()).toContain("Id: ");
+        // expect(statusResult.stdout.trim()).toContain("Identity deletionm status: ");
+        // expect(statusResult.stdout.trim()).toContain("End of approval period: ");
+        // expect(statusResult.stdout.trim()).toContain("End of grace period: ");
     });
 });

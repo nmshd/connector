@@ -15,9 +15,9 @@ export default class InitIdentityDeletion extends BaseCommand {
         const identityDeletionInitResult = await this.cliRuitime.getServices().transportServices.identityDeletionProcesses.initiateIdentityDeletionProcess();
 
         if (identityDeletionInitResult.isSuccess) {
-            this.log("Identity deletion initiated");
+            this.log.log("Identity deletion initiated");
             return identityDeletionInitResult.value;
         }
-        this.log(identityDeletionInitResult.error.toString());
+        this.log.log(identityDeletionInitResult.error.toString());
     }
 }

@@ -15,9 +15,9 @@ export default class CancelIdentityDeletion extends BaseCommand {
         const identityDeletionCancelationResult = await this.cliRuitime.getServices().transportServices.identityDeletionProcesses.cancelIdentityDeletionProcess();
 
         if (identityDeletionCancelationResult.isSuccess) {
-            this.log("Identity deletion canceled");
+            this.log.log("Identity deletion canceled");
             return identityDeletionCancelationResult.value;
         }
-        this.log(identityDeletionCancelationResult.error.toString());
+        this.log.log(identityDeletionCancelationResult.error.toString());
     }
 }

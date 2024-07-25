@@ -15,9 +15,9 @@ export default class RejectIdentityDeletion extends BaseCommand {
         const identityDeletionRejectionResult = await this.cliRuitime.getServices().transportServices.identityDeletionProcesses.rejectIdentityDeletionProcess();
 
         if (identityDeletionRejectionResult.isSuccess) {
-            this.log("Identity deletion rejected");
+            this.log.log("Identity deletion rejected");
             return identityDeletionRejectionResult.value;
         }
-        this.log(identityDeletionRejectionResult.error.toString());
+        this.log.log(identityDeletionRejectionResult.error.toString());
     }
 }

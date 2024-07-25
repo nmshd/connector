@@ -25,13 +25,13 @@ export class IdentityStatus extends BaseCommand {
             const identityDeletionProcessesResult = await this.cliRuitime.getServices().transportServices.identityDeletionProcesses.getActiveIdentityDeletionProcess();
 
             const identityInfo = identityInfoResult.value;
-            this.log(`Id: ${identityInfo.address}`);
+            this.log.log(`Id: ${identityInfo.address}`);
             let activeIdentityDeletion = {};
             if (identityDeletionProcessesResult.isSuccess) {
                 const identityDeletionProcesses = identityDeletionProcessesResult.value;
-                this.log(`Identity deletionm status: ${identityDeletionProcesses.status}`);
-                this.log(`End of approval period: ${identityDeletionProcesses.approvalPeriodEndsAt}`);
-                this.log(`End of grace period: ${identityDeletionProcesses.gracePeriodEndsAt}`);
+                this.log.log(`Identity deletionm status: ${identityDeletionProcesses.status}`);
+                this.log.log(`End of approval period: ${identityDeletionProcesses.approvalPeriodEndsAt}`);
+                this.log.log(`End of grace period: ${identityDeletionProcesses.gracePeriodEndsAt}`);
                 activeIdentityDeletion = {
                     status: identityDeletionProcesses.status,
                     approvalPeriodEndsAt: identityDeletionProcesses.approvalPeriodEndsAt,
@@ -43,7 +43,7 @@ export class IdentityStatus extends BaseCommand {
                 activeIdentityDeletion
             };
         } catch (e: any) {
-            this.error(e);
+            this.log.error(e);
         }
     }
 }

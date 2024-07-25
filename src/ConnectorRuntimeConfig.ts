@@ -108,7 +108,6 @@ function validateConnectorConfig(connectorConfig: ConnectorRuntimeConfig): void 
         for (const error of result.errors) {
             errorMessage += `\r\n  - ${error.stack}`;
         }
-        console.error(errorMessage); // eslint-disable-line no-console
         throw new Error(errorMessage);
     }
 }

@@ -2,17 +2,27 @@ import { IDatabaseConnection } from "@js-soft/docdb-access-abstractions";
 import { LokiJsConnection } from "@js-soft/docdb-access-loki";
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
-import { Command, Flags } from "@oclif/core";
+import yargs from "yargs";
 import { CLIRuntime } from "./CLIRuntime";
 import { ConnectorRuntimeConfig, createConnectorConfig, DocumentationLink } from "./connector";
 
-export abstract class BaseCommand extends Command {
-    public static readonly baseFlags = {
-        config: Flags.string({ description: "config file", char: "c", default: "./config.json" })
-    };
+export interface ConfigFileOptions {
+    config: string | undefined;
+}
 
+export const configOptionBuilder = (yargs: yargs.Argv<{}>): yargs.Argv<ConfigFileOptions> => {
+    return yargs.option("config", {
+        alias: "c",
+        describe: "Path to the custom configuration file",
+        type: "string",
+        demandOption: false
+    });
+};
+
+export abstract class BaseCommand {
     private connectorConfig?: ConnectorRuntimeConfig;
     protected cliRuitime?: CLIRuntime;
+    protected log = console;
 
     public static readonly enableJsonFlag = true;
 
@@ -41,20 +51,22 @@ export abstract class BaseCommand extends Command {
         return mongodbConnection;
     }
 
-    public async run(): Promise<any> {
-        const { flags } = await this.parse(BaseCommand);
-        process.env.CUSTOM_CONFIG_LOCATION = flags.config;
-        this.connectorConfig = createConnectorConfig();
-        this.connectorConfig.logging = {
-            appenders: {
-                console: { type: "console" }
-            },
-            categories: {
-                default: { appenders: ["console"], level: "OFF" }
-            }
-        };
-        this.connectorConfig = this.enhanceConfig(this.connectorConfig);
+    public async run(configPath: string | undefined): Promise<any> {
+        if (configPath) {
+            process.env.CUSTOM_CONFIG_LOCATION = configPath;
+        }
+
         try {
+            this.connectorConfig = createConnectorConfig();
+            this.connectorConfig.logging = {
+                appenders: {
+                    console: { type: "console" }
+                },
+                categories: {
+                    default: { appenders: ["console"], level: "OFF" }
+                }
+            };
+            this.connectorConfig = this.enhanceConfig(this.connectorConfig);
             return await this.runInternal(this.connectorConfig);
         } finally {
             if (this.cliRuitime) {
