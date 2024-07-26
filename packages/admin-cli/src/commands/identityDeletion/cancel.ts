@@ -1,22 +1,28 @@
-import { IdentityDeletionProcessDTO } from "@nmshd/runtime";
-import { BaseCommand } from "../../BaseCommand";
+import { CommandModule } from "yargs";
+import { BaseCommand, ConfigFileOptions, configOptionBuilder } from "../../BaseCommand";
+
+export const identityDeletionCancelHandler = async ({ config }: ConfigFileOptions): Promise<void> => {
+    await new CancelIdentityDeletion().run(config);
+};
+export const yargsIdentityDeletionCancelCommand: CommandModule<{}, ConfigFileOptions> = {
+    command: "cancel",
+    describe: "approve the identity deletion",
+    handler: identityDeletionCancelHandler,
+    builder: configOptionBuilder
+};
 
 export default class CancelIdentityDeletion extends BaseCommand {
-    public static readonly description = "Initialize an identity deletion";
-
-    public static readonly examples = ["<%= config.bin %> <%= command.id %>"];
-
-    protected async runInternal(): Promise<IdentityDeletionProcessDTO | void> {
+    protected async runInternal(): Promise<void> {
         await this.createRuntime();
-        if (!this.cliRuitime) {
-            throw new Error("Faild to iniziialize runtime");
+        if (!this.cliRuntime) {
+            throw new Error("Failed to initialize runtime");
         }
 
-        const identityDeletionCancelationResult = await this.cliRuitime.getServices().transportServices.identityDeletionProcesses.cancelIdentityDeletionProcess();
+        const identityDeletionCancelationResult = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.cancelIdentityDeletionProcess();
 
         if (identityDeletionCancelationResult.isSuccess) {
             this.log.log("Identity deletion canceled");
-            return identityDeletionCancelationResult.value;
+            return;
         }
         this.log.log(identityDeletionCancelationResult.error.toString());
     }

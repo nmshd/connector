@@ -1,47 +1,37 @@
-import { BaseCommand } from "../../BaseCommand";
+import { CommandModule } from "yargs";
+import { BaseCommand, ConfigFileOptions, configOptionBuilder } from "../../BaseCommand";
 
-export interface IdentityStatusCommandJSON {
-    address: string;
-    activeIdentityDeletion: {
-        status: string;
-        approvalPeriodEndsAt: string;
-        gracePeriodEndsAt: string;
-    };
-}
+export const identityStatusHandler = async ({ config }: ConfigFileOptions): Promise<void> => {
+    await new IdentityStatus().run(config);
+};
+export const yargsIdentityStatusCommand: CommandModule<{}, ConfigFileOptions> = {
+    command: "status",
+    describe: "show the status of the identity",
+    handler: identityStatusHandler,
+    builder: configOptionBuilder
+};
 
 export class IdentityStatus extends BaseCommand {
-    public static readonly description = "Get the current status of you identity";
-
-    public static readonly examples = ["<%= config.bin %> <%= command.id %>"];
-
-    protected async runInternal(): Promise<any> {
+    protected async runInternal(): Promise<void> {
         await this.createRuntime();
-        if (!this.cliRuitime) {
-            throw new Error("Faild to iniziialize runtime");
+        if (!this.cliRuntime) {
+            throw new Error("Failed to inizitialize runtime");
         }
 
         try {
-            const identityInfoResult = await this.cliRuitime.getServices().transportServices.account.getIdentityInfo();
-            const identityDeletionProcessesResult = await this.cliRuitime.getServices().transportServices.identityDeletionProcesses.getActiveIdentityDeletionProcess();
+            const identityInfoResult = await this.cliRuntime.getServices().transportServices.account.getIdentityInfo();
+            const identityDeletionProcessesResult = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.getActiveIdentityDeletionProcess();
 
             const identityInfo = identityInfoResult.value;
-            this.log.log(`Id: ${identityInfo.address}`);
-            let activeIdentityDeletion = {};
+            let message = `Id: ${identityInfo.address}`;
+
             if (identityDeletionProcessesResult.isSuccess) {
                 const identityDeletionProcesses = identityDeletionProcessesResult.value;
-                this.log.log(`Identity deletionm status: ${identityDeletionProcesses.status}`);
-                this.log.log(`End of approval period: ${identityDeletionProcesses.approvalPeriodEndsAt}`);
-                this.log.log(`End of grace period: ${identityDeletionProcesses.gracePeriodEndsAt}`);
-                activeIdentityDeletion = {
-                    status: identityDeletionProcesses.status,
-                    approvalPeriodEndsAt: identityDeletionProcesses.approvalPeriodEndsAt,
-                    gracePeriodEndsAt: identityDeletionProcesses.gracePeriodEndsAt
-                };
+                message += `\nIdentity deletionm status: ${identityDeletionProcesses.status}`;
+                message += `\nEnd of approval period: ${identityDeletionProcesses.approvalPeriodEndsAt}`;
+                message += `\nEnd of grace period: ${identityDeletionProcesses.gracePeriodEndsAt}`;
             }
-            return {
-                address: identityInfo.address,
-                activeIdentityDeletion
-            };
+            this.log.log(message);
         } catch (e: any) {
             this.log.error(e);
         }

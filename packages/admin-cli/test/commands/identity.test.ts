@@ -1,4 +1,6 @@
 import { identityInitHandler } from "../../src/commands/identity/init";
+import { identityStatusHandler } from "../../src/commands/identity/status";
+import { identityDeletionInitHandler } from "../../src/commands/identityDeletion/init";
 import { resetDB, setupEnviroment } from "../utils";
 
 describe("identity init", () => {
@@ -43,17 +45,19 @@ describe("identity init", () => {
         expect(consoleSpy).toHaveBeenCalledWith("Identity created successfully!");
         expect(consoleSpy).toHaveBeenCalledTimes(1);
 
-        // TODO: let statusResult = await runCommand("identity status");
-        // expect(statusResult.stdout.trim()).toContain("Id: ");
+        await identityStatusHandler({ config: undefined });
+        expect(consoleSpy.mock.lastCall?.[0]).toContain("Id: ");
+        expect(consoleSpy).toHaveBeenCalledTimes(2);
 
-        // const deltionResult = await runCommand("identityDeletion init");
+        await identityDeletionInitHandler({ config: undefined });
 
-        // expect(deltionResult.error).toBeUndefined();
+        expect(consoleSpy).toHaveBeenCalledTimes(3);
 
-        // statusResult = await runCommand("identity status");
-        // expect(statusResult.stdout.trim()).toContain("Id: ");
-        // expect(statusResult.stdout.trim()).toContain("Identity deletionm status: ");
-        // expect(statusResult.stdout.trim()).toContain("End of approval period: ");
-        // expect(statusResult.stdout.trim()).toContain("End of grace period: ");
+        await identityStatusHandler({ config: undefined });
+        expect(consoleSpy).toHaveBeenCalledTimes(4);
+        expect(consoleSpy.mock.lastCall?.[0]).toContain("Id: ");
+        expect(consoleSpy.mock.lastCall?.[0]).toContain("Identity deletionm status: ");
+        expect(consoleSpy.mock.lastCall?.[0]).toContain("End of approval period: ");
+        expect(consoleSpy.mock.lastCall?.[0]).toContain("End of grace period: ");
     });
 });

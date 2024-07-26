@@ -1,84 +1,88 @@
-// import { IdentityDeletionProcessStatus } from "@nmshd/transport";
-// import { runCommand } from "@oclif/test";
-// import { IdentityStatusCommandJSON } from "../../src/commands/identity/status";
-// import { startIdentityDeletionProcessFromBackboneAdminApi } from "../lib/AdminApiClient";
-// import { resetDB, setupEnviroment } from "../utils";
+import { identityInitHandler } from "../../src/commands/identity/init";
+import { identityStatusHandler } from "../../src/commands/identity/status";
+import { identityDeletionApproveHandler } from "../../src/commands/identityDeletion/approve";
+import { identityDeletionCancelHandler } from "../../src/commands/identityDeletion/cancel";
+import { identityDeletionInitHandler } from "../../src/commands/identityDeletion/init";
+import { identityDeletionRejectHandler } from "../../src/commands/identityDeletion/reject";
+import { startIdentityDeletionProcessFromBackboneAdminApi } from "../lib/AdminApiClient";
+import { resetDB, setupEnviroment } from "../utils";
 
-// TODO: describe("identity deletion", () => {
-//     const dbName = "identityDeletion";
-//     beforeAll(() => {
-//         setupEnviroment(dbName);
-//     });
+describe("identity deletion", () => {
+    const dbName = "identityDeletion";
+    let originalArgv: any;
+    beforeAll(() => {
+        setupEnviroment(dbName);
+    });
 
-//     beforeEach(async () => {
-//         await resetDB(dbName);
-//     });
+    afterEach(() => {
+        jest.resetAllMocks();
 
-//     test("identity deletion init", async () => {
-//         let result = await runCommand("identity init");
+        // Set process arguments back to the original value
+        process.argv = originalArgv;
+    });
 
-//         result = await runCommand("identityDeletion init");
-//         expect(result.stdout).toContain("Identity deletion initiated");
-//     });
-//     test("identity deletion init json", async () => {
-//         await runCommand("identity init");
+    beforeEach(async () => {
+        await resetDB(dbName);
+        // Remove all cached modules. The cache needs to be cleared before running
+        // each command, otherwise you will see the same results from the command
+        // run in your first test in subsequent tests.
+        jest.resetModules();
 
-//         const deletionResult = await runCommand<any>("identityDeletion init --json");
-//         expect(deletionResult.error).toBeUndefined();
-//         expectValidResult(deletionResult, IdentityDeletionProcessStatus.Approved);
-//     });
+        // Each test overwrites process arguments so store the original arguments
+        originalArgv = process.argv;
+    });
 
-//     test("identity deletion cancel", async () => {
-//         await runCommand("identity init");
-//         await runCommand("identityDeletion init");
+    test("identity deletion init", async () => {
+        await identityInitHandler({ config: undefined });
+        const consoleSpy = jest.spyOn(console, "log");
 
-//         const result = await runCommand("identityDeletion cancel");
-//         expect(result.error).toBeUndefined();
-//         expectValidResult(result, IdentityDeletionProcessStatus.Cancelled);
-//     });
+        await identityDeletionInitHandler({ config: undefined });
+        expect(consoleSpy).toHaveBeenCalledWith("Identity deletion initiated");
+        expect(consoleSpy).toHaveBeenCalledTimes(1);
+    });
 
-//     test("identity deletion approve", async () => {
-//         await runCommand("identity init");
-//         const identityResult = await runCommand<IdentityStatusCommandJSON>("identity status --json");
-//         expect(identityResult.error).toBeUndefined();
-//         expect(identityResult.result).toBeDefined();
-//         await startIdentityDeletionProcessFromBackboneAdminApi(identityResult.result!.address);
+    test("identity deletion cancel", async () => {
+        await identityInitHandler({ config: undefined });
+        await identityDeletionInitHandler({ config: undefined });
 
-//         const result = await runCommand("identityDeletion approve");
-//         expect(result.error).toBeUndefined();
-//         expectValidResult(result, IdentityDeletionProcessStatus.Approved);
-//     });
+        const consoleSpy = jest.spyOn(console, "log");
+        await identityDeletionCancelHandler({ config: undefined });
+        expect(consoleSpy).toHaveBeenCalledWith("Identity deletion canceled");
+    });
 
-//     test("identity deletion reject", async () => {
-//         await runCommand("identity init");
-//         const identityResult = await runCommand<IdentityStatusCommandJSON>("identity status --json");
-//         expect(identityResult.error).toBeUndefined();
-//         expect(identityResult.result).toBeDefined();
-//         await startIdentityDeletionProcessFromBackboneAdminApi(identityResult.result!.address);
+    test("identity deletion approve", async () => {
+        const consoleSpy = jest.spyOn(console, "log");
+        await identityInitHandler({ config: undefined });
 
-//         const result = await runCommand("identityDeletion reject");
-//         expect(result.error).toBeUndefined();
-//         expectValidResult(result, IdentityDeletionProcessStatus.Rejected);
-//     });
-// });
+        await identityStatusHandler({ config: undefined });
+        expect(consoleSpy).toHaveBeenCalledTimes(2);
 
-// function expectValidResult(identityDeletionResult: any, status: IdentityDeletionProcessStatus) {
-//     expect(identityDeletionResult.result).toBeDefined();
-//     expect(Object.keys(identityDeletionResult.result).sort()).toStrictEqual(
-//         [
-//             "id",
-//             "createdAt",
-//             "createdByDevice",
-//             "approvalPeriodEndsAt",
-//             "rejectedAt",
-//             "rejectedByDevice",
-//             "approvedAt",
-//             "approvedByDevice",
-//             "gracePeriodEndsAt",
-//             "status",
-//             "cancelledAt",
-//             "cancelledByDevice"
-//         ].sort()
-//     );
-//     expect(identityDeletionResult.result.status).toBe(status);
-// }
+        const statusOutput = consoleSpy.mock.lastCall?.[0] as string;
+        const identityId = statusOutput.match(/Id: (\w+)/)?.[1];
+
+        expect(identityId).toBeDefined();
+        await startIdentityDeletionProcessFromBackboneAdminApi(identityId!);
+
+        await identityDeletionApproveHandler({ config: undefined });
+        expect(consoleSpy).toHaveBeenCalledTimes(3);
+        expect(consoleSpy).toHaveBeenCalledWith("Identity deletion approved");
+    });
+
+    test("identity deletion reject", async () => {
+        const consoleSpy = jest.spyOn(console, "log");
+        await identityInitHandler({ config: undefined });
+
+        await identityStatusHandler({ config: undefined });
+        expect(consoleSpy).toHaveBeenCalledTimes(2);
+
+        const statusOutput = consoleSpy.mock.lastCall?.[0] as string;
+        const identityId = statusOutput.match(/Id: (\w+)/)?.[1];
+
+        expect(identityId).toBeDefined();
+        await startIdentityDeletionProcessFromBackboneAdminApi(identityId!);
+
+        await identityDeletionRejectHandler({ config: undefined });
+        expect(consoleSpy).toHaveBeenCalledTimes(3);
+        expect(consoleSpy).toHaveBeenCalledWith("Identity deletion rejected");
+    });
+});

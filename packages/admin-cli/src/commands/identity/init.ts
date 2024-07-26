@@ -9,25 +9,24 @@ export const identityInitHandler = async ({ config }: ConfigFileOptions): Promis
 };
 export const yargsIdentityInitCommand: CommandModule<{}, ConfigFileOptions> = {
     command: "init",
-    describe: "initialize the idntity",
+    describe: "initialize the identity",
     handler: identityInitHandler,
     builder: configOptionBuilder
 };
 
 export default class IdentityInit extends BaseTransportCommand {
-    protected async runInternalWithTransport(transport: Transport, connectorConfig: ConnectorRuntimeConfig): Promise<{ message: string }> {
+    protected async runInternalWithTransport(transport: Transport, connectorConfig: ConnectorRuntimeConfig): Promise<void> {
         const db = await transport.createDatabase(`${connectorConfig.database.dbNamePrefix}${connectorConfig.database.dbName}`);
         const identityCollection = await db.getMap("AccountInfo");
         const identity = await identityCollection.get("identity");
         if (identity) {
             this.log.log("Identity already created!");
-            return { message: "Identity already created!" };
+            return;
         }
-        const accoutController = new AccountController(transport, db, transport.config);
-        await accoutController.init();
+        const accountController = new AccountController(transport, db, transport.config);
+        await accountController.init();
 
         this.log.log("Identity created successfully!");
-        return { message: "Identity created successfully!" };
     }
 
     protected enhanceConfig(connectorConfig: ConnectorRuntimeConfig): ConnectorRuntimeConfig {

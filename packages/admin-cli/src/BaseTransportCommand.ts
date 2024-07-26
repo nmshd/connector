@@ -20,8 +20,6 @@ export abstract class BaseTransportCommand extends BaseCommand {
             this.transport = new Transport(databaseConnection, { ...connectorConfig.transportLibrary, supportedIdentityVersion: 1 }, eventBus, logger);
             await this.transport.init();
             return await this.runInternalWithTransport(this.transport, connectorConfig);
-        } catch (error: any) {
-            this.log.log("Error creating identity: ", error.stack);
         } finally {
             if (databaseConnection) {
                 await databaseConnection.close();
@@ -35,5 +33,5 @@ export abstract class BaseTransportCommand extends BaseCommand {
         }
     }
 
-    protected abstract runInternalWithTransport(transport: Transport, connectorConfig: ConnectorRuntimeConfig): Promise<any>;
+    protected abstract runInternalWithTransport(transport: Transport, connectorConfig: ConnectorRuntimeConfig): Promise<void>;
 }

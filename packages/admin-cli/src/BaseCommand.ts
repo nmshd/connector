@@ -21,7 +21,7 @@ export const configOptionBuilder = (yargs: yargs.Argv<{}>): yargs.Argv<ConfigFil
 
 export abstract class BaseCommand {
     private connectorConfig?: ConnectorRuntimeConfig;
-    protected cliRuitime?: CLIRuntime;
+    protected cliRuntime?: CLIRuntime;
     protected log = console;
 
     public static readonly enableJsonFlag = true;
@@ -68,9 +68,11 @@ export abstract class BaseCommand {
             };
             this.connectorConfig = this.enhanceConfig(this.connectorConfig);
             return await this.runInternal(this.connectorConfig);
+        } catch (error: any) {
+            this.log.log("Error creating identity: ", error);
         } finally {
-            if (this.cliRuitime) {
-                await this.cliRuitime.stop();
+            if (this.cliRuntime) {
+                await this.cliRuntime.stop();
             }
         }
     }
@@ -81,10 +83,10 @@ export abstract class BaseCommand {
     protected async createRuntime(): Promise<void> {
         if (!this.connectorConfig) throw new Error("Connector config not initialized");
         const loggerFactory = new NodeLoggerFactory(this.connectorConfig.logging);
-        this.cliRuitime = new CLIRuntime(this.connectorConfig, loggerFactory);
-        await this.cliRuitime.init();
-        await this.cliRuitime.start();
+        this.cliRuntime = new CLIRuntime(this.connectorConfig, loggerFactory);
+        await this.cliRuntime.init();
+        await this.cliRuntime.start();
     }
 
-    protected abstract runInternal(connectorConfig: ConnectorRuntimeConfig): Promise<any>;
+    protected abstract runInternal(connectorConfig: ConnectorRuntimeConfig): Promise<void>;
 }
