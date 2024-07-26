@@ -2,9 +2,6 @@
     "name": "@nmshd/connector-admin-cli",
     "version": "1.0.0",
     "description": "Admin cli for the enmeshed connector",
-    "keywords": [
-        "oclif"
-    ],
     "homepage": "https://github.com/packages/connector-admin-cli",
     "bugs": "https://github.com/packages/connector-admin-cli/issues",
     "repository": "packages/connector-admin-cli",
@@ -24,10 +21,7 @@
         "build:watch": "npm run build && tsc -b --watch",
         "compile-connector": "ts-node connectorBundle.ts",
         "copy-statics": "shx cp -r ../../src/jsonSchemas dist/jsonSchemas && shx cp -r ../../config config",
-        "prepack": "oclif manifest && oclif readme",
-        "postpack": "shx rm -f oclif.manifest.json",
-        "test": "shx rm -rf cliTest-*.db && jest",
-        "version": "oclif readme && git add README.md"
+        "test": "shx rm -rf cliTest-*.db && jest"
     },
     "jest": {
         "maxWorkers": 2,
