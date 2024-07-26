@@ -6,11 +6,15 @@ npm i -g @nmshd/connector-admin-cli
 
 # Usage
 
+## Identity commands
+
 ```
-connector-admin <command>
+connector-admin identity [command]
+
+identity related commands
 
 Commands:
-  connector-admin identity  identity control
+  connector-admin identity init  initialize the identity
 
 Options:
       --version  Show version number                                   [boolean]

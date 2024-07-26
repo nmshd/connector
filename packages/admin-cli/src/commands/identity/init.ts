@@ -7,7 +7,7 @@ export const identityInitHandler = async ({ config }: ConfigFileOptions): Promis
 };
 export const yargsIdentityInitCommand: CommandModule<{}, ConfigFileOptions> = {
     command: "init",
-    describe: "initialize the idntity",
+    describe: "initialize the identity",
     handler: identityInitHandler,
     builder: configOptionBuilder
 };

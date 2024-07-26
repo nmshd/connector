@@ -4,8 +4,8 @@ import { yargsIdentityInitCommand } from "./commands/identity/init";
 
 const argv = yargs(process.argv.slice(2))
     .command({
-        command: "identity",
-        describe: "identity control",
+        command: "identity [command]",
+        describe: "identity related commands ",
         builder: (yargs) => {
             return yargs.command(yargsIdentityInitCommand);
         },
