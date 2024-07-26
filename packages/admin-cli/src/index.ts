@@ -9,18 +9,18 @@ import { yargsIdentityDeletionRejectCommand } from "./commands/identityDeletion/
 
 const argv = yargs(process.argv.slice(2))
     .command({
-        command: "identity",
-        describe: "identity control",
+        command: "identity [command]",
+        describe: "Identity related commands",
         builder: (yargs) => {
             return yargs.command(yargsIdentityInitCommand).command(yargsIdentityStatusCommand);
         },
         handler: () => {
-            yargs.showHelp();
+            yargs.showHelp("log");
         }
     })
     .command({
-        command: "identityDeletion",
-        describe: "identity deletion control",
+        command: "identityDeletion [command]",
+        describe: "Identity deletion related commands",
         builder: (yargs) => {
             return yargs
                 .command(yargsIdentityDeletionInitCommand)
@@ -29,7 +29,7 @@ const argv = yargs(process.argv.slice(2))
                 .command(yargsIdentityDeletionRejectCommand);
         },
         handler: () => {
-            yargs.showHelp();
+            yargs.showHelp("log");
         }
     })
     .demandCommand(1, 1, "Please specify a command")
