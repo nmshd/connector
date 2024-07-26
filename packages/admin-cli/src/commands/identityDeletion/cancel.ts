@@ -6,7 +6,7 @@ export const identityDeletionCancelHandler = async ({ config }: ConfigFileOption
 };
 export const yargsIdentityDeletionCancelCommand: CommandModule<{}, ConfigFileOptions> = {
     command: "cancel",
-    describe: "approve the identity deletion",
+    describe: "cancel the identity deletion",
     handler: identityDeletionCancelHandler,
     builder: configOptionBuilder
 };
