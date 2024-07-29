@@ -16,7 +16,7 @@
         "/TODO"
     ],
     "scripts": {
-        "build": "shx rm -rf dist tsconfig.tsbuildinfo && tsc -b && npm run compile-connector && npm run copy-statics",
+        "build": "shx rm -rf dist tsconfig.tsbuildinfo config && tsc -b && npm run compile-connector && npm run copy-statics",
         "build:ci": "npm run build",
         "build:watch": "npm run build && tsc -b --watch",
         "compile-connector": "ts-node connectorBundle.ts",
