@@ -1,4 +1,5 @@
 import { NodeLoggerFactory } from "@js-soft/node-logger";
+import { sleep } from "@js-soft/ts-utils";
 import axios, { Axios } from "axios";
 import { CLIRuntime } from "../../src/CLIRuntime";
 import { createConnectorConfig } from "../../src/connector";
@@ -36,21 +37,34 @@ export async function startIdentityDeletionProcessFromBackboneAdminApi(accountAd
     const config = createConnectorConfig();
     // (config.logging.appenders.console as any)["level"] = "TRACE";
     const loggerFactory = new NodeLoggerFactory(config.logging);
-    const cliRuitime = new CLIRuntime(config, loggerFactory);
-    await cliRuitime.init();
-    await cliRuitime.start();
+    const cliRuntime = new CLIRuntime(config, loggerFactory);
+    await cliRuntime.init();
+    await cliRuntime.start();
 
-    const promise = new Promise<void>((resolve, reject) => {
+    let eventFired = false;
+    let promise = new Promise<void>((resolve, reject) => {
         const timeout = setTimeout(() => {
             reject(new Error("Timeout waiting for identity deletion process sync to finish"));
         }, 10000);
-        cliRuitime.eventBus.subscribeOnce("transport.identityDeletionProcessStatusChanged", () => {
+        cliRuntime.eventBus.subscribeOnce("transport.identityDeletionProcessStatusChanged", () => {
             clearTimeout(timeout);
             resolve();
         });
     });
+    promise = promise.then(() => {
+        eventFired = true;
+    });
 
-    await cliRuitime.getServices().transportServices.account.syncEverything();
+    let count = 0;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, no-unmodified-loop-condition
+    while (!eventFired) {
+        if (count > 10) {
+            throw new Error("Timeout waiting for identity deletion process sync to finish");
+        }
+        await cliRuntime.getServices().transportServices.account.syncEverything();
+        await sleep(1000);
+        count++;
+    }
     await promise;
-    await cliRuitime.stop();
+    await cliRuntime.stop();
 }
