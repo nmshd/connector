@@ -7,6 +7,13 @@ import { yargsIdentityDeletionCancelCommand } from "./commands/identityDeletion/
 import { yargsIdentityDeletionInitCommand } from "./commands/identityDeletion/init";
 import { yargsIdentityDeletionRejectCommand } from "./commands/identityDeletion/reject";
 
+const completionFunction: yargs.FallbackCompletionFunction = (current, argv, defaultCompletion, done) => {
+    defaultCompletion((err, completions) => {
+        completions = completions?.filter((completion) => !completion.includes("completion:")) ?? [];
+        done(completions);
+    });
+};
+
 const argv = yargs(process.argv.slice(2))
     .command({
         command: "identity [command]",
@@ -35,6 +42,7 @@ const argv = yargs(process.argv.slice(2))
     .demandCommand(1, 1, "Please specify a command")
     .help("h")
     .alias("h", "help")
+    .completion("completion", completionFunction)
     .strict()
     .parse();
 
