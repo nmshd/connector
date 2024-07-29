@@ -2,9 +2,8 @@ import { IDatabaseConnection } from "@js-soft/docdb-access-abstractions";
 import { LokiJsConnection } from "@js-soft/docdb-access-loki";
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
-import { EventEmitter2EventBus } from "@js-soft/ts-utils";
-import { Transport } from "@nmshd/transport";
 import yargs from "yargs";
+import { CLIRuntime } from "./CLIRuntime";
 import { ConnectorRuntimeConfig, createConnectorConfig, DocumentationLink } from "./connector";
 
 export interface ConfigFileOptions {
@@ -21,55 +20,11 @@ export const configOptionBuilder = (yargs: yargs.Argv<{}>): yargs.Argv<ConfigFil
 };
 
 export abstract class BaseCommand {
-    protected transport?: Transport;
-    protected connectorConfig?: ConnectorRuntimeConfig;
+    private connectorConfig?: ConnectorRuntimeConfig;
+    protected cliRuntime?: CLIRuntime;
     protected log = console;
 
-    public async run(configPath: string | undefined): Promise<void> {
-        if (configPath) {
-            process.env.CUSTOM_CONFIG_LOCATION = configPath;
-        }
-
-        let databaseConnection;
-        let logger;
-        try {
-            this.connectorConfig = createConnectorConfig();
-            this.connectorConfig.transportLibrary.allowIdentityCreation = true;
-            this.connectorConfig.logging = {
-                appenders: {
-                    console: { type: "console" }
-                },
-                categories: {
-                    default: { appenders: ["console"], level: "OFF" }
-                }
-            };
-
-            const eventBus = new EventEmitter2EventBus(() => {
-                // ignore errors
-            });
-            logger = new NodeLoggerFactory(this.connectorConfig.logging);
-            databaseConnection = await BaseCommand.createDBConnection(this.connectorConfig);
-
-            this.transport = new Transport(databaseConnection, { ...this.connectorConfig.transportLibrary, supportedIdentityVersion: 1 }, eventBus, logger);
-            await this.transport.init();
-
-            return await this.runInternal();
-        } catch (error: any) {
-            this.log.error("Error creating identity: ", error.message);
-        } finally {
-            if (databaseConnection) {
-                await databaseConnection.close();
-            }
-            if (this.transport) {
-                await this.transport.eventBus.close();
-            }
-            if (logger) {
-                logger.close();
-            }
-        }
-    }
-
-    public abstract runInternal(): Promise<any>;
+    public static readonly enableJsonFlag = true;
 
     public static async createDBConnection(runtimeConfig: ConnectorRuntimeConfig): Promise<IDatabaseConnection> {
         if (runtimeConfig.database.driver === "lokijs") {
@@ -95,4 +50,43 @@ export abstract class BaseCommand {
 
         return mongodbConnection;
     }
+
+    public async run(configPath: string | undefined): Promise<any> {
+        if (configPath) {
+            process.env.CUSTOM_CONFIG_LOCATION = configPath;
+        }
+
+        try {
+            this.connectorConfig = createConnectorConfig();
+            this.connectorConfig.logging = {
+                appenders: {
+                    console: { type: "console" }
+                },
+                categories: {
+                    default: { appenders: ["console"], level: "OFF" }
+                }
+            };
+            this.connectorConfig = this.enhanceConfig(this.connectorConfig);
+            return await this.runInternal(this.connectorConfig);
+        } catch (error: any) {
+            this.log.log("Error creating identity: ", error);
+        } finally {
+            if (this.cliRuntime) {
+                await this.cliRuntime.stop();
+            }
+        }
+    }
+    protected enhanceConfig(connectorConfig: ConnectorRuntimeConfig): ConnectorRuntimeConfig {
+        return connectorConfig;
+    }
+
+    protected async createRuntime(): Promise<void> {
+        if (!this.connectorConfig) throw new Error("Connector config not initialized");
+        const loggerFactory = new NodeLoggerFactory(this.connectorConfig.logging);
+        this.cliRuntime = new CLIRuntime(this.connectorConfig, loggerFactory);
+        await this.cliRuntime.init();
+        await this.cliRuntime.start();
+    }
+
+    protected abstract runInternal(connectorConfig: ConnectorRuntimeConfig): Promise<void>;
 }

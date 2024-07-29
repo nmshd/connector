@@ -16,13 +16,12 @@
         "/TODO"
     ],
     "scripts": {
-        "build": "shx rm -rf dist tsconfig.tsbuildinfo && tsc -b && npm run compile-connector && npm run copy-statics",
+        "build": "shx rm -rf dist tsconfig.tsbuildinfo config && tsc -b && npm run compile-connector && npm run copy-statics",
         "build:ci": "npm run build",
         "build:watch": "npm run build && tsc -b --watch",
         "compile-connector": "ts-node connectorBundle.ts",
         "copy-statics": "shx cp -r ../../src/jsonSchemas dist/jsonSchemas && shx cp -r ../../config config",
-        "test": "jest && shx rm -rf local-default.db",
-        "update-readme": "HELP=\"```\n$(connector-admin --help)\n```\" sed -i '/# Usage/,$ s/.*/$HELP/' README.md"
+        "test": "shx rm -rf cliTest-*.db && jest"
     },
     "jest": {
         "maxWorkers": 2,
@@ -43,10 +42,12 @@
         }
     },
     "dependencies": {
+        "@nmshd/transport": "^2.8.2",
         "@nmshd/runtime": "4.14.1",
         "yargs": "^17.7.2"
     },
     "devDependencies": {
+        "shelljs": "^0.8.5",
         "@types/yargs": "^17.0.32",
         "esbuild": "0.23.0",
         "shx": "^0.3.4"
