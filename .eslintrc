@@ -1,8 +1,8 @@
 {
-    "ignorePatterns": ["/*", "!/src", "!/test", "!/packages", "/packages/*/*", "!/packages/*/src"],
+    "ignorePatterns": ["dist", "node_modules", "packages/sdk/dist", "packages/sdk/_examples", "packages/admin-cli/dist", "packages/admin-cli/bin"],
     "extends": ["@js-soft/ts", "@js-soft/ts/jest"],
     "parserOptions": {
-        "project": ["./tsconfig.json", "./test/tsconfig.json", "./packages/*/tsconfig.json"]
+        "project": ["./tsconfig.json", "./test/tsconfig.json", "./packages/*/tsconfig.json", "./packages/*/test/tsconfig.json"]
     },
     "rules": {
         "jest/expect-expect": [

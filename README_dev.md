@@ -120,6 +120,7 @@ npm run test:local -- testSuiteName
 3. install the npm dependencies `npm i`
 4. build the connector `npm run build`
 5. create a config file (for example `local.config.json`)
+
     ```
     {
       "debug": true,
@@ -128,14 +129,17 @@ npm run test:local -- testSuiteName
           "platformClientId": "...",
           "platformClientSecret": "..."
       },
-      "database": { "driver": "lokijs", "folder": "./" },
+      "database": { "driver": "lokijs", "folder": "./", "dbName": "local", "dbNamePrefix": "l" },
       "logging": { "categories": { "default": { "appenders": ["console"] } } },
-      "infrastructure": { "httpServer": { "apiKey": "xxx", port: 8080 } },
-      "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
+      "infrastructure": { "httpServer": { "apiKey": "xxx", "port": 8080 } },
+      "modules": { "coreHttpApi": { "docs": { "enabled": true } } },
+      "transportLibrary": { "allowIdentityCreation": true }
     }
+
     ```
+
 6. replace ... in the config with real values
-7. start the connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/index.js`
+7. start the connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/start.js`
 
 It's now possible to access the connector on port 8080. Validating this is possible by accessing `http://localhost:8080/docs/swagger` in the browser.
 

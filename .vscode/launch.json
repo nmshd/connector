@@ -2,6 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "command": "npm version",
+            "name": "Local terminal with node_modules source maps",
+            "request": "launch",
+            "type": "node-terminal",
+            "resolveSourceMapLocations": ["${workspaceFolder}/**/*"]
+        },
+        {
             "type": "node",
             "request": "attach",
             "name": "Attach to Connector 1",

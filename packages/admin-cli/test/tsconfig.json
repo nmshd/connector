@@ -19,7 +19,7 @@
         "strictPropertyInitialization": false,
         "downlevelIteration": true,
         "lib": ["es2021", "dom"],
-        "typeRoots": ["./node_modules/@types"]
+        "typeRoots": ["../../../node_modules/@types"]
     },
-    "include": ["src/**/*"]
+    "include": ["**/*.ts", "../src/**/*.ts", "../connectorBundle.ts"]
 }
