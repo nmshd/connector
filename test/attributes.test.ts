@@ -10,10 +10,10 @@ import {
     establishRelationship,
     executeFullCreateAndShareRelationshipAttributeFlow,
     executeFullCreateAndShareRepositoryAttributeFlow,
-    syncUntilHasMessageWithNotification,
-    syncUntilHasMessageWithRequest,
-    syncUntilHasMessageWithResponse,
-    syncUntilHasMessages
+    syncUntilHasMessages,
+    syncUntilHasNotification,
+    syncUntilHasRequest,
+    syncUntilHasRequestWithResponse
 } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
@@ -132,7 +132,7 @@ describe("Attributes", () => {
         });
         expect(notificationResponse.isSuccess).toBe(true);
 
-        await syncUntilHasMessageWithNotification(client2, notificationResponse.result.notificationId);
+        await syncUntilHasNotification(client2, notificationResponse.result.notificationId);
         await client2._eventBus!.waitForEvent<DataEvent<any>>("consumption.peerSharedAttributeSucceeded", (event: DataEvent<SuccessionEventData>) => {
             return event.data.successor.id === notificationResponse.result.successor.id;
         });
@@ -485,7 +485,7 @@ describe("Delete attributes", () => {
 
         const deleteResponse = await client1.attributes.deleteOwnSharedAttributeAndNotifyPeer(ownSharedIdentityAttribute.id);
         expect(deleteResponse.isSuccess).toBe(true);
-        await syncUntilHasMessageWithNotification(client2, deleteResponse.result.notificationId);
+        await syncUntilHasNotification(client2, deleteResponse.result.notificationId);
         await client2._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.ownSharedAttributeDeletedByOwner", (event: any) => {
             return event.data.id === ownSharedIdentityAttribute.id;
         });
@@ -507,7 +507,7 @@ describe("Delete attributes", () => {
 
         const deleteResponse = await client2.attributes.deletePeerSharedAttributeAndNotifyOwner(ownSharedIdentityAttribute.id);
         expect(deleteResponse.isSuccess).toBe(true);
-        await syncUntilHasMessageWithNotification(client1, deleteResponse.result.notificationId);
+        await syncUntilHasNotification(client1, deleteResponse.result.notificationId);
         await client1._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.peerSharedAttributeDeletedByPeer", (event: any) => {
             return event.data.id === ownSharedIdentityAttribute.id;
         });
@@ -573,7 +573,7 @@ describe("Delete attributes", () => {
             content: outgoingRequests.result.content
         });
 
-        await syncUntilHasMessageWithRequest(client2, outgoingRequests.result.id);
+        await syncUntilHasRequest(client2, outgoingRequests.result.id);
         await client2._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>("consumption.incomingRequestStatusChanged", (event) => {
             // eslint-disable-next-line jest/no-conditional-in-test
             return event.data.request.id.toString() === outgoingRequests.result.id && event.data.newStatus === "ManualDecisionRequired";
@@ -588,7 +588,7 @@ describe("Delete attributes", () => {
             ]
         });
 
-        const message = await syncUntilHasMessageWithResponse(client3, outgoingRequests.result.id);
+        const message = await syncUntilHasRequestWithResponse(client3, outgoingRequests.result.id);
         await client3._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>("consumption.outgoingRequestStatusChanged", (event) => {
             // eslint-disable-next-line jest/no-conditional-in-test
             return event.data.request.id.toString() === outgoingRequests.result.id && event.data.newStatus === "Completed";
@@ -598,7 +598,7 @@ describe("Delete attributes", () => {
 
         const deleteResponse = await client3.attributes.deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer(thirdPartyRelationshipAttribute.id);
 
-        await syncUntilHasMessageWithNotification(client2, deleteResponse.result.notificationId);
+        await syncUntilHasNotification(client2, deleteResponse.result.notificationId);
         await client2._eventBus?.waitForEvent<ThirdPartyOwnedRelationshipAttributeDeletedByPeerEvent>("consumption.thirdPartyOwnedRelationshipAttributeDeletedByPeer", (event) => {
             return event.data.id.toString() === thirdPartyRelationshipAttribute.id;
         });

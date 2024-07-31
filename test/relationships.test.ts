@@ -8,7 +8,7 @@ import {
     executeFullCreateAndShareRepositoryAttributeFlow,
     getRelationship,
     getTemplateToken,
-    syncUntilHasRelationships
+    syncUntilHasRelationship
 } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
@@ -30,10 +30,9 @@ describe("Relationships", () => {
         const createRelationshipResponse = await client2.relationships.createRelationship({ templateId, creationContent: { a: "b" } });
         expect(createRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
-        const client1Relationships = await syncUntilHasRelationships(client1);
-        expect(client1Relationships).toHaveLength(1);
+        const client1Relationship = await syncUntilHasRelationship(client1, createRelationshipResponse.result.id);
 
-        const relationshipId = client1Relationships[0].id;
+        const relationshipId = client1Relationship.id;
         expect(relationshipId).toBeDefined();
 
         const acceptRelationshipResponse = await client1.relationships.acceptRelationship(relationshipId);
@@ -42,8 +41,7 @@ describe("Relationships", () => {
         const getRelationshipsResponse = await client1.relationships.getRelationships();
         expect(getRelationshipsResponse).toBeSuccessful(ValidationSchema.Relationships);
         expect(getRelationshipsResponse.result).toHaveLength(1);
-        const client2Relationships = await syncUntilHasRelationships(client2);
-        expect(client2Relationships).toHaveLength(1);
+        await syncUntilHasRelationship(client2, relationshipId);
 
         const client1GetRelationshipResponse = await client1.relationships.getRelationship(relationshipId);
         expect(client1GetRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
@@ -72,16 +70,15 @@ describe("Relationships", () => {
         const createRelationshipResponse = await client2.relationships.createRelationship({ templateId, creationContent: { a: "b" } });
         expect(createRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
-        const client1Relationships = await syncUntilHasRelationships(client1);
-        expect(client1Relationships).toHaveLength(1);
+        const client1Relationship = await syncUntilHasRelationship(client1, createRelationshipResponse.result.id);
 
-        const relationshipId = client1Relationships[0].id;
+        const relationshipId = client1Relationship.id;
         expect(relationshipId).toBeDefined();
 
         const rejectRelationshipResponse = await client1.relationships.rejectRelationship(relationshipId);
         expect(rejectRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
-        await syncUntilHasRelationships(client2);
+        await syncUntilHasRelationship(client2, relationshipId);
 
         const client1GetRelationshipResponse = await client1.relationships.getRelationship(relationshipId);
         expect(client1GetRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
@@ -102,16 +99,15 @@ describe("Relationships", () => {
         const createRelationshipResponse = await client2.relationships.createRelationship({ templateId, creationContent: { a: "b" } });
         expect(createRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
-        const client1Relationships = await syncUntilHasRelationships(client1);
-        expect(client1Relationships).toHaveLength(1);
+        const client1Relationship = await syncUntilHasRelationship(client1, createRelationshipResponse.result.id);
 
-        const relationshipId = client1Relationships[0].id;
+        const relationshipId = client1Relationship.id;
         expect(relationshipId).toBeDefined();
 
-        const revokeRelationshipResponse = await client2.relationships.revokeRelationship(relationshipId);
-        expect(revokeRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
+        const rejectRelationshipResponse = await client1.relationships.rejectRelationship(relationshipId);
+        expect(rejectRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
-        await syncUntilHasRelationships(client1);
+        await syncUntilHasRelationship(client2, relationshipId);
 
         const client1GetRelationshipResponse = await client1.relationships.getRelationship(relationshipId);
         expect(client1GetRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
@@ -129,14 +125,14 @@ describe("Relationships", () => {
         const terminateRelationshipResponse = await client1.relationships.terminateRelationship(relationship.id);
         expect(terminateRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
-        await syncUntilHasRelationships(client2);
+        await syncUntilHasRelationship(client2, relationship.id);
 
         await expectRelationshipToHaveStatusAndReason(client1, relationship.id, ConnectorRelationshipStatus.Terminated);
         await expectRelationshipToHaveStatusAndReason(client2, relationship.id, ConnectorRelationshipStatus.Terminated);
 
         const reactivateResponse = await client1.relationships.requestRelationshipReactivation(relationship.id);
         expect(reactivateResponse).toBeSuccessful(ValidationSchema.Relationship);
-        await syncUntilHasRelationships(client2);
+        await syncUntilHasRelationship(client2, relationship.id);
 
         await expectRelationshipToHaveStatusAndReason(
             client1,
@@ -154,7 +150,7 @@ describe("Relationships", () => {
         const rejectReactivationResponse = await client2.relationships.rejectRelationshipReactivation(relationship.id);
         expect(rejectReactivationResponse).toBeSuccessful(ValidationSchema.Relationship);
 
-        await syncUntilHasRelationships(client1);
+        await syncUntilHasRelationship(client1, relationship.id);
 
         await expectRelationshipToHaveStatusAndReason(
             client1,
@@ -170,10 +166,10 @@ describe("Relationships", () => {
         );
 
         await client1.relationships.requestRelationshipReactivation(relationship.id);
-        await syncUntilHasRelationships(client2);
+        await syncUntilHasRelationship(client2, relationship.id);
         const revokeReactivationResponse = await client1.relationships.revokeRelationshipReactivation(relationship.id);
         expect(revokeReactivationResponse).toBeSuccessful(ValidationSchema.Relationship);
-        await syncUntilHasRelationships(client2);
+        await syncUntilHasRelationship(client2, relationship.id);
 
         await expectRelationshipToHaveStatusAndReason(
             client1,
@@ -189,10 +185,10 @@ describe("Relationships", () => {
         );
 
         await client1.relationships.requestRelationshipReactivation(relationship.id);
-        await syncUntilHasRelationships(client2);
+        await syncUntilHasRelationship(client2, relationship.id);
         const acceptReactivationResponse = await client2.relationships.acceptRelationshipReactivation(relationship.id);
         expect(acceptReactivationResponse).toBeSuccessful(ValidationSchema.Relationship);
-        await syncUntilHasRelationships(client1);
+        await syncUntilHasRelationship(client1, relationship.id);
 
         await expectRelationshipToHaveStatusAndReason(
             client1,
@@ -235,7 +231,7 @@ describe("Relationships", () => {
         const terminateRelationshipResponse = await client1.relationships.terminateRelationship(relationship.id);
         expect(terminateRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
-        await syncUntilHasRelationships(client2);
+        await syncUntilHasRelationship(client2, relationship.id);
 
         const decompose = await client2.relationships.decomposeRelationship(relationship.id);
         expect(decompose).toBeSuccessfulVoidResult();
