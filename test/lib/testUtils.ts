@@ -34,19 +34,19 @@ export async function connectAndEmptyCollection(databaseName: string, collection
     }
 }
 
-export async function syncUntil(client: ConnectorClientWithMetadata, until: () => boolean): Promise<void> {
+export async function syncUntil(client: ConnectorClientWithMetadata, until: (client: ConnectorClientWithMetadata) => boolean): Promise<void> {
     client._eventBus?.reset();
     let iterationNumber = 0;
-    while (!until() && iterationNumber < 25) {
+    while (!until(client) && iterationNumber < 25) {
         const newSyncResponse = await client.account.sync();
-        expect(newSyncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
+        expect(newSyncResponse.isSuccess).toBe(true);
 
         // incrementally increase sleep duration
         iterationNumber++;
         await sleep(iterationNumber * 50);
     }
 
-    if (!until()) {
+    if (!until(client)) {
         throw new Error("syncUntil() timed out");
     }
 }
@@ -54,10 +54,10 @@ export async function syncUntil(client: ConnectorClientWithMetadata, until: () =
 export async function syncUntilHasRelationship(client: ConnectorClientWithMetadata, relationshipId: string): Promise<ConnectorRelationship> {
     await syncUntil(
         client,
-        () =>
+        (client) =>
             client._eventBus!.publishedEvents.filter(
                 (e) =>
-                    e.namespace in ["transport.relationshipChanged", "transport.relationshipReactivationCompleted", "transport.relationshipReactivationRequested"] &&
+                    ["transport.relationshipChanged", "transport.relationshipReactivationCompleted", "transport.relationshipReactivationRequested"].includes(e.namespace) &&
                     (e as DataEvent<ConnectorRelationship>).data.id === relationshipId
             ).length >= 1
     );
@@ -65,7 +65,7 @@ export async function syncUntilHasRelationship(client: ConnectorClientWithMetada
         client
             ._eventBus!.publishedEvents.filter(
                 (e) =>
-                    e.namespace in ["transport.relationshipChanged", "transport.relationshipReactivationCompleted", "transport.relationshipReactivationRequested"] &&
+                    ["transport.relationshipChanged", "transport.relationshipReactivationCompleted", "transport.relationshipReactivationRequested"].includes(e.namespace) &&
                     (e as DataEvent<ConnectorRelationship>).data.id === relationshipId
             )
             .at(-1) as DataEvent<ConnectorRelationship>
@@ -73,14 +73,14 @@ export async function syncUntilHasRelationship(client: ConnectorClientWithMetada
 }
 
 export async function syncUntilHasMessages(client: ConnectorClientWithMetadata, expectedNumberOfMessages = 1): Promise<ConnectorMessage[]> {
-    await syncUntil(client, () => client._eventBus!.publishedEvents.filter((e) => e.namespace === "transport.messageReceived").length >= expectedNumberOfMessages);
+    await syncUntil(client, (client) => client._eventBus!.publishedEvents.filter((e) => e.namespace === "transport.messageReceived").length >= expectedNumberOfMessages);
     return client._eventBus!.publishedEvents.filter((e) => e.namespace === "transport.messageReceived").map((e) => (e as DataEvent<ConnectorMessage>).data);
 }
 
 export async function syncUntilHasRequest(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorRequest> {
     await syncUntil(
         client,
-        () =>
+        (client) =>
             client._eventBus!.publishedEvents.filter((e) => e.namespace === "consumption.incomingRequestReceived" && (e as DataEvent<ConnectorRequest>).data.id === requestId)
                 .length === 1
     );
@@ -101,7 +101,7 @@ export async function syncUntilHasNotification(client: ConnectorClientWithMetada
 
     await syncUntil(
         client,
-        () =>
+        (client) =>
             client._eventBus?.publishedEvents.filter((e) => e.namespace === "consumption.messageProcessed" && isNotification((e as DataEvent<ConnectorMessage>).data.content))
                 .length === 1
     );
@@ -118,7 +118,7 @@ export async function syncUntilHasRequestWithResponse(client: ConnectorClientWit
 
     await syncUntil(
         client,
-        () =>
+        (client) =>
             client._eventBus?.publishedEvents.filter((e) => e.namespace === "consumption.messageProcessed" && isResponse((e as DataEvent<ConnectorMessage>).data.content))
                 .length === 1
     );

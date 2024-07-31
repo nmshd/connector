@@ -17,7 +17,8 @@ describe("Account Endpoints", () => {
 
     test("can sync", async () => {
         const sync = await client.account.sync();
-        expect(sync).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
+        expect(sync.isSuccess).toBe(true);
+        expect(sync.result).toBe("Sync successful");
     });
 
     test("can get the LastCompletedSyncRun", async () => {
