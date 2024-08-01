@@ -28,7 +28,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
         .file("config-env-file", { file: `config/${process.env.NODE_CONFIG_ENV}.json` })
         .file("default-file", { file: "config/default.json" });
 
-    const connectorConfig = nconf.get();
+    const connectorConfig = nconf.get() as ConnectorRuntimeConfig;
 
     if (typeof connectorConfig.modules.webhooksV2 !== "undefined") {
         // eslint-disable-next-line no-console
@@ -36,6 +36,9 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
 
         connectorConfig.modules.webhooks = _.defaultsDeep(connectorConfig.modules.webhooksV2, connectorConfig.modules.webhooks);
         delete connectorConfig.modules.webhooksV2;
+    }
+    if (connectorConfig.modules.sync.enabled && connectorConfig.modules.sse.enabled) {
+        throw new Error("SSE and Sync cannot be enabled at the same time.");
     }
 
     return connectorConfig;
