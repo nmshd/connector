@@ -36,7 +36,7 @@ export async function connectAndEmptyCollection(databaseName: string, collection
 }
 
 export async function syncUntil(client: ConnectorClientWithMetadata, until: (client: ConnectorClientWithMetadata) => boolean): Promise<void> {
-    client._eventBus?.reset();
+    client._eventBus!.reset();
     let iterationNumber = 0;
     while (!until(client) && iterationNumber < 25) {
         // incrementally increase sleep duration
@@ -103,13 +103,13 @@ export async function syncUntilHasMessageWithNotification(client: ConnectorClien
     await syncUntil(
         client,
         (client) =>
-            client._eventBus?.publishedEvents.filter(
+            client._eventBus!.publishedEvents.filter(
                 (e) => e.namespace === "consumption.messageProcessed" && isNotification((e as DataEvent<MessageProcessedEventData>).data.message.content)
             ).length === 1
     );
 
     return (
-        client._eventBus?.publishedEvents.filter(
+        client._eventBus!.publishedEvents.filter(
             (e) => e.namespace === "consumption.messageProcessed" && isNotification((e as DataEvent<MessageProcessedEventData>).data.message.content)
         )[0] as DataEvent<MessageProcessedEventData>
     ).data.message;
@@ -124,13 +124,13 @@ export async function syncUntilHasMessageWithResponse(client: ConnectorClientWit
     await syncUntil(
         client,
         (client) =>
-            client._eventBus?.publishedEvents.filter(
+            client._eventBus!.publishedEvents.filter(
                 (e) => e.namespace === "consumption.messageProcessed" && isResponse((e as DataEvent<MessageProcessedEventData>).data.message.content)
             ).length === 1
     );
 
     return (
-        client._eventBus?.publishedEvents.filter(
+        client._eventBus!.publishedEvents.filter(
             (e) => e.namespace === "consumption.messageProcessed" && isResponse((e as DataEvent<MessageProcessedEventData>).data.message.content)
         )[0] as DataEvent<MessageProcessedEventData>
     ).data.message;
