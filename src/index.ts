@@ -27,7 +27,13 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
         .file("config-env-file", { file: `config/${process.env.NODE_CONFIG_ENV}.json` })
         .file("default-file", { file: "config/default.json" });
 
-    const connectorConfig = nconf.get();
+    const connectorConfig = nconf.get() as ConnectorRuntimeConfig;
+
+    if (connectorConfig.modules.sync.enabled && connectorConfig.modules.sse.enabled) {
+        // eslint-disable-next-line no-console
+        console.warn("The SSE and Sync modules cannot be enabled at the same time, the Sync module will be disabled.");
+        connectorConfig.modules.sync.enabled = false;
+    }
 
     return connectorConfig;
 }
