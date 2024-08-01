@@ -3,7 +3,8 @@ import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Random, RandomCharacterRange } from "@nmshd/transport";
 import { ChildProcess, spawn } from "child_process";
 import express from "express";
-import { Server } from "http";
+import http, { Server } from "http";
+import https from "https";
 import path from "path";
 import { MockEventBus } from "./MockEventBus";
 import getPort from "./getPort";
@@ -20,10 +21,10 @@ export class Launcher {
     private readonly _processes: { connector: ChildProcess; webhookServer: Server | undefined }[] = [];
     private readonly apiKey = "xxx";
 
-    public async launchSimple(): Promise<string> {
+    public async launchSimple(hideOutput = false): Promise<{ processes: { connector: ChildProcess; webhookServer: Server | undefined }; baseUrl: string }> {
         const port = await getPort();
         const accountName = await this.randomString();
-        const { connector, webhookServer } = await this.spawnConnector(port, accountName);
+        const { connector, webhookServer } = await this.spawnConnector(port, accountName, hideOutput);
         this._processes.push({
             connector,
             webhookServer
@@ -35,10 +36,13 @@ export class Launcher {
             throw e;
         }
 
-        return `http://localhost:${port}`;
+        return {
+            processes: { connector, webhookServer },
+            baseUrl: `http://localhost:${port}`
+        };
     }
 
-    public async launch(count: number): Promise<ConnectorClientWithMetadata[]> {
+    public async launch(count: number, hideOutput = false): Promise<ConnectorClientWithMetadata[]> {
         const clients: ConnectorClientWithMetadata[] = [];
         const ports: number[] = [];
         const startPromises: Promise<void>[] = [];
@@ -46,14 +50,19 @@ export class Launcher {
         for (let i = 0; i < count; i++) {
             const port = await getPort();
             const accountName = `${i + 1}-${await this.randomString()}`;
-            const connectorClient = ConnectorClient.create({ baseUrl: `http://localhost:${port}`, apiKey: this.apiKey }) as ConnectorClientWithMetadata;
+            const connectorClient = ConnectorClient.create({
+                baseUrl: `http://localhost:${port}`,
+                apiKey: this.apiKey,
+                httpAgent: new http.Agent({ keepAlive: false }),
+                httpsAgent: new https.Agent({ keepAlive: false })
+            }) as ConnectorClientWithMetadata;
             connectorClient["_metadata"] = { accountName: `acc-${accountName}` };
 
             connectorClient._eventBus = new MockEventBus();
 
             clients.push(connectorClient);
             ports.push(port);
-            const { connector, webhookServer } = await this.spawnConnector(port, accountName, connectorClient._eventBus);
+            const { connector, webhookServer } = await this.spawnConnector(port, accountName, hideOutput, connectorClient._eventBus);
             this._processes.push({
                 connector,
                 webhookServer
@@ -79,7 +88,12 @@ export class Launcher {
         return await Random.string(7, RandomCharacterRange.Alphabet);
     }
 
-    private async spawnConnector(port: number, accountName: string, eventBus?: MockEventBus) {
+    private async spawnConnector(
+        port: number,
+        accountName: string,
+        hideOutput = false,
+        eventBus?: MockEventBus
+    ): Promise<{ connector: ChildProcess; webhookServer: Server | undefined }> {
         const env = process.env;
         env["infrastructure:httpServer:port"] = port.toString();
         env["infrastructure:httpServer:apiKey"] = this.apiKey;
@@ -104,12 +118,17 @@ export class Launcher {
             webhookServer = this.startWebHookServer(webhookServerPort, eventBus);
         }
 
+        const connector = spawn("node", ["dist/index.js"], {
+            env: { ...process.env, ...env },
+            cwd: path.resolve(`${__dirname}/../..`),
+            stdio: "pipe"
+        });
+        if (!hideOutput) {
+            connector.stdout.pipe(process.stdout);
+            connector.stderr.pipe(process.stderr);
+        }
         return {
-            connector: spawn("node", ["dist/index.js"], {
-                env: { ...process.env, ...env },
-                cwd: path.resolve(`${__dirname}/../..`),
-                stdio: "inherit"
-            }),
+            connector,
             webhookServer
         };
     }
