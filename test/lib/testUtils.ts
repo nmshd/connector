@@ -93,7 +93,7 @@ export async function syncUntilHasRequest(client: ConnectorClientWithMetadata, r
     ).data;
 }
 
-export async function syncUntilHasNotification(client: ConnectorClientWithMetadata, notificationId: string): Promise<ConnectorMessage> {
+export async function syncUntilHasMessageWithNotification(client: ConnectorClientWithMetadata, notificationId: string): Promise<ConnectorMessage> {
     const isNotification = (content: any) => {
         if (!content) return false;
 
@@ -115,7 +115,7 @@ export async function syncUntilHasNotification(client: ConnectorClientWithMetada
     ).data.message;
 }
 
-export async function syncUntilHasRequestWithResponse(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorMessage> {
+export async function syncUntilHasMessageWithResponse(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorMessage> {
     const isResponse = (content: any) => {
         if (!content) return false;
 
@@ -346,7 +346,7 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
 
     await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
 
-    const responseMessage = await syncUntilHasRequestWithResponse(sender, requestId);
+    const responseMessage = await syncUntilHasMessageWithResponse(sender, requestId);
     const sharedAttributeId = (responseMessage.content as any).response.items[0].attributeId;
     const senderRequest = (await sender.outgoingRequests.getRequest(requestId)).result;
     while (senderRequest.status !== ConnectorRequestStatus.Completed) {
@@ -425,7 +425,7 @@ export async function executeFullCreateAndShareRepositoryAttributeFlow(
 
         await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
 
-        const responseMessage = await syncUntilHasRequestWithResponse(sender, requestId);
+        const responseMessage = await syncUntilHasMessageWithResponse(sender, requestId);
         const sharedAttributeId = (responseMessage as any).content.response.items[0].attributeId;
 
         const senderOwnSharedIdentityAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
