@@ -16,6 +16,7 @@ import {
     CreateRepositoryAttributeRequest,
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
+import { MessageProcessedEventData } from "@nmshd/runtime";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata } from "./Launcher";
@@ -38,12 +39,12 @@ export async function syncUntil(client: ConnectorClientWithMetadata, until: (cli
     client._eventBus?.reset();
     let iterationNumber = 0;
     while (!until(client) && iterationNumber < 25) {
+        // incrementally increase sleep duration
+        await sleep(iterationNumber * 50);
+        iterationNumber++;
+
         const newSyncResponse = await client.account.sync();
         expect(newSyncResponse.isSuccess).toBe(true);
-
-        // incrementally increase sleep duration
-        iterationNumber++;
-        await sleep(iterationNumber * 50);
     }
 
     if (!until(client)) {
@@ -102,32 +103,37 @@ export async function syncUntilHasNotification(client: ConnectorClientWithMetada
     await syncUntil(
         client,
         (client) =>
-            client._eventBus?.publishedEvents.filter((e) => e.namespace === "consumption.messageProcessed" && isNotification((e as DataEvent<ConnectorMessage>).data.content))
-                .length === 1
+            client._eventBus?.publishedEvents.filter(
+                (e) => e.namespace === "consumption.messageProcessed" && isNotification((e as DataEvent<MessageProcessedEventData>).data.message.content)
+            ).length === 1
     );
 
     return (
         client._eventBus?.publishedEvents.filter(
-            (e) => e.namespace === "consumption.messageProcessed" && isNotification((e as DataEvent<ConnectorMessage>).data.content)
-        )[0] as DataEvent<ConnectorMessage>
-    ).data;
+            (e) => e.namespace === "consumption.messageProcessed" && isNotification((e as DataEvent<MessageProcessedEventData>).data.message.content)
+        )[0] as DataEvent<MessageProcessedEventData>
+    ).data.message;
 }
 
 export async function syncUntilHasRequestWithResponse(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorMessage> {
-    const isResponse = (content: any) => content["@type"] === "ResponseWrapper" && content.requestId === requestId;
+    const isResponse = (content: any) => {
+        if (!content) return false;
 
+        return content["@type"] === "ResponseWrapper" && content.requestId === requestId;
+    };
     await syncUntil(
         client,
         (client) =>
-            client._eventBus?.publishedEvents.filter((e) => e.namespace === "consumption.messageProcessed" && isResponse((e as DataEvent<ConnectorMessage>).data.content))
-                .length === 1
+            client._eventBus?.publishedEvents.filter(
+                (e) => e.namespace === "consumption.messageProcessed" && isResponse((e as DataEvent<MessageProcessedEventData>).data.message.content)
+            ).length === 1
     );
 
     return (
         client._eventBus?.publishedEvents.filter(
-            (e) => e.namespace === "consumption.messageProcessed" && isResponse((e as DataEvent<ConnectorMessage>).data.content)
-        )[0] as DataEvent<ConnectorMessage>
-    ).data;
+            (e) => e.namespace === "consumption.messageProcessed" && isResponse((e as DataEvent<MessageProcessedEventData>).data.message.content)
+        )[0] as DataEvent<MessageProcessedEventData>
+    ).data.message;
 }
 
 export async function uploadOwnToken(client: ConnectorClient): Promise<ConnectorToken> {

@@ -104,10 +104,10 @@ describe("Relationships", () => {
         const relationshipId = client1Relationship.id;
         expect(relationshipId).toBeDefined();
 
-        const rejectRelationshipResponse = await client1.relationships.rejectRelationship(relationshipId);
-        expect(rejectRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
+        const revokeRelationshipResponse = await client2.relationships.revokeRelationship(relationshipId);
+        expect(revokeRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
-        await syncUntilHasRelationship(client2, relationshipId);
+        await syncUntilHasRelationship(client1, relationshipId);
 
         const client1GetRelationshipResponse = await client1.relationships.getRelationship(relationshipId);
         expect(client1GetRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
