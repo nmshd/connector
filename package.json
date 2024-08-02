@@ -72,7 +72,7 @@
         "@js-soft/node-logger": "1.1.1",
         "@js-soft/ts-utils": "^2.3.3",
         "@nmshd/iql": "^1.0.2",
-        "@nmshd/runtime": "5.0.0-alpha.9",
+        "@nmshd/runtime": "5.0.0-alpha.14",
         "agentkeepalive": "4.5.0",
         "amqplib": "^0.10.4",
         "axios": "^1.7.2",
