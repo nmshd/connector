@@ -24,6 +24,7 @@ export class AccountController extends BaseController {
     public async sync(): Promise<void> {
         const result = await this.transportServices.account.syncEverything();
         if (result.isError) throw result.error;
+        return this.noContent(result);
     }
 
     @GET
