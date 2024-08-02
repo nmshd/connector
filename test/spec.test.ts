@@ -54,7 +54,7 @@ describe("test openapi spec against routes", () => {
         // Paths to ignore in regard to return code consistency (Post requests that return 200 due to no creation, deletes that return 204)
         /* eslint-disable @typescript-eslint/naming-convention */
         const returnCodeOverwrite: Record<string, Record<string, string> | undefined> = {
-            "/api/v2/Account/Sync": { post: "200" },
+            "/api/v2/Account/Sync": { post: "204" },
             "/api/v2/Attributes/ExecuteIQLQuery": { post: "200" },
             "/api/v2/Attributes/ValidateIQLQuery": { post: "200" },
             "/api/v2/Challenges/Validate": { post: "200" },
