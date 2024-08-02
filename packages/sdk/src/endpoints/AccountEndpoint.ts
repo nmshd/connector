@@ -7,7 +7,7 @@ export class AccountEndpoint extends Endpoint {
     }
 
     public async sync(): Promise<ConnectorResponse<string>> {
-        return await this.post("/api/v2/Account/Sync", undefined, 200);
+        return await this.post("/api/v2/Account/Sync", undefined, 204);
     }
 
     public async getSyncInfo(): Promise<ConnectorResponse<ConnectorSyncInfo>> {
