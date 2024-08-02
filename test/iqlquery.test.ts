@@ -1,8 +1,8 @@
 import { ConnectorClient, ConnectorIdentityAttribute, ExecuteIQLQueryRequest, IQLQuery, ProposeAttributeRequestItem, ReadAttributeRequestItem } from "@nmshd/connector-sdk";
 import { DateTime } from "luxon";
-import { Launcher } from "./lib/Launcher";
+import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { getTimeout } from "./lib/setTimeout";
-import { getTemplateToken, syncUntil, syncUntilHasMessages, syncUntilHasRelationships } from "./lib/testUtils";
+import { getTemplateToken, syncUntil, syncUntilHasMessages, syncUntilHasMessageWithRequest, syncUntilHasRelationships } from "./lib/testUtils";
 
 /* Disable timeout errors if we're debugging */
 if (process.env.NODE_OPTIONS !== undefined && process.env.NODE_OPTIONS.search("inspect") !== -1) {
@@ -10,7 +10,7 @@ if (process.env.NODE_OPTIONS !== undefined && process.env.NODE_OPTIONS.search("i
 }
 
 const launcher = new Launcher();
-let client1: ConnectorClient;
+let client1: ConnectorClientWithMetadata;
 let client2: ConnectorClient;
 let client1Address: string;
 let attributes: ConnectorIdentityAttribute[];
@@ -108,10 +108,9 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
     const requestId = createRequestRes.result.id;
 
     /* Send request via message from C2 to C1 and wait for it to arrive. */
-    const requestMessageId = (await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content })).result.id;
-    await syncUntil(client1, (context) => {
-        return context.messages.some((m) => m.id === requestMessageId);
-    });
+    await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content });
+
+    await syncUntilHasMessageWithRequest(client1, requestId);
 
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;

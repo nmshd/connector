@@ -3,7 +3,7 @@ import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Random, RandomCharacterRange } from "@nmshd/transport";
 import { ChildProcess, spawn } from "child_process";
 import express from "express";
-import { Server } from "http";
+import { Agent, Server } from "http";
 import path from "path";
 import { MockEventBus } from "./MockEventBus";
 import getPort from "./getPort";
@@ -46,7 +46,11 @@ export class Launcher {
         for (let i = 0; i < count; i++) {
             const port = await getPort();
             const accountName = `${i + 1}-${await this.randomString()}`;
-            const connectorClient = ConnectorClient.create({ baseUrl: `http://localhost:${port}`, apiKey: this.apiKey }) as ConnectorClientWithMetadata;
+            const connectorClient = ConnectorClient.create({
+                baseUrl: `http://localhost:${port}`,
+                apiKey: this.apiKey,
+                httpAgent: new Agent({ keepAlive: false })
+            }) as ConnectorClientWithMetadata;
             connectorClient["_metadata"] = { accountName: `acc-${accountName}` };
 
             connectorClient._eventBus = new MockEventBus();

@@ -77,7 +77,9 @@ export async function syncUntilHasMessages(client: ConnectorClient, expectedNumb
 }
 
 export async function syncUntilHasMessageWithRequest(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorMessage> {
-    const isRequest = (content: any) => content["@type"] === "Request" && content.id === requestId;
+    const isRequest = (content: any) => {
+        return content["@type"] === "Request" && content.id === requestId;
+    };
     const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
         return syncResult.messages.filter((m: ConnectorMessage) => isRequest(m.content));
     };
