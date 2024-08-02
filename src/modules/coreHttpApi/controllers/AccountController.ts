@@ -24,7 +24,7 @@ export class AccountController extends BaseController {
     @Accept("application/json")
     public async sync(): Promise<Envelope> {
         const result = await this.transportServices.account.syncEverything();
-        if (result.isError) return this.ok(result);
+        if (result.isError) throw result.error;
         return this.ok(Result.ok("Sync successful"));
     }
 
