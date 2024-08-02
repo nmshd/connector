@@ -1,4 +1,3 @@
-import { Result } from "@js-soft/ts-utils";
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
 import { Accept, GET, Path, POST } from "typescript-rest";
@@ -22,10 +21,9 @@ export class AccountController extends BaseController {
     @POST
     @Path("/Sync")
     @Accept("application/json")
-    public async sync(): Promise<Envelope> {
+    public async sync(): Promise<void> {
         const result = await this.transportServices.account.syncEverything();
         if (result.isError) throw result.error;
-        return this.ok(Result.ok("Sync successful"));
     }
 
     @GET
