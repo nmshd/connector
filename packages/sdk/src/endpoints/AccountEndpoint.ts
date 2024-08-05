@@ -6,7 +6,7 @@ export class AccountEndpoint extends Endpoint {
         return await this.get("/api/v2/Account/IdentityInfo");
     }
 
-    public async sync(): Promise<ConnectorResponse<string>> {
+    public async sync(): Promise<ConnectorResponse<void>> {
         return await this.post("/api/v2/Account/Sync", undefined, 204);
     }
 
