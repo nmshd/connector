@@ -27,9 +27,10 @@
         "unlink-runtime": "rm -rf node_modules/@nmshd && npm install",
         "tsc": "tsc",
         "tsc:watch": "tsc -w",
-        "test:ci": "npm run build && jest -i",
+        "test:ci": "npm run build && npx c8 jest -i",
         "test:local": "npm run test:local:mongo",
         "test:local:mongo": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" jest",
+        "test:local:coverage": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" npx c8 jest",
         "test:local:ferretdb": "npm run build --workspaces && npm run start:test-env:ferretdb && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27019\" jest",
         "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json",
         "start:backbone": "docker compose -p connector-test-backbone --env-file .dev/compose.backbone.env -f .dev/compose.backbone.yml up -d",
@@ -40,6 +41,18 @@
         "teardown:backbone": "docker compose -p connector-test-backbone --env-file .dev/compose.backbone.env -f .dev/compose.backbone.yml down -v",
         "teardown:test-env": "docker compose -p connector-tests -f test/compose.yml down -v",
         "teardown:testconnectors": "docker compose -f .dev/compose.yml down -v"
+    },
+    "c8": {
+        "all": true,
+        "src": [
+            "src",
+            "packages/sdk/src"
+        ],
+        "reporter": [
+            "lcov",
+            "text-summary",
+            "cobertura"
+        ]
     },
     "jest": {
         "maxWorkers": 2,
@@ -76,6 +89,7 @@
         "agentkeepalive": "4.5.0",
         "amqplib": "^0.10.4",
         "axios": "^1.7.2",
+        "c8": "^10.1.2",
         "compression": "1.7.4",
         "cors": "2.8.5",
         "eventsource": "^2.0.2",
