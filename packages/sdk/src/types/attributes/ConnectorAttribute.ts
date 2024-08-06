@@ -6,7 +6,7 @@ export interface ConnectorAttribute {
     succeededBy?: string;
     deletionInfo?: ConnectorAttributeDeletionInfo;
     shareInfo?: ConnectorAttributeShareInfo;
-    isDefault?: boolean;
+    isDefault?: true;
 }
 
 export enum ConnectorAttributeDeletionStatus {
