@@ -109,7 +109,6 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
 
     /* Send request via message from C2 to C1 and wait for it to arrive. */
     await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content });
-
     await syncUntilHasMessageWithRequest(client1, requestId);
 
     /* Extract and execute IQL query on C1. */

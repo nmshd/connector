@@ -30,6 +30,13 @@ jobs:
           NMSHD_TEST_CLIENTID: test
           NMSHD_TEST_CLIENTSECRET: test
 
+      - name: Code coverage
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
+          files: ./coverage/cobertura-coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   test-ferret:
     runs-on: ubuntu-latest
     steps:
