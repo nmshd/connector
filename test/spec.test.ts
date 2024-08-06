@@ -84,7 +84,6 @@ describe("test openapi spec against routes", () => {
 
             Object.keys(manualOpenApiSpec.paths[path] ?? {}).forEach((method) => {
                 const key = method as "get" | "put" | "post" | "delete" | "options" | "head" | "patch";
-                // const manualResponses = Object.keys(manualOpenApiSpec.paths[path][key]?.responses ?? {});
                 const manualResponses = Object.keys(manualOpenApiSpec.paths[path]?.[key]?.responses ?? {});
                 let expectedResponseCode = key === "post" ? "201" : "200";
                 expectedResponseCode = returnCodeOverwrite[path]?.[method] ?? expectedResponseCode;
