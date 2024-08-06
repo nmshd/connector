@@ -242,7 +242,7 @@ paths:
         - Account
       responses:
         204:
-          description: No content. The Connector received new/changed Relationships/Messages from the Backbone, if present.
+          description: No content.
           headers:
             X-Response-Duration-ms:
               schema:
