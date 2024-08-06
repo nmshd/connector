@@ -86,3 +86,8 @@ run()
         console.error(e); // eslint-disable-line no-console
         process.exit(1);
     });
+
+export function untested(): void {
+    // eslint-disable-next-line no-console
+    console.log("untested");
+}
