@@ -3,8 +3,9 @@ import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Random, RandomCharacterRange } from "@nmshd/transport";
 import { ChildProcess, spawn } from "child_process";
 import express from "express";
-import http, { Server } from "http";
-import https from "https";
+import http, { Server } from "node:http";
+import https from "node:https";
+import inspector from "node:inspector";
 import path from "path";
 import { MockEventBus } from "./MockEventBus";
 import getPort from "./getPort";
@@ -47,14 +48,16 @@ export class Launcher {
         const ports: number[] = [];
         const startPromises: Promise<void>[] = [];
 
+        const debugging = !!inspector.url();
         for (let i = 0; i < count; i++) {
             const port = await getPort();
             const accountName = `${i + 1}-${await this.randomString()}`;
+
             const connectorClient = ConnectorClient.create({
                 baseUrl: `http://localhost:${port}`,
                 apiKey: this.apiKey,
-                httpAgent: new http.Agent({ keepAlive: false }),
-                httpsAgent: new https.Agent({ keepAlive: false })
+                httpAgent: debugging ? new http.Agent({ keepAlive: false }) : undefined,
+                httpsAgent: debugging ? new https.Agent({ keepAlive: false }) : undefined
             }) as ConnectorClientWithMetadata;
             connectorClient["_metadata"] = { accountName: `acc-${accountName}` };
 
