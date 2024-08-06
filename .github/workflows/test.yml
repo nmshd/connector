@@ -33,10 +33,9 @@ jobs:
       - name: Code coverage
         uses: codecov/codecov-action@v4
         with:
-          fail_ci_if_error: true # optional (default = false)
-          files: ./coverage/cobertura-coverage.xml # optional
-          token: ${{ secrets.CODECOV_TOKEN }} # required
-          verbose: true # optional (default = false)
+          fail_ci_if_error: true
+          files: ./coverage/cobertura-coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   test-ferret:
     runs-on: ubuntu-latest
