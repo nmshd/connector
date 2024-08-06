@@ -32,7 +32,7 @@
         "test:local:mongo": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" jest",
         "test:local:coverage": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" c8 jest",
         "test:local:ferretdb": "npm run build --workspaces && npm run start:test-env:ferretdb && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27019\" jest",
-        "generate:connectorConfigSchema": "ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json",
+        "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json",
         "start:backbone": "docker compose -p connector-test-backbone --env-file .dev/compose.backbone.env -f .dev/compose.backbone.yml up -d",
         "start:test-env": "docker compose -p connector-tests -f test/compose.yml up -d",
         "start:test-env:ferretdb": "npm run start:test-env -- ferret",
