@@ -1,5 +1,6 @@
 import { sleep } from "@js-soft/ts-utils";
 import compression from "compression";
+import correlationIdWrapper from "correlation-id";
 import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
 import helmet, { HelmetOptions } from "helmet";
@@ -57,6 +58,18 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
     private configure(): void {
         this.logger.debug("Configuring middleware...");
+
+        this.app.use((req, res, next) => {
+            let correlationId = req.headers["x-correlation-id"];
+            if (Array.isArray(correlationId)) {
+                correlationId = correlationId[0];
+            }
+            if (correlationId) {
+                correlationIdWrapper.withId(correlationId, next);
+            } else {
+                correlationIdWrapper.withId(next);
+            }
+        });
 
         this.app.use(helmet(this.getHelmetOptions()));
 

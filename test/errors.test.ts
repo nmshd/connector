@@ -7,9 +7,9 @@ const launcher = new Launcher();
 let axiosClient: AxiosInstance;
 
 beforeAll(async () => {
-    const baseUrl = await launcher.launchSimple();
+    const launchResult = await launcher.launchSimple();
     axiosClient = axios.create({
-        baseURL: baseUrl,
+        baseURL: launchResult.baseUrl,
         validateStatus: (_) => true
     });
 }, getTimeout(30000));
