@@ -248,7 +248,7 @@ describe("Relationships", () => {
         expect(attributesAfterDecomposition).toBeSuccessful(ValidationSchema.ConnectorAttributes);
         expect(attributesAfterDecomposition.result).toHaveLength(0);
 
-        await client1.account.sync();
+        await syncUntilHasRelationships(client1);
 
         const client1Relationships = await client1.relationships.getRelationships();
         expect(client1Relationships).toBeSuccessful(ValidationSchema.Relationships);

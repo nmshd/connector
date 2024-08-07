@@ -1,6 +1,6 @@
 import { ConnectorClient, ConnectorIdentityAttribute, ExecuteIQLQueryRequest, IQLQuery, ProposeAttributeRequestItem, ReadAttributeRequestItem } from "@nmshd/connector-sdk";
 import { DateTime } from "luxon";
-import { Launcher } from "./lib/Launcher";
+import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { getTimeout } from "./lib/setTimeout";
 import { getTemplateToken, syncUntil, syncUntilHasMessages, syncUntilHasMessageWithRequest, syncUntilHasRelationships } from "./lib/testUtils";
 
@@ -10,7 +10,7 @@ if (process.env.NODE_OPTIONS !== undefined && process.env.NODE_OPTIONS.search("i
 }
 
 const launcher = new Launcher();
-let client1: ConnectorClient;
+let client1: ConnectorClientWithMetadata;
 let client2: ConnectorClient;
 let client1Address: string;
 let attributes: ConnectorIdentityAttribute[];
