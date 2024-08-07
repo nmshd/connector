@@ -9,13 +9,14 @@ import {
     ConnectorRelationship,
     ConnectorRelationshipAttribute,
     ConnectorRelationshipTemplate,
+    ConnectorRequest,
     ConnectorRequestStatus,
-    ConnectorSyncResult,
     ConnectorToken,
     CreateOutgoingRequestRequest,
     CreateRepositoryAttributeRequest,
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
+import { MessageProcessedEventData } from "@nmshd/runtime";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata } from "./Launcher";
@@ -34,58 +35,62 @@ export async function connectAndEmptyCollection(databaseName: string, collection
     }
 }
 
-export async function syncUntil(client: ConnectorClient, until: (syncResult: ConnectorSyncResult) => boolean): Promise<ConnectorSyncResult> {
-    const syncResponse = await client.account.sync();
-    expect(syncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
-
-    const connectorSyncResult: ConnectorSyncResult = {
-        messages: [...syncResponse.result.messages],
-        relationships: [...syncResponse.result.relationships],
-        identityDeletionProcesses: [...syncResponse.result.identityDeletionProcesses]
-    };
-
+export async function syncUntil(client: ConnectorClientWithMetadata, until: (client: ConnectorClientWithMetadata) => boolean): Promise<void> {
+    client._eventBus!.reset();
     let iterationNumber = 0;
-    while (!until(connectorSyncResult) && iterationNumber < 25) {
+    while (!until(client) && iterationNumber < 25) {
         // incrementally increase sleep duration
-        iterationNumber++;
         await sleep(iterationNumber * 50);
+        iterationNumber++;
 
         const newSyncResponse = await client.account.sync();
-        expect(newSyncResponse).toBeSuccessful(ValidationSchema.ConnectorSyncResult);
-
-        const newConnectorSyncResult = newSyncResponse.result;
-
-        connectorSyncResult.messages.push(...newConnectorSyncResult.messages);
-        connectorSyncResult.relationships.push(...newConnectorSyncResult.relationships);
+        expect(newSyncResponse.isSuccess).toBe(true);
     }
 
-    if (!until(connectorSyncResult)) {
+    if (!until(client)) {
         throw new Error("syncUntil() timed out");
     }
-
-    return connectorSyncResult;
 }
 
-export async function syncUntilHasRelationships(client: ConnectorClient, expectedNumberOfRelationships = 1): Promise<ConnectorRelationship[]> {
-    const syncResult = await syncUntil(client, (syncResult) => syncResult.relationships.length >= expectedNumberOfRelationships);
-    return syncResult.relationships;
+export async function syncUntilHasRelationship(client: ConnectorClientWithMetadata, relationshipId: string): Promise<ConnectorRelationship> {
+    await syncUntil(
+        client,
+        (client) =>
+            client._eventBus!.publishedEvents.filter(
+                (e) =>
+                    ["transport.relationshipChanged", "transport.relationshipReactivationCompleted", "transport.relationshipReactivationRequested"].includes(e.namespace) &&
+                    (e as DataEvent<ConnectorRelationship>).data.id === relationshipId
+            ).length >= 1
+    );
+    return (
+        client
+            ._eventBus!.publishedEvents.filter(
+                (e) =>
+                    ["transport.relationshipChanged", "transport.relationshipReactivationCompleted", "transport.relationshipReactivationRequested"].includes(e.namespace) &&
+                    (e as DataEvent<ConnectorRelationship>).data.id === relationshipId
+            )
+            .at(-1) as DataEvent<ConnectorRelationship>
+    ).data;
 }
 
-export async function syncUntilHasMessages(client: ConnectorClient, expectedNumberOfMessages = 1): Promise<ConnectorMessage[]> {
-    const syncResult = await syncUntil(client, (syncResult) => syncResult.messages.length >= expectedNumberOfMessages);
-    return syncResult.messages;
+export async function syncUntilHasMessages(client: ConnectorClientWithMetadata, expectedNumberOfMessages = 1): Promise<ConnectorMessage[]> {
+    await syncUntil(client, (client) => client._eventBus!.publishedEvents.filter((e) => e.namespace === "transport.messageReceived").length >= expectedNumberOfMessages);
+    return client._eventBus!.publishedEvents.filter((e) => e.namespace === "transport.messageReceived").map((e) => (e as DataEvent<ConnectorMessage>).data);
 }
 
-export async function syncUntilHasMessageWithRequest(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorMessage> {
-    const isRequest = (content: any) => content["@type"] === "Request" && content.id === requestId;
-    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
-        return syncResult.messages.filter((m: ConnectorMessage) => isRequest(m.content));
-    };
+export async function syncUntilHasRequest(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorRequest> {
+    await syncUntil(
+        client,
+        (client) =>
+            client._eventBus!.publishedEvents.filter((e) => e.namespace === "consumption.incomingRequestReceived" && (e as DataEvent<ConnectorRequest>).data.id === requestId)
+                .length === 1
+    );
 
-    const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
-    await client._eventBus!.waitForEvent<DataEvent<any>>("consumption.messageProcessed", (e) => isRequest(e.data.message?.content));
-
-    return filterRequestMessagesByRequestId(syncResult)[0];
+    return (
+        client._eventBus!.publishedEvents.filter(
+            (e) => e.namespace === "consumption.incomingRequestReceived" && (e as DataEvent<ConnectorRequest>).data.id === requestId
+        )[0] as DataEvent<ConnectorRequest>
+    ).data;
 }
 
 export async function syncUntilHasMessageWithNotification(client: ConnectorClientWithMetadata, notificationId: string): Promise<ConnectorMessage> {
@@ -95,26 +100,40 @@ export async function syncUntilHasMessageWithNotification(client: ConnectorClien
         return content["@type"] === "Notification" && content.id === notificationId;
     };
 
-    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => syncResult.messages.filter((m: ConnectorMessage) => isNotification(m.content));
+    await syncUntil(
+        client,
+        (client) =>
+            client._eventBus!.publishedEvents.filter(
+                (e) => e.namespace === "consumption.messageProcessed" && isNotification((e as DataEvent<MessageProcessedEventData>).data.message.content)
+            ).length === 1
+    );
 
-    const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
-
-    await client._eventBus!.waitForEvent<DataEvent<any>>("consumption.messageProcessed", (e) => isNotification(e.data.message?.content));
-
-    return filterRequestMessagesByRequestId(syncResult)[0];
+    return (
+        client._eventBus!.publishedEvents.filter(
+            (e) => e.namespace === "consumption.messageProcessed" && isNotification((e as DataEvent<MessageProcessedEventData>).data.message.content)
+        )[0] as DataEvent<MessageProcessedEventData>
+    ).data.message;
 }
 
 export async function syncUntilHasMessageWithResponse(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorMessage> {
-    const isResponse = (content: any) => content["@type"] === "ResponseWrapper" && content.requestId === requestId;
-    const filterRequestMessagesByRequestId = (syncResult: ConnectorSyncResult) => {
-        return syncResult.messages.filter((m: ConnectorMessage) => isResponse(m.content));
+    const isResponse = (content: any) => {
+        if (!content) return false;
+
+        return content["@type"] === "ResponseWrapper" && content.requestId === requestId;
     };
+    await syncUntil(
+        client,
+        (client) =>
+            client._eventBus!.publishedEvents.filter(
+                (e) => e.namespace === "consumption.messageProcessed" && isResponse((e as DataEvent<MessageProcessedEventData>).data.message.content)
+            ).length === 1
+    );
 
-    const syncResult = await syncUntil(client, (syncResult) => filterRequestMessagesByRequestId(syncResult).length !== 0);
-
-    await client._eventBus!.waitForEvent<DataEvent<any>>("consumption.messageProcessed", (e) => isResponse(e.data.message?.content));
-
-    return filterRequestMessagesByRequestId(syncResult)[0];
+    return (
+        client._eventBus!.publishedEvents.filter(
+            (e) => e.namespace === "consumption.messageProcessed" && isResponse((e as DataEvent<MessageProcessedEventData>).data.message.content)
+        )[0] as DataEvent<MessageProcessedEventData>
+    ).data.message;
 }
 
 export async function uploadOwnToken(client: ConnectorClient): Promise<ConnectorToken> {
@@ -266,14 +285,12 @@ export async function establishRelationship(client1: ConnectorClient, client2: C
     const createRelationshipResponse = await client2.relationships.createRelationship({ templateId: template.id, creationContent: { a: "b" } });
     expect(createRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
-    const relationships = await syncUntilHasRelationships(client1);
-    expect(relationships).toHaveLength(1);
+    const relationship = await syncUntilHasRelationship(client1, createRelationshipResponse.result.id);
 
-    const acceptResponse = await client1.relationships.acceptRelationship(relationships[0].id);
+    const acceptResponse = await client1.relationships.acceptRelationship(relationship.id);
     expect(acceptResponse).toBeSuccessful(ValidationSchema.Relationship);
 
-    const relationships2 = await syncUntilHasRelationships(client2);
-    expect(relationships2).toHaveLength(1);
+    await syncUntilHasRelationship(client2, acceptResponse.result.id);
 }
 
 export async function createRepositoryAttribute(client: ConnectorClient, request: CreateRepositoryAttributeRequest): Promise<ConnectorAttribute> {
@@ -320,7 +337,7 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
     });
     const requestId = (sendMessageResponse.result.content as any).id;
 
-    await syncUntilHasMessageWithRequest(recipient, requestId);
+    await syncUntilHasRequest(recipient, requestId);
     let recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
     while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {
         await sleep(500);
@@ -398,7 +415,7 @@ export async function executeFullCreateAndShareRepositoryAttributeFlow(
         });
 
         const requestId = (sendMessageResponse.result.content as any).id;
-        await syncUntilHasMessageWithRequest(recipient, requestId);
+        await syncUntilHasRequest(recipient, requestId);
 
         let recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
         while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {

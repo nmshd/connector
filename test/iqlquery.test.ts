@@ -2,7 +2,7 @@ import { ConnectorClient, ConnectorIdentityAttribute, ExecuteIQLQueryRequest, IQ
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { getTimeout } from "./lib/setTimeout";
-import { getTemplateToken, syncUntil, syncUntilHasMessages, syncUntilHasMessageWithRequest, syncUntilHasRelationships } from "./lib/testUtils";
+import { getTemplateToken, syncUntilHasMessages, syncUntilHasRelationship, syncUntilHasRequest } from "./lib/testUtils";
 
 /* Disable timeout errors if we're debugging */
 if (process.env.NODE_OPTIONS !== undefined && process.env.NODE_OPTIONS.search("inspect") !== -1) {
@@ -50,10 +50,9 @@ beforeAll(async () => {
     /* Initialize relationship. */
     const token = await getTemplateToken(client1);
     const templateId = (await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.truncatedReference })).result.id;
-    await client2.relationships.createRelationship({ templateId, creationContent: { a: "b" } });
+    const relationshipId = (await client2.relationships.createRelationship({ templateId, creationContent: { a: "b" } })).result.id;
     for (const c of [client1, client2]) {
-        const relationships = await syncUntilHasRelationships(c);
-        const relationshipId = relationships[0].id;
+        await syncUntilHasRelationship(c, relationshipId);
         await c.relationships.acceptRelationship(relationshipId);
     }
 
@@ -109,7 +108,7 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
 
     /* Send request via message from C2 to C1 and wait for it to arrive. */
     await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content });
-    await syncUntilHasMessageWithRequest(client1, requestId);
+    await syncUntilHasRequest(client1, requestId);
 
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
@@ -167,10 +166,8 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
     const requestId = createRequestRes.result.id;
 
     /* Send request via message from C2 to C1 and wait for it to arrive. */
-    const requestMessageId = (await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content })).result.id;
-    await syncUntil(client1, (context) => {
-        return context.messages.some((m) => m.id === requestMessageId);
-    });
+    await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content });
+    await syncUntilHasRequest(client1, requestId);
 
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
@@ -221,10 +218,8 @@ test("Remote ProposeAttributeRequest containing IQL Query without existing attri
     const requestId = createRequestRes.result.id;
 
     /* Send request via message from C2 to C1 and wait for it to arrive. */
-    const requestMessageId = (await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content })).result.id;
-    await syncUntil(client1, (context) => {
-        return context.messages.some((m) => m.id === requestMessageId);
-    });
+    await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content });
+    await syncUntilHasRequest(client1, requestId);
 
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;

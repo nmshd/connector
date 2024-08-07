@@ -10,10 +10,10 @@ import {
     establishRelationship,
     executeFullCreateAndShareRelationshipAttributeFlow,
     executeFullCreateAndShareRepositoryAttributeFlow,
+    syncUntilHasMessages,
     syncUntilHasMessageWithNotification,
-    syncUntilHasMessageWithRequest,
     syncUntilHasMessageWithResponse,
-    syncUntilHasMessages
+    syncUntilHasRequest
 } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
@@ -573,7 +573,7 @@ describe("Delete attributes", () => {
             content: outgoingRequests.result.content
         });
 
-        await syncUntilHasMessageWithRequest(client2, outgoingRequests.result.id);
+        await syncUntilHasRequest(client2, outgoingRequests.result.id);
         await client2._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>("consumption.incomingRequestStatusChanged", (event) => {
             // eslint-disable-next-line jest/no-conditional-in-test
             return event.data.request.id.toString() === outgoingRequests.result.id && event.data.newStatus === "ManualDecisionRequired";

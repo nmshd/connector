@@ -1,4 +1,4 @@
-import { ConnectorResponse, ConnectorSyncInfo, ConnectorSyncResult, IdentityInfo } from "../types";
+import { ConnectorResponse, ConnectorSyncInfo, IdentityInfo } from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class AccountEndpoint extends Endpoint {
@@ -6,8 +6,8 @@ export class AccountEndpoint extends Endpoint {
         return await this.get("/api/v2/Account/IdentityInfo");
     }
 
-    public async sync(): Promise<ConnectorResponse<ConnectorSyncResult>> {
-        return await this.post("/api/v2/Account/Sync", undefined, 200);
+    public async sync(): Promise<ConnectorResponse<void>> {
+        return await this.post("/api/v2/Account/Sync", undefined, 204);
     }
 
     public async getSyncInfo(): Promise<ConnectorResponse<ConnectorSyncInfo>> {
