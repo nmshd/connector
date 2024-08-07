@@ -1059,6 +1059,9 @@
                 "baseUrl": {
                     "type": "string"
                 },
+                "addressGenerationHostnameOverride": {
+                    "type": "string"
+                },
                 "datawalletEnabled": {
                     "type": "boolean"
                 },

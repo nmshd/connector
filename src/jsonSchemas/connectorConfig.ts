@@ -54,6 +54,7 @@ interface IConfigOverwrite {
     platformMaxContentLength?: number;
     platformAdditionalHeaders?: object;
     baseUrl?: string;
+    addressGenerationHostnameOverride?: string;
     realm?: Realm;
     datawalletEnabled?: boolean;
     debug?: boolean;

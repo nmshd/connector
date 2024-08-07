@@ -2,9 +2,9 @@ import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { DataEvent, EventBus, SubscriptionTarget, sleep } from "@js-soft/ts-utils";
 import {
     ConnectorAttribute,
+    ConnectorAttributeValue,
     ConnectorClient,
     ConnectorFile,
-    ConnectorIdentityAttribute,
     ConnectorMessage,
     ConnectorRelationship,
     ConnectorRelationshipAttribute,
@@ -87,11 +87,11 @@ export async function syncUntilHasMessageWithRequest(client: ConnectorClientWith
 
     return filterRequestMessagesByRequestId(syncResult)[0];
 }
+
 export async function syncUntilHasMessageWithNotification(client: ConnectorClientWithMetadata, notificationId: string): Promise<ConnectorMessage> {
     const isNotification = (content: any) => {
-        if (!content) {
-            return false;
-        }
+        if (!content) return false;
+
         return content["@type"] === "Notification" && content.id === notificationId;
     };
 
@@ -263,18 +263,19 @@ export async function getRelationship(client: ConnectorClient): Promise<Connecto
 export async function establishRelationship(client1: ConnectorClient, client2: ConnectorClient): Promise<void> {
     const template = await exchangeTemplate(client1, client2);
 
-    const createRelationshipResponse = await client2.relationships.createRelationship({ templateId: template.id, content: { a: "b" } });
+    const createRelationshipResponse = await client2.relationships.createRelationship({ templateId: template.id, creationContent: { a: "b" } });
     expect(createRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
     const relationships = await syncUntilHasRelationships(client1);
     expect(relationships).toHaveLength(1);
 
-    const acceptResponse = await client1.relationships.acceptRelationshipChange(relationships[0].id, relationships[0].changes[0].id, { content: { a: "b" } });
+    const acceptResponse = await client1.relationships.acceptRelationship(relationships[0].id);
     expect(acceptResponse).toBeSuccessful(ValidationSchema.Relationship);
 
     const relationships2 = await syncUntilHasRelationships(client2);
     expect(relationships2).toHaveLength(1);
 }
+
 export async function createRepositoryAttribute(client: ConnectorClient, request: CreateRepositoryAttributeRequest): Promise<ConnectorAttribute> {
     const response = await client.attributes.createRepositoryAttribute(request);
     expect(response).toBeSuccessful(ValidationSchema.ConnectorAttribute);
@@ -325,6 +326,7 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
         await sleep(500);
         recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
     }
+
     await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
 
     const responseMessage = await syncUntilHasMessageWithResponse(sender, requestId);
@@ -346,21 +348,21 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
  * Returns the sender's own shared identity attribute.
  */
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
-    sender: ConnectorClientWithMetadata,
-    recipient: ConnectorClientWithMetadata,
-    attributeContent: ConnectorIdentityAttribute
+    sender: ConnectorClient,
+    recipient: ConnectorClient,
+    attributeValue: ConnectorAttributeValue
 ): Promise<ConnectorAttribute>;
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipient: ConnectorClient[],
-    attributeContent: ConnectorIdentityAttribute
+    attributeValue: ConnectorAttributeValue
 ): Promise<ConnectorAttribute[]>;
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipients: ConnectorClient | ConnectorClient[],
-    attributeContent: ConnectorIdentityAttribute
+    attributeValue: ConnectorAttributeValue
 ): Promise<ConnectorAttribute | ConnectorAttribute[]> {
-    const createAttributeRequestResult = await sender.attributes.createRepositoryAttribute({ content: { value: attributeContent.value } });
+    const createAttributeRequestResult = await sender.attributes.createRepositoryAttribute({ content: { value: attributeValue } });
     const attribute = createAttributeRequestResult.result;
 
     if (!Array.isArray(recipients)) {
@@ -382,7 +384,7 @@ export async function executeFullCreateAndShareRepositoryAttributeFlow(
                         "@type": "ShareAttributeRequestItem",
                         mustBeAccepted: true,
                         sourceAttributeId: attribute.id,
-                        attribute: attributeContent
+                        attribute: attribute.content
                     }
                 ]
             }
@@ -451,6 +453,7 @@ export function combinations<T>(...arrays: T[][]): T[][] {
             result.push([elem, ...combination]);
         }
     }
+
     return result;
 }
 

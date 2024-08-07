@@ -28,9 +28,9 @@ export abstract class Endpoint {
         return this.makeResult(response);
     }
 
-    protected async delete<T>(path: string, params?: unknown): Promise<ConnectorResponse<T>> {
+    protected async delete<T>(path: string, params?: unknown, expectedStatus?: number): Promise<ConnectorResponse<T>> {
         const response = await this.httpClient.delete(path, { params });
-        return this.makeResult(response);
+        return this.makeResult(response, expectedStatus);
     }
 
     protected makeResult<T>(httpResponse: AxiosResponse<any>, expectedStatus?: number): ConnectorResponse<T> {
@@ -57,9 +57,12 @@ export abstract class Endpoint {
                 docs: errorPayload.docs,
                 time: errorPayload.time,
                 code: errorPayload.code,
-                message: errorPayload.message
+                message: errorPayload.message,
+                stacktrace: errorPayload.stacktrace
             });
         }
+
+        if (expectedStatus === 204) return ConnectorResponse.success(undefined as T);
 
         return ConnectorResponse.success(httpResponse.data.result);
     }
@@ -138,6 +141,7 @@ export abstract class Endpoint {
             if (!data.hasOwnProperty(key)) {
                 continue;
             }
+
             const value = data[key];
 
             if (value instanceof Buffer) {

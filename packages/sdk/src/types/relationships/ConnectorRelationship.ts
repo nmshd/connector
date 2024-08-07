@@ -1,7 +1,9 @@
 import { ConnectorRelationshipTemplate } from "../relationshipTemplates/ConnectorRelationshipTemplate";
 import { ConnectorIdentity } from "./ConnectorIdentity";
-import { ConnectorRelationshipChanges } from "./ConnectorRelationshipChanges";
+import { ConnectorRelationshipAuditLogEntry } from "./ConnectorRelationshipAuditLogEntry";
 import { ConnectorRelationshipStatus } from "./ConnectorRelationshipStatus";
+
+export interface ConnectorRelationshipAuditLog extends Array<ConnectorRelationshipAuditLogEntry> {}
 
 export interface ConnectorRelationship {
     id: string;
@@ -9,5 +11,6 @@ export interface ConnectorRelationship {
     status: ConnectorRelationshipStatus;
     peer: string;
     peerIdentity: ConnectorIdentity;
-    changes: ConnectorRelationshipChanges;
+    creationContent: any;
+    auditLog: ConnectorRelationshipAuditLog;
 }

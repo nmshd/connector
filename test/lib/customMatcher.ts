@@ -6,6 +6,7 @@ expect.extend({
         if (received instanceof SerializableBase) {
             received = received.toJSON();
         }
+
         if (expected instanceof SerializableBase) {
             expected = expected.toJSON();
         }
