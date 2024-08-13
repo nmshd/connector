@@ -238,33 +238,11 @@ paths:
         Syncs the Connector messages and relationships with the Backbone.
         Checks for new relationships as well as incoming changes of existing ones.
         Checks for new or updated Messages.
-        Returns all affected relationships and messages.
       tags:
         - Account
       responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      relationships:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/Relationship"
-                      messages:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/Message"
-                    required:
-                      - messages
-                      - relationships
-                required:
-                  - result
+        204:
+          description: No content.
           headers:
             X-Response-Duration-ms:
               schema:

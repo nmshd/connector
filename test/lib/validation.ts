@@ -24,7 +24,6 @@ export enum ValidationSchema {
     Token = "ConnectorToken",
     Tokens = "ConnectorTokens",
     IdentityInfo = "IdentityInfo",
-    ConnectorSyncResult = "ConnectorSyncResult",
     ConnectorHealth = "ConnectorHealth",
     ConnectorVersionInfo = "ConnectorVersionInfo",
     ConnectorRequestCount = "ConnectorRequestCount",
