@@ -1,5 +1,6 @@
 export interface ConnectorAttribute {
     id: string;
+    parentId?: string;
     createdAt: string;
     content: ConnectorIdentityAttribute | ConnectorRelationshipAttribute;
     succeeds?: string;
@@ -13,7 +14,9 @@ export enum ConnectorAttributeDeletionStatus {
     ToBeDeleted = "ToBeDeleted",
     ToBeDeletedByPeer = "ToBeDeletedByPeer",
     DeletedByPeer = "DeletedByPeer",
-    DeletedByOwner = "DeletedByOwner"
+    DeletedByOwner = "DeletedByOwner",
+    DeletionRequestSent = "DeletionRequestSent",
+    DeletionRequestRejected = "DeletionRequestRejected"
 }
 
 export interface ConnectorAttributeDeletionInfo {
