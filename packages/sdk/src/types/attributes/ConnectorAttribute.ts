@@ -1,5 +1,6 @@
 export interface ConnectorAttribute {
     id: string;
+    parentId?: string;
     createdAt: string;
     content: ConnectorIdentityAttribute | ConnectorRelationshipAttribute;
     succeeds?: string;
