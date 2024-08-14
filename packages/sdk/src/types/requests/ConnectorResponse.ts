@@ -8,7 +8,6 @@ export interface ConnectorResponse {
 export interface ConnectorResponseItem {
     "@type": string;
     result: ConnectorResponseItemResult;
-    metadata?: object;
     [key: string]: any;
 }
 
@@ -21,5 +20,4 @@ export enum ConnectorResponseItemResult {
 export interface ConnectorResponseItemGroup {
     "@type": "ResponseItemGroup";
     items: ConnectorResponseItem[];
-    metadata?: object;
 }
