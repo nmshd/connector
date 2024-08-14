@@ -14,9 +14,9 @@ export interface GetOwnSharedIdentityAttributesRequest {
     "query.shareInfo.requestReference"?: string | string[];
     "query.shareInfo.notificationReference"?: string | string[];
     "query.shareInfo.sourceAttribute"?: string | string[];
+    "query.deletionInfo"?: string | string[];
+    "query.deletionInfo.deletionStatus"?: string | string[];
+    "query.deletionInfo.deletionDate"?: string | string[];
     hideTechnical?: boolean;
     onlyLatestVersions?: boolean;
-    deletionInfo?: string | string[];
-    "deletionInfo.deletionStatus"?: string | string[];
-    "deletionInfo.deletionDate"?: string | string[];
 }
