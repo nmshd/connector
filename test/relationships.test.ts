@@ -27,7 +27,10 @@ describe("Relationships", () => {
         expect(loadRelationshipResponse).toBeSuccessful(ValidationSchema.RelationshipTemplate);
         const templateId = loadRelationshipResponse.result.id;
 
-        const createRelationshipResponse = await client2.relationships.createRelationship({ templateId, creationContent: { a: "b" } });
+        const createRelationshipResponse = await client2.relationships.createRelationship({
+            templateId,
+            creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} }
+        });
         expect(createRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
         const client1Relationship = await syncUntilHasRelationship(client1, createRelationshipResponse.result.id);
@@ -67,7 +70,10 @@ describe("Relationships", () => {
         expect(loadRelationshipResponse).toBeSuccessful(ValidationSchema.RelationshipTemplate);
         const templateId = loadRelationshipResponse.result.id;
 
-        const createRelationshipResponse = await client2.relationships.createRelationship({ templateId, creationContent: { a: "b" } });
+        const createRelationshipResponse = await client2.relationships.createRelationship({
+            templateId,
+            creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} }
+        });
         expect(createRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
         const client1Relationship = await syncUntilHasRelationship(client1, createRelationshipResponse.result.id);
@@ -96,7 +102,10 @@ describe("Relationships", () => {
         expect(loadRelationshipResponse).toBeSuccessful(ValidationSchema.RelationshipTemplate);
         const templateId = loadRelationshipResponse.result.id;
 
-        const createRelationshipResponse = await client2.relationships.createRelationship({ templateId, creationContent: { a: "b" } });
+        const createRelationshipResponse = await client2.relationships.createRelationship({
+            templateId,
+            creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} }
+        });
         expect(createRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
         const client1Relationship = await syncUntilHasRelationship(client1, createRelationshipResponse.result.id);

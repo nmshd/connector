@@ -21,7 +21,10 @@ describe("Template Tests", () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
             maxNumberOfAllocations: 1,
             expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
-            content: { a: "b" }
+            content: {
+                "@type": "ArbitraryRelationshipTemplateContent",
+                value: { a: "b" }
+            }
         });
 
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
@@ -31,7 +34,10 @@ describe("Template Tests", () => {
 
     test("create a template with undefined maxNumberOfAllocations", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
-            content: { a: "A" },
+            content: {
+                "@type": "ArbitraryRelationshipTemplateContent",
+                value: { a: "b" }
+            },
             expiresAt: DateTime.utc().plus({ minutes: 10 }).toString()
         });
 
@@ -65,7 +71,10 @@ describe("Template Tests", () => {
 
     test("expect a validation error for sending maxNumberOfAllocations 0", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
-            content: { a: "A" },
+            content: {
+                "@type": "ArbitraryRelationshipTemplateContent",
+                value: { a: "A" }
+            },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString(),
             maxNumberOfAllocations: 0
         });
@@ -78,7 +87,7 @@ describe("Template Tests", () => {
 describe("Serialization Errors", () => {
     test("create a template with wrong content : missing values", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
-            content: { a: "A", "@type": "Message" },
+            content: { a: "A", "@type": "Message" } as any,
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
         expect(response).toBeAnError("Message.secretKey :: Value is not defined", "error.runtime.requestDeserialization");
@@ -86,7 +95,7 @@ describe("Serialization Errors", () => {
 
     test("create a template with wrong content : not existent type", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
-            content: { a: "A", "@type": "NonExistentType" },
+            content: { a: "A", "@type": "NonExistentType" } as any,
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
         expect(response).toBeAnError(

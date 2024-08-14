@@ -1,5 +1,5 @@
 import { DataEvent } from "@js-soft/ts-utils";
-import { ConnectorAttribute, ConnectorAttributeDeletionStatus, ConnectorResponse } from "@nmshd/connector-sdk";
+import { ConnectorAttribute, ConnectorAttributeDeletionStatus, ConnectorHttpResponse } from "@nmshd/connector-sdk";
 import { IncomingRequestStatusChangedEvent, LocalAttributeDTO, SuccessionEventData, ThirdPartyOwnedRelationshipAttributeDeletedByPeerEvent } from "@nmshd/runtime";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
@@ -325,7 +325,7 @@ describe("Read Attribute and versions", () => {
         expect(attributesResponse.result).toHaveLength(0);
 
         const numberOfAttributes = 5;
-        let newAttributeResponse: ConnectorResponse<ConnectorAttribute>;
+        let newAttributeResponse: ConnectorHttpResponse<ConnectorAttribute>;
         for (let i = 0; i < numberOfAttributes; i++) {
             newAttributeResponse = await client1.attributes.createRepositoryAttribute({
                 content: {

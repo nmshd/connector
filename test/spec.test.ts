@@ -73,7 +73,7 @@ describe("test openapi spec against routes", () => {
                 return;
             }
 
-            const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path])
+            const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path] ?? {})
                 .map((method) => method.toLocaleLowerCase())
                 .sort();
             const manualMethods = Object.keys(manualOpenApiSpec.paths[path] ?? {})
@@ -117,7 +117,8 @@ describe("test openapi spec against routes", () => {
                     return;
                 }
 
-                const manualOperation = manualOpenApiSpec.paths[path][method];
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                const manualOperation = manualOpenApiSpec.paths[path]?.[method];
                 if (!isOperation(manualOperation) || !manualOperation.parameters) {
                     throw new Error(`${path} ${method} does not contain parameters but generated do`);
                 }

@@ -114,7 +114,7 @@ describe("Message errors", () => {
                 "@type": "Mail",
                 subject: "A Subject",
                 body: "A Body"
-            }
+            } as any
         });
         expect(result).toBeAnError("Mail.to :: Value is not defined", "error.runtime.requestDeserialization");
     });

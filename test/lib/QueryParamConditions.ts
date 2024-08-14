@@ -1,6 +1,6 @@
 /* eslint-disable jest/no-standalone-expect */
 
-import { ConnectorClient, ConnectorResponse } from "@nmshd/connector-sdk";
+import { ConnectorClient, ConnectorHttpResponse } from "@nmshd/connector-sdk";
 import { DateTime } from "luxon";
 import { ValidationSchema } from "./validation";
 
@@ -177,7 +177,7 @@ export class QueryParamConditions {
         }
 
         for (const condition of this._conditions) {
-            const response: ConnectorResponse<any> = await queryFunction(this.connectorClient, { [condition.key]: condition.value });
+            const response: ConnectorHttpResponse<any> = await queryFunction(this.connectorClient, { [condition.key]: condition.value });
 
             expect(response).toBeSuccessful(schema);
 
