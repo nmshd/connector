@@ -1,6 +1,7 @@
 import {
     ConnectorAttribute,
     ConnectorAttributes,
+    ConnectorHttpResponse,
     CreateRepositoryAttributeRequest,
     DeleteOwnSharedAttributeAndNotifyPeerResponse,
     DeletePeerSharedAttributeAndNotifyOwnerResponse,
@@ -17,89 +18,90 @@ import {
     GetValidAttributesRequest,
     NotifyPeerAboutRepositoryAttributeSuccessionRequest,
     NotifyPeerAboutRepositoryAttributeSuccessionResponse,
-    Response,
     SucceedAttributeRequest,
     SucceedAttributeResponse
 } from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
-    public async createRepositoryAttribute(request: CreateRepositoryAttributeRequest): Promise<Response<ConnectorAttribute>> {
+    public async createRepositoryAttribute(request: CreateRepositoryAttributeRequest): Promise<ConnectorHttpResponse<ConnectorAttribute>> {
         return await this.post("/api/v2/Attributes", request);
     }
 
-    public async succeedAttribute(predecessorId: string, request: SucceedAttributeRequest): Promise<Response<SucceedAttributeResponse>> {
+    public async succeedAttribute(predecessorId: string, request: SucceedAttributeRequest): Promise<ConnectorHttpResponse<SucceedAttributeResponse>> {
         return await this.post(`/api/v2/Attributes/${predecessorId}/Succeed`, request);
     }
 
     public async notifyPeerAboutRepositoryAttributeSuccession(
         attributeId: string,
         request: NotifyPeerAboutRepositoryAttributeSuccessionRequest
-    ): Promise<Response<NotifyPeerAboutRepositoryAttributeSuccessionResponse>> {
+    ): Promise<ConnectorHttpResponse<NotifyPeerAboutRepositoryAttributeSuccessionResponse>> {
         return await this.post(`/api/v2/Attributes/${attributeId}/NotifyPeer`, request);
     }
 
-    public async getAttributes(request: GetAttributesRequest): Promise<Response<ConnectorAttributes>> {
+    public async getAttributes(request: GetAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes", request);
     }
 
-    public async getAttribute(attributeId: string): Promise<Response<ConnectorAttribute>> {
+    public async getAttribute(attributeId: string): Promise<ConnectorHttpResponse<ConnectorAttribute>> {
         return await this.get(`/api/v2/Attributes/${attributeId}`);
     }
 
-    public async getValidAttributes(request: GetValidAttributesRequest): Promise<Response<ConnectorAttributes>> {
+    public async getValidAttributes(request: GetValidAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Valid", request);
     }
 
-    public async getOwnRepositoryAttributes(request?: GetOwnRepositoryAttributesRequest): Promise<Response<ConnectorAttributes>> {
+    public async getOwnRepositoryAttributes(request?: GetOwnRepositoryAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Own/Repository", request);
     }
 
-    public async getOwnSharedIdentityAttributes(request?: GetOwnSharedIdentityAttributesRequest): Promise<Response<ConnectorAttributes>> {
+    public async getOwnSharedIdentityAttributes(request?: GetOwnSharedIdentityAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Own/Shared/Identity", request);
     }
 
-    public async getPeerSharedIdentityAttributes(request?: GetPeerSharedIdentityAttributesRequest): Promise<Response<ConnectorAttributes>> {
+    public async getPeerSharedIdentityAttributes(request?: GetPeerSharedIdentityAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Peer/Shared/Identity", request);
     }
 
-    public async getVersionsOfAttribute(attributeId: string): Promise<Response<ConnectorAttributes>> {
+    public async getVersionsOfAttribute(attributeId: string): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.get(`/api/v2/Attributes/${attributeId}/Versions`);
     }
 
-    public async getSharedVersionsOfAttribute(attributeId: string, request: GetSharedVersionsOfRepositoryAttributeRequest): Promise<Response<ConnectorAttributes>> {
+    public async getSharedVersionsOfAttribute(attributeId: string, request: GetSharedVersionsOfRepositoryAttributeRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.get(`/api/v2/Attributes/${attributeId}/Versions/Shared`, request);
     }
 
-    public async deleteOwnSharedAttributeAndNotifyPeer(attributeId: string): Promise<Response<DeleteOwnSharedAttributeAndNotifyPeerResponse>> {
+    public async deleteOwnSharedAttributeAndNotifyPeer(attributeId: string): Promise<ConnectorHttpResponse<DeleteOwnSharedAttributeAndNotifyPeerResponse>> {
         return await this.delete(`/api/v2/Attributes/Own/Shared/${attributeId}`);
     }
 
-    public async deletePeerSharedAttributeAndNotifyOwner(attributeId: string): Promise<Response<DeletePeerSharedAttributeAndNotifyOwnerResponse>> {
+    public async deletePeerSharedAttributeAndNotifyOwner(attributeId: string): Promise<ConnectorHttpResponse<DeletePeerSharedAttributeAndNotifyOwnerResponse>> {
         return await this.delete(`/api/v2/Attributes/Peer/Shared/${attributeId}`);
     }
 
-    public async deleteRepositoryAttribute(attributeId: string): Promise<Response<void>> {
+    public async deleteRepositoryAttribute(attributeId: string): Promise<ConnectorHttpResponse<void>> {
         return await this.delete(`/api/v2/Attributes/${attributeId}`, undefined, 204);
     }
 
-    public async deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer(attributeId: string): Promise<Response<DeleteThirdPartyOwnedRelationshipAttributeAndNotifyPeerResponse>> {
+    public async deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer(
+        attributeId: string
+    ): Promise<ConnectorHttpResponse<DeleteThirdPartyOwnedRelationshipAttributeAndNotifyPeerResponse>> {
         return await this.delete(`/api/v2/Attributes/ThirdParty/${attributeId}`);
     }
 
-    public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<Response<ConnectorAttributes>> {
+    public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.post("/api/v2/Attributes/ExecuteIdentityAttributeQuery", request, 200);
     }
 
-    public async executeRelationshipAttributeQuery(request: ExecuteRelationshipAttributeQueryRequest): Promise<Response<ConnectorAttribute>> {
+    public async executeRelationshipAttributeQuery(request: ExecuteRelationshipAttributeQueryRequest): Promise<ConnectorHttpResponse<ConnectorAttribute>> {
         return await this.post("/api/v2/Attributes/ExecuteRelationshipAttributeQuery", request, 200);
     }
 
-    public async executeThirdPartyRelationshipAttributeQuery(request: ExecuteThirdPartyRelationshipAttributeQueryRequest): Promise<Response<ConnectorAttribute[]>> {
+    public async executeThirdPartyRelationshipAttributeQuery(request: ExecuteThirdPartyRelationshipAttributeQueryRequest): Promise<ConnectorHttpResponse<ConnectorAttribute[]>> {
         return await this.post("/api/v2/Attributes/ExecuteThirdPartyRelationshipAttributeQuery", request, 200);
     }
 
-    public async executeIQLQuery(request: ExecuteIQLQueryRequest): Promise<Response<ConnectorAttribute[]>> {
+    public async executeIQLQuery(request: ExecuteIQLQueryRequest): Promise<ConnectorHttpResponse<ConnectorAttribute[]>> {
         return await this.post("/api/v2/Attributes/ExecuteIQLQuery", request, 200);
     }
 }

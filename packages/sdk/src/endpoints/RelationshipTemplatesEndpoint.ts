@@ -1,5 +1,6 @@
 import { AxiosInstance } from "axios";
 import {
+    ConnectorHttpResponse,
     ConnectorRelationshipTemplate,
     ConnectorRelationshipTemplates,
     ConnectorToken,
@@ -11,7 +12,6 @@ import {
     GetRelationshipTemplatesRequest,
     LoadPeerRelationshipTemplateRequest,
     RelationshipTemplateReference,
-    Response,
     TruncatedRelationshipTemplateReference
 } from "../types";
 import { Endpoint } from "./Endpoint";
@@ -21,41 +21,44 @@ export class RelationshipTemplatesEndpoint extends Endpoint {
         super(httpClient);
     }
 
-    public async getRelationshipTemplates(request?: GetRelationshipTemplatesRequest): Promise<Response<ConnectorRelationshipTemplates>> {
+    public async getRelationshipTemplates(request?: GetRelationshipTemplatesRequest): Promise<ConnectorHttpResponse<ConnectorRelationshipTemplates>> {
         return await this.get("/api/v2/RelationshipTemplates", request);
     }
 
-    public async getRelationshipTemplate(id: string): Promise<Response<ConnectorRelationshipTemplate>> {
+    public async getRelationshipTemplate(id: string): Promise<ConnectorHttpResponse<ConnectorRelationshipTemplate>> {
         return await this.get(`/api/v2/RelationshipTemplates/${id}`);
     }
 
-    public async getOwnRelationshipTemplates(request?: GetOwnRelationshipTemplatesRequest): Promise<Response<ConnectorRelationshipTemplates>> {
+    public async getOwnRelationshipTemplates(request?: GetOwnRelationshipTemplatesRequest): Promise<ConnectorHttpResponse<ConnectorRelationshipTemplates>> {
         return await this.get("/api/v2/RelationshipTemplates/Own", request);
     }
 
-    public async createOwnRelationshipTemplate(request: CreateOwnRelationshipTemplateRequest): Promise<Response<ConnectorRelationshipTemplate>> {
+    public async createOwnRelationshipTemplate(request: CreateOwnRelationshipTemplateRequest): Promise<ConnectorHttpResponse<ConnectorRelationshipTemplate>> {
         return await this.post("/api/v2/RelationshipTemplates/Own", request);
     }
 
-    public async getQrCodeForOwnRelationshipTemplate(id: string): Promise<Response<ArrayBuffer>> {
+    public async getQrCodeForOwnRelationshipTemplate(id: string): Promise<ConnectorHttpResponse<ArrayBuffer>> {
         return await this.downloadQrCode("GET", `/api/v2/RelationshipTemplates/${id}`);
     }
 
-    public async createTokenForOwnRelationshipTemplate(id: string, request?: CreateTokenForOwnRelationshipTemplateRequest): Promise<Response<ConnectorToken>> {
+    public async createTokenForOwnRelationshipTemplate(id: string, request?: CreateTokenForOwnRelationshipTemplateRequest): Promise<ConnectorHttpResponse<ConnectorToken>> {
         return await this.post(`/api/v2/RelationshipTemplates/Own/${id}/Token`, request, undefined);
     }
 
-    public async createTokenQrCodeForOwnRelationshipTemplate(id: string, request?: CreateTokenQrCodeForOwnRelationshipTemplateRequest): Promise<Response<ArrayBuffer>> {
+    public async createTokenQrCodeForOwnRelationshipTemplate(
+        id: string,
+        request?: CreateTokenQrCodeForOwnRelationshipTemplateRequest
+    ): Promise<ConnectorHttpResponse<ArrayBuffer>> {
         return await this.downloadQrCode("POST", `/api/v2/RelationshipTemplates/Own/${id}/Token`, request);
     }
 
-    public async getPeerRelationshipTemplates(request?: GetPeerRelationshipTemplatesRequest): Promise<Response<ConnectorRelationshipTemplates>> {
+    public async getPeerRelationshipTemplates(request?: GetPeerRelationshipTemplatesRequest): Promise<ConnectorHttpResponse<ConnectorRelationshipTemplates>> {
         return await this.get("/api/v2/RelationshipTemplates/Peer", request);
     }
 
-    public async loadPeerRelationshipTemplate(request: TruncatedRelationshipTemplateReference): Promise<Response<ConnectorRelationshipTemplate>>;
-    public async loadPeerRelationshipTemplate(request: RelationshipTemplateReference): Promise<Response<ConnectorRelationshipTemplate>>;
-    public async loadPeerRelationshipTemplate(request: LoadPeerRelationshipTemplateRequest): Promise<Response<ConnectorRelationshipTemplate>> {
+    public async loadPeerRelationshipTemplate(request: TruncatedRelationshipTemplateReference): Promise<ConnectorHttpResponse<ConnectorRelationshipTemplate>>;
+    public async loadPeerRelationshipTemplate(request: RelationshipTemplateReference): Promise<ConnectorHttpResponse<ConnectorRelationshipTemplate>>;
+    public async loadPeerRelationshipTemplate(request: LoadPeerRelationshipTemplateRequest): Promise<ConnectorHttpResponse<ConnectorRelationshipTemplate>> {
         return await this.post("/api/v2/RelationshipTemplates/Peer", request);
     }
 }
