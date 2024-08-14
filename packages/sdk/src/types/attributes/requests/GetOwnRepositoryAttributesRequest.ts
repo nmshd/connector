@@ -5,7 +5,4 @@ export interface GetOwnRepositoryAttributesRequest {
     "content.validFrom"?: string | string[];
     "content.validTo"?: string | string[];
     "content.value.@type"?: string | string[];
-    deletionInfo?: string | string[];
-    "deletionInfo.deletionStatus"?: string | string[];
-    "deletionInfo.deletionDate"?: string | string[];
 }
