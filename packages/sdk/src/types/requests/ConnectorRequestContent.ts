@@ -4,7 +4,7 @@ import { IdentityAttributeQuery } from "../attributes/IdentityAttributeQuery";
 import { RelationshipAttributeQuery } from "../attributes/RelationshipAttributeQuery";
 
 export interface ConnectorRequestContent {
-    "@type"?: string;
+    "@type"?: "Request";
     id?: string;
     expiresAt?: string;
     items: (ConnectorRequestItemDerivation | ConnectorRequestContentItemGroup)[];

@@ -1,3 +1,4 @@
+export * from "./ConnectorRelationshipContentDerivation";
 export * from "./ConnectorRelationshipTemplate";
 export * from "./ConnectorRelationshipTemplates";
 export * from "./RelationshipTemplateReference";
