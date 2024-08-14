@@ -16,7 +16,7 @@ export interface ConnectorRequest {
         createdAt: string;
         content: ConnectorResponse;
         source?: {
-            type: "Message" | "RelationshipChange";
+            type: "Message" | "Relationship";
             reference: string;
         };
     };
