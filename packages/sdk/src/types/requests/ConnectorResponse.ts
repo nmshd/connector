@@ -1,5 +1,5 @@
 export interface ConnectorResponse {
-    "@type": string;
+    "@type": "Response";
     result: "Accepted" | "Rejected";
     requestId: string;
     items: (ConnectorResponseItemGroup | ConnectorResponseItem)[];
@@ -9,6 +9,7 @@ export interface ConnectorResponseItem {
     "@type": string;
     result: ConnectorResponseItemResult;
     metadata?: object;
+    [key: string]: any;
 }
 
 export enum ConnectorResponseItemResult {
@@ -18,7 +19,7 @@ export enum ConnectorResponseItemResult {
 }
 
 export interface ConnectorResponseItemGroup {
-    "@type": string;
+    "@type": "ResponseItemGroup";
     items: ConnectorResponseItem[];
     metadata?: object;
 }
