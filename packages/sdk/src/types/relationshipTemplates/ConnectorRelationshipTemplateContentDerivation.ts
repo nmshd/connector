@@ -6,8 +6,8 @@ export interface ConnectorRelationshipTemplateContent {
     "@type": "RelationshipTemplateContent";
     title?: string;
     metadata?: object;
-    onNewRelationship: ConnectorRequestContent;
-    onExistingRelationship?: ConnectorRequestContent;
+    onNewRelationship: Omit<ConnectorRequestContent, "@type"> & { "@type"?: "Request" };
+    onExistingRelationship?: Omit<ConnectorRequestContent, "@type"> & { "@type"?: "Request" };
 }
 
 export interface ArbitraryRelationshipTemplateContent {
