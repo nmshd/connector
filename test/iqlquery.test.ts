@@ -1,6 +1,6 @@
 import { ConnectorClient, ConnectorIdentityAttribute, ExecuteIQLQueryRequest, IQLQuery, ProposeAttributeRequestItem, ReadAttributeRequestItem } from "@nmshd/connector-sdk";
 import { DateTime } from "luxon";
-import { Launcher } from "./lib/Launcher";
+import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { getTimeout } from "./lib/setTimeout";
 import { getTemplateToken, syncUntilHasMessages, syncUntilHasRelationship, syncUntilHasRequest } from "./lib/testUtils";
 
@@ -10,7 +10,7 @@ if (process.env.NODE_OPTIONS !== undefined && process.env.NODE_OPTIONS.search("i
 }
 
 const launcher = new Launcher();
-let client1: ConnectorClient;
+let client1: ConnectorClientWithMetadata;
 let client2: ConnectorClient;
 let client1Address: string;
 let attributes: ConnectorIdentityAttribute[];
@@ -50,7 +50,8 @@ beforeAll(async () => {
     /* Initialize relationship. */
     const token = await getTemplateToken(client1);
     const templateId = (await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.truncatedReference })).result.id;
-    const relationshipId = (await client2.relationships.createRelationship({ templateId, creationContent: { a: "b" } })).result.id;
+    const relationshipId = (await client2.relationships.createRelationship({ templateId, creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} } })).result
+        .id;
     for (const c of [client1, client2]) {
         await syncUntilHasRelationship(c, relationshipId);
         await c.relationships.acceptRelationship(relationshipId);

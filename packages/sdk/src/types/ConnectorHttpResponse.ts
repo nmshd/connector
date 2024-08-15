@@ -1,6 +1,6 @@
 import { ConnectorError } from "./ConnectorError";
 
-export class ConnectorResponse<T> {
+export class ConnectorHttpResponse<T> {
     private readonly _error?: ConnectorError;
     private readonly _result?: T;
 
@@ -47,11 +47,11 @@ export class ConnectorResponse<T> {
         return this._result!;
     }
 
-    public static success<T>(value: T): ConnectorResponse<T> {
-        return new ConnectorResponse<T>(true, value);
+    public static success<T>(value: T): ConnectorHttpResponse<T> {
+        return new ConnectorHttpResponse<T>(true, value);
     }
 
-    public static error<T>(error: ConnectorError): ConnectorResponse<T> {
-        return new ConnectorResponse<T>(false, undefined, error);
+    public static error<T>(error: ConnectorError): ConnectorHttpResponse<T> {
+        return new ConnectorHttpResponse<T>(false, undefined, error);
     }
 }

@@ -1,6 +1,6 @@
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import formDataLib from "form-data";
-import { ConnectorResponse } from "../types/ConnectorResponse";
+import { ConnectorHttpResponse } from "../types/ConnectorHttpResponse";
 
 export abstract class Endpoint {
     public constructor(private readonly httpClient: AxiosInstance) {}
@@ -10,7 +10,7 @@ export abstract class Endpoint {
         return reponse.data;
     }
 
-    protected async get<T>(path: string, query?: unknown): Promise<ConnectorResponse<T>> {
+    protected async get<T>(path: string, query?: unknown): Promise<ConnectorHttpResponse<T>> {
         const response = await this.httpClient.get(path, {
             params: query
         });
@@ -18,22 +18,22 @@ export abstract class Endpoint {
         return this.makeResult(response);
     }
 
-    protected async post<T>(path: string, data?: unknown, expectedStatus?: number, params?: unknown): Promise<ConnectorResponse<T>> {
+    protected async post<T>(path: string, data?: unknown, expectedStatus?: number, params?: unknown): Promise<ConnectorHttpResponse<T>> {
         const response = await this.httpClient.post(path, data, { params });
         return this.makeResult(response, expectedStatus);
     }
 
-    protected async put<T>(path: string, data?: unknown): Promise<ConnectorResponse<T>> {
+    protected async put<T>(path: string, data?: unknown): Promise<ConnectorHttpResponse<T>> {
         const response = await this.httpClient.put(path, data);
         return this.makeResult(response);
     }
 
-    protected async delete<T>(path: string, params?: unknown, expectedStatus?: number): Promise<ConnectorResponse<T>> {
+    protected async delete<T>(path: string, params?: unknown, expectedStatus?: number): Promise<ConnectorHttpResponse<T>> {
         const response = await this.httpClient.delete(path, { params });
         return this.makeResult(response, expectedStatus);
     }
 
-    protected makeResult<T>(httpResponse: AxiosResponse<any>, expectedStatus?: number): ConnectorResponse<T> {
+    protected makeResult<T>(httpResponse: AxiosResponse<any>, expectedStatus?: number): ConnectorHttpResponse<T> {
         if (!expectedStatus) {
             switch (httpResponse.config.method?.toUpperCase()) {
                 case "POST":
@@ -52,7 +52,7 @@ export abstract class Endpoint {
                     `The http request to connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
                 );
             }
-            return ConnectorResponse.error({
+            return ConnectorHttpResponse.error({
                 id: errorPayload.id,
                 docs: errorPayload.docs,
                 time: errorPayload.time,
@@ -62,12 +62,12 @@ export abstract class Endpoint {
             });
         }
 
-        if (expectedStatus === 204) return ConnectorResponse.success(undefined as T);
+        if (expectedStatus === 204) return ConnectorHttpResponse.success(undefined as T);
 
-        return ConnectorResponse.success(httpResponse.data.result);
+        return ConnectorHttpResponse.success(httpResponse.data.result);
     }
 
-    protected async download(url: string): Promise<ConnectorResponse<ArrayBuffer>> {
+    protected async download(url: string): Promise<ConnectorHttpResponse<ArrayBuffer>> {
         const httpResponse = await this.httpClient.get(url, {
             responseType: "arraybuffer"
         });
@@ -82,7 +82,7 @@ export abstract class Endpoint {
                 );
             }
 
-            return ConnectorResponse.error({
+            return ConnectorHttpResponse.error({
                 id: errorPayload.id,
                 docs: errorPayload.docs,
                 time: errorPayload.time,
@@ -91,10 +91,10 @@ export abstract class Endpoint {
             });
         }
 
-        return ConnectorResponse.success(httpResponse.data as ArrayBuffer);
+        return ConnectorHttpResponse.success(httpResponse.data as ArrayBuffer);
     }
 
-    protected async downloadQrCode(method: "GET" | "POST", url: string, request?: unknown): Promise<ConnectorResponse<ArrayBuffer>> {
+    protected async downloadQrCode(method: "GET" | "POST", url: string, request?: unknown): Promise<ConnectorHttpResponse<ArrayBuffer>> {
         const config: AxiosRequestConfig = {
             responseType: "arraybuffer",
             headers: {
@@ -123,7 +123,7 @@ export abstract class Endpoint {
                 );
             }
 
-            return ConnectorResponse.error({
+            return ConnectorHttpResponse.error({
                 id: errorPayload.id,
                 docs: errorPayload.docs,
                 time: errorPayload.time,
@@ -132,7 +132,7 @@ export abstract class Endpoint {
             });
         }
 
-        return ConnectorResponse.success(httpResponse.data as ArrayBuffer);
+        return ConnectorHttpResponse.success(httpResponse.data as ArrayBuffer);
     }
 
     protected async postMultipart(url: string, data: Record<string, unknown>, filename: string): Promise<AxiosResponse<unknown>> {

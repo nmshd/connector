@@ -1,5 +1,7 @@
+import { ConnectorMessageContentDerivation } from "../ConnectorMessageContentDerivation";
+
 export interface SendMessageRequest {
     recipients: string[];
-    content: unknown;
+    content: ConnectorMessageContentDerivation;
     attachments?: string[];
 }

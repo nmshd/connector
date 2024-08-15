@@ -4623,6 +4623,8 @@ components:
           anyOf:
             - "$ref": "#/components/schemas/IdentityAttribute"
             - "$ref": "#/components/schemas/RelationshipAttribute"
+        isDefault:
+          type: boolean
       required:
         - id
         - createdAt

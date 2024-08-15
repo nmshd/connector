@@ -16,11 +16,15 @@ import {
     CreateRepositoryAttributeRequest,
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
-import { MessageProcessedEventData } from "@nmshd/runtime";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata } from "./Launcher";
 import { ValidationSchema } from "./validation";
+
+export interface MessageProcessedEventData {
+    message: ConnectorMessage;
+    result: "ManualRequestDecisionRequired" | "NoRequest" | "Error";
+}
 
 export async function connectAndEmptyCollection(databaseName: string, collectionName: string): Promise<void> {
     const connection = new MongoDbConnection(process.env.DATABASE_CONNECTION_STRING!);
@@ -180,7 +184,10 @@ export async function createTemplate(client: ConnectorClient): Promise<Connector
     const response = await client.relationshipTemplates.createOwnRelationshipTemplate({
         maxNumberOfAllocations: 1,
         expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
-        content: { a: "b" }
+        content: {
+            "@type": "ArbitraryRelationshipTemplateContent",
+            value: { a: "b" }
+        }
     });
 
     expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
@@ -282,7 +289,10 @@ export async function getRelationship(client: ConnectorClient): Promise<Connecto
 export async function establishRelationship(client1: ConnectorClient, client2: ConnectorClient): Promise<void> {
     const template = await exchangeTemplate(client1, client2);
 
-    const createRelationshipResponse = await client2.relationships.createRelationship({ templateId: template.id, creationContent: { a: "b" } });
+    const createRelationshipResponse = await client2.relationships.createRelationship({
+        templateId: template.id,
+        creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} }
+    });
     expect(createRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
 
     const relationship = await syncUntilHasRelationship(client1, createRelationshipResponse.result.id);

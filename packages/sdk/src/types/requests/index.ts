@@ -2,6 +2,7 @@ export * from "./ConnectorRequest";
 export * from "./ConnectorRequestContent";
 export * from "./ConnectorRequests";
 export * from "./ConnectorRequestValidationResult";
+export * from "./ConnectorResponse";
 export * from "./requests/AcceptIncomingRequestRequest";
 export * from "./requests/CanAcceptIncomingRequestRequest";
 export * from "./requests/CanCreateOutgoingRequestRequest";

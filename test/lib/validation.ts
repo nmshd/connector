@@ -1,4 +1,4 @@
-import { ConnectorResponse, getJSONSchemaDefinition } from "@nmshd/connector-sdk";
+import { ConnectorHttpResponse, getJSONSchemaDefinition } from "@nmshd/connector-sdk";
 import ajv, { ErrorObject } from "ajv";
 import { matchersWithOptions } from "jest-json-schema";
 import _ from "lodash";
@@ -50,8 +50,8 @@ const ajvInstance = new ajv({ schemas: [schemaDefinition], allowUnionTypes: true
 type ExtendedError = ErrorObject<string, Record<string, any>, unknown> & { value: any };
 
 expect.extend({
-    toBeSuccessful(actual: ConnectorResponse<unknown>, schemaName: ValidationSchema) {
-        if (!(actual instanceof ConnectorResponse)) {
+    toBeSuccessful(actual: ConnectorHttpResponse<unknown>, schemaName: ValidationSchema) {
+        if (!(actual instanceof ConnectorHttpResponse)) {
             return { pass: false, message: () => "expected an instance of Result." };
         }
 
@@ -79,8 +79,8 @@ expect.extend({
         return { pass: actual.isSuccess, message: () => "" };
     },
 
-    toBeSuccessfulVoidResult(actual: ConnectorResponse<unknown>) {
-        if (!(actual instanceof ConnectorResponse)) {
+    toBeSuccessfulVoidResult(actual: ConnectorHttpResponse<unknown>) {
+        if (!(actual instanceof ConnectorHttpResponse)) {
             return { pass: false, message: () => "expected an instance of Result." };
         }
 
@@ -99,8 +99,8 @@ expect.extend({
         return { pass: actual.isSuccess, message: () => "" };
     },
 
-    toBeAnError(actual: ConnectorResponse<unknown>, expectedMessage: string | RegExp, expectedCode: string | RegExp) {
-        if (!(actual instanceof ConnectorResponse)) {
+    toBeAnError(actual: ConnectorHttpResponse<unknown>, expectedMessage: string | RegExp, expectedCode: string | RegExp) {
+        if (!(actual instanceof ConnectorHttpResponse)) {
             return {
                 pass: false,
                 message: () => "expected an instance of Result."

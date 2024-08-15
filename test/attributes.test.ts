@@ -1,6 +1,5 @@
 import { DataEvent } from "@js-soft/ts-utils";
-import { ConnectorAttribute, ConnectorAttributeDeletionStatus, ConnectorResponse } from "@nmshd/connector-sdk";
-import { IncomingRequestStatusChangedEvent, LocalAttributeDTO, SuccessionEventData, ThirdPartyOwnedRelationshipAttributeDeletedByPeerEvent } from "@nmshd/runtime";
+import { ConnectorAttribute, ConnectorAttributeDeletionStatus, ConnectorHttpResponse } from "@nmshd/connector-sdk";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
@@ -133,7 +132,7 @@ describe("Attributes", () => {
         expect(notificationResponse.isSuccess).toBe(true);
 
         await syncUntilHasMessageWithNotification(client2, notificationResponse.result.notificationId);
-        await client2._eventBus!.waitForEvent<DataEvent<any>>("consumption.peerSharedAttributeSucceeded", (event: DataEvent<SuccessionEventData>) => {
+        await client2._eventBus!.waitForEvent<DataEvent<any>>("consumption.peerSharedAttributeSucceeded", (event: DataEvent<any>) => {
             return event.data.successor.id === notificationResponse.result.successor.id;
         });
 
@@ -166,7 +165,7 @@ describe("Attributes", () => {
         expect(successionResponse.isSuccess).toBe(true);
 
         await syncUntilHasMessages(client2);
-        await client2._eventBus!.waitForEvent<DataEvent<SuccessionEventData>>(
+        await client2._eventBus!.waitForEvent<DataEvent<any>>(
             "consumption.peerSharedAttributeSucceeded",
             (event) => event.data.successor.id === successionResponse.result.successor.id
         );
@@ -325,7 +324,7 @@ describe("Read Attribute and versions", () => {
         expect(attributesResponse.result).toHaveLength(0);
 
         const numberOfAttributes = 5;
-        let newAttributeResponse: ConnectorResponse<ConnectorAttribute>;
+        let newAttributeResponse: ConnectorHttpResponse<ConnectorAttribute>;
         for (let i = 0; i < numberOfAttributes; i++) {
             newAttributeResponse = await client1.attributes.createRepositoryAttribute({
                 content: {
@@ -486,7 +485,7 @@ describe("Delete attributes", () => {
         const deleteResponse = await client1.attributes.deleteOwnSharedAttributeAndNotifyPeer(ownSharedIdentityAttribute.id);
         expect(deleteResponse.isSuccess).toBe(true);
         await syncUntilHasMessageWithNotification(client2, deleteResponse.result.notificationId);
-        await client2._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.ownSharedAttributeDeletedByOwner", (event: any) => {
+        await client2._eventBus!.waitForEvent<DataEvent<ConnectorAttribute>>("consumption.ownSharedAttributeDeletedByOwner", (event: any) => {
             return event.data.id === ownSharedIdentityAttribute.id;
         });
 
@@ -508,7 +507,7 @@ describe("Delete attributes", () => {
         const deleteResponse = await client2.attributes.deletePeerSharedAttributeAndNotifyOwner(ownSharedIdentityAttribute.id);
         expect(deleteResponse.isSuccess).toBe(true);
         await syncUntilHasMessageWithNotification(client1, deleteResponse.result.notificationId);
-        await client1._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.peerSharedAttributeDeletedByPeer", (event: any) => {
+        await client1._eventBus!.waitForEvent<DataEvent<ConnectorAttribute>>("consumption.peerSharedAttributeDeletedByPeer", (event: any) => {
             return event.data.id === ownSharedIdentityAttribute.id;
         });
 
@@ -574,7 +573,7 @@ describe("Delete attributes", () => {
         });
 
         await syncUntilHasRequest(client2, outgoingRequests.result.id);
-        await client2._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>("consumption.incomingRequestStatusChanged", (event) => {
+        await client2._eventBus?.waitForEvent<DataEvent<any>>("consumption.incomingRequestStatusChanged", (event) => {
             // eslint-disable-next-line jest/no-conditional-in-test
             return event.data.request.id.toString() === outgoingRequests.result.id && event.data.newStatus === "ManualDecisionRequired";
         });
@@ -589,7 +588,7 @@ describe("Delete attributes", () => {
         });
 
         const message = await syncUntilHasMessageWithResponse(client3, outgoingRequests.result.id);
-        await client3._eventBus?.waitForEvent<IncomingRequestStatusChangedEvent>("consumption.outgoingRequestStatusChanged", (event) => {
+        await client3._eventBus?.waitForEvent<DataEvent<any>>("consumption.outgoingRequestStatusChanged", (event) => {
             // eslint-disable-next-line jest/no-conditional-in-test
             return event.data.request.id.toString() === outgoingRequests.result.id && event.data.newStatus === "Completed";
         });
@@ -599,7 +598,7 @@ describe("Delete attributes", () => {
         const deleteResponse = await client3.attributes.deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer(thirdPartyRelationshipAttribute.id);
 
         await syncUntilHasMessageWithNotification(client2, deleteResponse.result.notificationId);
-        await client2._eventBus?.waitForEvent<ThirdPartyOwnedRelationshipAttributeDeletedByPeerEvent>("consumption.thirdPartyOwnedRelationshipAttributeDeletedByPeer", (event) => {
+        await client2._eventBus?.waitForEvent<DataEvent<any>>("consumption.thirdPartyOwnedRelationshipAttributeDeletedByPeer", (event) => {
             return event.data.id.toString() === thirdPartyRelationshipAttribute.id;
         });
 

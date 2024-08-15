@@ -1,8 +1,9 @@
+import { ConnectorMessageContentDerivation } from "./ConnectorMessageContentDerivation";
 import { ConnectorMessageRecipient } from "./ConnectorMessageRecipient";
 
 export interface ConnectorMessage {
     id: string;
-    content: unknown;
+    content: ConnectorMessageContentDerivation;
     createdBy: string;
     createdByDevice: string;
     recipients: ConnectorMessageRecipient[];
