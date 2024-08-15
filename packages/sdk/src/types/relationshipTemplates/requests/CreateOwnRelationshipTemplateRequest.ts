@@ -1,7 +1,7 @@
-import { RelationshipTemplateContentDerivation } from "../ConnectorRelationshipContentDerivation";
+import { ConnectorRelationshipTemplateContentDerivation } from "../ConnectorRelationshipTemplateContentDerivation";
 
 export interface CreateOwnRelationshipTemplateRequest {
     maxNumberOfAllocations?: number;
     expiresAt: string;
-    content: RelationshipTemplateContentDerivation;
+    content: ConnectorRelationshipTemplateContentDerivation;
 }

@@ -1,6 +1,6 @@
 import { ConnectorRequestContent } from "../requests/ConnectorRequestContent";
 
-export type RelationshipTemplateContentDerivation = ConnectorRelationshipTemplateContent | ArbitraryRelationshipTemplateContent;
+export type ConnectorRelationshipTemplateContentDerivation = ConnectorRelationshipTemplateContent | ArbitraryRelationshipTemplateContent;
 
 export interface ConnectorRelationshipTemplateContent {
     "@type": "RelationshipTemplateContent";

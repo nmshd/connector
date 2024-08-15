@@ -1,4 +1,4 @@
-import { RelationshipTemplateContentDerivation } from "./ConnectorRelationshipContentDerivation";
+import { ConnectorRelationshipTemplateContentDerivation } from "./ConnectorRelationshipTemplateContentDerivation";
 
 export interface ConnectorRelationshipTemplate {
     id: string;
@@ -7,7 +7,7 @@ export interface ConnectorRelationshipTemplate {
     createdBy: string;
     createdByDevice: string;
     createdAt: string;
-    content: RelationshipTemplateContentDerivation;
+    content: ConnectorRelationshipTemplateContentDerivation;
     expiresAt?: string;
     secretKey: string;
     truncatedReference: string;
