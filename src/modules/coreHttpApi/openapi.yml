@@ -2990,38 +2990,6 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Decompose:
-    put:
-      operationId: decomposeRelationship
-      description: Decompose a Relationship.
-      tags:
-        - Relationships
-      parameters:
-        - in: path
-          name: id
-          description: The ID of the relationship to decompose.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RelationshipID"
-      responses:
-        204:
-          description: Success
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        400:
-          $ref: "#/components/responses/BadRequest"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
   # ------------------- RelationshipTemplates -------------------
 
   /api/v2/RelationshipTemplates:
