@@ -5256,6 +5256,9 @@ components:
         content:
           anyOf:
             - "$ref": "#/components/schemas/IdentityAttribute"
+        isDefault:
+          type: boolean
+          enum: [true]
       required:
         - id
         - createdAt
