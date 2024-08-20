@@ -1802,7 +1802,7 @@ paths:
                   type: string
                   format: date-time
                   description: A timestamp that describes when this file will expire.
-                  example: 2023-01-01
+                  example: 2025-01-01
                   nullable: false
                 file:
                   type: string
@@ -2194,12 +2194,16 @@ paths:
                     $ref: "#/components/schemas/Address"
                 content:
                   allOf:
-                    - $ref: "#/components/schemas/MessageContent"
+                    - $ref: "#/components/schemas/ArbitraryMessageContent"
+                    - $ref: "#/components/schemas/Mail"
+                    - $ref: "#/components/schemas/Request"
+                    - $ref: "#/components/schemas/ResponseWrapper"
+                    - $ref: "#/components/schemas/Notification"
                   nullable: false
                   example:
                     "@type": Mail
-                    to: [id_________________________________]
-                    cc: [id_________________________________]
+                    to: [did:e:_________________________________]
+                    cc: [did:e:_________________________________]
                     subject: Subject
                     body: Body
                 attachments:
@@ -2458,15 +2462,19 @@ paths:
                   allOf:
                     - $ref: "#/components/schemas/RelationshipTemplateID"
                   nullable: false
-                content:
-                  type: object
+                creationContent:
+                  allOf:
+                    - $ref: "#/components/schemas/RelationshipCreationContent"
+                    - $ref: "#/components/schemas/ArbitraryRelationshipCreationContent"
                   nullable: false
                   example:
-                    prop1: value
-                    prop2: 1
+                    "@type": "ArbitraryRelationshipCreationContent"
+                    value:
+                      prop1: value
+                      prop2: 1
               required:
                 - templateId
-                - content
+                - creationContent
       responses:
         201:
           description: Success
@@ -2982,6 +2990,38 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
+  /api/v2/Relationships/{id}/Decompose:
+    put:
+      operationId: decomposeRelationship
+      description: Decompose a Relationship.
+      tags:
+        - Relationships
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the relationship to decompose.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipID"
+      responses:
+        204:
+          description: Success
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
   # ------------------- RelationshipTemplates -------------------
 
   /api/v2/RelationshipTemplates:
@@ -3063,15 +3103,18 @@ paths:
                 expiresAt:
                   type: string
                   format: date-time
-                  example: 2023-01-01
+                  example: 2025-01-01
                   description: A timestamp that describes when this relationship template expires. Expired templates cannot be used to create relationships anymore.
                 content:
                   allOf:
                     - $ref: "#/components/schemas/RelationshipTemplateContent"
+                    - $ref: "#/components/schemas/ArbitraryRelationshipTemplateContent"
                   nullable: false
                   example:
-                    prop1: value
-                    prop2: 1
+                    "@type": "ArbitraryRelationshipTemplateContent"
+                    value:
+                      prop1: "value"
+                      prop2: 1
               required:
                 - expiresAt
                 - content
@@ -3914,7 +3957,7 @@ paths:
                 expiresAt:
                   type: string
                   format: date-time
-                  example: 2023-01-01
+                  example: 2025-01-01
                   nullable: false
                   description: A timestamp that describes when this token expires. An expired token cannot be fetched from the platform anymore. However it will still be available for auditing purposes.
                 ephemeral:
@@ -4411,8 +4454,7 @@ components:
       type: string
       format: Address
       minLength: 35
-      maxLength: 36
-      example: id_________________________________
+      example: did:e:_________________________________
 
     AttributeID:
       type: string
@@ -4791,7 +4833,7 @@ components:
           type: string
           format: date-time
           description: A timestamp that describes when this file was created.
-          example: 2020-05-25T11:05:02.924Z
+          example: 2024-05-25T11:05:02.924Z
           nullable: false
         createdBy:
           allOf:
@@ -4805,7 +4847,7 @@ components:
           type: string
           format: date-time
           description: A timestamp that describes when this file will expire. Expired files cannot be accessed anymore. Notice that they will still be available for auditing purposes.
-          example: 2022-05-25T11:05:02.924Z
+          example: 2026-05-25T11:05:02.924Z
           nullable: true
         mimetype:
           type: string
@@ -4871,7 +4913,7 @@ components:
         relationshipId:
           allOf:
             - $ref: "#/components/schemas/RelationshipID"
-          nullable: false
+          nullable: true
           description: The id of the relationship to the recipient.
       required:
         - address
@@ -5284,7 +5326,11 @@ components:
             $ref: "#/components/schemas/Recipient"
         content:
           allOf:
-            - $ref: "#/components/schemas/MessageContent"
+            - $ref: "#/components/schemas/ArbitraryMessageContent"
+            - $ref: "#/components/schemas/Mail"
+            - $ref: "#/components/schemas/Request"
+            - $ref: "#/components/schemas/ResponseWrapper"
+            - $ref: "#/components/schemas/Notification"
           nullable: false
         attachments:
           type: array
@@ -5332,7 +5378,11 @@ components:
             $ref: "#/components/schemas/Recipient"
         content:
           allOf:
-            - $ref: "#/components/schemas/MessageContent"
+            - $ref: "#/components/schemas/ArbitraryMessageContent"
+            - $ref: "#/components/schemas/Mail"
+            - $ref: "#/components/schemas/Request"
+            - $ref: "#/components/schemas/ResponseWrapper"
+            - $ref: "#/components/schemas/Notification"
           nullable: false
         attachments:
           type: array
@@ -5351,8 +5401,68 @@ components:
         - content
         - isOwn
 
-    MessageContent:
+    ResponseWrapper:
       type: object
+      additionalProperties: false
+      properties:
+        "@type":
+          type: string
+          enum: ["ResponseWrapper"]
+        requestId:
+          $ref: "#/components/schemas/RequestID"
+        requestSourceReference:
+          allOf:
+            - $ref: "#/components/schemas/RelationshipTemplateID"
+            - $ref: "#/components/schemas/MessageID"
+        requestSourceType:
+          type: string
+          enum: ["RelationshipTemplate", "Message"]
+        response:
+          $ref: "#/components/schemas/RequestResponseContent"
+      required:
+        - "@type"
+        - requestId
+        - requestSourceReference
+        - requestSourceType
+        - response
+
+    Mail:
+      type: object
+      additionalProperties: false
+      properties:
+        "@type":
+          type: string
+          enum: ["Mail"]
+        to:
+          type: array
+          items:
+            $ref: "#/components/schemas/Address"
+        cc:
+          type: array
+          items:
+            $ref: "#/components/schemas/Address"
+        subject:
+          type: string
+        body:
+          type: string
+      required:
+        - "@type"
+        - to
+        - subject
+        - body
+
+    ArbitraryMessageContent:
+      type: object
+      additionalProperties: false
+      properties:
+        "@type":
+          type: string
+          enum: ["ArbitraryMessageContent"]
+        value:
+          type: object
+      required:
+        - "@type"
+        - value
 
     Notification:
       type: object
@@ -5360,7 +5470,11 @@ components:
       required:
         - id
         - items
+        - "@type"
       properties:
+        "@type":
+          type: string
+          enum: ["Notification"]
         id:
           $ref: "#/components/schemas/NotificationID"
         items:
@@ -5388,7 +5502,9 @@ components:
           nullable: false
           description: The address of the peer identity.
         creationContent:
-          type: object
+          allOf:
+            - $ref: "#/components/schemas/RelationshipCreationContent"
+            - $ref: "#/components/schemas/ArbitraryRelationshipCreationContent"
           nullable: false
           description: The content at creation.
         auditLog:
@@ -5402,9 +5518,66 @@ components:
         - template
         - status
         - peer
+        - creationContent
+        - auditLog
+
+    RelationshipCreationContent:
+      type: object
+      additionalProperties: false
+      properties:
+        "@type":
+          type: string
+          enum: ["RelationshipCreationContent"]
+        response:
+          $ref: "#/components/schemas/RequestResponseContent"
+      required:
+        - "@type"
+        - response
+
+    ArbitraryRelationshipCreationContent:
+      type: object
+      additionalProperties: false
+      properties:
+        "@type":
+          type: string
+          enum: ["ArbitraryRelationshipCreationContent"]
+        value:
+          type: object
+      required:
+        - "@type"
+        - value
 
     RelationshipTemplateContent:
       type: object
+      additionalProperties: false
+      properties:
+        "@type":
+          type: string
+          enum: ["RelationshipTemplateContent"]
+        title:
+          type: string
+        metadata:
+          type: object
+        onNewRelationship:
+          $ref: "#/components/schemas/RequestContent"
+        onExistingRelationship:
+          $ref: "#/components/schemas/RequestContent"
+      required:
+        - "@type"
+        - onNewRelationship
+
+    ArbitraryRelationshipTemplateContent:
+      type: object
+      additionalProperties: false
+      properties:
+        "@type":
+          type: string
+          enum: ["ArbitraryRelationshipTemplateContent"]
+        value:
+          type: object
+      required:
+        - "@type"
+        - value
 
     RelationshipTemplate:
       type: object
@@ -5445,6 +5618,7 @@ components:
         content:
           allOf:
             - $ref: "#/components/schemas/RelationshipTemplateContent"
+            - $ref: "#/components/schemas/ArbitraryRelationshipTemplateContent"
           nullable: false
         secretKey:
           type: string
@@ -5511,6 +5685,12 @@ components:
           $ref: "#/components/schemas/RelationshipStatus"
         newStatus:
           $ref: "#/components/schemas/RelationshipStatus"
+      required:
+        - createdAt
+        - createdBy
+        - createdByDevice
+        - reason
+        - newStatus
 
     RelationshipAuditLogEntryReason:
       type: string
@@ -5524,6 +5704,7 @@ components:
         - AcceptanceOfReactivation
         - RejectionOfReactivation
         - RevocationOfReactivation
+        - Decomposition
 
     RelationshipStatus:
       type: string
@@ -5533,6 +5714,7 @@ components:
         - Rejected
         - Revoked
         - Terminated
+        - DeletionProposed
 
     SignedChallenge:
       type: object
