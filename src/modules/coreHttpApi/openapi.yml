@@ -4987,13 +4987,9 @@ components:
         result:
           type: string
           enum: [Accepted, Rejected, Failed]
-        metadata:
-          type: object
-          description: The metadata that was sent with the `RequestItem`.
       required:
         - "@type"
         - result
-        - metadata
 
     RequestResponseContentItemGroup:
       properties:
@@ -5003,13 +4999,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/RequestResponseContentItem"
-        metadata:
-          type: object
-          description: The metadata that was sent with the `RequestItemGroup`.
       required:
         - "@type"
         - items
-        - metadata
 
     RequestResponseContent:
       type: object
