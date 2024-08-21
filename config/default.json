@@ -73,6 +73,11 @@
             "location": "autoAcceptPendingRelationships/AutoAcceptPendingRelationshipsModule",
             "enabled": false
         },
+        "autoDecomposeDeletionProposedRelationships": {
+            "displayName": "Auto Decompose DeletionProposed Pending Relationships",
+            "location": "autoDecomposeDeletionProposedRelationships/AutoDecomposeDeletionProposedRelationshipsModule",
+            "enabled": false
+        },
         "coreHttpApi": {
             "displayName": "Core HTTP API",
             "location": "coreHttpApi/CoreHttpApiModule",
