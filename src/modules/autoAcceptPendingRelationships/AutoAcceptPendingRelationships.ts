@@ -20,7 +20,7 @@ export default class AutoAcceptPendingRelationshipsModule extends ConnectorRunti
     private async handleRelationshipChanged(event: RelationshipChangedEvent) {
         if (!this.isIncomingPendingRelationship(event)) return;
 
-        this.logger.info("Incoming relationship creation change detected.");
+        this.logger.info("Incoming pending relationship detected.");
 
         const result = await this.runtime.getServices().transportServices.relationships.acceptRelationship({ relationshipId: event.data.id });
 
