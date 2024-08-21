@@ -4,7 +4,7 @@ import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { ILogger } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
-import { ConsumptionController } from "@nmshd/consumption";
+import { Consumption, ConsumptionController } from "@nmshd/consumption";
 import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
 import { AccountController, CoreErrors as TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
@@ -149,7 +149,9 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
             throw e;
         });
-        const consumptionController = await new ConsumptionController(this.transport, this.accountController).init();
+
+        const consumption = new Consumption();
+        const consumptionController = await new ConsumptionController(this.transport, this.accountController, consumption).init();
 
         await this.checkDeviceCredentials(this.accountController);
 

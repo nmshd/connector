@@ -50,6 +50,21 @@ describe("Attributes", () => {
         expect(createAttributeResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
     });
 
+    test("should not set isDefault for the first repository attribute of a value type", async () => {
+        const repositoryAttribute = (
+            await client1.attributes.createRepositoryAttribute({
+                content: {
+                    value: {
+                        "@type": "Surname",
+                        value: "ASurname"
+                    }
+                }
+            })
+        ).result;
+
+        expect(repositoryAttribute.isDefault).toBeUndefined();
+    });
+
     test("should get the created attribute", async () => {
         const attributeId = (
             await client1.attributes.createRepositoryAttribute({
