@@ -11,7 +11,7 @@ export default class AutoAcceptPendingRelationshipsModule extends ConnectorRunti
     }
 
     public async start(): Promise<void> {
-        const currentIdentityResult = await this.runtime.transportServices.account.getIdentityInfo();
+        const currentIdentityResult = await this.runtime.getServices().transportServices.account.getIdentityInfo();
         this.currentIdentity = currentIdentityResult.value.address;
 
         this.subscribeToEvent(RelationshipChangedEvent, this.handleRelationshipChanged.bind(this));
@@ -22,9 +22,7 @@ export default class AutoAcceptPendingRelationshipsModule extends ConnectorRunti
 
         this.logger.info("Incoming relationship creation change detected.");
 
-        const result = await this.runtime.transportServices.relationships.acceptRelationship({
-            relationshipId: event.data.id
-        });
+        const result = await this.runtime.getServices().transportServices.relationships.acceptRelationship({ relationshipId: event.data.id });
 
         if (result.isSuccess) {
             this.logger.info("Incoming pending relationship was accepted successfully.");

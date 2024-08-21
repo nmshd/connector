@@ -17,7 +17,7 @@ export default class SyncModule extends ConnectorRuntimeModule<SyncModuleConfigu
 
     private async sync() {
         try {
-            await this.runtime.transportServices.account.syncEverything();
+            await this.runtime.getServices().transportServices.account.syncEverything();
         } catch (error) {
             this.logger.error(error);
         }
