@@ -95,6 +95,16 @@
                     },
                     "type": "object"
                 },
+                "autoDecomposeDeletionProposedRelationships": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    "type": "object"
+                },
                 "coreHttpApi": {
                     "additionalProperties": false,
                     "properties": {
