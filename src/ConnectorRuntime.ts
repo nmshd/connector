@@ -36,14 +36,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private accountController: AccountController;
 
     private _transportServices: TransportServices;
-    public get transportServices(): TransportServices {
-        return this._transportServices;
-    }
-
     private _consumptionServices: ConsumptionServices;
-    public get consumptionServices(): ConsumptionServices {
-        return this._consumptionServices;
-    }
 
     private get connectorMode(): ConnectorMode {
         return this.runtimeConfig.debug ? "debug" : "production";
@@ -222,7 +215,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     public async getSupportInformation(): Promise<SupportInformation> {
         const supportInformation = await super.getSupportInformation();
 
-        const identityInfoResult = await this.transportServices.account.getIdentityInfo();
+        const identityInfoResult = await this._transportServices.account.getIdentityInfo();
         const identityInfo = identityInfoResult.isSuccess ? identityInfoResult.value : { error: identityInfoResult.error.message };
 
         return {
