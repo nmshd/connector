@@ -20,12 +20,12 @@ export default class AutoDecomposeDeletionProposedRelationshipsModule extends Co
     private async handleRelationshipChanged(event: RelationshipChangedEvent) {
         if (event.data.status !== RelationshipStatus.DeletionProposed) return;
 
-        this.logger.info("Incoming 'DeletionProposed' Relationship detected.");
+        this.logger.info("'DeletionProposed' Relationship detected.");
 
         const result = await this.runtime.getServices().transportServices.relationships.decomposeRelationship({ relationshipId: event.data.id });
 
         if (result.isSuccess) {
-            this.logger.info("Incoming 'DeletionProposed' Relationship was decomposed successfully.");
+            this.logger.info("'DeletionProposed' Relationship was decomposed successfully.");
         } else {
             this.logger.error("Error while decomposing 'DeletionProposed' Relationship:", result.error);
         }
