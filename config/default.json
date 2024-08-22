@@ -74,7 +74,7 @@
             "enabled": false
         },
         "autoDecomposeDeletionProposedRelationships": {
-            "displayName": "Auto Decompose DeletionProposed Pending Relationships",
+            "displayName": "Auto Decompose DeletionProposed Relationships",
             "location": "autoDecomposeDeletionProposedRelationships/AutoDecomposeDeletionProposedRelationshipsModule",
             "enabled": false
         },
