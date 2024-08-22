@@ -18,7 +18,7 @@ export default class AutoDecomposeDeletionProposedRelationshipsModule extends Co
     }
 
     private async handleRelationshipChanged(event: RelationshipChangedEvent) {
-        if (!this.isIncomingDeletionProposedRelationship(event)) return;
+        if (event.data.status !== RelationshipStatus.DeletionProposed) return;
 
         this.logger.info("Incoming 'DeletionProposed' Relationship detected.");
 
@@ -29,14 +29,6 @@ export default class AutoDecomposeDeletionProposedRelationshipsModule extends Co
         } else {
             this.logger.error("Error while decomposing 'DeletionProposed' Relationship:", result.error);
         }
-    }
-
-    private isIncomingDeletionProposedRelationship(event: RelationshipChangedEvent) {
-        const data = event.data;
-        if (data.status !== RelationshipStatus.DeletionProposed) return false;
-
-        const auditLogEntry = data.auditLog[-1];
-        return auditLogEntry.createdBy !== this.currentIdentity;
     }
 
     public stop(): void {
