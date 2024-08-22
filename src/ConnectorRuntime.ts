@@ -142,7 +142,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
             throw e;
         });
-        const consumptionController = await new ConsumptionController(this.transport, this.accountController).init();
+
+        const consumptionController = await new ConsumptionController(this.transport, this.accountController, { setDefaultRepositoryAttributes: false }).init();
 
         await this.checkDeviceCredentials(this.accountController);
 
