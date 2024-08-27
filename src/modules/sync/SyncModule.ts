@@ -16,11 +16,8 @@ export default class SyncModule extends ConnectorRuntimeModule<SyncModuleConfigu
     }
 
     private async sync() {
-        try {
-            await this.runtime.getServices().transportServices.account.syncEverything();
-        } catch (error) {
-            this.logger.error(error);
-        }
+        const result = await this.runtime.getServices().transportServices.account.syncEverything();
+        if (result.isError) this.logger.error("Sync failed", result.error);
 
         this.syncTimeout = setTimeout(async () => await this.sync(), this.configuration.interval * 1000);
     }
