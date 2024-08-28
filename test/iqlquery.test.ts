@@ -1,4 +1,5 @@
-import { ConnectorClient, ConnectorIdentityAttribute, ExecuteIQLQueryRequest, IQLQuery, ProposeAttributeRequestItem, ReadAttributeRequestItem } from "@nmshd/connector-sdk";
+import { ConnectorClient, ExecuteIQLQueryRequest, IQLQuery } from "@nmshd/connector-sdk";
+import { IdentityAttributeJSON, ProposeAttributeRequestItemJSON, ReadAttributeRequestItemJSON } from "@nmshd/content";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { getTimeout } from "./lib/setTimeout";
@@ -13,7 +14,7 @@ const launcher = new Launcher();
 let client1: ConnectorClientWithMetadata;
 let client2: ConnectorClient;
 let client1Address: string;
-let attributes: ConnectorIdentityAttribute[];
+let attributes: IdentityAttributeJSON[];
 let attributeIds: string[];
 
 beforeAll(async () => {
@@ -90,7 +91,7 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
     ];
 
     /* Create request on C2. */
-    const outRequest: ReadAttributeRequestItem = {
+    const outRequest: ReadAttributeRequestItemJSON = {
         "@type": "ReadAttributeRequestItem",
         mustBeAccepted: false,
         query: {
@@ -113,7 +114,7 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
 
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
-    const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItem).query as IQLQuery).queryString;
+    const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItemJSON).query as IQLQuery).queryString;
     const matchedAttributes = (await client1.attributes.executeIQLQuery({ query: { queryString: iqlQueryString } })).result;
 
     /* Reply to the response with the first matched attribute. Wait on C2 for
@@ -140,7 +141,7 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
     ];
 
     /* Create request on C2. */
-    const outRequest: ProposeAttributeRequestItem = {
+    const outRequest: ProposeAttributeRequestItemJSON = {
         "@type": "ProposeAttributeRequestItem",
         mustBeAccepted: true,
         query: {
@@ -172,7 +173,7 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
 
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
-    const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItem).query as IQLQuery).queryString;
+    const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItemJSON).query as IQLQuery).queryString;
     const matchedAttributes = (await client1.attributes.executeIQLQuery({ query: { queryString: iqlQueryString } })).result;
 
     /* Reply to the response with the first matched attribute. Wait on C2 for
@@ -193,7 +194,7 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
 
 test("Remote ProposeAttributeRequest containing IQL Query without existing attribute response", async () => {
     /* Create request on C2. */
-    const outRequest: ProposeAttributeRequestItem = {
+    const outRequest: ProposeAttributeRequestItemJSON = {
         "@type": "ProposeAttributeRequestItem",
         mustBeAccepted: true,
         query: {
@@ -224,14 +225,14 @@ test("Remote ProposeAttributeRequest containing IQL Query without existing attri
 
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
-    const incomingRequestItem: ProposeAttributeRequestItem = incomingRequest.content.items[0] as ProposeAttributeRequestItem;
+    const incomingRequestItem = incomingRequest.content.items[0] as ProposeAttributeRequestItemJSON;
     const iqlQueryString = (incomingRequestItem.query as IQLQuery).queryString;
     const matchedAttributes = (await client1.attributes.executeIQLQuery({ query: { queryString: iqlQueryString } })).result;
 
     expect(matchedAttributes).toHaveLength(0);
 
     incomingRequestItem.attribute.owner = client1Address;
-    const requestItemAttribute = incomingRequestItem.attribute;
+    const requestItemAttribute = incomingRequestItem.attribute as IdentityAttributeJSON;
     const attributeId = (await client1.attributes.createRepositoryAttribute({ content: { value: requestItemAttribute.value } })).result.id;
 
     /* Reply to the response with the first matched attribute. Wait on C2 for

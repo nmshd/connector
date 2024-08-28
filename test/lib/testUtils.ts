@@ -2,12 +2,10 @@ import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { DataEvent, EventBus, SubscriptionTarget, sleep } from "@js-soft/ts-utils";
 import {
     ConnectorAttribute,
-    ConnectorAttributeValue,
     ConnectorClient,
     ConnectorFile,
     ConnectorMessage,
     ConnectorRelationship,
-    ConnectorRelationshipAttribute,
     ConnectorRelationshipTemplate,
     ConnectorRequest,
     ConnectorRequestStatus,
@@ -16,6 +14,7 @@ import {
     CreateRepositoryAttributeRequest,
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
+import { AttributeValues, RelationshipAttributeJSON } from "@nmshd/content";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata } from "./Launcher";
@@ -318,7 +317,7 @@ export async function createRepositoryAttribute(client: ConnectorClient, request
 export async function executeFullCreateAndShareRelationshipAttributeFlow(
     sender: ConnectorClientWithMetadata,
     recipient: ConnectorClientWithMetadata,
-    attributeContent: Omit<ConnectorRelationshipAttribute, "owner" | "@type">
+    attributeContent: Omit<RelationshipAttributeJSON, "owner" | "@type">
 ): Promise<ConnectorAttribute> {
     const senderIdentityInfoResult = await sender.account.getIdentityInfo();
     expect(senderIdentityInfoResult.isSuccess).toBe(true);
@@ -377,17 +376,17 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipient: ConnectorClient,
-    attributeValue: ConnectorAttributeValue
+    attributeValue: AttributeValues.Identity.Json
 ): Promise<ConnectorAttribute>;
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipient: ConnectorClient[],
-    attributeValue: ConnectorAttributeValue
+    attributeValue: AttributeValues.Identity.Json
 ): Promise<ConnectorAttribute[]>;
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipients: ConnectorClient | ConnectorClient[],
-    attributeValue: ConnectorAttributeValue
+    attributeValue: AttributeValues.Identity.Json
 ): Promise<ConnectorAttribute | ConnectorAttribute[]> {
     const createAttributeRequestResult = await sender.attributes.createRepositoryAttribute({ content: { value: attributeValue } });
     const attribute = createAttributeRequestResult.result;
