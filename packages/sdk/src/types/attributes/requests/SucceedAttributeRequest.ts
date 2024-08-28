@@ -1,8 +1,8 @@
-import { ConnectorAttributeValue } from "../ConnectorAttribute";
+import { AttributeValues } from "@nmshd/content";
 
 export interface SucceedAttributeRequest {
     successorContent: {
-        value: ConnectorAttributeValue;
+        value: AttributeValues.Identity.Json | AttributeValues.Relationship.Json;
         tags?: string[];
         validFrom?: string;
         validTo?: string;

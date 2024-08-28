@@ -1,8 +1,10 @@
+import { IdentityAttributeJSON, RelationshipAttributeJSON } from "@nmshd/content";
+
 export interface ConnectorAttribute {
     id: string;
     parentId?: string;
     createdAt: string;
-    content: ConnectorIdentityAttribute | ConnectorRelationshipAttribute;
+    content: IdentityAttributeJSON | RelationshipAttributeJSON;
     succeeds?: string;
     succeededBy?: string;
     deletionInfo?: ConnectorAttributeDeletionInfo;
@@ -37,29 +39,3 @@ export interface ConnectorAttributeShareInfoForNotification {
 }
 
 export type ConnectorAttributeShareInfo = ConnectorAttributeShareInfoForNotification | ConnectorAttributeShareInfoForRequest;
-
-export interface ConnectorBaseAttribute {
-    "@type": string;
-    owner: string;
-    validFrom?: string;
-    validTo?: string;
-}
-
-export interface ConnectorIdentityAttribute extends ConnectorBaseAttribute {
-    "@type": "IdentityAttribute";
-    value: ConnectorAttributeValue;
-    tags?: string[];
-}
-
-export interface ConnectorRelationshipAttribute extends ConnectorBaseAttribute {
-    "@type": "RelationshipAttribute";
-    value: ConnectorAttributeValue;
-    key: string;
-    isTechnical?: boolean;
-    confidentiality: "public" | "private" | "protected";
-}
-
-export interface ConnectorAttributeValue {
-    "@type": string;
-    [key: string]: unknown;
-}

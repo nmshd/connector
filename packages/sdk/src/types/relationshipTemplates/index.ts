@@ -1,5 +1,4 @@
 export * from "./ConnectorRelationshipTemplate";
-export * from "./ConnectorRelationshipTemplateContentDerivation";
 export * from "./ConnectorRelationshipTemplates";
 export * from "./RelationshipTemplateReference";
 export * from "./requests/CreateOwnRelationshipTemplateRequest";
