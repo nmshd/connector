@@ -6,7 +6,7 @@ import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionController } from "@nmshd/consumption";
 import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
-import { AccountController, CoreErrors as TransportCoreErrors } from "@nmshd/transport";
+import { AccountController, TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import fs from "fs";
 import { HttpsProxyAgent } from "https-proxy-agent";
