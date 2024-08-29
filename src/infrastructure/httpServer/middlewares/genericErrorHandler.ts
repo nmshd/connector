@@ -1,6 +1,6 @@
 import { ApplicationError } from "@js-soft/ts-utils";
 import { RuntimeErrors } from "@nmshd/runtime";
-import { RequestError, CoreErrors as TransportCoreErrors } from "@nmshd/transport";
+import { RequestError, TransportCoreErrors } from "@nmshd/transport";
 import express from "express";
 import stringify from "json-stringify-safe";
 import { Errors } from "typescript-rest";

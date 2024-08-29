@@ -1,7 +1,8 @@
+import { ArbitraryRelationshipCreationContentJSON, RelationshipCreationContentJSON } from "@nmshd/content";
 import { ConnectorRelationshipTemplate } from "../relationshipTemplates/ConnectorRelationshipTemplate";
 import { ConnectorIdentity } from "./ConnectorIdentity";
+import { ConnectorPeerDeletionInfo } from "./ConnectorPeerDeletionInfo";
 import { ConnectorRelationshipAuditLogEntry } from "./ConnectorRelationshipAuditLogEntry";
-import { ConnectorRelationshipCreationContentDerivation } from "./ConnectorRelationshipCreationContentDerivation";
 import { ConnectorRelationshipStatus } from "./ConnectorRelationshipStatus";
 
 export interface ConnectorRelationshipAuditLog extends Array<ConnectorRelationshipAuditLogEntry> {}
@@ -11,7 +12,8 @@ export interface ConnectorRelationship {
     template: ConnectorRelationshipTemplate;
     status: ConnectorRelationshipStatus;
     peer: string;
+    peerDeletionInfo?: ConnectorPeerDeletionInfo;
     peerIdentity: ConnectorIdentity;
-    creationContent: ConnectorRelationshipCreationContentDerivation;
+    creationContent: RelationshipCreationContentJSON | ArbitraryRelationshipCreationContentJSON;
     auditLog: ConnectorRelationshipAuditLog;
 }

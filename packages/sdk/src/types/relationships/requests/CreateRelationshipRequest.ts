@@ -1,6 +1,6 @@
-import { ConnectorRelationshipCreationContentDerivation } from "../ConnectorRelationshipCreationContentDerivation";
+import { ArbitraryRelationshipCreationContentJSON, RelationshipCreationContentJSON } from "@nmshd/content";
 
 export interface CreateRelationshipRequest {
     templateId: string;
-    creationContent: ConnectorRelationshipCreationContentDerivation;
+    creationContent: ArbitraryRelationshipCreationContentJSON | RelationshipCreationContentJSON;
 }

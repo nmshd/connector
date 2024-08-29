@@ -1,10 +1,10 @@
+import { ArbitraryMessageContentJSON, MailJSON, NotificationJSON, RequestJSON, ResponseWrapperJSON } from "@nmshd/content";
 import { ConnectorFile } from "../files/ConnectorFile";
-import { ConnectorMessageContentDerivation } from "./ConnectorMessageContentDerivation";
 import { ConnectorMessageRecipient } from "./ConnectorMessageRecipient";
 
 export interface ConnectorMessageWithAttachments {
     id: string;
-    content: ConnectorMessageContentDerivation;
+    content: MailJSON | ResponseWrapperJSON | RequestJSON | NotificationJSON | ArbitraryMessageContentJSON;
     createdBy: string;
     createdByDevice: string;
     recipients: ConnectorMessageRecipient[];

@@ -1,5 +1,6 @@
 import { DataEvent } from "@js-soft/ts-utils";
-import { ConnectorAttribute, ConnectorAttributeDeletionStatus, ConnectorHttpResponse } from "@nmshd/connector-sdk";
+import { ConnectorAttribute, ConnectorAttributeDeletionStatus, ConnectorHttpResponse, CreateRepositoryAttributeRequest, SucceedAttributeRequest } from "@nmshd/connector-sdk";
+import { GivenNameJSON, RelationshipAttributeConfidentiality } from "@nmshd/content";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
@@ -92,7 +93,7 @@ describe("Attributes", () => {
     });
 
     test("should succeed a Repository Attribute", async () => {
-        const newRepositoryAttribute = {
+        const newRepositoryAttribute: CreateRepositoryAttributeRequest = {
             content: {
                 value: {
                     "@type": "GivenName",
@@ -164,10 +165,10 @@ describe("Attributes", () => {
                 value: "AGivenName"
             },
             key: "key",
-            confidentiality: "public"
+            confidentiality: RelationshipAttributeConfidentiality.Public
         });
 
-        const successionAttribute = {
+        const successionAttribute: SucceedAttributeRequest = {
             successorContent: {
                 value: {
                     "@type": "ProprietaryString",
@@ -281,7 +282,7 @@ describe("Execute AttributeQueries", () => {
                 value: "AGivenName"
             },
             key: "someSpecialKey",
-            confidentiality: "public"
+            confidentiality: RelationshipAttributeConfidentiality.Public
         });
 
         const executeRelationshipAttributeQueryResponse = await client2.attributes.executeRelationshipAttributeQuery({
@@ -298,7 +299,7 @@ describe("Execute AttributeQueries", () => {
 
         expect(executeRelationshipAttributeQueryResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
 
-        expect(executeRelationshipAttributeQueryResponse.result.content.value.value).toBe("AGivenName");
+        expect((executeRelationshipAttributeQueryResponse.result.content.value as GivenNameJSON).value).toBe("AGivenName");
     });
 });
 
@@ -561,7 +562,7 @@ describe("Delete attributes", () => {
                 value: "ANewGivenName"
             },
             key: "randomKey",
-            confidentiality: "public"
+            confidentiality: RelationshipAttributeConfidentiality.Public
         });
 
         const outgoingRequests = await client3.outgoingRequests.createRequest({

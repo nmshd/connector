@@ -1,5 +1,4 @@
-import { ConnectorRequestContent } from "./ConnectorRequestContent";
-import { ConnectorResponse } from "./ConnectorResponse";
+import { RequestJSON, ResponseJSON } from "@nmshd/content";
 
 export interface ConnectorRequest {
     id: string;
@@ -7,14 +6,14 @@ export interface ConnectorRequest {
     peer: string;
     createdAt: string;
     status: ConnectorRequestStatus;
-    content: ConnectorRequestContent;
+    content: RequestJSON;
     source?: {
         type: "Message" | "RelationshipTemplate";
         reference: string;
     };
     response?: {
         createdAt: string;
-        content: ConnectorResponse;
+        content: ResponseJSON;
         source?: {
             type: "Message" | "Relationship";
             reference: string;

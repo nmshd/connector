@@ -1,4 +1,5 @@
 import { ConnectorClient, ConnectorRelationshipAuditLogEntryReason, ConnectorRelationshipStatus } from "@nmshd/connector-sdk";
+import { RelationshipAttributeConfidentiality } from "@nmshd/content";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
@@ -225,7 +226,7 @@ describe("Relationships", () => {
                 value: "AProprietaryString"
             },
             key: "randomKey",
-            confidentiality: "public"
+            confidentiality: RelationshipAttributeConfidentiality.Public
         });
 
         await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {

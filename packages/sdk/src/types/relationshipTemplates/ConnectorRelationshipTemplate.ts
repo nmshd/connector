@@ -1,4 +1,4 @@
-import { ConnectorRelationshipTemplateContentDerivation } from "./ConnectorRelationshipTemplateContentDerivation";
+import { ArbitraryRelationshipTemplateContentJSON, RelationshipTemplateContentJSON } from "@nmshd/content";
 
 export interface ConnectorRelationshipTemplate {
     id: string;
@@ -7,7 +7,7 @@ export interface ConnectorRelationshipTemplate {
     createdBy: string;
     createdByDevice: string;
     createdAt: string;
-    content: ConnectorRelationshipTemplateContentDerivation;
+    content: RelationshipTemplateContentJSON | ArbitraryRelationshipTemplateContentJSON;
     expiresAt?: string;
     secretKey: string;
     truncatedReference: string;

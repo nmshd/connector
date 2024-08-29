@@ -1,7 +1,7 @@
-import { ConnectorRelationshipTemplateContentDerivation } from "../ConnectorRelationshipTemplateContentDerivation";
+import { ArbitraryRelationshipTemplateContentJSON, RelationshipTemplateContentJSON } from "@nmshd/content";
 
 export interface CreateOwnRelationshipTemplateRequest {
     maxNumberOfAllocations?: number;
     expiresAt: string;
-    content: ConnectorRelationshipTemplateContentDerivation;
+    content: RelationshipTemplateContentJSON | ArbitraryRelationshipTemplateContentJSON;
 }
