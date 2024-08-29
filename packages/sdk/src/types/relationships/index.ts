@@ -1,3 +1,4 @@
+export * from "./ConnectorPeerDeletionInfo";
 export * from "./ConnectorRelationship";
 export * from "./ConnectorRelationshipAuditLogEntry";
 export * from "./ConnectorRelationshipAuditLogEntryReason";
