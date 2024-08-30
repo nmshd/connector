@@ -1,15 +1,20 @@
 import { ConnectorClient, ConnectorRequestStatus } from "@nmshd/connector-sdk";
+import { ReadAttributeRequestItemJSON } from "@nmshd/content";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
+import { establishRelationship } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
 let client2: ConnectorClient;
 
-beforeAll(async () => ([client1, client2] = await launcher.launch(2)), getTimeout(30000));
+beforeAll(async () => {
+    [client1, client2] = await launcher.launch(2);
+    await establishRelationship(client1, client2);
+}, getTimeout(30000));
 afterAll(() => launcher.stop());
 
 describe("Outgoing Requests", () => {
@@ -28,7 +33,7 @@ describe("Outgoing Requests", () => {
         expect(sConsumptionRequest.status).toBe(ConnectorRequestStatus.Draft);
         expect(sConsumptionRequest.content.items).toHaveLength(1);
         expect(sConsumptionRequest.content.items[0]["@type"]).toBe("ReadAttributeRequestItem");
-        expect(sConsumptionRequest.content.items[0].mustBeAccepted).toBe(false);
+        expect((sConsumptionRequest.content.items[0] as ReadAttributeRequestItemJSON).mustBeAccepted).toBe(false);
     });
 
     test("should query outgoing requests", async () => {

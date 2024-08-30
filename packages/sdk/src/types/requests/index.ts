@@ -1,5 +1,4 @@
 export * from "./ConnectorRequest";
-export * from "./ConnectorRequestContent";
 export * from "./ConnectorRequests";
 export * from "./ConnectorRequestValidationResult";
 export * from "./requests/AcceptIncomingRequestRequest";

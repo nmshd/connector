@@ -68,12 +68,15 @@
             "displayName": "Attribute Listener",
             "location": "@nmshd/runtime:AttributeListenerModule"
         },
-        "autoAcceptRelationshipCreationChanges": {
-            "displayName": "Auto Accept Relationship Creation Changes",
-            "location": "autoAcceptRelationshipCreationChanges/AutoAcceptRelationshipCreationChangesModule",
-            "enabled": false,
-
-            "responseContent": {}
+        "autoAcceptPendingRelationships": {
+            "displayName": "Auto Accept Pending Relationships",
+            "location": "autoAcceptPendingRelationships/AutoAcceptPendingRelationshipsModule",
+            "enabled": false
+        },
+        "autoDecomposeDeletionProposedRelationships": {
+            "displayName": "Auto Decompose DeletionProposed Relationships",
+            "location": "autoDecomposeDeletionProposedRelationships/AutoDecomposeDeletionProposedRelationshipsModule",
+            "enabled": false
         },
         "coreHttpApi": {
             "displayName": "Core HTTP API",
@@ -95,19 +98,6 @@
             "location": "webhooks/WebhooksModule",
             "targets": {},
             "webhooks": []
-        },
-        "amqpPublisher": {
-            "enabled": false,
-            "displayName": "AMQP Publisher",
-            "location": "amqpPublisher/AMQPPublisherModule"
-        },
-        "PubSubPublisher": {
-            "enabled": false,
-            "displayName": "PubSub Publisher",
-            "location": "pubSubPublisher/PubSubPublisherModule",
-            "projectId": "",
-            "topic": "",
-            "keyFile": ""
         },
         "messageBrokerPublisher": {
             "enabled": false,

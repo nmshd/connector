@@ -15,10 +15,10 @@ async function run() {
     const { connector1Address, connector2Address } = await establishOrReturnRelationship(connector1, connector2);
 
     while (true) {
-        await connector1.messages.sendMessage({ recipients: [connector2Address], content: {} });
+        await connector1.messages.sendMessage({ recipients: [connector2Address], content: { "@type": "ArbitraryMessageContent", value: {} } });
         await sleep(2000);
 
-        await connector2.messages.sendMessage({ recipients: [connector1Address], content: {} });
+        await connector2.messages.sendMessage({ recipients: [connector1Address], content: { "@type": "ArbitraryMessageContent", value: {} } });
         await sleep(2000);
     }
 }
@@ -29,8 +29,8 @@ async function establishOrReturnRelationship(connector1: ConnectorClient, connec
     const relationships = (await connector1.relationships.getRelationships()).result;
 
     if (relationships.length > 0) {
-        if (relationships[0].status === ConnectorRelationshipStatus.PENDING) {
-            await connector1.relationships.acceptRelationshipChange(relationships[0].id, relationships[0].changes[0].id);
+        if (relationships[0].status === ConnectorRelationshipStatus.Pending) {
+            await connector1.relationships.acceptRelationship(relationships[0].id);
         }
 
         return {
@@ -39,15 +39,26 @@ async function establishOrReturnRelationship(connector1: ConnectorClient, connec
         };
     }
 
-    const template = (await connector1.relationshipTemplates.createOwnRelationshipTemplate({ expiresAt: "2099", maxNumberOfAllocations: 1, content: {} })).result;
+    const template = (
+        await connector1.relationshipTemplates.createOwnRelationshipTemplate({
+            expiresAt: "2099",
+            maxNumberOfAllocations: 1,
+            content: { "@type": "ArbitraryRelationshipTemplateContent", value: {} }
+        })
+    ).result;
 
     await connector2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: template.truncatedReference });
 
-    const relationship = (await connector2.relationships.createRelationship({ templateId: template.id, content: {} })).result;
+    const relationship = (
+        await connector2.relationships.createRelationship({
+            templateId: template.id,
+            creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} }
+        })
+    ).result;
 
     await connector1.account.sync();
 
-    const accepted = (await connector1.relationships.acceptRelationshipChange(relationship.id, relationship.changes[0].id)).result;
+    const accepted = (await connector1.relationships.acceptRelationship(relationship.id)).result;
     console.log(accepted);
 
     await connector2.account.sync();

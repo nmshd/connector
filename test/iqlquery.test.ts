@@ -1,8 +1,9 @@
-import { ConnectorClient, ConnectorIdentityAttribute, ExecuteIQLQueryRequest, IQLQuery, ProposeAttributeRequestItem, ReadAttributeRequestItem } from "@nmshd/connector-sdk";
+import { ConnectorClient, ExecuteIQLQueryRequest, IQLQuery } from "@nmshd/connector-sdk";
+import { IdentityAttributeJSON, ProposeAttributeRequestItemJSON, ReadAttributeRequestItemJSON } from "@nmshd/content";
 import { DateTime } from "luxon";
-import { Launcher } from "./lib/Launcher";
+import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { getTimeout } from "./lib/setTimeout";
-import { getTemplateToken, syncUntil, syncUntilHasMessages, syncUntilHasMessageWithRequest, syncUntilHasRelationships } from "./lib/testUtils";
+import { getTemplateToken, syncUntilHasMessages, syncUntilHasRelationship, syncUntilHasRequest } from "./lib/testUtils";
 
 /* Disable timeout errors if we're debugging */
 if (process.env.NODE_OPTIONS !== undefined && process.env.NODE_OPTIONS.search("inspect") !== -1) {
@@ -10,10 +11,10 @@ if (process.env.NODE_OPTIONS !== undefined && process.env.NODE_OPTIONS.search("i
 }
 
 const launcher = new Launcher();
-let client1: ConnectorClient;
+let client1: ConnectorClientWithMetadata;
 let client2: ConnectorClient;
 let client1Address: string;
-let attributes: ConnectorIdentityAttribute[];
+let attributes: IdentityAttributeJSON[];
 let attributeIds: string[];
 
 beforeAll(async () => {
@@ -50,13 +51,13 @@ beforeAll(async () => {
     /* Initialize relationship. */
     const token = await getTemplateToken(client1);
     const templateId = (await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.truncatedReference })).result.id;
-    await client2.relationships.createRelationship({ templateId, content: { a: "b" } });
+    const relationshipId = (await client2.relationships.createRelationship({ templateId, creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} } })).result
+        .id;
     for (const c of [client1, client2]) {
-        const relationships = await syncUntilHasRelationships(c);
-        const relationshipId = relationships[0].id;
-        const relationshipChangeId = relationships[0].changes[0].id;
-        await c.relationships.acceptRelationshipChange(relationshipId, relationshipChangeId, { content: { a: "b" } });
+        await syncUntilHasRelationship(c, relationshipId);
+        await c.relationships.acceptRelationship(relationshipId);
     }
+
     const relId1 = (await client1.relationships.getRelationships()).result[0].id;
     const relId2 = (await client2.relationships.getRelationships()).result[0].id;
     if (relId1 !== relId2) {
@@ -90,7 +91,7 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
     ];
 
     /* Create request on C2. */
-    const outRequest: ReadAttributeRequestItem = {
+    const outRequest: ReadAttributeRequestItemJSON = {
         "@type": "ReadAttributeRequestItem",
         mustBeAccepted: false,
         query: {
@@ -109,11 +110,11 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
 
     /* Send request via message from C2 to C1 and wait for it to arrive. */
     await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content });
-    await syncUntilHasMessageWithRequest(client1, requestId);
+    await syncUntilHasRequest(client1, requestId);
 
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
-    const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItem).query as IQLQuery).queryString;
+    const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItemJSON).query as IQLQuery).queryString;
     const matchedAttributes = (await client1.attributes.executeIQLQuery({ query: { queryString: iqlQueryString } })).result;
 
     /* Reply to the response with the first matched attribute. Wait on C2 for
@@ -140,7 +141,7 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
     ];
 
     /* Create request on C2. */
-    const outRequest: ProposeAttributeRequestItem = {
+    const outRequest: ProposeAttributeRequestItemJSON = {
         "@type": "ProposeAttributeRequestItem",
         mustBeAccepted: true,
         query: {
@@ -167,14 +168,12 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
     const requestId = createRequestRes.result.id;
 
     /* Send request via message from C2 to C1 and wait for it to arrive. */
-    const requestMessageId = (await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content })).result.id;
-    await syncUntil(client1, (context) => {
-        return context.messages.some((m) => m.id === requestMessageId);
-    });
+    await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content });
+    await syncUntilHasRequest(client1, requestId);
 
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
-    const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItem).query as IQLQuery).queryString;
+    const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItemJSON).query as IQLQuery).queryString;
     const matchedAttributes = (await client1.attributes.executeIQLQuery({ query: { queryString: iqlQueryString } })).result;
 
     /* Reply to the response with the first matched attribute. Wait on C2 for
@@ -195,7 +194,7 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
 
 test("Remote ProposeAttributeRequest containing IQL Query without existing attribute response", async () => {
     /* Create request on C2. */
-    const outRequest: ProposeAttributeRequestItem = {
+    const outRequest: ProposeAttributeRequestItemJSON = {
         "@type": "ProposeAttributeRequestItem",
         mustBeAccepted: true,
         query: {
@@ -221,21 +220,19 @@ test("Remote ProposeAttributeRequest containing IQL Query without existing attri
     const requestId = createRequestRes.result.id;
 
     /* Send request via message from C2 to C1 and wait for it to arrive. */
-    const requestMessageId = (await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content })).result.id;
-    await syncUntil(client1, (context) => {
-        return context.messages.some((m) => m.id === requestMessageId);
-    });
+    await client2.messages.sendMessage({ recipients: [client1Address], content: createRequestRes.result.content });
+    await syncUntilHasRequest(client1, requestId);
 
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
-    const incomingRequestItem: ProposeAttributeRequestItem = incomingRequest.content.items[0] as ProposeAttributeRequestItem;
+    const incomingRequestItem = incomingRequest.content.items[0] as ProposeAttributeRequestItemJSON;
     const iqlQueryString = (incomingRequestItem.query as IQLQuery).queryString;
     const matchedAttributes = (await client1.attributes.executeIQLQuery({ query: { queryString: iqlQueryString } })).result;
 
     expect(matchedAttributes).toHaveLength(0);
 
     incomingRequestItem.attribute.owner = client1Address;
-    const requestItemAttribute = incomingRequestItem.attribute;
+    const requestItemAttribute = incomingRequestItem.attribute as IdentityAttributeJSON;
     const attributeId = (await client1.attributes.createRepositoryAttribute({ content: { value: requestItemAttribute.value } })).result.id;
 
     /* Reply to the response with the first matched attribute. Wait on C2 for

@@ -1,4 +1,6 @@
+import { ArbitraryRelationshipCreationContentJSON, RelationshipCreationContentJSON } from "@nmshd/content";
+
 export interface CreateRelationshipRequest {
     templateId: string;
-    content: unknown;
+    creationContent: ArbitraryRelationshipCreationContentJSON | RelationshipCreationContentJSON;
 }

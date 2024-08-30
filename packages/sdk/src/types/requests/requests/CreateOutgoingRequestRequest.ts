@@ -1,6 +1,6 @@
-import { ConnectorRequestContent } from "../ConnectorRequestContent";
+import { RequestJSON } from "@nmshd/content";
 
 export interface CreateOutgoingRequestRequest {
-    content: ConnectorRequestContent;
+    content: Omit<RequestJSON, "@type"> & { "@type"?: "Request" };
     peer: string;
 }

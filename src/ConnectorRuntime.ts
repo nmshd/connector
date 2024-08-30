@@ -6,7 +6,7 @@ import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionController } from "@nmshd/consumption";
 import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
-import { AccountController, CoreErrors as TransportCoreErrors } from "@nmshd/transport";
+import { AccountController, TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import fs from "fs";
 import { HttpsProxyAgent } from "https-proxy-agent";
@@ -36,14 +36,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private accountController: AccountController;
 
     private _transportServices: TransportServices;
-    public get transportServices(): TransportServices {
-        return this._transportServices;
-    }
-
     private _consumptionServices: ConsumptionServices;
-    public get consumptionServices(): ConsumptionServices {
-        return this._consumptionServices;
-    }
 
     private get connectorMode(): ConnectorMode {
         return this.runtimeConfig.debug ? "debug" : "production";
@@ -77,6 +70,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             for (const error of result.errors) {
                 errorMessage += `\r\n  - ${error.stack}`;
             }
+
             console.error(errorMessage); // eslint-disable-line no-console
             throw new Error(errorMessage);
         }
@@ -130,6 +124,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
             process.exit(1);
         }
+
         this.logger.debug("Finished initialization of Mongo DB connection.");
 
         this.databaseConnection = mongodbConnection;
@@ -147,7 +142,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
             throw e;
         });
-        const consumptionController = await new ConsumptionController(this.transport, this.accountController).init();
+
+        const consumptionController = await new ConsumptionController(this.transport, this.accountController, { setDefaultRepositoryAttributes: false }).init();
 
         await this.checkDeviceCredentials(this.accountController);
 
@@ -219,7 +215,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     public async getSupportInformation(): Promise<SupportInformation> {
         const supportInformation = await super.getSupportInformation();
 
-        const identityInfoResult = await this.transportServices.account.getIdentityInfo();
+        const identityInfoResult = await this._transportServices.account.getIdentityInfo();
         const identityInfo = identityInfoResult.isSuccess ? identityInfoResult.value : { error: identityInfoResult.error.message };
 
         return {
@@ -285,6 +281,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             if (e.code === "MODULE_NOT_FOUND" && e.message.includes(`Cannot find module '${moduleName}'`)) {
                 return;
             }
+
             this.logger.error(e);
             throw e;
         }

@@ -1,5 +1,8 @@
 export enum ConnectorRelationshipStatus {
-    PENDING = "Pending",
-    ACTIVE = "Active",
-    REJECTED = "Rejected"
+    Pending = "Pending",
+    Active = "Active",
+    Rejected = "Rejected",
+    Revoked = "Revoked",
+    Terminated = "Terminated",
+    DeletionProposed = "DeletionProposed"
 }
