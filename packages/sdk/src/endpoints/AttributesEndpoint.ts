@@ -14,7 +14,7 @@ import {
     GetOwnRepositoryAttributesRequest,
     GetOwnSharedIdentityAttributesRequest,
     GetPeerSharedIdentityAttributesRequest,
-    GetSharedVersionsOfRepositoryAttributeRequest,
+    GetSharedVersionsOfAttributeRequest,
     GetValidAttributesRequest,
     NotifyPeerAboutRepositoryAttributeSuccessionRequest,
     NotifyPeerAboutRepositoryAttributeSuccessionResponse,
@@ -67,7 +67,7 @@ export class AttributesEndpoint extends Endpoint {
         return await this.get(`/api/v2/Attributes/${attributeId}/Versions`);
     }
 
-    public async getSharedVersionsOfAttribute(attributeId: string, request: GetSharedVersionsOfRepositoryAttributeRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
+    public async getSharedVersionsOfAttribute(attributeId: string, request: GetSharedVersionsOfAttributeRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.get(`/api/v2/Attributes/${attributeId}/Versions/Shared`, request);
     }
 
