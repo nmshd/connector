@@ -18,6 +18,7 @@ export class MockEventBus extends EventEmitter2EventBus {
         if (!namespace) {
             throw Error("The event needs a namespace. Use the EventNamespace-decorator in order to define a namespace for a event.");
         }
+
         this.publishPromises.push(this.emitter.emitAsync(namespace, event));
     }
 

@@ -1,4 +1,4 @@
-import { ConnectorRequestContent } from "./ConnectorRequestContent";
+import { RequestJSON, ResponseJSON } from "@nmshd/content";
 
 export interface ConnectorRequest {
     id: string;
@@ -6,9 +6,19 @@ export interface ConnectorRequest {
     peer: string;
     createdAt: string;
     status: ConnectorRequestStatus;
-    content: ConnectorRequestContent;
-    source?: ConnectorRequestSource;
-    response?: ConnectorRequestResponse;
+    content: RequestJSON;
+    source?: {
+        type: "Message" | "RelationshipTemplate";
+        reference: string;
+    };
+    response?: {
+        createdAt: string;
+        content: ResponseJSON;
+        source?: {
+            type: "Message" | "Relationship";
+            reference: string;
+        };
+    };
 }
 
 export enum ConnectorRequestStatus {
@@ -18,50 +28,4 @@ export enum ConnectorRequestStatus {
     ManualDecisionRequired = "ManualDecisionRequired",
     Decided = "Decided",
     Completed = "Completed"
-}
-
-export interface ConnectorRequestSource {
-    type: "Message" | "RelationshipTemplate";
-    reference: string;
-}
-
-export interface ConnectorRequestResponse {
-    createdAt: string;
-    content: ConnectorRequestResponseContent;
-    source?: ConnectorRequestResponseSource;
-}
-
-export interface ConnectorRequestResponseSource {
-    type: "Message" | "RelationshipChange";
-    reference: string;
-}
-
-export interface ConnectorRequestResponseContent {
-    "@type": string;
-    result: ConnectorRequestResponseResult;
-    requestId: string;
-    items: (ConnectorRequestResponseItemGroup | ConnectorRequestResponseItem)[];
-}
-
-export enum ConnectorRequestResponseResult {
-    Accepted = "Accepted",
-    Rejected = "Rejected"
-}
-
-export interface ConnectorRequestResponseItem {
-    "@type": string;
-    result: ConnectorRequestResponseItemResult;
-    metadata?: object;
-}
-
-export enum ConnectorRequestResponseItemResult {
-    Accepted = "Accepted",
-    Rejected = "Rejected",
-    Failed = "Error"
-}
-
-export interface ConnectorRequestResponseItemGroup {
-    "@type": string;
-    items: ConnectorRequestResponseItem[];
-    metadata?: object;
 }

@@ -1,6 +1,5 @@
 import { RuntimeConfig } from "@nmshd/runtime";
 import correlationIdWrapper from "correlation-id";
-import _ from "lodash";
 import nconf from "nconf";
 import { ConnectorRuntime } from "./ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
@@ -32,14 +31,6 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
     const connectorConfig = nconf.get() as ConnectorRuntimeConfig;
     enhanceLoggingConfig(connectorConfig);
 
-    if (typeof connectorConfig.modules.webhooksV2 !== "undefined") {
-        // eslint-disable-next-line no-console
-        console.warn("The 'webhooksV2' configuration is deprecated. Please use 'webhooks' instead.");
-
-        connectorConfig.modules.webhooks = _.defaultsDeep(connectorConfig.modules.webhooksV2, connectorConfig.modules.webhooks);
-        delete connectorConfig.modules.webhooksV2;
-    }
-
     if (connectorConfig.modules.sync.enabled && connectorConfig.modules.sse.enabled) {
         // eslint-disable-next-line no-console
         console.warn("The SSE and Sync modules cannot be enabled at the same time, the Sync module will be disabled.");
@@ -65,9 +56,6 @@ function enhanceLoggingConfig(connectorConfig: ConnectorRuntimeConfig) {
 }
 
 const envKeyMapping: Record<string, string> = {
-    // The DATABASE__DB_NAME env variable was called ACCOUNT in the past - we need to keep an alias for backwards compatibility.
-    ACCOUNT: "database:dbName", // eslint-disable-line @typescript-eslint/naming-convention
-
     DATABASE_NAME: "database:dbName", // eslint-disable-line @typescript-eslint/naming-convention
     API_KEY: "infrastructure:httpServer:apiKey", // eslint-disable-line @typescript-eslint/naming-convention
     DATABASE_CONNECTION_STRING: "database:connectionString", // eslint-disable-line @typescript-eslint/naming-convention

@@ -21,9 +21,10 @@ export class AccountController extends BaseController {
     @POST
     @Path("/Sync")
     @Accept("application/json")
-    public async sync(): Promise<Envelope> {
+    public async sync(): Promise<void> {
         const result = await this.transportServices.account.syncEverything();
-        return this.ok(result);
+        if (result.isError) throw result.error;
+        return this.noContent(result);
     }
 
     @GET

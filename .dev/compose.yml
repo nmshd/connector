@@ -14,6 +14,7 @@ services:
       - SYNC_ENABLED=${SYNC_ENABLED:-false}
       - DATABASE_NAME=${DATABASE_NAME_PREFIX:-connector}-1
       - transportLibrary__baseUrl
+      - transportLibrary__addressGenerationHostnameOverride
       - transportLibrary__platformClientId
       - transportLibrary__platformClientSecret
       - modules__sse__enabled=${modules__sse__enabled:-false}
@@ -42,6 +43,7 @@ services:
       - SYNC_ENABLED=${SYNC_ENABLED:-false}
       - DATABASE_NAME=${DATABASE_NAME_PREFIX:-connector}-2
       - transportLibrary__baseUrl
+      - transportLibrary__addressGenerationHostnameOverride
       - transportLibrary__platformClientId
       - transportLibrary__platformClientSecret
       - modules__sse__enabled=${modules__sse__enabled:-false}

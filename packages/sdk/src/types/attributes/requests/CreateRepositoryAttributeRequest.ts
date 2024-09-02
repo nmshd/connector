@@ -1,8 +1,8 @@
-import { ConnectorAttributeValue } from "../ConnectorAttribute";
+import { AttributeValues } from "@nmshd/content";
 
 export interface CreateRepositoryAttributeRequest {
     content: {
-        value: ConnectorAttributeValue;
+        value: AttributeValues.Identity.Json;
         tags?: string[];
         validFrom?: string;
         validTo?: string;

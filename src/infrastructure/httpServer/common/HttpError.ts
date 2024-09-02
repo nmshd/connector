@@ -57,6 +57,7 @@ export class HttpErrorId {
         for (let i = 0; i < HttpErrorId.lengthOfRandomPart; i++) {
             result += HttpErrorId.characters.charAt(Math.floor(Math.random() * HttpErrorId.charactersLength));
         }
+
         return result;
     }
 }
