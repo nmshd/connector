@@ -28,6 +28,8 @@ updates:
           - "*"
         exclude-patterns:
           - "@nmshd/runtime"
+          - "@nmshd/content"
+          - "@nmshd/core-types"
     reviewers:
       - "jkoenig134"
       - "sebbi08"
