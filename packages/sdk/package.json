@@ -30,8 +30,8 @@
         "build:schemas:watch": "npx nodemon -e ts -w 'src/types' --exec 'npm run build:schemas'"
     },
     "dependencies": {
-        "@nmshd/content": "^5.3.0",
-        "axios": "^1.7.5",
+        "@nmshd/content": "^5.4.0",
+        "axios": "^1.7.7",
         "form-data": "^4.0.0",
         "qs": "^6.13.0"
     },
