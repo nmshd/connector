@@ -1056,10 +1056,13 @@
         "transportLibrary": {
             "additionalProperties": false,
             "properties": {
-                "baseUrl": {
+                "addressGenerationHostnameOverride": {
                     "type": "string"
                 },
-                "addressGenerationHostnameOverride": {
+                "allowIdentityCreation": {
+                    "type": "boolean"
+                },
+                "baseUrl": {
                     "type": "string"
                 },
                 "datawalletEnabled": {

@@ -1,6 +1,8 @@
 {
     "debug": false,
-    "transportLibrary": {},
+    "transportLibrary": {
+        "allowIdentityCreation": false
+    },
     "database": {
         "driver": "mongodb",
         "dbName": "default",
