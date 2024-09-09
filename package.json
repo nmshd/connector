@@ -113,7 +113,7 @@
         "@js-soft/eslint-config-ts": "1.6.9",
         "@js-soft/license-check": "1.0.9",
         "@nmshd/connector-sdk": "*",
-        "@nmshd/content": "^5.4.0",
+        "@nmshd/content": "^5.4.1",
         "@nmshd/core-types": "^5.4.0",
         "@types/amqplib": "^0.10.5",
         "@types/compression": "^1.7.5",
