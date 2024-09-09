@@ -79,9 +79,9 @@
         ]
     },
     "dependencies": {
-        "@google-cloud/pubsub": "4.7.0",
+        "@google-cloud/pubsub": "4.7.1",
         "@js-soft/docdb-access-loki": "^1.1.0",
-        "@js-soft/docdb-access-mongo": "1.1.8",
+        "@js-soft/docdb-access-mongo": "1.1.9",
         "@js-soft/node-logger": "1.2.0",
         "@js-soft/ts-utils": "^2.3.3",
         "@nmshd/runtime": "5.4.0",
@@ -126,7 +126,7 @@
         "@types/lodash": "^4.17.7",
         "@types/luxon": "^3.4.2",
         "@types/nconf": "^0.10.7",
-        "@types/node": "^22.5.2",
+        "@types/node": "^22.5.4",
         "@types/on-headers": "^1.0.3",
         "@types/swagger-ui-express": "^4.1.6",
         "@types/yamljs": "^0.2.34",
@@ -143,7 +143,7 @@
         "prettier": "^3.3.3",
         "ts-jest": "^29.2.5",
         "ts-node": "^10.9.2",
-        "typescript": "^5.5.4",
+        "typescript": "^5.6.2",
         "typescript-rest-swagger": "github:nmshd/typescript-rest-swagger#1.4.0"
     },
     "overrides": {
