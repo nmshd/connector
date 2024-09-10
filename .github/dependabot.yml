@@ -30,6 +30,11 @@ updates:
           - "@nmshd/runtime"
           - "@nmshd/content"
           - "@nmshd/core-types"
+      update-runtime:
+        patterns:
+          - "@nmshd/runtime"
+          - "@nmshd/content"
+          - "@nmshd/core-types"
     reviewers:
       - "jkoenig134"
       - "sebbi08"
