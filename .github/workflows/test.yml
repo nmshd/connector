@@ -54,7 +54,7 @@ jobs:
           node-version: current
       - run: npm ci
       - run: npm run build:ci --workspaces --if-present
-      - uses: js-soft/ferretdb-github-action@1.1.0
+      - uses: js-soft/ferretdb-github-action@1.1.1
         with:
           ferretdb-telemetry: "enabled"
           ferretdb-version: "1.20.1"
