@@ -22,14 +22,14 @@ updates:
       - "/packages/sdk"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "@nmshd/content"
+      - dependency-name: "@nmshd/runtime"
+      - dependency-name: "@nmshd/core-types"
     groups:
       update-npm-dependencies:
         patterns:
           - "*"
-        exclude-patterns:
-          - "@nmshd/runtime"
-          - "@nmshd/content"
-          - "@nmshd/core-types"
     reviewers:
       - "jkoenig134"
       - "sebbi08"
