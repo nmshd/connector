@@ -168,7 +168,7 @@ export async function uploadFile(client: ConnectorClient): Promise<ConnectorFile
     return response.result;
 }
 
-export async function makeUploadRequest(values: object = {}): Promise<UploadOwnFileRequest> {
+export async function makeUploadRequest(values: Partial<UploadOwnFileRequest> = {}): Promise<UploadOwnFileRequest> {
     return {
         title: "File Title",
         filename: "test.txt",

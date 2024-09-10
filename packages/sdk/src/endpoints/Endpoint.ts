@@ -144,6 +144,8 @@ export abstract class Endpoint {
 
             const value = data[key];
 
+            if (typeof value === "undefined") continue;
+
             if (value instanceof Buffer) {
                 formData.append(key, value, { filename });
             } else {
