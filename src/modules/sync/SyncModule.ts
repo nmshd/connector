@@ -1,3 +1,4 @@
+import correlationIdLibrary from "correlation-id";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
 export interface SyncModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
@@ -16,8 +17,10 @@ export default class SyncModule extends ConnectorRuntimeModule<SyncModuleConfigu
     }
 
     private async sync() {
-        const result = await this.runtime.getServices().transportServices.account.syncEverything();
-        if (result.isError) this.logger.error("Sync failed", result.error);
+        await correlationIdLibrary.withId(async () => {
+            const result = await this.runtime.getServices().transportServices.account.syncEverything();
+            if (result.isError) this.logger.error("Sync failed", result.error);
+        });
 
         this.syncTimeout = setTimeout(async () => await this.sync(), this.configuration.interval * 1000);
     }
