@@ -1,6 +1,7 @@
 import { RuntimeConfig } from "@nmshd/runtime";
 import * as log4js from "log4js";
 import { ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
+import { HttpServerConfiguration } from "./infrastructure";
 
 export interface MongoDBSettings {
     driver: "mongodb";
@@ -22,10 +23,6 @@ export interface ConnectorRuntimeConfig extends RuntimeConfig {
     modules: Record<string, ConnectorRuntimeModuleConfiguration>;
 
     infrastructure: {
-        httpServer: {
-            enabled: boolean;
-            apiKey: string;
-            cors?: any;
-        };
+        httpServer: HttpServerConfiguration;
     };
 }
