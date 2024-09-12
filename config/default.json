@@ -1,8 +1,6 @@
 {
     "debug": false,
-    "transportLibrary": {
-        "realm": "id1"
-    },
+    "transportLibrary": {},
     "database": {
         "driver": "mongodb",
         "dbName": "default",
