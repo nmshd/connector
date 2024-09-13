@@ -13,7 +13,7 @@ const uuidRegex = new RegExp("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0
 
 beforeAll(async () => {
     process.env["logging:appenders:console:level"] = "INFO";
-    launchResult = await launcher.launchSimple(true);
+    launchResult = await launcher.launchSimple(false);
     axiosClient = axios.create({
         baseURL: launchResult.baseUrl,
         validateStatus: (_) => true

@@ -22,10 +22,10 @@ export class Launcher {
     private readonly _processes: { connector: ChildProcess; webhookServer: Server | undefined }[] = [];
     private readonly apiKey = "xxx";
 
-    public async launchSimple(hideOutput = false): Promise<{ processes: { connector: ChildProcess; webhookServer: Server | undefined }; baseUrl: string }> {
+    public async launchSimple(pipeOutputToConsole = true): Promise<{ processes: { connector: ChildProcess; webhookServer: Server | undefined }; baseUrl: string }> {
         const port = await getPort();
         const accountName = await this.randomString();
-        const { connector, webhookServer } = await this.spawnConnector(port, accountName, hideOutput);
+        const { connector, webhookServer } = await this.spawnConnector(port, accountName, pipeOutputToConsole);
         this._processes.push({
             connector,
             webhookServer
@@ -43,7 +43,7 @@ export class Launcher {
         };
     }
 
-    public async launch(count: number, hideOutput = false): Promise<ConnectorClientWithMetadata[]> {
+    public async launch(count: number, pipeOutputToConsole = true): Promise<ConnectorClientWithMetadata[]> {
         const clients: ConnectorClientWithMetadata[] = [];
         const ports: number[] = [];
         const startPromises: Promise<void>[] = [];
@@ -65,7 +65,7 @@ export class Launcher {
 
             clients.push(connectorClient);
             ports.push(port);
-            const { connector, webhookServer } = await this.spawnConnector(port, accountName, hideOutput, connectorClient._eventBus);
+            const { connector, webhookServer } = await this.spawnConnector(port, accountName, pipeOutputToConsole, connectorClient._eventBus);
             this._processes.push({
                 connector,
                 webhookServer
@@ -94,7 +94,7 @@ export class Launcher {
     private async spawnConnector(
         port: number,
         accountName: string,
-        hideOutput = false,
+        pipeOutputToConsole = true,
         eventBus?: MockEventBus
     ): Promise<{ connector: ChildProcess; webhookServer: Server | undefined }> {
         const env = process.env;
@@ -126,7 +126,7 @@ export class Launcher {
             cwd: path.resolve(`${__dirname}/../..`),
             stdio: "pipe"
         });
-        if (!hideOutput) {
+        if (pipeOutputToConsole) {
             connector.stdout.pipe(process.stdout);
             connector.stderr.pipe(process.stderr);
         }
