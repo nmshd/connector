@@ -1,6 +1,6 @@
 import { sleep } from "@js-soft/ts-utils";
 import compression from "compression";
-import correlationIdWrapper from "correlation-id";
+import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
 import helmet, { HelmetOptions } from "helmet";
@@ -65,9 +65,9 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 correlationId = correlationId[0];
             }
             if (correlationId) {
-                correlationIdWrapper.withId(correlationId, next);
+                correlator.withId(correlationId, next);
             } else {
-                correlationIdWrapper.withId(next);
+                correlator.withId(next);
             }
         });
 

@@ -2,7 +2,7 @@ import { Event, DataEvent as tsUtilsDataEvent } from "@js-soft/ts-utils";
 import { DataEvent } from "@nmshd/runtime";
 import agentKeepAlive, { HttpsAgent as AgentKeepAliveHttps } from "agentkeepalive";
 import axios, { AxiosInstance } from "axios";
-import correlationIdLibrary from "correlation-id";
+import correlator from "correlation-id";
 import { ConnectorRuntimeModule } from "../../ConnectorRuntimeModule";
 import { ConfigModel, Webhook } from "./ConfigModel";
 import { ConfigParser } from "./ConfigParser";
@@ -45,7 +45,7 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
 
         try {
             this.logger.debug(`Sending request to webhook '${url}' for trigger '${trigger}'.`);
-            const correlationId = correlationIdLibrary.getId();
+            const correlationId = correlator.getId();
             const response = await this.axios.post(url, payload, {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 headers: Object.assign({}, webhook.target.headers, { "x-correlation-id": correlationId })

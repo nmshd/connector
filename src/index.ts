@@ -1,5 +1,5 @@
 import { RuntimeConfig } from "@nmshd/runtime";
-import correlationIdWrapper from "correlation-id";
+import correlator from "correlation-id";
 import nconf from "nconf";
 import { ConnectorRuntime } from "./ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
@@ -48,7 +48,7 @@ function enhanceLoggingConfig(connectorConfig: ConnectorRuntimeConfig) {
             appender.layout.tokens = {
                 ...tokens,
                 correlationId: () => {
-                    return correlationIdWrapper.getId() ?? "";
+                    return correlator.getId() ?? "";
                 }
             };
         }
