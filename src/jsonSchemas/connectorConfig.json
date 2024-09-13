@@ -1085,10 +1085,6 @@
                 },
                 "platformTimeout": {
                     "type": "number"
-                },
-                "realm": {
-                    "enum": ["dev", "id0", "id1"],
-                    "type": "string"
                 }
             },
             "type": "object"

@@ -1,5 +1,6 @@
 import { ConnectorClient, ConnectorFile } from "@nmshd/connector-sdk";
 import fs from "fs";
+import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
@@ -25,6 +26,17 @@ describe("File Upload", () => {
         expect(response).toBeSuccessful(ValidationSchema.File);
 
         file = response.result;
+    });
+
+    test("can upload file without description", async () => {
+        const response = await client1.files.uploadOwnFile({
+            title: "File Title",
+            filename: "test.txt",
+            file: await fs.promises.readFile(`${__dirname}/__assets__/test.txt`),
+            expiresAt: DateTime.utc().plus({ minutes: 5 }).toString()
+        });
+
+        expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
     test("uploaded files can be accessed under /Files", async () => {
@@ -65,7 +77,7 @@ describe("File Upload", () => {
 
     test("cannot upload a file that is null", async () => {
         // Cannot use client1.files.uploadOwn because it cannot deal with null values
-        const _response = await (client1.files as any).httpClient.post("/api/v2/Files/Own", makeUploadRequest({ file: null }));
+        const _response = await (client1.files as any).httpClient.post("/api/v2/Files/Own", makeUploadRequest({ file: null as any }));
         const response = (client1.files as any).makeResult(_response);
 
         expect(response).toBeAnError("must have required property 'content'", "error.runtime.validation.invalidPropertyValue");
