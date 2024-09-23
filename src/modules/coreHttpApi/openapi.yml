@@ -1909,16 +1909,9 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: "#/components/schemas/FileReference"
                 - $ref: "#/components/schemas/FileReferenceTruncated"
                 - $ref: "#/components/schemas/TokenReferenceTruncated"
             examples:
-              FileReference:
-                value: |
-                  {
-                    "id": "FIL_________________",
-                    "secretKey": "YOUR_SECRET_KEY"
-                  }
               FileReferenceTruncated:
                 value: |
                   {
@@ -2131,7 +2124,7 @@ paths:
                   type: string
                   format: date-time
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the id and secretKey of the token. Defaults to true. Will be ignored if Accept is set to image/png.
+                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to true. Will be ignored if Accept is set to image/png.
                   type: boolean
       responses:
         201:
@@ -3168,16 +3161,9 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: "#/components/schemas/RelationshipTemplateReference"
                 - $ref: "#/components/schemas/RelationshipTemplateReferenceTruncated"
                 - $ref: "#/components/schemas/TokenReferenceTruncated"
             examples:
-              RelationshipTemplateReference:
-                value: |
-                  {
-                    "id": "RLT_________________",
-                    "secretKey": "YOUR_SECRET_KEY"
-                  }
               RelationshipTemplateReferenceTruncated:
                 value: |
                   {
@@ -3333,7 +3319,7 @@ paths:
                   type: string
                   format: date-time
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the id and secretKey of the token. Defaults to true. Will be ignored if Accept is set to image/png.
+                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to true. Will be ignored if Accept is set to image/png.
                   type: boolean
       responses:
         201:
@@ -3924,7 +3910,7 @@ paths:
                   nullable: false
                   description: A timestamp that describes when this token expires. An expired token cannot be fetched from the platform anymore. However it will still be available for auditing purposes.
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the id and secretKey of the token. Defaults to false.
+                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
                   type: boolean
                   example: false
               required:
@@ -4015,41 +4001,17 @@ paths:
               oneOf:
                 - type: object
                   properties:
-                    id:
-                      allOf:
-                        - $ref: "#/components/schemas/TokenID"
-                      nullable: false
-                      description: The ID of the received Token which should be fetched. This is usually shared over the side channel (QR-Code, Link).
-                    secretKey:
-                      type: string
-                      format: byte
-                      nullable: false
-                      description: The base64 encoded secret key which was used to encrypt the Token. This is usually shared over the side channel (QR-Code, Link).
-                    ephemeral:
-                      description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the id and secretKey of the token. Defaults to false.
-                      type: boolean
-                  required:
-                    - id
-                    - secretKey
-                - type: object
-                  properties:
                     reference:
                       type: string
                       format: byte
                       nullable: false
-                      description: The base64 encoded truncated reference of the token, which actually consists of the TokenId and the secretKey.
+                      description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
                     ephemeral:
-                      description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the id and secretKey of the token. Defaults to false.
+                      description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
                       type: boolean
                   required:
                     - reference
             examples:
-              TokenReference:
-                value: |
-                  {
-                    "id": "TOK_________________",
-                    "secretKey": "YOUR_SECRET_KEY"
-                  }
               TokenReferenceTruncated:
                 value: |
                   {
@@ -4823,7 +4785,7 @@ components:
           type: string
           format: byte
           nullable: false
-          description: The base64 encoded truncated reference of the file, which actually consists of the FileId and the secretKey.
+          description: The base64 encoded truncated reference of the File, which actually consists of all information to get and decrypt it.
       required:
         - id
         - title
@@ -4836,23 +4798,6 @@ components:
         - mimetype
         - isOwn
         - truncatedReference
-
-    FileReference:
-      type: object
-      properties:
-        id:
-          allOf:
-            - $ref: "#/components/schemas/FileID"
-          nullable: false
-          description: The ID of the `File` which should be fetched. This is usually shared within a Token.
-        secretKey:
-          type: string
-          format: byte
-          nullable: false
-          description: The secret key which was used to encrypt the `File`. This is usually shared within a Token.
-      required:
-        - id
-        - secretKey
 
     FileReferenceTruncated:
       type: object
@@ -5578,15 +5523,11 @@ components:
             - $ref: "#/components/schemas/RelationshipTemplateContent"
             - $ref: "#/components/schemas/ArbitraryRelationshipTemplateContent"
           nullable: false
-        secretKey:
-          type: string
-          nullable: false
-          description: The base64 encoded secret key which was used to encrypt the RelationshipTemplate.
         truncatedReference:
           type: string
           format: byte
           nullable: false
-          description: The base64 encoded truncated reference of the RelationshipTemplate, which actually consists of the RelationshipTemplateId and the secretKey.
+          description: The base64 encoded truncated reference of the RelationshipTemplate, which actually consists of all information to get and decrypt it.
       required:
         - id
         - isOwn
@@ -5596,23 +5537,6 @@ components:
         - expiresAt
         - content
         - truncatedReference
-
-    RelationshipTemplateReference:
-      type: object
-      properties:
-        id:
-          allOf:
-            - $ref: "#/components/schemas/RelationshipTemplateID"
-          nullable: false
-          description: The ID of the received RelationshipTemplate which should be fetched. This is usually shared within a Token.
-        secretKey:
-          type: string
-          format: byte
-          nullable: false
-          description: The secret key which was used to encrypt the RelationshipTemplate. This is usually shared within a Token.
-      required:
-        - id
-        - secretKey
 
     RelationshipTemplateReferenceTruncated:
       type: object
@@ -5750,16 +5674,11 @@ components:
           format: date-time
           nullable: false
           description: A timestamp that describes when this token expires. An expired token cannot be fetched from the platform anymore. However it will still be available for auditing purposes.
-        secretKey:
-          type: string
-          format: byte
-          nullable: false
-          description: The base64 encoded secret key which was used to encrypt the Token. This is usually shared over the side channel (QR-Code, Link).
         truncatedReference:
           type: string
           format: byte
           nullable: false
-          description: The base64 encoded truncated reference of the token, which actually consists of the TokenId and the secretKey.
+          description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
       required:
         - id
         - createdBy
@@ -5767,25 +5686,7 @@ components:
         - content
         - createdAt
         - expiresAt
-        - secretKey
         - truncatedReference
-
-    TokenReference:
-      type: object
-      properties:
-        id:
-          allOf:
-            - $ref: "#/components/schemas/TokenID"
-          nullable: false
-          description: The ID of the received Token which should be fetched. This is usually shared over the side channel (QR-Code, Link).
-        secretKey:
-          type: string
-          format: byte
-          nullable: false
-          description: The base64 encoded secret key which was used to encrypt the Token. This is usually shared over the side channel (QR-Code, Link).
-      required:
-        - id
-        - secretKey
 
     TokenReferenceTruncated:
       type: object
@@ -5794,7 +5695,7 @@ components:
           type: string
           format: byte
           nullable: false
-          description: The base64 encoded truncated reference of the token, which actually consists of the TokenId and the secretKey.
+          description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
       required:
         - reference
 
