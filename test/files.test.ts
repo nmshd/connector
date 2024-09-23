@@ -236,7 +236,7 @@ describe("Load peer file with token reference", () => {
 
     test("passing undefined as truncated token reference causes an error", async () => {
         const response = await client2.files.loadPeerFile({ reference: undefined as any });
-        expect(response).toBeAnError("The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+        expect(response).toBeAnError("token / file reference invalid", "error.runtime.validation.invalidPropertyValue");
     });
 });
 
