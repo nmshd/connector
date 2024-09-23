@@ -9,8 +9,6 @@ import {
     GetOwnFilesRequest,
     GetPeerFilesRequest,
     LoadPeerFileRequest,
-    TokenReference,
-    TruncatedFileReference,
     UploadOwnFileRequest
 } from "../types";
 import { Endpoint } from "./Endpoint";
@@ -38,8 +36,6 @@ export class FilesEndpoint extends Endpoint {
         return await this.get("/api/v2/Files/Own", request);
     }
 
-    public async loadPeerFile(request: TruncatedFileReference): Promise<ConnectorHttpResponse<ConnectorFile>>;
-    public async loadPeerFile(request: TokenReference): Promise<ConnectorHttpResponse<ConnectorFile>>;
     public async loadPeerFile(request: LoadPeerFileRequest): Promise<ConnectorHttpResponse<ConnectorFile>> {
         return await this.post("/api/v2/Files/Peer", request);
     }
