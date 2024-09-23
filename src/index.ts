@@ -29,7 +29,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
         .file("default-file", { file: "config/default.json" });
 
     const connectorConfig = nconf.get() as ConnectorRuntimeConfig;
-    enhanceLoggingConfig(connectorConfig);
+    addCorrelationIdSupportToLogger(connectorConfig);
 
     if (connectorConfig.modules.sync.enabled && connectorConfig.modules.sse.enabled) {
         // eslint-disable-next-line no-console
@@ -40,7 +40,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
     return connectorConfig;
 }
 
-function enhanceLoggingConfig(connectorConfig: ConnectorRuntimeConfig) {
+function addCorrelationIdSupportToLogger(connectorConfig: ConnectorRuntimeConfig) {
     Object.entries(connectorConfig.logging.appenders).forEach(([_key, appender]) => {
         if ("layout" in appender && appender.layout.type === "pattern") {
             const tokens = appender.layout.tokens;
