@@ -45,11 +45,10 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
 
         try {
             this.logger.debug(`Sending request to webhook '${url}' for trigger '${trigger}'.`);
+
             const correlationId = correlator.getId();
-            const response = await this.axios.post(url, payload, {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                headers: Object.assign({}, webhook.target.headers, { "x-correlation-id": correlationId })
-            });
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            const response = await this.axios.post(url, payload, { headers: { ...webhook.target.headers, "x-correlation-id": correlationId } });
 
             if (response.status < 200 || response.status > 299) {
                 this.logger.warn(`Request to webhook '${url}' returned status ${response.status}. Expected value between 200 and 299.`);
