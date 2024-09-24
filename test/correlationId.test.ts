@@ -44,7 +44,7 @@ describe("test the correlation ids", () => {
         );
 
         await connectorClient1._eventBus?.waitForEvent("consumption.outgoingRequestCreated", (event: any) => {
-            return uuidRegex.test(event.data["_headers"]["x-correlation-id"]);
+            return uuidRegex.test(event.headers["x-correlation-id"]);
         });
     });
 
@@ -74,7 +74,7 @@ describe("test the correlation ids", () => {
         );
 
         await connectorClient1._eventBus?.waitForEvent("consumption.outgoingRequestCreated", (event: any) => {
-            return event.data["_headers"]["x-correlation-id"] === customCorrelationId;
+            return event.headers["x-correlation-id"] === customCorrelationId;
         });
     });
 });

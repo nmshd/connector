@@ -1,4 +1,3 @@
-import { DataEvent } from "@js-soft/ts-utils";
 import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Random, RandomCharacterRange } from "@nmshd/transport";
 import { ChildProcess, spawn } from "child_process";
@@ -7,6 +6,7 @@ import http, { Server } from "node:http";
 import https from "node:https";
 import inspector from "node:inspector";
 import path from "path";
+import { DataEventWithHeaders } from "./DataEventWithHeader";
 import { MockEventBus } from "./MockEventBus";
 import getPort from "./getPort";
 import waitForConnector from "./waitForConnector";
@@ -129,8 +129,7 @@ export class Launcher {
             .use((req, res) => {
                 res.status(200).send("OK");
 
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                eventBus.publish(new DataEvent(req.body.trigger, { ...req.body.data, _headers: req.headers }));
+                eventBus.publish(new DataEventWithHeaders(req.body.trigger, req.body.data, req.headers));
             })
             .listen(port);
     }
