@@ -89,6 +89,7 @@
         "amqplib": "^0.10.4",
         "axios": "^1.7.7",
         "compression": "1.7.4",
+        "correlation-id": "^5.2.0",
         "cors": "2.8.5",
         "eventsource": "^2.0.2",
         "express": "4.21.0",

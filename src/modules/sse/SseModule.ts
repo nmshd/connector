@@ -1,4 +1,5 @@
 import { ILogger } from "@js-soft/logging-abstractions";
+import correlator from "correlation-id";
 import eventSourceModule from "eventsource";
 import { ConnectorMode } from "../../ConnectorMode";
 import { ConnectorRuntime } from "../../ConnectorRuntime";
@@ -88,11 +89,12 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
 
         const services = this.runtime.getServices();
 
-        const syncResult = await services.transportServices.account.syncEverything();
-        if (syncResult.isError) {
-            this.logger.error(syncResult);
-            return;
-        }
+        await correlator.withId(async () => {
+            const syncResult = await services.transportServices.account.syncEverything();
+            if (syncResult.isError) {
+                this.logger.error(syncResult);
+            }
+        });
     }
 
     public stop(): void {

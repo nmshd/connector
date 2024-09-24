@@ -8,6 +8,7 @@ import { ConsumptionController } from "@nmshd/consumption";
 import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
+import correlator from "correlation-id";
 import fs from "fs";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import { validate as validateSchema } from "jsonschema";
@@ -57,7 +58,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private healthChecker: HealthChecker;
 
     private constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory) {
-        super(connectorConfig, loggerFactory);
+        super(connectorConfig, loggerFactory, undefined, correlator);
     }
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {

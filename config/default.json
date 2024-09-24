@@ -10,11 +10,12 @@
         "appenders": {
             "fileAppender": {
                 "type": "dateFile",
-                "filename": "/var/log/enmeshed-connector/latest.log"
+                "filename": "./latest.log",
+                "layout": { "type": "pattern", "pattern": "[%d] [%p] %c - %m %x{correlationId}" }
             },
             "consoleAppender": {
                 "type": "stdout",
-                "layout": { "type": "pattern", "pattern": "%[[%d] [%p] %c - %m%]" }
+                "layout": { "type": "pattern", "pattern": "%[[%d] [%p] %c - %m %x{correlationId}%]" }
             },
             "console": {
                 "type": "logLevelFilter",
