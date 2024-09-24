@@ -54,6 +54,7 @@ describe("test the correlation ids", () => {
                 },
                 peer: account2Address
             },
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             { headers: { "x-correlation-id": customCorrelationId } }
         );
 
