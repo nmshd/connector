@@ -15,7 +15,6 @@ export type ConnectorClientWithMetadata = ConnectorClient & {
     /* eslint-disable @typescript-eslint/naming-convention */
     _metadata?: Record<string, string>;
     _eventBus?: MockEventBus;
-    _baseUrl?: string;
     /* eslint-enable @typescript-eslint/naming-convention */
 };
 
@@ -60,7 +59,6 @@ export class Launcher {
             connectorClient["_metadata"] = { accountName: `acc-${accountName}` };
 
             connectorClient._eventBus = new MockEventBus();
-            connectorClient._baseUrl = `http://localhost:${port}`;
 
             clients.push(connectorClient);
             ports.push(port);
@@ -131,8 +129,8 @@ export class Launcher {
             .use((req, res) => {
                 res.status(200).send("OK");
 
-                eventBus.publish(new DataEvent(req.body.trigger, req.body.data));
-                eventBus.publish(new DataEvent("__headers", req.headers));
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                eventBus.publish(new DataEvent(req.body.trigger, { ...req.body.data, _headers: req.headers }));
             })
             .listen(port);
     }

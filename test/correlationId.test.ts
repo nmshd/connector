@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import { AxiosInstance } from "axios";
 import { randomUUID } from "crypto";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
@@ -14,18 +14,18 @@ const uuidRegex = new RegExp("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0
 
 beforeAll(async () => {
     [connectorClient1, connectorClient2] = await launcher.launch(2);
-    axiosClient = axios.create({
-        baseURL: connectorClient1._baseUrl,
-        validateStatus: (_) => true
-    });
+    axiosClient = connectorClient1["account"]["httpClient"];
     await establishRelationship(connectorClient1, connectorClient2);
     account2Address = (await connectorClient2.account.getIdentityInfo()).result.address;
 }, getTimeout(30000));
 
 afterAll(() => launcher.stop());
-describe("should log the correlation id", () => {
-    test("should log the correlation id", async () => {
+
+describe("test the correlation ids", () => {
+    // eslint-disable-next-line jest/expect-expect
+    test("should send the the correlation id via webhook", async () => {
         connectorClient1._eventBus?.reset();
+
         await axiosClient.post<any>(
             "/api/v2/Requests/Outgoing",
             {
@@ -42,17 +42,18 @@ describe("should log the correlation id", () => {
                 }
             }
         );
-        await connectorClient1._eventBus?.waitForEvent("__headers", (event: any) => {
-            return uuidRegex.test(event.data["x-correlation-id"]);
-        });
 
-        // Found correlation id otherwise waitForEvent would throw an error
-        expect(true).toBe(true);
+        await connectorClient1._eventBus?.waitForEvent("consumption.outgoingRequestCreated", (event: any) => {
+            return uuidRegex.test(event.data["_headers"]["x-correlation-id"]);
+        });
     });
 
+    // eslint-disable-next-line jest/expect-expect
     test("should log the custom correlation id", async () => {
         connectorClient1._eventBus?.reset();
+
         const customCorrelationId = randomUUID();
+
         await axiosClient.post<any>(
             "/api/v2/Requests/Outgoing",
             {
@@ -71,11 +72,9 @@ describe("should log the correlation id", () => {
                 }
             }
         );
-        await connectorClient1._eventBus?.waitForEvent("__headers", (event: any) => {
-            return event.data["x-correlation-id"] === customCorrelationId;
-        });
 
-        // Found correlation id otherwise waitForEvent would throw an error
-        expect(true).toBe(true);
+        await connectorClient1._eventBus?.waitForEvent("consumption.outgoingRequestCreated", (event: any) => {
+            return event.data["_headers"]["x-correlation-id"] === customCorrelationId;
+        });
     });
 });
