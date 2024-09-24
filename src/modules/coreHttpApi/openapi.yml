@@ -1901,7 +1901,7 @@ paths:
   /api/v2/Files/Peer:
     post:
       operationId: loadPeerFile
-      description: Loads a file of another identity. After it is loaded once, you can retrieve it without the need for the secret key by calling one of the GET-routes.
+      description: Loads a file of another identity. After it is loaded once, you can retrieve it without the need for the truncatedReference by calling one of the GET-routes.
       tags:
         - Files
       requestBody:
@@ -3998,19 +3998,17 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - type: object
-                  properties:
-                    reference:
-                      type: string
-                      format: byte
-                      nullable: false
-                      description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
-                    ephemeral:
-                      description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
-                      type: boolean
-                  required:
-                    - reference
+              properties:
+                reference:
+                  type: string
+                  format: byte
+                  nullable: false
+                  description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
+                ephemeral:
+                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
+                  type: boolean
+              required:
+                - reference
             examples:
               TokenReferenceTruncated:
                 value: |

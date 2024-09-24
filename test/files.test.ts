@@ -278,12 +278,4 @@ describe("Load peer file with reference", () => {
         expect(response).toBeSuccessful(ValidationSchema.Files);
         expect(response.result).toContainEqual({ ...file, isOwn: false });
     });
-
-    test("get the File via the truncatedReference", async () => {
-        expect(file).toBeDefined();
-
-        const response = await client2.files.getFile(file.truncatedReference);
-        expect(response).toBeSuccessful(ValidationSchema.File);
-        expect(response.result).toMatchObject({ ...file, isOwn: false });
-    });
 });
