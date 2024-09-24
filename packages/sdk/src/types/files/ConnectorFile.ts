@@ -10,6 +10,5 @@ export interface ConnectorFile {
     isOwn: boolean;
     title: string;
     description?: string;
-    secretKey: string;
     truncatedReference: string;
 }

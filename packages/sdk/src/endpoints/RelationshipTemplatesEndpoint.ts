@@ -10,9 +10,7 @@ import {
     GetOwnTemplatesRequest as GetOwnRelationshipTemplatesRequest,
     GetPeerRelationshipTemplatesRequest,
     GetRelationshipTemplatesRequest,
-    LoadPeerRelationshipTemplateRequest,
-    RelationshipTemplateReference,
-    TruncatedRelationshipTemplateReference
+    LoadPeerRelationshipTemplateRequest
 } from "../types";
 import { Endpoint } from "./Endpoint";
 
@@ -56,8 +54,6 @@ export class RelationshipTemplatesEndpoint extends Endpoint {
         return await this.get("/api/v2/RelationshipTemplates/Peer", request);
     }
 
-    public async loadPeerRelationshipTemplate(request: TruncatedRelationshipTemplateReference): Promise<ConnectorHttpResponse<ConnectorRelationshipTemplate>>;
-    public async loadPeerRelationshipTemplate(request: RelationshipTemplateReference): Promise<ConnectorHttpResponse<ConnectorRelationshipTemplate>>;
     public async loadPeerRelationshipTemplate(request: LoadPeerRelationshipTemplateRequest): Promise<ConnectorHttpResponse<ConnectorRelationshipTemplate>> {
         return await this.post("/api/v2/RelationshipTemplates/Peer", request);
     }

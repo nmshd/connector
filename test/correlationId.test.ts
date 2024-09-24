@@ -26,22 +26,13 @@ describe("test the correlation ids", () => {
     test("should send the the correlation id via webhook", async () => {
         connectorClient1._eventBus?.reset();
 
-        await axiosClient.post<any>(
-            "/api/v2/Requests/Outgoing",
-            {
-                content: {
-                    items: [{ "@type": "ReadAttributeRequestItem", mustBeAccepted: false, query: { "@type": "IdentityAttributeQuery", valueType: "Surname" } }],
-                    expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
-                },
-                peer: account2Address
+        await axiosClient.post<any>("/api/v2/Requests/Outgoing", {
+            content: {
+                items: [{ "@type": "ReadAttributeRequestItem", mustBeAccepted: false, query: { "@type": "IdentityAttributeQuery", valueType: "Surname" } }],
+                expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
             },
-            {
-                headers: {
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
-                    "X-API-KEY": "xxx"
-                }
-            }
-        );
+            peer: account2Address
+        });
 
         await connectorClient1._eventBus?.waitForEvent("consumption.outgoingRequestCreated", (event: any) => {
             return uuidRegex.test(event.headers["x-correlation-id"]);
@@ -63,14 +54,7 @@ describe("test the correlation ids", () => {
                 },
                 peer: account2Address
             },
-            {
-                headers: {
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
-                    "x-correlation-id": customCorrelationId,
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
-                    "X-API-KEY": "xxx"
-                }
-            }
+            { headers: { "x-correlation-id": customCorrelationId } }
         );
 
         await connectorClient1._eventBus?.waitForEvent("consumption.outgoingRequestCreated", (event: any) => {
