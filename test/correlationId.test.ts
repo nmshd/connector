@@ -23,7 +23,7 @@ afterAll(() => launcher.stop());
 
 describe("test the correlation ids", () => {
     // eslint-disable-next-line jest/expect-expect
-    test("should send the the correlation id via webhook", async () => {
+    test("should send a random correlation id via webhook", async () => {
         connectorClient1._eventBus?.reset();
 
         await axiosClient.post<any>("/api/v2/Requests/Outgoing", {
@@ -40,7 +40,7 @@ describe("test the correlation ids", () => {
     });
 
     // eslint-disable-next-line jest/expect-expect
-    test("should log the custom correlation id", async () => {
+    test("should send a custom correlation id via webhook", async () => {
         connectorClient1._eventBus?.reset();
 
         const customCorrelationId = randomUUID();
