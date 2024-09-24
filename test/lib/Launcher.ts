@@ -22,10 +22,10 @@ export class Launcher {
     private readonly _processes: { connector: ChildProcess; webhookServer: Server | undefined }[] = [];
     private readonly apiKey = "xxx";
 
-    public async launchSimple(pipeOutputToConsole = true): Promise<{ processes: { connector: ChildProcess; webhookServer: Server | undefined }; baseUrl: string }> {
+    public async launchSimple(): Promise<string> {
         const port = await getPort();
         const accountName = await this.randomString();
-        const { connector, webhookServer } = await this.spawnConnector(port, accountName, pipeOutputToConsole);
+        const { connector, webhookServer } = await this.spawnConnector(port, accountName);
         this._processes.push({
             connector,
             webhookServer
@@ -37,13 +37,10 @@ export class Launcher {
             throw e;
         }
 
-        return {
-            processes: { connector, webhookServer },
-            baseUrl: `http://localhost:${port}`
-        };
+        return `http://localhost:${port}`;
     }
 
-    public async launch(count: number, pipeOutputToConsole = true): Promise<ConnectorClientWithMetadata[]> {
+    public async launch(count: number): Promise<ConnectorClientWithMetadata[]> {
         const clients: ConnectorClientWithMetadata[] = [];
         const ports: number[] = [];
         const startPromises: Promise<void>[] = [];
@@ -65,7 +62,7 @@ export class Launcher {
 
             clients.push(connectorClient);
             ports.push(port);
-            const { connector, webhookServer } = await this.spawnConnector(port, accountName, pipeOutputToConsole, connectorClient._eventBus);
+            const { connector, webhookServer } = await this.spawnConnector(port, accountName, connectorClient._eventBus);
             this._processes.push({
                 connector,
                 webhookServer
@@ -91,12 +88,7 @@ export class Launcher {
         return await Random.string(7, RandomCharacterRange.Alphabet);
     }
 
-    private async spawnConnector(
-        port: number,
-        accountName: string,
-        pipeOutputToConsole = true,
-        eventBus?: MockEventBus
-    ): Promise<{ connector: ChildProcess; webhookServer: Server | undefined }> {
+    private async spawnConnector(port: number, accountName: string, eventBus?: MockEventBus) {
         const env = process.env;
         env["infrastructure:httpServer:port"] = port.toString();
         env["infrastructure:httpServer:apiKey"] = this.apiKey;
@@ -121,17 +113,12 @@ export class Launcher {
             webhookServer = this.startWebHookServer(webhookServerPort, eventBus);
         }
 
-        const connector = spawn("node", ["dist/index.js"], {
-            env: { ...process.env, ...env },
-            cwd: path.resolve(`${__dirname}/../..`),
-            stdio: "pipe"
-        });
-        if (pipeOutputToConsole) {
-            connector.stdout.pipe(process.stdout);
-            connector.stderr.pipe(process.stderr);
-        }
         return {
-            connector,
+            connector: spawn("node", ["dist/index.js"], {
+                env: { ...process.env, ...env },
+                cwd: path.resolve(`${__dirname}/../..`),
+                stdio: "inherit"
+            }),
             webhookServer
         };
     }
