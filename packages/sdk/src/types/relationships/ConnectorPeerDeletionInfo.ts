@@ -5,4 +5,5 @@ export enum ConnectorPeerDeletionStatus {
 
 export interface ConnectorPeerDeletionInfo {
     deletionStatus: ConnectorPeerDeletionStatus;
+    deletionDate: string;
 }
