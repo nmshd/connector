@@ -5402,6 +5402,20 @@ components:
             - $ref: "#/components/schemas/Address"
           nullable: false
           description: The address of the peer identity.
+        peerDeletionInfo:
+          type: object
+          additionalProperties: false
+          properties:
+            deletionStatus:
+              type: string
+              enum: ["ToBeDeleted", "Deleted"]
+              description: The status of the deletion
+            deletionDate:
+              type: string
+              description: The date of the deletion
+          required:
+            - deletionStatus
+            - deletionDate
         creationContent:
           allOf:
             - $ref: "#/components/schemas/RelationshipCreationContent"
