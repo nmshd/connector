@@ -83,6 +83,16 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
         await runtime.init();
+        const compatibilityResult = await runtime.anonymousServices.backboneCompatibility.checkBackboneCompatibility();
+
+        if (compatibilityResult.isError) {
+            throw compatibilityResult.error;
+        }
+        if (compatibilityResult.value.isCompatible) {
+            throw new Error(`The given backbone is not compatible with this connector version
+The version of the configured backbone is ${compatibilityResult.value.backboneVersion}
+the supported min/max version is ${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}`);
+        }
 
         runtime.scheduleKillTask();
         runtime.setupGlobalExceptionHandling();
