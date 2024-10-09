@@ -18,16 +18,17 @@ export class MockEventBus extends EventEmitter2EventBus {
         if (!namespace) {
             throw Error("The event needs a namespace. Use the EventNamespace-decorator in order to define a namespace for a event.");
         }
+
         this.publishPromises.push(this.emitter.emitAsync(namespace, event));
     }
 
-    public async waitForEvent<TEvent extends Event>(subscriptionTarget: string, predicate?: (event: TEvent) => boolean): Promise<TEvent> {
+    public async waitForEvent<TEvent extends Event>(subscriptionTarget: string, predicate?: (event: TEvent) => boolean, timeout?: number): Promise<TEvent> {
         const alreadyTriggeredEvents = this.publishedEvents.find((e) => e.namespace === subscriptionTarget && (!predicate || predicate(e as TEvent))) as TEvent | undefined;
         if (alreadyTriggeredEvents) {
             return alreadyTriggeredEvents;
         }
 
-        const event = await waitForEvent(this, subscriptionTarget, predicate);
+        const event = await waitForEvent(this, subscriptionTarget, predicate, timeout);
         return event;
     }
 

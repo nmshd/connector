@@ -85,14 +85,23 @@
                     },
                     "type": "object"
                 },
-                "autoAcceptRelationshipCreationChanges": {
+                "autoAcceptPendingRelationships": {
                     "additionalProperties": false,
                     "properties": {
                         "enabled": {
                             "type": "boolean",
                             "default": false
-                        },
-                        "responseContent": {}
+                        }
+                    },
+                    "type": "object"
+                },
+                "autoDecomposeDeletionProposedRelationships": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "default": false
+                        }
                     },
                     "type": "object"
                 },

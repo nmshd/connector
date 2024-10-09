@@ -1,6 +1,7 @@
-import { ConnectorResponse, getJSONSchemaDefinition } from "@nmshd/connector-sdk";
-import ajv from "ajv";
+import { ConnectorHttpResponse, getJSONSchemaDefinition } from "@nmshd/connector-sdk";
+import ajv, { ErrorObject } from "ajv";
 import { matchersWithOptions } from "jest-json-schema";
+import _ from "lodash";
 
 expect.extend(
     matchersWithOptions({
@@ -23,7 +24,6 @@ export enum ValidationSchema {
     Token = "ConnectorToken",
     Tokens = "ConnectorTokens",
     IdentityInfo = "IdentityInfo",
-    ConnectorSyncResult = "ConnectorSyncResult",
     ConnectorHealth = "ConnectorHealth",
     ConnectorVersionInfo = "ConnectorVersionInfo",
     ConnectorRequestCount = "ConnectorRequestCount",
@@ -47,10 +47,11 @@ export function validateSchema(schemaName: ValidationSchema, obj: any): void {
 
 const schemaDefinition = getJSONSchemaDefinition();
 const ajvInstance = new ajv({ schemas: [schemaDefinition], allowUnionTypes: true });
+type ExtendedError = ErrorObject<string, Record<string, any>, unknown> & { value: any };
 
 expect.extend({
-    toBeSuccessful(actual: ConnectorResponse<unknown>, schemaName: ValidationSchema) {
-        if (!(actual instanceof ConnectorResponse)) {
+    toBeSuccessful(actual: ConnectorHttpResponse<unknown>, schemaName: ValidationSchema) {
+        if (!(actual instanceof ConnectorHttpResponse)) {
             return { pass: false, message: () => "expected an instance of Result." };
         }
 
@@ -66,17 +67,40 @@ expect.extend({
         const valid = validate(actual.result);
 
         if (!valid) {
+            const extendedError: ExtendedError[] = validate.errors!.map((error): ExtendedError => {
+                return Object.assign(error, { value: _.get(actual.result, error.instancePath.replaceAll("/", ".").slice(1)) });
+            });
             return {
                 pass: false,
-                message: () => `expected a successful result to match the schema '${schemaName}', but got the following errors: ${JSON.stringify(validate.errors)}`
+                message: () => `expected a successful result to match the schema '${schemaName}', but got the following errors: ${JSON.stringify(extendedError, null, 2)}`
             };
         }
 
         return { pass: actual.isSuccess, message: () => "" };
     },
 
-    toBeAnError(actual: ConnectorResponse<unknown>, expectedMessage: string | RegExp, expectedCode: string | RegExp) {
-        if (!(actual instanceof ConnectorResponse)) {
+    toBeSuccessfulVoidResult(actual: ConnectorHttpResponse<unknown>) {
+        if (!(actual instanceof ConnectorHttpResponse)) {
+            return { pass: false, message: () => "expected an instance of Result." };
+        }
+
+        if (!actual.isSuccess) {
+            const message = `expected a successful result; got an error result with the error message '${actual.error.message}'.`;
+            return { pass: false, message: () => message };
+        }
+
+        if (typeof actual.result !== "undefined") {
+            return {
+                pass: false,
+                message: () => `expected a successful result to be a void result, but got the following result: ${JSON.stringify(actual.result, null, 2)}`
+            };
+        }
+
+        return { pass: actual.isSuccess, message: () => "" };
+    },
+
+    toBeAnError(actual: ConnectorHttpResponse<unknown>, expectedMessage: string | RegExp, expectedCode: string | RegExp) {
+        if (!(actual instanceof ConnectorHttpResponse)) {
             return {
                 pass: false,
                 message: () => "expected an instance of Result."
@@ -112,6 +136,7 @@ declare global {
     namespace jest {
         interface Matchers<R> {
             toBeSuccessful(schema: ValidationSchema): R;
+            toBeSuccessfulVoidResult(): R;
             toBeAnError(expectedMessage: string | RegExp, expectedCode: string | RegExp): R;
         }
     }

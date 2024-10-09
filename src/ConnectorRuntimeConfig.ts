@@ -1,11 +1,12 @@
 import { RuntimeConfig } from "@nmshd/runtime";
+import correlator from "correlation-id";
 import fs from "fs";
 import { validate as validateSchema } from "jsonschema";
-import _ from "lodash";
 import * as log4js from "log4js";
 import nconf from "nconf";
 import path from "path";
 import { ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
+import { HttpServerConfiguration } from "./infrastructure";
 
 export interface MongoDBSettings {
     driver: "mongodb";
@@ -27,11 +28,7 @@ export interface ConnectorRuntimeConfig extends RuntimeConfig {
     modules: Record<string, ConnectorRuntimeModuleConfiguration>;
 
     infrastructure: {
-        httpServer: {
-            enabled: boolean;
-            apiKey: string;
-            cors?: any;
-        };
+        httpServer: HttpServerConfiguration;
     };
 }
 export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRuntimeConfig {
@@ -58,23 +55,34 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
         .file("config-env-file", { file: `config/${process.env.NODE_CONFIG_ENV}.json` })
         .file("default-file", { file: "config/default.json" });
 
-    const connectorConfig = nconf.get();
+    const connectorConfig = nconf.get() as ConnectorRuntimeConfig;
+    addCorrelationIdSupportToLogger(connectorConfig);
 
-    if (typeof connectorConfig.modules.webhooksV2 !== "undefined") {
+    if (connectorConfig.modules.sync.enabled && connectorConfig.modules.sse.enabled) {
         // eslint-disable-next-line no-console
-        console.warn("The 'webhooksV2' configuration is deprecated. Please use 'webhooks' instead.");
-
-        connectorConfig.modules.webhooks = _.defaultsDeep(connectorConfig.modules.webhooksV2, connectorConfig.modules.webhooks);
-        delete connectorConfig.modules.webhooksV2;
+        console.warn("The SSE and Sync modules cannot be enabled at the same time, the Sync module will be disabled.");
+        connectorConfig.modules.sync.enabled = false;
     }
     validateConnectorConfig(connectorConfig);
     return connectorConfig;
 }
 
-const envKeyMapping: Record<string, string> = {
-    // The DATABASE__DB_NAME env variable was called ACCOUNT in the past - we need to keep an alias for backwards compatibility.
-    ACCOUNT: "database:dbName", // eslint-disable-line @typescript-eslint/naming-convention
+function addCorrelationIdSupportToLogger(connectorConfig: ConnectorRuntimeConfig) {
+    Object.entries(connectorConfig.logging.appenders).forEach(([_key, appender]) => {
+        if ("layout" in appender && appender.layout.type === "pattern") {
+            const tokens = appender.layout.tokens;
 
+            appender.layout.tokens = {
+                ...tokens,
+                correlationId: () => {
+                    return correlator.getId() ?? "";
+                }
+            };
+        }
+    });
+}
+
+const envKeyMapping: Record<string, string> = {
     DATABASE_NAME: "database:dbName", // eslint-disable-line @typescript-eslint/naming-convention
     API_KEY: "infrastructure:httpServer:apiKey", // eslint-disable-line @typescript-eslint/naming-convention
     DATABASE_CONNECTION_STRING: "database:connectionString", // eslint-disable-line @typescript-eslint/naming-convention

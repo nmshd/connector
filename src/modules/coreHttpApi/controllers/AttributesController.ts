@@ -1,4 +1,3 @@
-import { ApplicationError } from "@js-soft/ts-utils";
 import { ConsumptionServices, RuntimeErrors, TransportServices } from "@nmshd/runtime";
 import { Inject } from "typescript-ioc";
 import { Accept, Context, DELETE, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "typescript-rest";
@@ -17,19 +16,6 @@ export class AttributesController extends BaseController {
     @POST
     @Accept("application/json")
     public async createRepositoryAttribute(request: any): Promise<Return.NewResource<Envelope>> {
-        const selfAddress = (await this.transportServices.account.getIdentityInfo()).value.address;
-        if (request?.content?.owner && request?.content?.owner !== selfAddress) {
-            throw new ApplicationError(
-                "error.connector.attributes.cannotCreateNotSelfOwnedRepositoryAttribute",
-                "You are not allowed to create an attribute that is not owned by yourself"
-            );
-        }
-        /* We left 'owner' and '@type' optional in the openapi spec for
-         * backwards compatibility. If set, they have to be removed here or the runtime
-         * use case will throw an error. */
-        if (typeof request?.content?.owner !== "undefined") delete request.content.owner;
-        if (request?.content?.["@type"] === "IdentityAttribute") delete request.content["@type"];
-
         const result = await this.consumptionServices.attributes.createRepositoryAttribute(request);
         return this.created(result);
     }
@@ -42,6 +28,7 @@ export class AttributesController extends BaseController {
         if (result.isError) {
             throw RuntimeErrors.general.recordNotFoundWithMessage(`Predecessor attribute '${predecessorId}' not found.`);
         }
+
         const predecessor = result.value;
 
         if (predecessor.content["@type"] === "IdentityAttribute") {
@@ -143,7 +130,7 @@ export class AttributesController extends BaseController {
     @GET
     @Path("/:id/Versions/Shared")
     @Accept("application/json")
-    public async getSharedVersionsOfRepositoryAttribute(
+    public async getSharedVersionsOfAttribute(
         @PathParam("id") attributeId: string,
         @QueryParam("peers") peers?: string | string[],
         @QueryParam("onlyLatestVersions") onlyLatestVersions?: string
@@ -152,7 +139,7 @@ export class AttributesController extends BaseController {
             peers = [peers];
         }
 
-        const result = await this.consumptionServices.attributes.getSharedVersionsOfRepositoryAttribute({
+        const result = await this.consumptionServices.attributes.getSharedVersionsOfAttribute({
             attributeId,
             onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
             peers
@@ -239,9 +226,9 @@ export class AttributesController extends BaseController {
 
     @DELETE
     @Path("/:id")
-    public async deleteRepositoryAttribute(@PathParam("id") attributeId: string): Promise<Envelope> {
+    public async deleteRepositoryAttribute(@PathParam("id") attributeId: string): Promise<void> {
         const result = await this.consumptionServices.attributes.deleteRepositoryAttribute({ attributeId });
-        return this.ok(result);
+        return this.noContent(result);
     }
 
     private stringToBoolean(value: string | undefined): boolean | undefined {

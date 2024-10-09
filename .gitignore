@@ -19,3 +19,4 @@ packages/runtime
 .env
 .local
 test/manualTest.ts
+coverage

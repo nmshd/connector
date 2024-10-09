@@ -8,7 +8,7 @@ async function run() {
 
     const sentMessage = await client.messages.sendMessage({
         recipients: ["id1343523509859032455"],
-        content: { A: "B" }
+        content: { "@type": "Mail", to: [""], subject: "Hello", body: "Hello World!" }
     });
 }
 

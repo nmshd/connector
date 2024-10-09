@@ -55,15 +55,9 @@ interface IConfigOverwrite {
     platformMaxContentLength?: number;
     platformAdditionalHeaders?: object;
     baseUrl?: string;
-    realm?: Realm;
+    addressGenerationHostnameOverride?: string;
     datawalletEnabled?: boolean;
     debug?: boolean;
-}
-
-declare enum Realm {
-    Dev = "dev",
-    Stage = "id0",
-    Prod = "id1"
 }
 
 // ================================ log4js ================================

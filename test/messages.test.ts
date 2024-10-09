@@ -93,7 +93,7 @@ describe("Messaging", () => {
 });
 
 describe("Message errors", () => {
-    const fakeAddress = "id1PNvUP4jHD74qo6usnWNoaFGFf33MXZi6c";
+    const fakeAddress = "did:e:a-domain:dids:0000000000000000000000";
     test("should throw correct error for empty 'to' in the Message", async () => {
         const result = await client1.messages.sendMessage({
             recipients: [fakeAddress],
@@ -114,7 +114,7 @@ describe("Message errors", () => {
                 "@type": "Mail",
                 subject: "A Subject",
                 body: "A Body"
-            }
+            } as any
         });
         expect(result).toBeAnError("Mail.to :: Value is not defined", "error.runtime.requestDeserialization");
     });

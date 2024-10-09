@@ -1,5 +1,6 @@
 import { ConnectorClient, ConnectorFile } from "@nmshd/connector-sdk";
 import fs from "fs";
+import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
@@ -9,9 +10,6 @@ import { ValidationSchema } from "./lib/validation";
 const launcher = new Launcher();
 let client1: ConnectorClient;
 let client2: ConnectorClient;
-
-const UNKOWN_FILE_ID = "FILXXXXXXXXXXXXXXXXX";
-const UNKOWN_TOKEN_ID = "TOKXXXXXXXXXXXXXXXXX";
 
 beforeAll(async () => ([client1, client2] = await launcher.launch(2)), getTimeout(30000));
 afterAll(() => launcher.stop());
@@ -25,6 +23,17 @@ describe("File Upload", () => {
         expect(response).toBeSuccessful(ValidationSchema.File);
 
         file = response.result;
+    });
+
+    test("can upload file without description", async () => {
+        const response = await client1.files.uploadOwnFile({
+            title: "File Title",
+            filename: "test.txt",
+            file: await fs.promises.readFile(`${__dirname}/__assets__/test.txt`),
+            expiresAt: DateTime.utc().plus({ minutes: 5 }).toString()
+        });
+
+        expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
     test("uploaded files can be accessed under /Files", async () => {
@@ -65,7 +74,7 @@ describe("File Upload", () => {
 
     test("cannot upload a file that is null", async () => {
         // Cannot use client1.files.uploadOwn because it cannot deal with null values
-        const _response = await (client1.files as any).httpClient.post("/api/v2/Files/Own", makeUploadRequest({ file: null }));
+        const _response = await (client1.files as any).httpClient.post("/api/v2/Files/Own", makeUploadRequest({ file: null as any }));
         const response = (client1.files as any).makeResult(_response);
 
         expect(response).toBeAnError("must have required property 'content'", "error.runtime.validation.invalidPropertyValue");
@@ -227,11 +236,11 @@ describe("Load peer file with token reference", () => {
 
     test("passing undefined as truncated token reference causes an error", async () => {
         const response = await client2.files.loadPeerFile({ reference: undefined as any });
-        expect(response).toBeAnError("The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+        expect(response).toBeAnError("token / file reference invalid", "error.runtime.validation.invalidPropertyValue");
     });
 });
 
-describe("Load peer file with file id and secret", () => {
+describe("Load peer file with reference", () => {
     let file: ConnectorFile;
 
     beforeAll(async () => {
@@ -245,10 +254,10 @@ describe("Load peer file with file id and secret", () => {
         expect(response).toBeAnError("File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 
-    test("peer file can be loaded with file id and secret key", async () => {
+    test("peer file can be loaded", async () => {
         expect(file).toBeDefined();
 
-        const response = await client2.files.loadPeerFile({ id: file.id, secretKey: file.secretKey });
+        const response = await client2.files.loadPeerFile({ reference: file.truncatedReference });
 
         expect(response).toBeSuccessful(ValidationSchema.File);
         expect(response.result).toMatchObject({ ...file, isOwn: false });
@@ -268,59 +277,5 @@ describe("Load peer file with file id and secret", () => {
         const response = await client2.files.getFiles({ createdAt: file.createdAt });
         expect(response).toBeSuccessful(ValidationSchema.Files);
         expect(response.result).toContainEqual({ ...file, isOwn: false });
-    });
-
-    test("passing an unkown file id causes an error", async () => {
-        expect(file).toBeDefined();
-
-        const response = await client2.files.loadPeerFile({ id: UNKOWN_FILE_ID, secretKey: file.secretKey });
-
-        expect(response).toBeAnError("File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
-    });
-
-    test("passing an unkown token id as file id causes an error", async () => {
-        expect(file).toBeDefined();
-
-        const response = await client2.files.loadPeerFile({ id: UNKOWN_TOKEN_ID, secretKey: file.secretKey });
-
-        expect(response).toBeAnError("id must match pattern FIL.*", "error.runtime.validation.invalidPropertyValue");
-    });
-
-    test.each([
-        [null, "secretKey must be string"],
-        ["", "secretKey must NOT have fewer than 10 characters"]
-    ])("cannot pass %p as secret key", async (secretKey, expectedMessage) => {
-        const response = await client2.files.loadPeerFile({ id: file.id, secretKey: secretKey as any });
-
-        expect(response).toBeAnError(expectedMessage, "error.runtime.validation.invalidPropertyValue");
-    });
-
-    test("cannot pass undefined as secret key", async () => {
-        const response = await client2.files.loadPeerFile({ id: file.id, secretKey: undefined as any });
-
-        expect(response).toBeAnError("The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
-    });
-
-    test.each([
-        [null, "id must be string"],
-        ["", "id must match pattern FIL.*"]
-    ])("cannot pass %p as file id", async (fileId, expectedMessage) => {
-        const response = await client2.files.loadPeerFile({ id: fileId as any, secretKey: file.secretKey });
-
-        expect(response).toBeAnError(expectedMessage, "error.runtime.validation.invalidPropertyValue");
-    });
-
-    test("cannot pass undefined as file id", async () => {
-        const response = await client2.files.loadPeerFile({ id: undefined as any, secretKey: file.secretKey });
-
-        expect(response).toBeAnError("The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
-    });
-
-    test("get the File via the truncatedReference", async () => {
-        expect(file).toBeDefined();
-
-        const response = await client2.files.getFile(file.truncatedReference);
-        expect(response).toBeSuccessful(ValidationSchema.File);
-        expect(response.result).toMatchObject({ ...file, isOwn: false });
     });
 });

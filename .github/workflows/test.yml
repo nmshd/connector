@@ -2,12 +2,21 @@ name: Test
 
 on:
   pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
   run-checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: current
       - run: bash .ci/runChecks.sh
 
   test:
@@ -29,6 +38,13 @@ jobs:
           NMSHD_TEST_BASEURL: http://localhost:8090
           NMSHD_TEST_CLIENTID: test
           NMSHD_TEST_CLIENTSECRET: test
+
+      - name: Code coverage
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: false
+          files: ./coverage/cobertura-coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   test-cli:
     runs-on: ubuntu-latest
@@ -61,7 +77,7 @@ jobs:
           node-version: current
       - run: npm ci
       - run: npm run build:ci --workspaces --if-present
-      - uses: js-soft/ferretdb-github-action@1.1.0
+      - uses: js-soft/ferretdb-github-action@1.1.1
         with:
           ferretdb-telemetry: "enabled"
           ferretdb-version: "1.20.1"
