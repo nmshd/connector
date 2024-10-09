@@ -1,4 +1,5 @@
 import { RuntimeConfig } from "@nmshd/runtime";
+import correlator from "correlation-id";
 import nconf from "nconf";
 import { ConnectorRuntime } from "./ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
@@ -28,6 +29,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
         .file("default-file", { file: "config/default.json" });
 
     const connectorConfig = nconf.get() as ConnectorRuntimeConfig;
+    addCorrelationIdSupportToLogger(connectorConfig);
 
     if (connectorConfig.modules.sync.enabled && connectorConfig.modules.sse.enabled) {
         // eslint-disable-next-line no-console
@@ -36,6 +38,21 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
     }
 
     return connectorConfig;
+}
+
+function addCorrelationIdSupportToLogger(connectorConfig: ConnectorRuntimeConfig) {
+    Object.entries(connectorConfig.logging.appenders).forEach(([_key, appender]) => {
+        if ("layout" in appender && appender.layout.type === "pattern") {
+            const tokens = appender.layout.tokens;
+
+            appender.layout.tokens = {
+                ...tokens,
+                correlationId: () => {
+                    return correlator.getId() ?? "";
+                }
+            };
+        }
+    });
 }
 
 const envKeyMapping: Record<string, string> = {

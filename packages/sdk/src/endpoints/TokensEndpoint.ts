@@ -1,15 +1,5 @@
 import { AxiosInstance } from "axios";
-import {
-    ConnectorHttpResponse,
-    ConnectorToken,
-    ConnectorTokens,
-    CreateOwnTokenRequest,
-    GetOwnTokensRequest,
-    GetPeerTokensRequest,
-    LoadPeerTokenByReferenceRequest,
-    LoadPeerTokenByTruncatedReferenceRequest,
-    LoadPeerTokenRequest
-} from "../types";
+import { ConnectorHttpResponse, ConnectorToken, ConnectorTokens, CreateOwnTokenRequest, GetOwnTokensRequest, GetPeerTokensRequest, LoadPeerTokenRequest } from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class TokensEndpoint extends Endpoint {
@@ -37,8 +27,6 @@ export class TokensEndpoint extends Endpoint {
         return await this.get("/api/v2/Tokens/Peer", request);
     }
 
-    public async loadPeerToken(request: LoadPeerTokenByReferenceRequest): Promise<ConnectorHttpResponse<ConnectorToken>>;
-    public async loadPeerToken(request: LoadPeerTokenByTruncatedReferenceRequest): Promise<ConnectorHttpResponse<ConnectorToken>>;
     public async loadPeerToken(request: LoadPeerTokenRequest): Promise<ConnectorHttpResponse<ConnectorToken>> {
         return await this.post("/api/v2/Tokens/Peer", request);
     }

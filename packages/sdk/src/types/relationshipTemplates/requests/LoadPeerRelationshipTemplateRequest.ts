@@ -1,4 +1,7 @@
-import { RelationshipTemplateReference } from "../RelationshipTemplateReference";
-import { TruncatedRelationshipTemplateReference } from "../TruncatedRelationshipTemplateReference";
-
-export type LoadPeerRelationshipTemplateRequest = TruncatedRelationshipTemplateReference | RelationshipTemplateReference;
+export interface LoadPeerRelationshipTemplateRequest {
+    /**
+     * starting with 'VE9L' for a truncated reference to a token containing a RelationshipTemplateReference or
+     * starting with 'UkxU' for a direct truncated RelationshipTemplateReference
+     */
+    reference: string;
+}

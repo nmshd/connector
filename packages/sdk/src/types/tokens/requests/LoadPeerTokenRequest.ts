@@ -1,12 +1,4 @@
-export interface LoadPeerTokenByTruncatedReferenceRequest {
+export interface LoadPeerTokenRequest {
     reference: string;
     ephemeral?: boolean;
 }
-
-export interface LoadPeerTokenByReferenceRequest {
-    id: string;
-    secretKey: string;
-    ephemeral?: boolean;
-}
-
-export type LoadPeerTokenRequest = LoadPeerTokenByReferenceRequest | LoadPeerTokenByTruncatedReferenceRequest;

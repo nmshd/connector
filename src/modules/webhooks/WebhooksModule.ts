@@ -2,6 +2,7 @@ import { Event, DataEvent as tsUtilsDataEvent } from "@js-soft/ts-utils";
 import { DataEvent } from "@nmshd/runtime";
 import agentKeepAlive, { HttpsAgent as AgentKeepAliveHttps } from "agentkeepalive";
 import axios, { AxiosInstance } from "axios";
+import correlator from "correlation-id";
 import { ConnectorRuntimeModule } from "../../ConnectorRuntimeModule";
 import { ConfigModel, Webhook } from "./ConfigModel";
 import { ConfigParser } from "./ConfigParser";
@@ -45,7 +46,13 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
         try {
             this.logger.debug(`Sending request to webhook '${url}' for trigger '${trigger}'.`);
 
-            const response = await this.axios.post(url, payload, { headers: webhook.target.headers });
+            let headers = webhook.target.headers;
+
+            const correlationId = correlator.getId();
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            if (correlationId) headers = { ...headers, "x-correlation-id": correlationId };
+
+            const response = await this.axios.post(url, payload, { headers });
 
             if (response.status < 200 || response.status > 299) {
                 this.logger.warn(`Request to webhook '${url}' returned status ${response.status}. Expected value between 200 and 299.`);

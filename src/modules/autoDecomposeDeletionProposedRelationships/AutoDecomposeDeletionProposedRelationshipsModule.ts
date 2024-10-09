@@ -14,7 +14,20 @@ export default class AutoDecomposeDeletionProposedRelationshipsModule extends Co
         const currentIdentityResult = await this.runtime.getServices().transportServices.account.getIdentityInfo();
         this.currentIdentity = currentIdentityResult.value.address;
 
+        await this.decomposeDeletionProposedRelationshipsAtStartup();
+
         this.subscribeToEvent(RelationshipChangedEvent, this.handleRelationshipChanged.bind(this));
+    }
+
+    private async decomposeDeletionProposedRelationshipsAtStartup() {
+        const services = this.runtime.getServices();
+
+        const deletionProposedRelationships = await services.transportServices.relationships.getRelationships({ query: { status: "DeletionProposed" } });
+        this.logger.info(`Found ${deletionProposedRelationships.value.length} 'DeletionProposed' Relationships.`);
+
+        for (const relationship of deletionProposedRelationships.value) {
+            await this.decomposeRelationship(relationship.id);
+        }
     }
 
     private async handleRelationshipChanged(event: RelationshipChangedEvent) {
@@ -22,7 +35,11 @@ export default class AutoDecomposeDeletionProposedRelationshipsModule extends Co
 
         this.logger.info("'DeletionProposed' Relationship detected.");
 
-        const result = await this.runtime.getServices().transportServices.relationships.decomposeRelationship({ relationshipId: event.data.id });
+        await this.decomposeRelationship(event.data.id);
+    }
+
+    private async decomposeRelationship(relationshipId: string) {
+        const result = await this.runtime.getServices().transportServices.relationships.decomposeRelationship({ relationshipId });
 
         if (result.isSuccess) {
             this.logger.info("'DeletionProposed' Relationship was decomposed successfully.");
