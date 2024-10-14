@@ -1,12 +1,12 @@
 import { sleep } from "@js-soft/ts-utils";
+import { Container } from "@nmshd/typescript-ioc";
+import { Server } from "@nmshd/typescript-rest";
 import compression from "compression";
 import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
-import { Server } from "typescript-rest";
-import typescriptRestIOC from "typescript-rest-ioc";
 import { buildInformation } from "../../buildInformation";
 import { ConnectorInfrastructure, InfrastructureConfiguration } from "../ConnectorInfastructure";
 import { HttpMethod } from "./HttpMethod";
@@ -230,7 +230,27 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useCustomControllers() {
-        Server.registerServiceFactory(typescriptRestIOC);
+        Server.registerServiceFactory({
+            create: (serviceClass: any) => {
+                return Container.get(serviceClass);
+            },
+            getTargetClass: (serviceClass: Function) => {
+                let typeConstructor: any = serviceClass;
+                if (typeConstructor["name"] && typeConstructor["name"] !== "ioc_wrapper") {
+                    return typeConstructor as FunctionConstructor;
+                }
+                typeConstructor = typeConstructor["__parent"];
+                while (typeConstructor) {
+                    if (typeConstructor["name"] && typeConstructor["name"] !== "ioc_wrapper") {
+                        return typeConstructor as FunctionConstructor;
+                    }
+                    typeConstructor = typeConstructor["__parent"];
+                }
+
+                this.logger.error("Can not identify the base Type for requested target: %o", serviceClass);
+                throw new TypeError("Can not identify the base Type for requested target");
+            }
+        });
 
         for (const controller of this.controllers) {
             Server.loadControllers(this.app, controller.globs, controller.baseDirectory);

@@ -1,7 +1,7 @@
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
+import { Inject } from "@nmshd/typescript-ioc";
+import { Accept, Context, ContextAccept, ContextResponse, Errors, GET, Path, PathParam, POST, Return, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
-import { Inject } from "typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, Errors, GET, Path, PathParam, POST, Return, ServiceContext } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController, Mimetype } from "../common/BaseController";
 
