@@ -86,6 +86,7 @@
         "@js-soft/ts-utils": "^2.3.3",
         "@nmshd/runtime": "6.3.1",
         "@nmshd/typescript-ioc": "^3.2.4",
+        "@nmshd/typescript-rest": "^3.0.5",
         "agentkeepalive": "4.5.0",
         "amqplib": "^0.10.4",
         "axios": "^1.7.7",
