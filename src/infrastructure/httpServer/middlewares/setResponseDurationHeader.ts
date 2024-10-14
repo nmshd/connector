@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import onHeaders from "on-headers";
 
-export function setDurationHeader(req: Request, res: Response, next: NextFunction): void {
+export function setDurationHeader(_: Request, res: Response, next: NextFunction): void {
     const startAt = process.hrtime();
 
     onHeaders(res, function onHeaders() {
