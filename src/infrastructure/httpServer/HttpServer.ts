@@ -59,7 +59,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private configure(): void {
         this.logger.debug("Configuring middleware...");
 
-        this.app.use((req, res, next) => {
+        this.app.use((req, _, next) => {
             let correlationId = req.headers["x-correlation-id"];
             if (Array.isArray(correlationId)) {
                 correlationId = correlationId[0];

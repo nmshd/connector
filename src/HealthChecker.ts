@@ -66,7 +66,7 @@ export class HealthChecker {
             await authenticatorClone.getToken();
             this.isAuthenticatedUntil = CoreDate.utc().add({ minutes: 5 });
             return true;
-        } catch (e) {
+        } catch (_) {
             return false;
         }
     }
@@ -77,7 +77,7 @@ export class HealthChecker {
         try {
             await this.dbConnection.connect();
             return true;
-        } catch (e) {
+        } catch (_) {
             return false;
         } finally {
             await this.dbConnection.close();
