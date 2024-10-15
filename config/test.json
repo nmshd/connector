@@ -1,8 +1,7 @@
 {
     "debug": true,
     "transportLibrary": {
-        "debug": true,
-        "allowIdentityCreation": true
+        "debug": true
     },
     "logging": {
         "appenders": {

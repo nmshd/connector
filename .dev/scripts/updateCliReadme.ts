@@ -6,10 +6,6 @@ import { command } from "../../src/cli/ConnectorCli";
 (async function () {
     let readmeFileContent = (await readFile("CLI-README.md")).toString();
 
-    // let c = await command.getCompletion([]);
-    // let d = await command.showCompletionScript();
-    // let c = await command.getCompletion(["/node", "/connector", "identity"]);
-    // debugger;
     let helpText = await command.getHelp();
     let readMeReplace = `
 # Usage
