@@ -1,15 +1,15 @@
 import { IDatabaseMap } from "@js-soft/docdb-access-abstractions";
-import { BaseCommand } from "../../../src/BaseCommand";
-import { identityInitHandler } from "../../../src/commands/identity/init";
-import { ConnectorRuntimeConfig, createConnectorConfig } from "../../../src/connector";
-import { setupEnviroment } from "../../setup";
+import { BaseCommand } from "../../../src/cli/BaseCommand";
+import { identityInitHandler } from "../../../src/cli/commands/identity/init";
+import { ConnectorRuntimeConfig, createConnectorConfig } from "../../../src/ConnectorRuntimeConfig";
+import { setupEnvironment } from "../setup";
 
 describe("identity init", () => {
     let accountInfo: IDatabaseMap;
     let config: ConnectorRuntimeConfig;
     let originalArgv: any;
     beforeAll(() => {
-        setupEnviroment();
+        setupEnvironment();
         config = createConnectorConfig();
     });
 

@@ -1,4 +1,4 @@
-export function setupEnviroment(): void {
+export function setupEnvironment(): void {
     process.env.database = JSON.stringify({
         driver: "lokijs",
         folder: "./",

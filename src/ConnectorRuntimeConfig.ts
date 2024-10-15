@@ -31,7 +31,7 @@ export interface ConnectorRuntimeConfig extends RuntimeConfig {
         httpServer: HttpServerConfiguration;
     };
 }
-export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRuntimeConfig {
+export function createConnectorConfig(overrides?: RuntimeConfig, customConfigLocation?: string): ConnectorRuntimeConfig {
     nconf
         .overrides(overrides)
         .env({
@@ -51,7 +51,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig): ConnectorRunti
                 return variable;
             }
         })
-        .file("file-from-env", { file: process.env.CUSTOM_CONFIG_LOCATION ?? "config/custom.json" })
+        .file("file-from-env", { file: process.env.CUSTOM_CONFIG_LOCATION ?? customConfigLocation ?? "config/custom.json" })
         .file("config-env-file", { file: `config/${process.env.NODE_CONFIG_ENV}.json` })
         .file("default-file", { file: "config/default.json" });
 

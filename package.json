@@ -8,10 +8,12 @@
     "author": "j&s-soft GmbH",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "bin": {
+        "connector-admin": "./dist/cli/index.js"
+    },
     "workspaces": [
         ".",
-        "packages/sdk",
-        "packages/admin-cli"
+        "packages/sdk"
     ],
     "scripts": {
         "lint": "npm run lint:tsc && npm run lint:prettier && npm run lint:eslint",
@@ -20,11 +22,10 @@
         "lint:tsc": "npm run build --workspaces && tsc -p test/tsconfig.json --noEmit",
         "build": "run-p tsc copy-additional-files",
         "build:ci": "npm run build",
-        "build:watch": "run-p -r tsc:watch copy-additional-files:watch sdk:build:watch sdk:schemas:watch cli:build:watch",
+        "build:watch": "run-p -r tsc:watch copy-additional-files:watch sdk:build:watch sdk:schemas:watch",
         "sdk:build": "npm run --workspace packages/sdk build",
         "sdk:build:watch": "npm run --workspace packages/sdk build:watch",
         "sdk:schemas:watch": "npm run --workspace packages/sdk build:schemas:watch",
-        "cli:build:watch": "npm run --workspace packages/admin-cli build:watch",
         "copy-additional-files": "cpx \"src/**/*.{json,yml,ico}\" dist",
         "copy-additional-files:watch": "cpx \"src/**/*.{json,yml,ico}\" dist --watch",
         "link-runtime": "bash .dev/scripts/linkRuntime.sh",
@@ -44,7 +45,8 @@
         "teardown": "npm run teardown:backbone && npm run teardown:test-env && npm run teardown:testconnectors",
         "teardown:backbone": "docker compose -p connector-test-backbone --env-file .dev/compose.backbone.env -f .dev/compose.backbone.yml down -v",
         "teardown:test-env": "docker compose -p connector-tests -f test/compose.yml down -v",
-        "teardown:testconnectors": "docker compose -f .dev/compose.yml down -v"
+        "teardown:testconnectors": "docker compose -f .dev/compose.yml down -v",
+        "cli-readme": "ts-node .dev/scripts/updateCliReadme.ts && npx markdown-toc -i CLI-README.md"
     },
     "jest": {
         "maxWorkers": 2,
@@ -100,6 +102,7 @@
         "helmet": "8.0.0",
         "json-stringify-safe": "5.0.1",
         "jsonschema": "1.4.1",
+        "markdown-toc": "^1.2.0",
         "mqtt": "^5.10.1",
         "multer": "^1.4.5-lts.1",
         "nconf": "0.12.1",
@@ -111,7 +114,8 @@
         "typescript-ioc": "3.2.2",
         "typescript-rest": "3.0.4",
         "typescript-rest-ioc": "1.0.1",
-        "yamljs": "0.3.0"
+        "yamljs": "0.3.0",
+        "yargs": "^17.7.2"
     },
     "devDependencies": {
         "@apidevtools/swagger-parser": "^10.1.0",

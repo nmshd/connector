@@ -24,8 +24,8 @@ export default class IdentityInit extends BaseCommand {
             this.log.log("Identity already created!");
             return { message: "Identity already created!" };
         }
-        const accoutController = new AccountController(this.transport, db, this.transport.config);
-        await accoutController.init();
+        const accountController = new AccountController(this.transport, db, this.transport.config);
+        await accountController.init();
 
         this.log.log("Identity created successfully!");
         return { message: "Identity created successfully!" };

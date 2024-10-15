@@ -1,8 +1,9 @@
-#!/usr/bin/env node
 import yargs from "yargs";
+import { configOptionBuilder } from "./BaseCommand";
 import { yargsIdentityInitCommand } from "./commands/identity/init";
+import { startConnectorHandler } from "./commands/start";
 
-const argv = yargs(process.argv.slice(2))
+export const command = yargs(process.argv.slice(2))
     .command({
         command: "identity [command]",
         describe: "identity related commands ",
@@ -13,14 +14,14 @@ const argv = yargs(process.argv.slice(2))
             yargs.showHelp();
         }
     })
+    .command({
+        command: "start",
+        describe: "start the connector",
+        builder: configOptionBuilder,
+        handler: startConnectorHandler
+    })
     .demandCommand(1, 1, "Please specify a command")
     .help("h")
     .alias("h", "help")
-    .strict()
-    .parse();
-
-Promise.resolve(argv).catch((e) => {
-    // eslint-disable-next-line no-console
-    console.error(e);
-    process.exit(1);
-});
+    .scriptName("connector")
+    .strict();

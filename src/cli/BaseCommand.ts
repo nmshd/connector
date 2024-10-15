@@ -5,7 +5,8 @@ import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { EventEmitter2EventBus } from "@js-soft/ts-utils";
 import { Transport } from "@nmshd/transport";
 import yargs from "yargs";
-import { ConnectorRuntimeConfig, createConnectorConfig, DocumentationLink } from "./connector";
+import { ConnectorRuntimeConfig, createConnectorConfig } from "../ConnectorRuntimeConfig";
+import { DocumentationLink } from "../DocumentationLink";
 
 export interface ConfigFileOptions {
     config: string | undefined;
@@ -14,7 +15,8 @@ export interface ConfigFileOptions {
 export const configOptionBuilder = (yargs: yargs.Argv<{}>): yargs.Argv<ConfigFileOptions> => {
     return yargs.option("config", {
         alias: "c",
-        describe: "Path to the custom configuration file",
+        describe: `Path to the custom configuration file
+Can also be set via the CUSTOM_CONFIG_LOCATION env variable`,
         type: "string",
         demandOption: false
     });
@@ -26,14 +28,10 @@ export abstract class BaseCommand {
     protected log = console;
 
     public async run(configPath: string | undefined): Promise<void> {
-        if (configPath) {
-            process.env.CUSTOM_CONFIG_LOCATION = configPath;
-        }
-
         let databaseConnection;
         let logger;
         try {
-            this.connectorConfig = createConnectorConfig();
+            this.connectorConfig = createConnectorConfig(undefined, configPath);
             this.connectorConfig.transportLibrary.allowIdentityCreation = true;
             this.connectorConfig.logging = {
                 appenders: {
