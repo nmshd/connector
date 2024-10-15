@@ -1,6 +1,6 @@
 import { TransportServices } from "@nmshd/runtime";
-import { Inject } from "typescript-ioc";
-import { Accept, Path, POST, Return } from "typescript-rest";
+import { Inject } from "@nmshd/typescript-ioc";
+import { Accept, Path, POST, Return } from "@nmshd/typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 

@@ -1,6 +1,6 @@
 import { ConsumptionServices, RuntimeErrors, TransportServices } from "@nmshd/runtime";
-import { Inject } from "typescript-ioc";
-import { Accept, Context, DELETE, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "typescript-rest";
+import { Inject } from "@nmshd/typescript-ioc";
+import { Accept, Context, DELETE, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "@nmshd/typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 

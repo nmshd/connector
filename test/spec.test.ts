@@ -1,7 +1,7 @@
 /* eslint-disable jest/no-conditional-in-test */
 import swaggerParser from "@apidevtools/swagger-parser";
+import { MetadataGenerator, SpecGenerator, Swagger } from "@nmshd/typescript-rest-swagger";
 import { OpenAPIV3 } from "openapi-types";
-import { MetadataGenerator, SpecGenerator, Swagger } from "typescript-rest-swagger";
 import yamljs from "yamljs";
 
 describe("test openapi spec against routes", () => {

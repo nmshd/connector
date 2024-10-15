@@ -90,11 +90,11 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
     private useOpenApi() {
         const swaggerDocument = this.loadOpenApiSpec();
 
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/json", false, (req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/json", false, (_, res) => {
             res.send(swaggerDocument);
         });
 
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/yaml", false, (req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/yaml", false, (_, res) => {
             res.set("Content-Type", "text/vnd.yaml");
             res.send(yamlJs.stringify(swaggerDocument, 1000));
         });
