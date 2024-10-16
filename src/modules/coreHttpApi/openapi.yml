@@ -2181,12 +2181,12 @@ paths:
                   items:
                     $ref: "#/components/schemas/Address"
                 content:
-                  allOf:
-                    - $ref: "#/components/schemas/ArbitraryMessageContent"
+                  anyOf:
                     - $ref: "#/components/schemas/Mail"
                     - $ref: "#/components/schemas/Request"
                     - $ref: "#/components/schemas/ResponseWrapper"
                     - $ref: "#/components/schemas/Notification"
+                    - $ref: "#/components/schemas/ArbitraryMessageContent"
                   nullable: false
                   example:
                     "@type": Mail
@@ -2194,6 +2194,7 @@ paths:
                     cc: [did:e:_________________________________]
                     subject: Subject
                     body: Body
+                  description: Either a Mail, a Request, a ResponseWrapper, a Notification or an ArbitraryMessageContent must be provided as the 'content' of the Message.
                 attachments:
                   type: array
                   nullable: true
@@ -2451,7 +2452,7 @@ paths:
                     - $ref: "#/components/schemas/RelationshipTemplateID"
                   nullable: false
                 creationContent:
-                  allOf:
+                  oneOf:
                     - $ref: "#/components/schemas/RelationshipCreationContent"
                     - $ref: "#/components/schemas/ArbitraryRelationshipCreationContent"
                   nullable: false
@@ -2460,6 +2461,7 @@ paths:
                     value:
                       prop1: value
                       prop2: 1
+                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the 'creationContent' of the Relationship.
               required:
                 - templateId
                 - creationContent
@@ -3062,7 +3064,7 @@ paths:
                   example: 2025-01-01
                   description: A timestamp that describes when this relationship template expires. Expired templates cannot be used to create relationships anymore.
                 content:
-                  allOf:
+                  oneOf:
                     - $ref: "#/components/schemas/RelationshipTemplateContent"
                     - $ref: "#/components/schemas/ArbitraryRelationshipTemplateContent"
                   nullable: false
@@ -3071,6 +3073,7 @@ paths:
                     value:
                       prop1: "value"
                       prop2: 1
+                  description: Either a RelationshipTemplateContent or an ArbitraryRelationshipTemplateContent must be provided as the 'content' of the RelationshipTemplate.
               required:
                 - expiresAt
                 - content
@@ -4838,9 +4841,9 @@ components:
         mustBeAccepted:
           type: boolean
           description: Whether the request must be accepted by the peer.
-        responseMetadata:
+        metadata:
           type: object
-          description: The metadata will be sent back in the response.
+          description: Metadata provided by the sender of the request.
       required:
         - "@type"
         - mustBeAccepted
@@ -4859,7 +4862,7 @@ components:
             allOf:
               - $ref: "#/components/schemas/RequestItem"
           type: array
-        responseMetadata:
+        metadata:
           type: object
       required:
         - "@type"
@@ -5091,9 +5094,10 @@ components:
             items:
               type: array
               items:
-                allOf:
+                oneOf:
                   - $ref: "#/components/schemas/RequestItemGroup"
                   - $ref: "#/components/schemas/RequestItem"
+                description: The 'items' of a Request can be of type RequestItemGroup or RequestItem.
         peer:
           description: The address of the peer that will receive the request. This is optional because in case of a RelationshipTemplate you do not know the peer address yet. For better results you should specify `peer` whenever you know it.
           allOf:
@@ -5114,9 +5118,10 @@ components:
             items:
               type: array
               items:
-                allOf:
+                oneOf:
                   - $ref: "#/components/schemas/RequestItemGroup"
                   - $ref: "#/components/schemas/RequestItem"
+                description: The 'items' of a Request can be of type RequestItemGroup or RequestItem.
         peer:
           allOf:
             - $ref: "#/components/schemas/Address"
@@ -5226,12 +5231,12 @@ components:
           items:
             $ref: "#/components/schemas/Recipient"
         content:
-          allOf:
-            - $ref: "#/components/schemas/ArbitraryMessageContent"
+          anyOf:
             - $ref: "#/components/schemas/Mail"
             - $ref: "#/components/schemas/Request"
             - $ref: "#/components/schemas/ResponseWrapper"
             - $ref: "#/components/schemas/Notification"
+            - $ref: "#/components/schemas/ArbitraryMessageContent"
           nullable: false
         attachments:
           type: array
@@ -5278,12 +5283,12 @@ components:
           items:
             $ref: "#/components/schemas/Recipient"
         content:
-          allOf:
-            - $ref: "#/components/schemas/ArbitraryMessageContent"
+          anyOf:
             - $ref: "#/components/schemas/Mail"
             - $ref: "#/components/schemas/Request"
             - $ref: "#/components/schemas/ResponseWrapper"
             - $ref: "#/components/schemas/Notification"
+            - $ref: "#/components/schemas/ArbitraryMessageContent"
           nullable: false
         attachments:
           type: array
@@ -5312,7 +5317,7 @@ components:
         requestId:
           $ref: "#/components/schemas/RequestID"
         requestSourceReference:
-          allOf:
+          anyOf:
             - $ref: "#/components/schemas/RelationshipTemplateID"
             - $ref: "#/components/schemas/MessageID"
         requestSourceType:
@@ -5417,7 +5422,7 @@ components:
             - deletionStatus
             - deletionDate
         creationContent:
-          allOf:
+          oneOf:
             - $ref: "#/components/schemas/RelationshipCreationContent"
             - $ref: "#/components/schemas/ArbitraryRelationshipCreationContent"
           nullable: false
@@ -5531,7 +5536,7 @@ components:
           format: date-time
           description: A timestamp that describes when this relationship template expires. Expired templates cannot be used to create relationship requests anymore.
         content:
-          allOf:
+          oneOf:
             - $ref: "#/components/schemas/RelationshipTemplateContent"
             - $ref: "#/components/schemas/ArbitraryRelationshipTemplateContent"
           nullable: false
