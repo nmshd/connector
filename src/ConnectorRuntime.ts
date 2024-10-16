@@ -88,7 +88,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         if (compatibilityResult.isError) {
             throw compatibilityResult.error;
         }
-        if (compatibilityResult.value.isCompatible) {
+        if (!compatibilityResult.value.isCompatible) {
             throw new Error(`The given backbone is not compatible with this connector version
 The version of the configured backbone is ${compatibilityResult.value.backboneVersion}
 the supported min/max version is ${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}`);
