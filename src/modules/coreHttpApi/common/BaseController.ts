@@ -1,6 +1,6 @@
 import { Result } from "@js-soft/ts-utils";
+import { Return } from "@nmshd/typescript-rest";
 import express from "express";
-import { Return } from "typescript-rest";
 import { Envelope } from "../../../infrastructure";
 
 export abstract class BaseController {
