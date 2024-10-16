@@ -84,6 +84,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
         await runtime.init();
 
+        await this.runBackboneCompatibilityCheck(runtime);
+
         runtime.scheduleKillTask();
         runtime.setupGlobalExceptionHandling();
 
@@ -94,6 +96,17 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         connectorConfig.modules.decider.enabled = true;
         connectorConfig.modules.request.enabled = true;
         connectorConfig.modules.attributeListener.enabled = true;
+    }
+
+    private static async runBackboneCompatibilityCheck(runtime: ConnectorRuntime) {
+        const compatibilityResult = await runtime.anonymousServices.backboneCompatibility.checkBackboneCompatibility();
+        if (compatibilityResult.isError) throw compatibilityResult.error;
+
+        if (compatibilityResult.value.isCompatible) return;
+
+        throw new Error(
+            `The given backbone is not compatible with this connector version. The version of the configured backbone is '${compatibilityResult.value.backboneVersion}' the supported min/max version is '${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}'.`
+        );
     }
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
