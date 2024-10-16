@@ -16,7 +16,6 @@ import path from "path";
 import { ConnectorMode } from "./ConnectorMode";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
-import { DocumentationLink } from "./DocumentationLink";
 import { HealthChecker } from "./HealthChecker";
 import { buildInformation } from "./buildInformation";
 import { HttpServer } from "./infrastructure";
@@ -83,16 +82,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
         await runtime.init();
-        const compatibilityResult = await runtime.anonymousServices.backboneCompatibility.checkBackboneCompatibility();
 
-        if (compatibilityResult.isError) {
-            throw compatibilityResult.error;
-        }
-        if (!compatibilityResult.value.isCompatible) {
-            throw new Error(`The given backbone is not compatible with this connector version
-The version of the configured backbone is ${compatibilityResult.value.backboneVersion}
-the supported min/max version is ${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}`);
-        }
+        await this.runBackboneCompatibilityCheck(runtime);
 
         runtime.scheduleKillTask();
         runtime.setupGlobalExceptionHandling();
@@ -106,6 +97,17 @@ the supported min/max version is ${compatibilityResult.value.supportedMinBackbon
         connectorConfig.modules.attributeListener.enabled = true;
     }
 
+    private static async runBackboneCompatibilityCheck(runtime: ConnectorRuntime) {
+        const compatibilityResult = await runtime.anonymousServices.backboneCompatibility.checkBackboneCompatibility();
+        if (compatibilityResult.isError) throw compatibilityResult.error;
+
+        if (compatibilityResult.value.isCompatible) return;
+
+        throw new Error(
+            `The given backbone is not compatible with this connector version. The version of the configured backbone is '${compatibilityResult.value.backboneVersion}' the supported min/max version is '${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}'.`
+        );
+    }
+
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
         if (this.runtimeConfig.database.driver === "lokijs") {
             if (!this.runtimeConfig.debug) throw new Error("LokiJS is only available in debug mode.");
@@ -115,11 +117,6 @@ the supported min/max version is ${compatibilityResult.value.supportedMinBackbon
 
             this.databaseConnection = new LokiJsConnection(folder, undefined, { autoload: true, autosave: true, persistenceMethod: "fs" });
             return this.databaseConnection;
-        }
-
-        if (!this.runtimeConfig.database.connectionString) {
-            this.logger.error(`No database connection string provided. See ${DocumentationLink.operate__configuration("database")} on how to configure the database connection.`);
-            process.exit(1);
         }
 
         if (this.databaseConnection) {
