@@ -4841,9 +4841,9 @@ components:
         mustBeAccepted:
           type: boolean
           description: Whether the request must be accepted by the peer.
-        responseMetadata:
+        metadata:
           type: object
-          description: The metadata will be sent back in the response.
+          description: Metadata provided by the sender of the request.
       required:
         - "@type"
         - mustBeAccepted
@@ -4862,7 +4862,7 @@ components:
             allOf:
               - $ref: "#/components/schemas/RequestItem"
           type: array
-        responseMetadata:
+        metadata:
           type: object
       required:
         - "@type"
