@@ -1,16 +1,10 @@
 #!/usr/bin/env node
 
 import yargs from "yargs";
-import { configOptionBuilder } from "./BaseCommand";
-import { startConnectorHandler } from "./commands/start";
+import { yargsStartConnectorCommand } from "./commands/start";
 
 const argv = yargs(process.argv.slice(2))
-    .command({
-        command: "start",
-        describe: "start the connector",
-        builder: configOptionBuilder,
-        handler: startConnectorHandler
-    })
+    .command(yargsStartConnectorCommand)
     .demandCommand(1, 1, "Please specify a command")
     .help("h")
     .alias("h", "help")

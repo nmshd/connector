@@ -59,8 +59,7 @@
         ],
         "testEnvironment": "node",
         "testPathIgnorePatterns": [
-            "/node_modules/",
-            "/packages/.*"
+            "/node_modules/"
         ],
         "testTimeout": 60000,
         "transform": {
@@ -104,7 +103,6 @@
         "helmet": "8.0.0",
         "json-stringify-safe": "5.0.1",
         "jsonschema": "1.4.1",
-        "markdown-toc": "^1.2.0",
         "mqtt": "^5.10.1",
         "nconf": "0.12.1",
         "on-headers": "1.0.2",
