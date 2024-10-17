@@ -84,7 +84,7 @@
         ]
     },
     "dependencies": {
-        "@google-cloud/pubsub": "4.7.2",
+        "@google-cloud/pubsub": "4.8.0",
         "@js-soft/docdb-access-loki": "^1.1.0",
         "@js-soft/docdb-access-mongo": "1.1.9",
         "@js-soft/node-logger": "1.2.0",
@@ -132,7 +132,7 @@
         "@types/lodash": "^4.17.10",
         "@types/luxon": "^3.4.2",
         "@types/nconf": "^0.10.7",
-        "@types/node": "^22.7.5",
+        "@types/node": "^22.7.6",
         "@types/on-headers": "^1.0.3",
         "@types/swagger-ui-express": "^4.1.6",
         "@types/yamljs": "^0.2.34",
