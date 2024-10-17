@@ -114,7 +114,7 @@ export class Launcher {
         }
 
         return {
-            connector: spawn("node", ["dist/index.js"], {
+            connector: spawn("node", ["dist/cli/index.js", "start"], {
                 env: { ...process.env, ...env },
                 cwd: path.resolve(`${__dirname}/../..`),
                 stdio: "inherit"

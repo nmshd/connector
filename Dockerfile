@@ -33,4 +33,4 @@ LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
 USER node
 
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["node", "/usr/app/dist/index.js"]
+CMD ["node", "/usr/app/dist/cli/index.js","start"]

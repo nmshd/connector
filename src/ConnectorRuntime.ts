@@ -9,9 +9,7 @@ import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleC
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import correlator from "correlation-id";
-import fs from "fs";
 import { HttpsProxyAgent } from "https-proxy-agent";
-import { validate as validateSchema } from "jsonschema";
 import path from "path";
 import { ConnectorMode } from "./ConnectorMode";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
@@ -62,20 +60,6 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
-        const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
-        const runtimeConfigSchemaString = fs.readFileSync(schemaPath).toString();
-        const runtimeConfigSchema = JSON.parse(runtimeConfigSchemaString);
-        const result = validateSchema(connectorConfig, runtimeConfigSchema);
-        if (!result.valid) {
-            let errorMessage = "The configuration is not valid:";
-            for (const error of result.errors) {
-                errorMessage += `\r\n  - ${error.stack}`;
-            }
-
-            console.error(errorMessage); // eslint-disable-line no-console
-            throw new Error(errorMessage);
-        }
-
         this.forceEnableMandatoryModules(connectorConfig);
 
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
