@@ -9,7 +9,7 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "bin": {
-        "connector-admin": "./dist/cli/index.js"
+        "nmshd-connector": "./dist/cli/index.js"
     },
     "workspaces": [
         ".",
