@@ -4,16 +4,11 @@ import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../
 export interface AutoDecomposeDeletionProposedRelationshipsModuleConfiguration extends ConnectorRuntimeModuleConfiguration {}
 
 export default class AutoDecomposeDeletionProposedRelationshipsModule extends ConnectorRuntimeModule<AutoDecomposeDeletionProposedRelationshipsModuleConfiguration> {
-    private currentIdentity: string;
-
     public init(): void {
         // Nothing to do here
     }
 
     public async start(): Promise<void> {
-        const currentIdentityResult = await this.runtime.getServices().transportServices.account.getIdentityInfo();
-        this.currentIdentity = currentIdentityResult.value.address;
-
         await this.decomposeDeletionProposedRelationshipsAtStartup();
 
         this.subscribeToEvent(RelationshipChangedEvent, this.handleRelationshipChanged.bind(this));
