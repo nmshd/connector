@@ -2435,6 +2435,63 @@ paths:
 
   # ------------------- Relationships -------------------
 
+  /api/v2/Relationships/CanCreate:
+    get:
+      operationId: canCreateRelationship
+      description: Checks if a Relationship with a given RelationshipTemplate and creationContent can be created.
+      tags:
+        - Relationships
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                templateId:
+                  allOf:
+                    - $ref: "#/components/schemas/RelationshipTemplateID"
+                  nullable: false
+                creationContent:
+                  oneOf:
+                    - $ref: "#/components/schemas/RelationshipCreationContent"
+                    - $ref: "#/components/schemas/ArbitraryRelationshipCreationContent"
+                  nullable: false
+                  example:
+                    "@type": "ArbitraryRelationshipCreationContent"
+                    value:
+                      prop1: value
+                      prop2: 1
+                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the 'creationContent' of the Relationship.
+              required:
+                - templateId
+                - creationContent
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/CanCreateRelationshipResponse"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
   /api/v2/Relationships:
     post:
       operationId: createRelationship
