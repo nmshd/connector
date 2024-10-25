@@ -2126,6 +2126,10 @@ paths:
                 ephemeral:
                   description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to true. Will be ignored if Accept is set to image/png.
                   type: boolean
+                forIdentity:
+                  $ref: "#/components/schemas/Address"
+                  nullable: true
+                  description: The only Identity that may load this Token.
       responses:
         201:
           description: Success
@@ -3340,6 +3344,10 @@ paths:
                 ephemeral:
                   description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to true. Will be ignored if Accept is set to image/png.
                   type: boolean
+                forIdentity:
+                  $ref: "#/components/schemas/Address"
+                  nullable: true
+                  description: The only Identity that may load this Token.
       responses:
         201:
           description: Success
@@ -3932,6 +3940,10 @@ paths:
                   description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
                   type: boolean
                   example: false
+                forIdentity:
+                  $ref: "#/components/schemas/Address"
+                  nullable: true
+                  description: The only Identity that may load this Token.
               required:
                 - content
                 - expiresAt
@@ -3980,6 +3992,10 @@ paths:
           name: expiresAt
           schema:
             $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: forIdentity
+          schema:
+            $ref: "#/components/schemas/IdFilter"
       responses:
         200:
           description: Success
@@ -4079,6 +4095,10 @@ paths:
           name: expiresAt
           schema:
             $ref: "#/components/schemas/DateFilter"
+        - in: query
+          name: forIdentity
+          schema:
+            $ref: "#/components/schemas/IdFilter"
       responses:
         200:
           description: Success
@@ -5711,6 +5731,10 @@ components:
           format: date-time
           nullable: false
           description: A timestamp that describes when this token expires. An expired token cannot be fetched from the platform anymore. However it will still be available for auditing purposes.
+        forIdentity:
+          $ref: "#/components/schemas/Address"
+          nullable: true
+          description: The only Identity that may load this Token.
         truncatedReference:
           type: string
           format: byte

@@ -5,6 +5,7 @@ export interface ConnectorToken {
     content: unknown;
     createdAt: string;
     expiresAt: string;
+    forIdentity?: string;
     truncatedReference: string;
     isEphemeral: boolean;
 }

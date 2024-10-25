@@ -91,6 +91,28 @@ describe("Template Tests", () => {
         });
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
     });
+
+    test("create and load a token for a template", async () => {
+        const template = await createTemplate(client1);
+
+        const tokenResponse = await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id);
+        expect(tokenResponse).toBeSuccessful(ValidationSchema.Token);
+
+        const templateResponse = await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: tokenResponse.result.truncatedReference });
+        expect(templateResponse).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+    });
+
+    test("create and load a personalized token for a template", async () => {
+        const template = await createTemplate(client1);
+
+        const tokenResponse = await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, {
+            forIdentity: (await client1.account.getIdentityInfo()).result.address
+        });
+        expect(tokenResponse).toBeSuccessful(ValidationSchema.Token);
+
+        const templateResponse = await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: tokenResponse.result.truncatedReference });
+        expect(templateResponse).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+    });
 });
 
 describe("Serialization Errors", () => {
