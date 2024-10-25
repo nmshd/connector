@@ -84,16 +84,7 @@ describe("Template Tests", () => {
     });
 
     test("send and receive a personalized template", async () => {
-        const template = (
-            await client1.relationshipTemplates.createOwnRelationshipTemplate({
-                content: {
-                    "@type": "ArbitraryRelationshipTemplateContent",
-                    value: { a: "A" }
-                },
-                expiresAt: DateTime.utc().plus({ minutes: 1 }).toString(),
-                forIdentity: (await client2.account.getIdentityInfo()).result.address
-            })
-        ).result;
+        const template = await createTemplate(client1, (await client2.account.getIdentityInfo()).result.address);
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: template.truncatedReference
