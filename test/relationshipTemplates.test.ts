@@ -82,6 +82,24 @@ describe("Template Tests", () => {
         expect(response.isError).toBeTruthy();
         expect(response.error.code).toBe("error.runtime.validation.invalidPropertyValue");
     });
+
+    test("send and receive a personalized template", async () => {
+        const template = (
+            await client1.relationshipTemplates.createOwnRelationshipTemplate({
+                content: {
+                    "@type": "ArbitraryRelationshipTemplateContent",
+                    value: { a: "A" }
+                },
+                expiresAt: DateTime.utc().plus({ minutes: 1 }).toString(),
+                forIdentity: (await client2.account.getIdentityInfo()).result.address
+            })
+        ).result;
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: template.truncatedReference
+        });
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+    });
 });
 
 describe("Serialization Errors", () => {
@@ -107,37 +125,40 @@ describe("Serialization Errors", () => {
 
 describe("RelationshipTemplates Query", () => {
     test("query templates", async () => {
-        const template = await createTemplate(client1);
+        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address);
         const conditions = new QueryParamConditions(template, client1)
             .addBooleanSet("isOwn")
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
             .addStringSet("createdByDevice")
-            .addNumberSet("maxNumberOfAllocations");
+            .addNumberSet("maxNumberOfAllocations")
+            .addStringSet("forIdentity");
 
         await conditions.executeTests((c, q) => c.relationshipTemplates.getRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
     });
 
     test("query own templates", async () => {
-        const template = await createTemplate(client1);
+        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address);
         const conditions = new QueryParamConditions(template, client1)
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
             .addStringSet("createdByDevice")
-            .addNumberSet("maxNumberOfAllocations");
+            .addNumberSet("maxNumberOfAllocations")
+            .addStringSet("forIdentity");
         await conditions.executeTests((c, q) => c.relationshipTemplates.getOwnRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
     });
 
     test("query peer templates", async () => {
-        const template = await exchangeTemplate(client1, client2);
+        const template = await exchangeTemplate(client1, client2, (await client2.account.getIdentityInfo()).result.address);
         const conditions = new QueryParamConditions(template, client2)
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
             .addStringSet("createdByDevice")
-            .addNumberSet("maxNumberOfAllocations");
+            .addNumberSet("maxNumberOfAllocations")
+            .addStringSet("forIdentity");
 
         await conditions.executeTests((c, q) => c.relationshipTemplates.getPeerRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
     });

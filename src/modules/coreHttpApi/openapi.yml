@@ -3010,6 +3010,10 @@ paths:
           schema:
             $ref: "#/components/schemas/NumberFilter"
         - in: query
+          name: forIdentity
+          schema:
+            $ref: "#/components/schemas/IdFilter"
+        - in: query
           name: isOwn
           schema:
             $ref: "#/components/schemas/BooleanFilter"
@@ -3063,6 +3067,10 @@ paths:
                   format: date-time
                   example: 2025-01-01
                   description: A timestamp that describes when this relationship template expires. Expired templates cannot be used to create relationships anymore.
+                forIdentity:
+                  $ref: "#/components/schemas/Address"
+                  nullable: true
+                  description: The only Identity that may load this RelationshipTemplate.
                 content:
                   oneOf:
                     - $ref: "#/components/schemas/RelationshipTemplateContent"
@@ -3126,6 +3134,10 @@ paths:
           name: maxNumberOfAllocations
           schema:
             $ref: "#/components/schemas/NumberFilter"
+        - in: query
+          name: forIdentity
+          schema:
+            $ref: "#/components/schemas/IdFilter"
       responses:
         200:
           description: Success
@@ -3226,6 +3238,10 @@ paths:
           name: maxNumberOfAllocations
           schema:
             $ref: "#/components/schemas/NumberFilter"
+        - in: query
+          name: forIdentity
+          schema:
+            $ref: "#/components/schemas/IdFilter"
       responses:
         200:
           description: Success
@@ -5535,6 +5551,10 @@ components:
           type: string
           format: date-time
           description: A timestamp that describes when this relationship template expires. Expired templates cannot be used to create relationship requests anymore.
+        forIdentity:
+          $ref: "#/components/schemas/Address"
+          nullable: true
+          description: The only Identity that may load this RelationshipTemplate.
         content:
           oneOf:
             - $ref: "#/components/schemas/RelationshipTemplateContent"

@@ -179,14 +179,15 @@ export async function makeUploadRequest(values: Partial<UploadOwnFileRequest> = 
     };
 }
 
-export async function createTemplate(client: ConnectorClient): Promise<ConnectorRelationshipTemplate> {
+export async function createTemplate(client: ConnectorClient, forIdentity?: string): Promise<ConnectorRelationshipTemplate> {
     const response = await client.relationshipTemplates.createOwnRelationshipTemplate({
         maxNumberOfAllocations: 1,
         expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
         content: {
             "@type": "ArbitraryRelationshipTemplateContent",
             value: { a: "b" }
-        }
+        },
+        forIdentity
     });
 
     expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
@@ -194,8 +195,8 @@ export async function createTemplate(client: ConnectorClient): Promise<Connector
     return response.result;
 }
 
-export async function getTemplateToken(client: ConnectorClient): Promise<ConnectorToken> {
-    const template = await createTemplate(client);
+export async function getTemplateToken(client: ConnectorClient, tempateForIdentity?: string): Promise<ConnectorToken> {
+    const template = await createTemplate(client, tempateForIdentity);
 
     const response = await client.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id);
     expect(response).toBeSuccessful(ValidationSchema.Token);
@@ -212,8 +213,8 @@ export async function getFileToken(client: ConnectorClient): Promise<ConnectorTo
     return response.result;
 }
 
-export async function exchangeTemplate(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient): Promise<ConnectorRelationshipTemplate> {
-    const templateToken = await getTemplateToken(clientCreator);
+export async function exchangeTemplate(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient, forIdentity?: string): Promise<ConnectorRelationshipTemplate> {
+    const templateToken = await getTemplateToken(clientCreator, forIdentity);
 
     const response = await clientRecpipient.relationshipTemplates.loadPeerRelationshipTemplate({
         reference: templateToken.truncatedReference
