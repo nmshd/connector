@@ -5445,6 +5445,32 @@ components:
           items:
             type: object
 
+    CanCreateRelationshipResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+      oneOf:
+        - properties:
+            isSuccess:
+              const: true
+          required:
+            - isSuccess
+          additionalProperties: false
+
+        - properties:
+            isSuccess:
+              const: false
+            code:
+              type: string
+            message:
+              type: string
+          required:
+            - isSuccess
+            - code
+            - message
+          additionalProperties: false
+
     Relationship:
       type: object
       properties:
