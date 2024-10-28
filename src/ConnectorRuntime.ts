@@ -13,6 +13,7 @@ import fs from "fs";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import { validate as validateSchema } from "jsonschema";
 import path from "path";
+import { checkServerIdentity, PeerCertificate } from "tls";
 import { ConnectorMode } from "./ConnectorMode";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
@@ -76,6 +77,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             throw new Error(errorMessage);
         }
 
+        if (connectorConfig.transportLibrary.pinnedPublicKeys) this.setServerIdentityCheckFromKeyPinning(connectorConfig);
+
         this.forceEnableMandatoryModules(connectorConfig);
 
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
@@ -90,6 +93,24 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         runtime.setupGlobalExceptionHandling();
 
         return runtime;
+    }
+
+    private static setServerIdentityCheckFromKeyPinning(connectorConfig: ConnectorRuntimeConfig) {
+        connectorConfig.transportLibrary.httpsAgentOptions = {
+            ...connectorConfig.transportLibrary.httpsAgentOptions,
+            checkServerIdentity: (host: string, certificate: PeerCertificate) => {
+                const error = checkServerIdentity(host, certificate);
+                if (error) {
+                    return error;
+                }
+
+                const subject = certificate.subject.CN;
+                if (!(subject in connectorConfig.transportLibrary.pinnedPublicKeys!)) return;
+                if (connectorConfig.transportLibrary.pinnedPublicKeys![subject].includes(certificate.pubkey!.toString("base64"))) return;
+
+                return new Error(`Certificate verification error: The public key of ${certificate.subject.CN} doesn't match a pinned public key`);
+            }
+        };
     }
 
     private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {

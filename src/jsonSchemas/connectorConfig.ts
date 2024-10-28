@@ -57,6 +57,7 @@ interface IConfigOverwrite {
     addressGenerationHostnameOverride?: string;
     datawalletEnabled?: boolean;
     debug?: boolean;
+    pinnedPublicKeys?: Record<string, string[]>;
 }
 
 // ================================ log4js ================================

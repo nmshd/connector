@@ -1056,10 +1056,10 @@
         "transportLibrary": {
             "additionalProperties": false,
             "properties": {
-                "baseUrl": {
+                "addressGenerationHostnameOverride": {
                     "type": "string"
                 },
-                "addressGenerationHostnameOverride": {
+                "baseUrl": {
                     "type": "string"
                 },
                 "datawalletEnabled": {
@@ -1067,6 +1067,15 @@
                 },
                 "debug": {
                     "type": "boolean"
+                },
+                "pinnedPublicKeys": {
+                    "additionalProperties": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "type": "object"
                 },
                 "platformAdditionalHeaders": {
                     "type": "object"
