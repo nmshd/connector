@@ -77,7 +77,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             throw new Error(errorMessage);
         }
 
-        if (connectorConfig.transportLibrary.pinnedPublicKeys) this.setServerIdentityCheckFromKeyPinning(connectorConfig);
+        if (connectorConfig.pinnedTLSCertificateKeys) this.setServerIdentityCheckFromKeyPinning(connectorConfig);
 
         this.forceEnableMandatoryModules(connectorConfig);
 
@@ -105,8 +105,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
                 }
 
                 const subject = certificate.subject.CN;
-                if (!(subject in connectorConfig.transportLibrary.pinnedPublicKeys!)) return;
-                if (connectorConfig.transportLibrary.pinnedPublicKeys![subject].includes(certificate.pubkey!.toString("base64"))) return;
+                if (!(subject in connectorConfig.pinnedTLSCertificateKeys!)) return;
+                if (connectorConfig.pinnedTLSCertificateKeys![subject].includes(certificate.pubkey!.toString("base64"))) return;
 
                 return new Error(`Certificate verification error: The public key of ${certificate.subject.CN} doesn't match a pinned public key`);
             }

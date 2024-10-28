@@ -24,6 +24,8 @@ export interface ConnectorConfig {
     modules: Record<string, ModuleConfiguration>;
     infrastructure: InfrastructureConfiguration;
 
+    pinnedTLSCertificateKeys?: Record<string, string[]>;
+
     [key: string]: any;
 }
 
@@ -57,7 +59,6 @@ interface IConfigOverwrite {
     addressGenerationHostnameOverride?: string;
     datawalletEnabled?: boolean;
     debug?: boolean;
-    pinnedPublicKeys?: Record<string, string[]>;
 }
 
 // ================================ log4js ================================

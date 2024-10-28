@@ -1053,6 +1053,15 @@
             },
             "type": "object"
         },
+        "pinnedTLSCertificateKeys": {
+            "additionalProperties": {
+                "items": {
+                    "type": "string"
+                },
+                "type": "array"
+            },
+            "type": "object"
+        },
         "transportLibrary": {
             "additionalProperties": false,
             "properties": {
@@ -1067,15 +1076,6 @@
                 },
                 "debug": {
                     "type": "boolean"
-                },
-                "pinnedPublicKeys": {
-                    "additionalProperties": {
-                        "items": {
-                            "type": "string"
-                        },
-                        "type": "array"
-                    },
-                    "type": "object"
                 },
                 "platformAdditionalHeaders": {
                     "type": "object"
