@@ -1,9 +1,20 @@
 #!/usr/bin/env node
 
 import yargs from "yargs";
+import { yargsIdentityInitCommand } from "./commands/identity/init";
 import { yargsStartConnectorCommand } from "./commands/start";
 
 const argv = yargs(process.argv.slice(2))
+    .command({
+        command: "identity [command]",
+        describe: "identity related commands ",
+        builder: (yargs) => {
+            return yargs.command(yargsIdentityInitCommand);
+        },
+        handler: () => {
+            yargs.showHelp();
+        }
+    })
     .command(yargsStartConnectorCommand)
     .demandCommand(1, 1, "Please specify a command")
     .help("h")
