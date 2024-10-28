@@ -1,6 +1,6 @@
 import { CommandModule } from "yargs";
 import { ConnectorRuntime } from "../../ConnectorRuntime";
-import { createConnectorConfig } from "../../ConnectorRuntimeConfig";
+import { createConnectorConfig } from "../../CreateConnectorConfig";
 import { ConfigFileOptions, configOptionBuilder } from "../BaseCommand";
 
 export const startConnectorHandler = async ({ config }: ConfigFileOptions): Promise<void> => {
