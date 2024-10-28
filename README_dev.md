@@ -32,7 +32,7 @@ docker compose -f .dev/compose.yml --env-file [path_to_your_env_file] up --build
 After a few seconds you should see the following output:
 
 ```console
-connector-1  | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transportinitialized
+connector-1  | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transport initialized
 ...
 connector-1  | [2021-01-25T11:27:41.241] [INFO] HttpServerModule - Listening on port 80
 ...
@@ -133,8 +133,7 @@ npm run test:local -- testSuiteName
       "database": { "driver": "lokijs", "folder": "./", "dbName": "local", "dbNamePrefix": "l" },
       "logging": { "categories": { "default": { "appenders": ["console"] } } },
       "infrastructure": { "httpServer": { "apiKey": "xxx", "port": 8080 } },
-      "modules": { "coreHttpApi": { "docs": { "enabled": true } } },
-      "transportLibrary": { "allowIdentityCreation": true }
+      "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
     }
 
     ```
