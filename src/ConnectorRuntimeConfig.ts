@@ -31,6 +31,7 @@ export interface ConnectorRuntimeConfig extends RuntimeConfig {
         httpServer: HttpServerConfiguration;
     };
 }
+
 export function createConnectorConfig(overrides?: RuntimeConfig, customConfigLocation?: string): ConnectorRuntimeConfig {
     nconf
         .overrides(overrides)
@@ -56,6 +57,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig, customConfigLoc
         .file("default-file", { file: "config/default.json" });
 
     const connectorConfig = nconf.get() as ConnectorRuntimeConfig;
+
     addCorrelationIdSupportToLogger(connectorConfig);
 
     if (connectorConfig.modules.sync.enabled && connectorConfig.modules.sse.enabled) {
@@ -63,7 +65,9 @@ export function createConnectorConfig(overrides?: RuntimeConfig, customConfigLoc
         console.warn("The SSE and Sync modules cannot be enabled at the same time, the Sync module will be disabled.");
         connectorConfig.modules.sync.enabled = false;
     }
+
     validateConnectorConfig(connectorConfig);
+
     return connectorConfig;
 }
 
