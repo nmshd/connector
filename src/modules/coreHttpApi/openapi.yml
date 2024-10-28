@@ -2436,7 +2436,7 @@ paths:
   # ------------------- Relationships -------------------
 
   /api/v2/Relationships/CanCreate:
-    get:
+    put:
       operationId: canCreateRelationship
       description: Checks if a Relationship with a given RelationshipTemplate and creationContent can be created.
       tags:
@@ -2485,6 +2485,8 @@ paths:
             X-Response-Time:
               schema:
                 $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
         401:
           $ref: "#/components/responses/Unauthorized"
         403:
@@ -5444,6 +5446,32 @@ components:
           type: array
           items:
             type: object
+
+    CanCreateRelationshipResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+      oneOf:
+        - properties:
+            isSuccess:
+              const: true
+          required:
+            - isSuccess
+          additionalProperties: false
+
+        - properties:
+            isSuccess:
+              const: false
+            code:
+              type: string
+            message:
+              type: string
+          required:
+            - isSuccess
+            - code
+            - message
+          additionalProperties: false
 
     Relationship:
       type: object

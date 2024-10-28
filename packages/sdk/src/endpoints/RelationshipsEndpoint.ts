@@ -1,5 +1,12 @@
-import { ConnectorAttributes, ConnectorHttpResponse, ConnectorRelationship, ConnectorRelationships, CreateRelationshipRequest, GetRelationshipsRequest } from "../types";
-import { CanCreateRelationshipResponse } from "../types/relationships/responses/CanCreateRelationshipResponse";
+import {
+    CanCreateRelationshipResponse,
+    ConnectorAttributes,
+    ConnectorHttpResponse,
+    ConnectorRelationship,
+    ConnectorRelationships,
+    CreateRelationshipRequest,
+    GetRelationshipsRequest
+} from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class RelationshipsEndpoint extends Endpoint {
