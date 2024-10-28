@@ -10,6 +10,14 @@ export class RelationshipsController extends BaseController {
         super();
     }
 
+    @PUT
+    @Path("CanCreate")
+    @Accept("application/json")
+    public async canCreateRelationship(request: any): Promise<Envelope> {
+        const result = await this.transportServices.relationships.canCreateRelationship(request);
+        return this.ok(result);
+    }
+
     @POST
     @Accept("application/json")
     public async createRelationship(request: any): Promise<Return.NewResource<Envelope>> {

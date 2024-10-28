@@ -1,4 +1,4 @@
-import { RuntimeConfig } from "@nmshd/runtime";
+import { DeciderModuleConfiguration, RuntimeConfig } from "@nmshd/runtime";
 import { IConfigOverwrite } from "@nmshd/transport";
 import * as log4js from "log4js";
 import { ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
@@ -23,7 +23,9 @@ export interface ConnectorRuntimeConfig extends RuntimeConfig {
 
     logging: log4js.Configuration;
 
-    modules: Record<string, ConnectorRuntimeModuleConfiguration>;
+    modules: Record<string, ConnectorRuntimeModuleConfiguration> & {
+        decider: DeciderModuleConfiguration;
+    };
 
     infrastructure: {
         httpServer: HttpServerConfiguration;

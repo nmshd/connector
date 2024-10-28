@@ -1128,21 +1128,21 @@ paths:
 
   /api/v2/Attributes/ThirdParty/{id}:
     delete:
-      operationId: deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer
-      description: Delete a third party relationship attribute and notify the owner.
+      operationId: deleteThirdPartyRelationshipAttributeAndNotifyPeer
+      description: Delete a ThirdPartyRelationshipAttribute and notify the peer.
       tags:
         - Attributes
       parameters:
         - in: path
           name: id
-          description: The ID of the third party relationship attribute to delete.
+          description: The ID of the ThirdPartyRelationshipAttribute to delete.
           required: true
           schema:
             $ref: "#/components/schemas/AttributeID"
       responses:
         200:
           description: |
-            Success. Deleting a third party relationship attribute and notifying the owner returns the notificationId of the send notification.
+            Success. Deleting a ThirdPartyRelationshipAttribute and notifying the peer returns the NotificationId of the sent Notification.
           content:
             application/json:
               schema:
@@ -2434,6 +2434,65 @@ paths:
           $ref: "#/components/responses/NotFound"
 
   # ------------------- Relationships -------------------
+
+  /api/v2/Relationships/CanCreate:
+    put:
+      operationId: canCreateRelationship
+      description: Checks if a Relationship with a given RelationshipTemplate and creationContent can be created.
+      tags:
+        - Relationships
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                templateId:
+                  allOf:
+                    - $ref: "#/components/schemas/RelationshipTemplateID"
+                  nullable: false
+                creationContent:
+                  oneOf:
+                    - $ref: "#/components/schemas/RelationshipCreationContent"
+                    - $ref: "#/components/schemas/ArbitraryRelationshipCreationContent"
+                  nullable: false
+                  example:
+                    "@type": "ArbitraryRelationshipCreationContent"
+                    value:
+                      prop1: value
+                      prop2: 1
+                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the 'creationContent' of the Relationship.
+              required:
+                - templateId
+                - creationContent
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/CanCreateRelationshipResponse"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
 
   /api/v2/Relationships:
     post:
@@ -5387,6 +5446,32 @@ components:
           type: array
           items:
             type: object
+
+    CanCreateRelationshipResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+      oneOf:
+        - properties:
+            isSuccess:
+              const: true
+          required:
+            - isSuccess
+          additionalProperties: false
+
+        - properties:
+            isSuccess:
+              const: false
+            code:
+              type: string
+            message:
+              type: string
+          required:
+            - isSuccess
+            - code
+            - message
+          additionalProperties: false
 
     Relationship:
       type: object
