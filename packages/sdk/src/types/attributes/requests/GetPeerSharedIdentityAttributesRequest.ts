@@ -13,6 +13,7 @@ export interface GetPeerSharedIdentityAttributesRequest {
     "query.shareInfo"?: string | string[];
     "query.shareInfo.requestReference"?: string | string[];
     "query.shareInfo.notificationReference"?: string | string[];
+    "query.shareInfo.thirdPartyAddress"?: string | string[];
     "query.deletionInfo"?: string | string[];
     "query.deletionInfo.deletionStatus"?: string | string[];
     "query.deletionInfo.deletionDate"?: string | string[];

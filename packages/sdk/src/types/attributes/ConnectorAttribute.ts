@@ -30,12 +30,14 @@ export interface ConnectorAttributeShareInfoForRequest {
     requestReference: string;
     peer: string;
     sourceAttribute?: string;
+    thirdPartyAddress?: string;
 }
 
 export interface ConnectorAttributeShareInfoForNotification {
     notificationReference: string;
     peer: string;
     sourceAttribute?: string;
+    thirdPartyAddress?: string;
 }
 
 export type ConnectorAttributeShareInfo = ConnectorAttributeShareInfoForNotification | ConnectorAttributeShareInfoForRequest;
