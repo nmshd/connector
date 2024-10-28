@@ -129,7 +129,7 @@ npm run test:local -- testSuiteName
           "platformClientId": "...",
           "platformClientSecret": "..."
       },
-      "database": { "driver": "lokijs", "folder": "./", "dbName": "local", "dbNamePrefix": "l" },
+      "database": { "driver": "lokijs", "folder": "./" },
       "logging": { "categories": { "default": { "appenders": ["console"] } } },
       "infrastructure": { "httpServer": { "apiKey": "xxx", "port": 8080 } },
       "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
@@ -138,7 +138,7 @@ npm run test:local -- testSuiteName
     ```
 
 6. replace ... in the config with real values
-7. start the connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/cli/index.js start`
+7. start the connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/index.js start`
 
 It's now possible to access the connector on port 8080. Validating this is possible by accessing `http://localhost:8080/docs/swagger` in the browser.
 

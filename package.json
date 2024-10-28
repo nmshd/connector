@@ -6,10 +6,8 @@
     "repository": "github:nmshd/connector",
     "license": "MIT",
     "author": "j&s-soft GmbH",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
     "bin": {
-        "nmshd-connector": "./dist/cli/index.js"
+        "nmshd-connector": "./dist/index.js"
     },
     "workspaces": [
         ".",

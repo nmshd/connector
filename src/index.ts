@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import yargs from "yargs";
-import { yargsStartConnectorCommand } from "./commands/start";
+import { yargsStartConnectorCommand } from "./cli/commands/start";
 
 const argv = yargs(process.argv.slice(2))
     .command(yargsStartConnectorCommand)
