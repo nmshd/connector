@@ -1,14 +1,7 @@
 #!/usr/bin/env node
 
 import yargs from "yargs";
-import {
-    yargsIdentityDeletionApproveCommand,
-    yargsIdentityDeletionCancelCommand,
-    yargsIdentityDeletionInitCommand,
-    yargsIdentityDeletionRejectCommand,
-    yargsIdentityStatusCommand,
-    yargsStartConnectorCommand
-} from "./cli/commands";
+import { yargsIdentityDeletionCancelCommand, yargsIdentityDeletionInitCommand, yargsIdentityStatusCommand, yargsStartConnectorCommand } from "./cli/commands";
 
 const argv = yargs(process.argv.slice(2))
     .command({
@@ -25,11 +18,7 @@ const argv = yargs(process.argv.slice(2))
         command: "identityDeletion [command]",
         describe: "Identity deletion related commands",
         builder: (yargs) => {
-            return yargs
-                .command(yargsIdentityDeletionInitCommand)
-                .command(yargsIdentityDeletionApproveCommand)
-                .command(yargsIdentityDeletionCancelCommand)
-                .command(yargsIdentityDeletionRejectCommand);
+            return yargs.command(yargsIdentityDeletionInitCommand).command(yargsIdentityDeletionCancelCommand);
         },
         handler: () => {
             yargs.showHelp("log");

@@ -41,6 +41,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         return this.runtimeConfig.debug ? "debug" : "production";
     }
 
+    public isDebugMode = (): boolean => this.runtimeConfig.debug;
+
     private _dataViewExpander: DataViewExpander;
 
     public override getServices(): RuntimeServices {

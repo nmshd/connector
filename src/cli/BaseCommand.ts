@@ -3,7 +3,8 @@ import { LokiJsConnection } from "@js-soft/docdb-access-loki";
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import yargs from "yargs";
 import { ConnectorRuntime } from "../ConnectorRuntime";
-import { ConnectorRuntimeConfig, createConnectorConfig } from "../ConnectorRuntimeConfig";
+import { ConnectorRuntimeConfig } from "../ConnectorRuntimeConfig";
+import { createConnectorConfig } from "../CreateConnectorConfig";
 import { DocumentationLink } from "../DocumentationLink";
 
 export interface ConfigFileOptions {
