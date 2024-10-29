@@ -24,8 +24,8 @@ export class IdentityMetadataController extends BaseController {
     }
 
     @DELETE
-    public async deleteIdentityMetadata(@QueryParam("reference") reference: string, @QueryParam("key") key: string): Promise<Envelope> {
+    public async deleteIdentityMetadata(@QueryParam("reference") reference: string, @QueryParam("key") key: string): Promise<void> {
         const result = await this.consumptionServices.identityMetadata.deleteIdentityMetadata({ reference, key });
-        return this.ok(result);
+        return this.noContent(result);
     }
 }
