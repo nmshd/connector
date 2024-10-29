@@ -28,11 +28,10 @@ RUN npm ci --omit=dev
 
 COPY --from=builder /usr/app/dist/ dist/
 
-RUN npm link .
 
 LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
 
 USER node
 
-ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["nmshd-connector", "start"]
+ENTRYPOINT ["/sbin/tini", "--", "node", "/usr/app/dist/index.js"]
+CMD ["start"]

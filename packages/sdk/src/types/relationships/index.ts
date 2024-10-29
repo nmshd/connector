@@ -6,3 +6,4 @@ export * from "./ConnectorRelationships";
 export * from "./ConnectorRelationshipStatus";
 export * from "./requests/CreateRelationshipRequest";
 export * from "./requests/GetRelationshipsRequest";
+export * from "./responses/CanCreateRelationshipResponse";

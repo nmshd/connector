@@ -6,11 +6,6 @@
     "repository": "github:nmshd/connector",
     "license": "MIT",
     "author": "j&s-soft GmbH",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "bin": {
-        "nmshd-connector": "./dist/cli/index.js"
-    },
     "workspaces": [
         ".",
         "packages/sdk"
@@ -45,8 +40,7 @@
         "teardown": "npm run teardown:backbone && npm run teardown:test-env && npm run teardown:testconnectors",
         "teardown:backbone": "docker compose -p connector-test-backbone --env-file .dev/compose.backbone.env -f .dev/compose.backbone.yml down -v",
         "teardown:test-env": "docker compose -p connector-tests -f test/compose.yml down -v",
-        "teardown:testconnectors": "docker compose -f .dev/compose.yml down -v",
-        "cli-readme": "ts-node .dev/scripts/updateCliReadme.ts && npx markdown-toc -i CLI-README.md"
+        "teardown:testconnectors": "docker compose -f .dev/compose.yml down -v"
     },
     "jest": {
         "maxWorkers": 2,
@@ -89,7 +83,7 @@
         "@js-soft/docdb-access-mongo": "1.1.9",
         "@js-soft/node-logger": "1.2.0",
         "@js-soft/ts-utils": "^2.3.3",
-        "@nmshd/runtime": "6.3.1",
+        "@nmshd/runtime": "6.6.0",
         "@nmshd/typescript-ioc": "^3.2.4",
         "@nmshd/typescript-rest": "^3.0.5",
         "agentkeepalive": "4.5.0",
@@ -118,21 +112,21 @@
         "@js-soft/eslint-config-ts": "1.6.13",
         "@js-soft/license-check": "1.0.9",
         "@nmshd/connector-sdk": "*",
-        "@nmshd/content": "6.3.1",
-        "@nmshd/core-types": "6.3.1",
+        "@nmshd/content": "6.6.0",
+        "@nmshd/core-types": "6.6.0",
         "@nmshd/typescript-rest-swagger": "^1.4.1",
         "@types/amqplib": "^0.10.5",
         "@types/compression": "^1.7.5",
         "@types/cors": "^2.8.17",
         "@types/eventsource": "^1.1.15",
         "@types/express": "5.0.0",
-        "@types/jest": "^29.5.13",
+        "@types/jest": "^29.5.14",
         "@types/jest-json-schema": "^6.1.4",
         "@types/json-stringify-safe": "^5.0.3",
         "@types/lodash": "^4.17.12",
         "@types/luxon": "^3.4.2",
         "@types/nconf": "^0.10.7",
-        "@types/node": "^22.7.7",
+        "@types/node": "^22.8.1",
         "@types/on-headers": "^1.0.3",
         "@types/swagger-ui-express": "^4.1.6",
         "@types/yamljs": "^0.2.34",

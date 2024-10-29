@@ -8,7 +8,7 @@ import {
     yargsIdentityDeletionRejectCommand,
     yargsIdentityStatusCommand,
     yargsStartConnectorCommand
-} from "./commands";
+} from "./cli/commands";
 
 const argv = yargs(process.argv.slice(2))
     .command({

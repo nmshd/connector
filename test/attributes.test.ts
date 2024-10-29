@@ -550,7 +550,7 @@ describe("Delete attributes", () => {
         expect(getAttributeResponse.isSuccess).toBe(false);
     });
 
-    test("should delete a third party attribute and notify owner", async () => {
+    test("should delete a ThirdPartyRelationshipAttribute and notify the peer", async () => {
         const [client3] = await launcher.launch(1);
 
         await establishRelationship(client3, client2);
@@ -611,10 +611,10 @@ describe("Delete attributes", () => {
 
         const thirdPartyRelationshipAttribute = (await client3.attributes.getAttribute((message.content as any).response.items[0].attributeId)).result;
 
-        const deleteResponse = await client3.attributes.deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer(thirdPartyRelationshipAttribute.id);
+        const deleteResponse = await client3.attributes.deleteThirdPartyRelationshipAttributeAndNotifyPeer(thirdPartyRelationshipAttribute.id);
 
         await syncUntilHasMessageWithNotification(client2, deleteResponse.result.notificationId);
-        await client2._eventBus?.waitForEvent<DataEvent<any>>("consumption.thirdPartyOwnedRelationshipAttributeDeletedByPeer", (event) => {
+        await client2._eventBus?.waitForEvent<DataEvent<any>>("consumption.thirdPartyRelationshipAttributeDeletedByPeer", (event) => {
             return event.data.id.toString() === thirdPartyRelationshipAttribute.id;
         });
 

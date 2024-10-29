@@ -32,7 +32,7 @@ docker compose -f .dev/compose.yml --env-file [path_to_your_env_file] up --build
 After a few seconds you should see the following output:
 
 ```console
-connector-1  | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transportinitialized
+connector-1  | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transport initialized
 ...
 connector-1  | [2021-01-25T11:27:41.241] [INFO] HttpServerModule - Listening on port 80
 ...
@@ -119,8 +119,7 @@ npm run test:local -- testSuiteName
 2. change into the directory `cd connector`
 3. install the npm dependencies `npm i`
 4. build the connector `npm run build`
-5. install the connector as cli locally `npm link .`
-6. create a config file (for example `local.config.json`)
+5. create a config file (for example `local.config.json`)
 
     ```
     {
@@ -130,17 +129,16 @@ npm run test:local -- testSuiteName
           "platformClientId": "...",
           "platformClientSecret": "..."
       },
-      "database": { "driver": "lokijs", "folder": "./", "dbName": "local", "dbNamePrefix": "l" },
+      "database": { "driver": "lokijs", "folder": "./" },
       "logging": { "categories": { "default": { "appenders": ["console"] } } },
       "infrastructure": { "httpServer": { "apiKey": "xxx", "port": 8080 } },
-      "modules": { "coreHttpApi": { "docs": { "enabled": true } } },
-      "transportLibrary": { "allowIdentityCreation": true }
+      "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
     }
 
     ```
 
-7. replace ... in the config with real values
-8. start the connector using `nmshd-connector start --config ./local.config.json`
+6. replace ... in the config with real values
+7. start the connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/index.js start`
 
 It's now possible to access the connector on port 8080. Validating this is possible by accessing `http://localhost:8080/docs/swagger` in the browser.
 

@@ -4,4 +4,4 @@ WORKDIR /usr/app
 # Webserver, Debugger
 EXPOSE 80 9229
 
-ENTRYPOINT ["npx", "nodemon", "-e", "js,json,yml", "--watch", "./dist", "--watch", "./config", "--inspect=0.0.0.0:9229", "--nolazy", "./dist/cli/index.js","strat"]
+ENTRYPOINT ["npx", "nodemon", "-e", "js,json,yml", "--watch", "./dist", "--watch", "./config", "--inspect=0.0.0.0:9229", "--nolazy", "./dist/index.js", "start"]
