@@ -108,7 +108,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
                 if (!(subject in connectorConfig.pinnedTLSCertificateKeys!)) return;
                 if (connectorConfig.pinnedTLSCertificateKeys![subject].includes(certificate.pubkey!.toString("base64"))) return;
 
-                return new Error(`Certificate verification error: The public key of ${certificate.subject.CN} doesn't match a pinned public key`);
+                return new Error(`Certificate verification error: The public key of ${certificate.subject.CN} doesn't match a pinned TLS certificate key`);
             }
         };
     }
