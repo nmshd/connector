@@ -19,5 +19,6 @@ export interface GetAttributesRequest {
         requestReference?: string;
         peer?: string;
         sourceAttribute?: string;
+        thirdPartyAddress?: string;
     };
 }
