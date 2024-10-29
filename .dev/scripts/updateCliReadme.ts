@@ -5,7 +5,7 @@ import _ from "lodash";
 (async function () {
     let readmeFileContent = (await readFile("CLI-README.md")).toString();
 
-    const helpTextReturn = spawnSync("node", ["dist/cli/index.js", "--help"]);
+    const helpTextReturn = spawnSync("node", ["dist/index.js", "--help"]);
     const helpText = helpTextReturn.stdout.toString();
     let readMeReplace = `
 # Usage
@@ -36,7 +36,7 @@ ${readMeReplace}
 });
 
 async function extendHelpText(readMeReplace: string, commandName: string, depth: number = 0): Promise<string> {
-    const subCommandHelpReturn = spawnSync("node", ["dist/cli/index.js", ...commandName.split(" "), "--help"]);
+    const subCommandHelpReturn = spawnSync("node", ["dist/index.js", ...commandName.split(" "), "--help"]);
     const subCommandHelp = subCommandHelpReturn.stdout.toString();
     readMeReplace += `
 ##${"#".repeat(depth)} ${_.startCase(commandName)}
