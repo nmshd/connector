@@ -89,6 +89,15 @@ export class AttributesEndpoint extends Endpoint {
         return await this.delete(`/api/v2/Attributes/ThirdParty/${attributeId}`);
     }
 
+    /**
+     * @deprecated use deleteThirdPartyRelationshipAttributeAndNotifyPeer instead
+     */
+    public async deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer(
+        attributeId: string
+    ): Promise<ConnectorHttpResponse<DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse>> {
+        return await this.deleteThirdPartyRelationshipAttributeAndNotifyPeer(attributeId);
+    }
+
     public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.post("/api/v2/Attributes/ExecuteIdentityAttributeQuery", request, 200);
     }
