@@ -6,9 +6,6 @@
     "repository": "github:nmshd/connector",
     "license": "MIT",
     "author": "j&s-soft GmbH",
-    "bin": {
-        "nmshd-connector": "./dist/index.js"
-    },
     "workspaces": [
         ".",
         "packages/sdk"
