@@ -11,6 +11,6 @@ export class IdentityMetadataEndpoint extends Endpoint {
     }
 
     public async deleteIdentityMetadata(reference: string, key?: string): Promise<ConnectorHttpResponse<void>> {
-        return await this.delete("/api/v2/IdentityMetadata", { reference: reference, key: key });
+        return await this.delete("/api/v2/IdentityMetadata", { reference: reference, key: key }, 204);
     }
 }
