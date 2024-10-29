@@ -2158,6 +2158,16 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
+  # ------------------- IdentityMetadata -------------------
+
+  /api/v2/IdentityMetadata:
+    put:
+      operationId: upsertIdentityMetadata
+    get:
+      operationId: getIdentityMetadata
+    delete:
+      operationId: deleteIdentityMetadata
+
   # ------------------- Messages -------------------
 
   /api/v2/Messages:
@@ -5804,6 +5814,27 @@ components:
     TokenContent:
       type: object
       description: The arbitrary JSON object which should be shared between creator of the Token and the recipient.
+
+    IdentityMetadata:
+      type: object
+      additionalProperties: false
+      properties:
+        reference:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+          description: The address of the identity for that the metadata is stored for.
+        key:
+          type: string
+          nullable: true
+          description: An optional key to identify the metadata. Can be used to store multiple metadata entries for the same identity.
+        value:
+          type: object
+          example: { "key": "value" }
+          description: The metadata value as a JSON object.
+      required:
+        - reference
+        - value
 
     # ------------------- General -------------------
 
