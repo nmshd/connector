@@ -5956,7 +5956,7 @@ components:
         key:
           type: string
           nullable: true
-          description: An optional key to identify the metadata. Can be used to store multiple metadata entries for the same identity.
+          description: An optional key to identify the metadata. Can be used to store multiple metadata entries for the same identity. There can be at most one IdentityMetadata per `reference` and `key` combination.
         value:
           type: object
           example: { "key": "value" }
