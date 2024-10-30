@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
-import { createTemplate, exchangeTemplate } from "./lib/testUtils";
+import { createTemplate, exchangeTemplate, getTemplateToken } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
@@ -69,6 +69,13 @@ describe("Template Tests", () => {
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
     });
 
+    test("create a token for an own template", async () => {
+        expect(template).toBeDefined();
+
+        const response = await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id);
+        expect(response).toBeSuccessful(ValidationSchema.Token);
+    });
+
     test("expect a validation error for sending maxNumberOfAllocations 0", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
             content: {
@@ -88,6 +95,15 @@ describe("Template Tests", () => {
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: template.truncatedReference
+        });
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+    });
+
+    test("send and receive a personalized template via token", async () => {
+        const templateToken = await getTemplateToken(client1, (await client2.account.getIdentityInfo()).result.address);
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: templateToken.truncatedReference
         });
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
     });

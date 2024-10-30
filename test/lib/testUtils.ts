@@ -195,10 +195,10 @@ export async function createTemplate(client: ConnectorClient, forIdentity?: stri
     return response.result;
 }
 
-export async function getTemplateToken(client: ConnectorClient, tempateForIdentity?: string): Promise<ConnectorToken> {
-    const template = await createTemplate(client, tempateForIdentity);
+export async function getTemplateToken(client: ConnectorClient, forIdentity?: string): Promise<ConnectorToken> {
+    const template = await createTemplate(client, forIdentity);
 
-    const response = await client.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id);
+    const response = await client.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { forIdentity });
     expect(response).toBeSuccessful(ValidationSchema.Token);
 
     return response.result;
