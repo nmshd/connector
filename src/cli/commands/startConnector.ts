@@ -9,7 +9,7 @@ export const startConnectorHandler = async ({ config }: ConfigFileOptions): Prom
     await runtime.start();
 };
 
-export const yargsStartConnectorCommand: CommandModule<{}, ConfigFileOptions> = {
+export const startConnectorCommand: CommandModule<{}, ConfigFileOptions> = {
     command: "start",
     describe: "start the connector",
     handler: startConnectorHandler,

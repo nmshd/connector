@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import yargs from "yargs";
-import { yargsStartConnectorCommand } from "./cli/commands/start";
+import { startConnectorCommand } from "./cli/commands";
 
 const argv = yargs(process.argv.slice(2))
-    .command(yargsStartConnectorCommand)
+    .command(startConnectorCommand)
     .demandCommand(1, 1, "Please specify a command")
     .help("h")
     .alias("h", "help")
