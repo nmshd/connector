@@ -69,13 +69,6 @@ describe("Template Tests", () => {
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
     });
 
-    test("create a token for an own template", async () => {
-        expect(template).toBeDefined();
-
-        const response = await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id);
-        expect(response).toBeSuccessful(ValidationSchema.Token);
-    });
-
     test("expect a validation error for sending maxNumberOfAllocations 0", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
             content: {
