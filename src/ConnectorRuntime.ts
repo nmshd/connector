@@ -77,12 +77,11 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             throw new Error(errorMessage);
         }
 
-        if (connectorConfig.pinnedTLSCertificateKeys) this.setServerIdentityCheckFromKeyPinning(connectorConfig);
-
-        this.forceEnableMandatoryModules(connectorConfig);
-
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
         ConnectorLoggerFactory.init(loggerFactory);
+
+        this.setServerIdentityCheckFromKeyPinning(connectorConfig, loggerFactory.getLogger(ConnectorRuntime));
+        this.forceEnableMandatoryModules(connectorConfig);
 
         const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
         await runtime.init();
@@ -95,20 +94,39 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         return runtime;
     }
 
-    private static setServerIdentityCheckFromKeyPinning(connectorConfig: ConnectorRuntimeConfig) {
+    private static setServerIdentityCheckFromKeyPinning(connectorConfig: ConnectorRuntimeConfig, logger: ILogger) {
+        if (!connectorConfig.pinnedTLSCertificateSHA256Fingerprints) return;
+        const pinnedFingerprints = connectorConfig.pinnedTLSCertificateSHA256Fingerprints;
+
+        for (const host in pinnedFingerprints) {
+            if (!host.match(/^((([A-Za-z0-9]+(-[A-Za-z0-9]+)*)\.)+[a-z]{2,}|localhost)$/)) {
+                throw new Error(`Invalid host '${host}' in pinnedTLSCertificateSHA256Fingerprints. The host must not contain a protocol, path or query.`);
+            }
+
+            logger.info(`Certificate pinning is enforced for host '${host}' with fingerprint(s) '${pinnedFingerprints[host].join(", ")}'.`);
+        }
+
         connectorConfig.transportLibrary.httpsAgentOptions = {
             ...connectorConfig.transportLibrary.httpsAgentOptions,
             checkServerIdentity: (host: string, certificate: PeerCertificate) => {
                 const error = checkServerIdentity(host, certificate);
-                if (error) {
-                    return error;
+                if (error) return error;
+
+                if (connectorConfig.enforceCertificatePinning && !(host in pinnedFingerprints)) {
+                    return new Error(
+                        `Certificate verification error: Certificate pinning is enforced, but no pinned certificate fingerprint is provided in the configuration for the requested host '${host}'.`
+                    );
                 }
 
-                const subject = certificate.subject.CN;
-                if (!(subject in connectorConfig.pinnedTLSCertificateKeys!)) return;
-                if (connectorConfig.pinnedTLSCertificateKeys![subject].includes(certificate.pubkey!.toString("base64"))) return;
+                if (!(host in pinnedFingerprints)) return;
+                const pinnedFingerprintsForHost = pinnedFingerprints[host];
 
-                return new Error(`Certificate verification error: The public key of ${certificate.subject.CN} doesn't match a pinned TLS certificate key`);
+                const fingerprint = certificate.fingerprint256.replaceAll(":", "").toLocaleLowerCase();
+                if (pinnedFingerprintsForHost.find((e) => e.replaceAll(":", "").toLocaleLowerCase() === fingerprint)) return;
+
+                return new Error(
+                    `Certificate verification error: The SHA256 fingerprint of the received certificate '${fingerprint}' doesn't match a pinned certificate fingerprint for host '${host}'.`
+                );
             }
         };
     }

@@ -24,7 +24,8 @@ export interface ConnectorConfig {
     modules: Record<string, ModuleConfiguration>;
     infrastructure: InfrastructureConfiguration;
 
-    pinnedTLSCertificateKeys?: Record<string, string[]>;
+    pinnedTLSCertificateSHA256Fingerprints?: Record<string, string[]>;
+    enforceCertificatePinning?: boolean;
 
     [key: string]: any;
 }
