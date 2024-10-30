@@ -1,8 +1,8 @@
-import { ConnectorHttpResponse, ConnectorIdentityMetadata } from "../types";
+import { ConnectorHttpResponse, ConnectorIdentityMetadata, UpsertIdentityMetadataRequest } from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class IdentityMetadataEndpoint extends Endpoint {
-    public async upsertIdentityMetadata(request: any): Promise<ConnectorHttpResponse<ConnectorIdentityMetadata>> {
+    public async upsertIdentityMetadata(request: UpsertIdentityMetadataRequest): Promise<ConnectorHttpResponse<ConnectorIdentityMetadata>> {
         return await this.put("/api/v2/IdentityMetadata", request);
     }
 
