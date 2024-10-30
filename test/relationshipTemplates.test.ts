@@ -84,21 +84,26 @@ describe("Template Tests", () => {
     });
 
     test("send and receive a personalized template", async () => {
-        const template = await createTemplate(client1, (await client2.account.getIdentityInfo()).result.address);
+        const client2address = (await client2.account.getIdentityInfo()).result.address;
+        const template = await createTemplate(client1, client2address);
+        expect(template.forIdentity).toBe(client2address);
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: template.truncatedReference
         });
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response.result.forIdentity).toBe(client2address);
     });
 
     test("send and receive a personalized template via token", async () => {
-        const templateToken = await getTemplateToken(client1, (await client2.account.getIdentityInfo()).result.address);
+        const client2address = (await client2.account.getIdentityInfo()).result.address;
+        const templateToken = await getTemplateToken(client1, client2address);
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: templateToken.truncatedReference
         });
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response.result.forIdentity).toBe(client2address);
     });
 });
 
