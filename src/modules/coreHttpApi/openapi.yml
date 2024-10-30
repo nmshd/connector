@@ -2158,6 +2158,131 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
+  # ------------------- IdentityMetadata -------------------
+
+  /api/v2/IdentityMetadata:
+    put:
+      operationId: upsertIdentityMetadata
+      description: Creates or updates an IdentityMetadata object for the specified `reference` and `key` combination.
+      tags:
+        - IdentityMetadata
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/UpsertIdentityMetadataRequest"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/IdentityMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    get:
+      operationId: getIdentityMetadata
+      description: Fetches the IdentityMetadata with the given `reference` and `key` combination.
+      tags:
+        - IdentityMetadata
+      parameters:
+        - in: query
+          name: reference
+          description: The reference of the IdentityMetadata.
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+        - in: query
+          name: key
+          description: The optional key of the IdentityMetadata.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/IdentityMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      operationId: deleteIdentityMetadata
+      description: Deletes the IdentityMetadata with the given `reference` and `key` combination.
+      tags:
+        - IdentityMetadata
+      parameters:
+        - in: query
+          name: reference
+          description: The reference of the IdentityMetadata.
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+        - in: query
+          name: key
+          description: The optional key of the IdentityMetadata.
+          required: false
+          schema:
+            type: string
+      responses:
+        204:
+          description: Success
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
   # ------------------- Messages -------------------
 
   /api/v2/Messages:
@@ -2190,8 +2315,8 @@ paths:
                   nullable: false
                   example:
                     "@type": Mail
-                    to: [did:e:_________________________________]
-                    cc: [did:e:_________________________________]
+                    to: [did:e:<base-url>:dids:<22-characters>]
+                    cc: [did:e:<base-url>:dids:<22-characters>]
                     subject: Subject
                     body: Body
                   description: Either a Mail, a Request, a ResponseWrapper, a Notification or an ArbitraryMessageContent must be provided as the 'content' of the Message.
@@ -4459,7 +4584,7 @@ components:
       type: string
       format: Address
       minLength: 35
-      example: did:e:_________________________________
+      example: did:e:<base-url>:dids:<22-characters>
 
     AttributeID:
       type: string
@@ -5832,6 +5957,45 @@ components:
     TokenContent:
       type: object
       description: The arbitrary JSON object which should be shared between creator of the Token and the recipient.
+
+    IdentityMetadata:
+      type: object
+      additionalProperties: false
+      properties:
+        reference:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+          description: The address of the identity for that the metadata is stored for.
+        key:
+          type: string
+          nullable: true
+          description: An optional key to identify the metadata. Can be used to store multiple metadata entries for the same identity. There can be at most one IdentityMetadata per `reference` and `key` combination.
+        value:
+          type: object
+          example: { "key": "value" }
+          description: The metadata value as a JSON object.
+      required:
+        - reference
+        - value
+
+    UpsertIdentityMetadataRequest:
+      type: object
+      properties:
+        reference:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+        key:
+          type: string
+          nullable: true
+        value:
+          type: object
+          nullable: false
+          example: { "key": "value" }
+      required:
+        - reference
+        - value
 
     # ------------------- General -------------------
 
