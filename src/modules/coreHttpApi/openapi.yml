@@ -2171,21 +2171,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties:
-                reference:
-                  allOf:
-                    - $ref: "#/components/schemas/Address"
-                  nullable: false
-                key:
-                  type: string
-                  nullable: true
-                value:
-                  type: object
-                  nullable: false
-                  example: { "key": "value" }
-              required:
-                - reference
-                - value
+              $ref: "#/components/schemas/UpsertIdentityMetadataRequest"
       responses:
         200:
           description: Success
@@ -5961,6 +5947,24 @@ components:
           type: object
           example: { "key": "value" }
           description: The metadata value as a JSON object.
+      required:
+        - reference
+        - value
+
+    UpsertIdentityMetadataRequest:
+      type: object
+      properties:
+        reference:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+        key:
+          type: string
+          nullable: true
+        value:
+          type: object
+          nullable: false
+          example: { "key": "value" }
       required:
         - reference
         - value
