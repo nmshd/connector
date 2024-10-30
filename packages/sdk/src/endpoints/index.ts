@@ -2,6 +2,7 @@ export * from "./AccountEndpoint";
 export * from "./AttributesEndpoint";
 export * from "./ChallengesEndpoint";
 export * from "./FilesEndpoint";
+export * from "./IdentityMetadataEndpoint";
 export * from "./IncomingRequestsEndpoint";
 export * from "./MessagesEndpoint";
 export * from "./MonitoringEndpoint";
