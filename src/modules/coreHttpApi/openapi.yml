@@ -2163,10 +2163,139 @@ paths:
   /api/v2/IdentityMetadata:
     put:
       operationId: upsertIdentityMetadata
+      description: Creates or updates an IdentityMetadata object for the specified `reference` and `key` combination.
+      tags:
+        - IdentityMetadata
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reference:
+                  allOf:
+                    - $ref: "#/components/schemas/Address"
+                  nullable: false
+                key:
+                  type: string
+                  nullable: true
+                value:
+                  type: object
+                  nullable: false
+                  example: { "key": "value" }
+              required:
+                - reference
+                - value
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/IdentityMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
     get:
       operationId: getIdentityMetadata
+      description: Fetches the IdentityMetadata with the given `reference` and `key` combination.
+      tags:
+        - IdentityMetadata
+      parameters:
+        - in: query
+          name: reference
+          description: The reference of the IdentityMetadata.
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+        - in: query
+          name: key
+          description: The optional key of the IdentityMetadata.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/IdentityMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
     delete:
       operationId: deleteIdentityMetadata
+      description: Deletes the IdentityMetadata with the given `reference` and `key` combination.
+      tags:
+        - IdentityMetadata
+      parameters:
+        - in: query
+          name: reference
+          description: The reference of the IdentityMetadata.
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+        - in: query
+          name: key
+          description: The optional key of the IdentityMetadata.
+          required: false
+          schema:
+            type: string
+      responses:
+        204:
+          description: Success
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
 
   # ------------------- Messages -------------------
 
@@ -2200,8 +2329,8 @@ paths:
                   nullable: false
                   example:
                     "@type": Mail
-                    to: [did:e:_________________________________]
-                    cc: [did:e:_________________________________]
+                    to: [did:e:<base-url>:dids:<22-characters>]
+                    cc: [did:e:<base-url>:dids:<22-characters>]
                     subject: Subject
                     body: Body
                   description: Either a Mail, a Request, a ResponseWrapper, a Notification or an ArbitraryMessageContent must be provided as the 'content' of the Message.
@@ -4449,7 +4578,7 @@ components:
       type: string
       format: Address
       minLength: 35
-      example: did:e:_________________________________
+      example: did:e:<base-url>:dids:<22-characters>
 
     AttributeID:
       type: string
