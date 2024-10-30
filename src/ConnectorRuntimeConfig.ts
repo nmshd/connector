@@ -27,4 +27,7 @@ export interface ConnectorRuntimeConfig extends RuntimeConfig {
     infrastructure: {
         httpServer: HttpServerConfiguration;
     };
+
+    pinnedTLSCertificateSHA256Fingerprints?: Record<string, string[]>;
+    enforceCertificatePinning?: boolean;
 }
