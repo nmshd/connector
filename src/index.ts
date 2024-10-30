@@ -81,6 +81,8 @@ function parseString(value: string) {
 
 async function run() {
     const config = createConnectorConfig();
+    if (!config.debug) process.env.TLS_REJECT_UNAUTHORIZED = "1";
+
     const runtime = await ConnectorRuntime.create(config);
     await runtime.start();
 }
