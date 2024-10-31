@@ -92,6 +92,7 @@ describe("Template Tests", () => {
             reference: template.truncatedReference
         });
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        console.log(response.result);
         expect(response.result.forIdentity).toBe(client2address);
     });
 
@@ -103,6 +104,7 @@ describe("Template Tests", () => {
             reference: templateToken.truncatedReference
         });
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        console.log(response.result);
         expect(response.result.forIdentity).toBe(client2address);
     });
 });
