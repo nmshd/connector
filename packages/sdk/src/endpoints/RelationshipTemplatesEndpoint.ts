@@ -55,6 +55,8 @@ export class RelationshipTemplatesEndpoint extends Endpoint {
     }
 
     public async loadPeerRelationshipTemplate(request: LoadPeerRelationshipTemplateRequest): Promise<ConnectorHttpResponse<ConnectorRelationshipTemplate>> {
-        return await this.post("/api/v2/RelationshipTemplates/Peer", request);
+        const result: ConnectorHttpResponse<ConnectorRelationshipTemplate> = await this.post("/api/v2/RelationshipTemplates/Peer", request);
+        console.log(result.result);
+        return result;
     }
 }
