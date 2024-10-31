@@ -1,5 +1,4 @@
 import { ConnectorClient, ConnectorRelationshipTemplate } from "@nmshd/connector-sdk";
-import { Reference } from "@nmshd/transport";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
@@ -84,18 +83,16 @@ describe("Template Tests", () => {
         expect(response.error.code).toBe("error.runtime.validation.invalidPropertyValue");
     });
 
-    test.only("send and receive a personalized template", async () => {
+    test("send and receive a personalized template", async () => {
         const client2address = (await client2.account.getIdentityInfo()).result.address;
         const template = await createTemplate(client1, client2address);
         expect(template.forIdentity).toBe(client2address);
-        console.log(template);
-        console.log(Reference.from(template.truncatedReference));
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: template.truncatedReference
         });
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
-        // console.log(response.result);
+        console.log(response.result);
         expect(response.result.forIdentity).toBe(client2address);
     });
 

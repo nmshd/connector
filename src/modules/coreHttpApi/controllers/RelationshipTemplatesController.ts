@@ -80,10 +80,7 @@ export class RelationshipTemplatesController extends BaseController {
     @Accept("application/json")
     public async loadPeerTemplate(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.transportServices.relationshipTemplates.loadPeerRelationshipTemplate(request);
-        console.log("Hi - Controller" + result.value);
-        console.log(result.value.forIdentity);
-        console.log(!!result.value.forIdentity);
-        if (!!result.value.forIdentity) {
+        if (result.value.forIdentity) {
             console.log(result.value.forIdentity);
         }
         return this.created(result);
