@@ -7,7 +7,7 @@ import { startConnectorCommand } from "./cli/commands";
 yargs(hideBin(process.argv))
     .command(startConnectorCommand)
     .demandCommand(1, 1, "Please specify a command")
-    .scriptName("nmshd-connector")
+    .scriptName("")
     .strict()
     .alias("h", "help")
     .parseAsync()
