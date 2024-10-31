@@ -4,6 +4,7 @@ export * from "./challenges";
 export * from "./ConnectorError";
 export * from "./ConnectorHttpResponse";
 export * from "./files";
+export * from "./identityMetadata";
 export * from "./messages";
 export * from "./relationships";
 export * from "./relationshipTemplates";

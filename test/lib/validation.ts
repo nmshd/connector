@@ -13,6 +13,7 @@ export enum ValidationSchema {
     Error = "ConnectorError",
     File = "ConnectorFile",
     Files = "ConnectorFiles",
+    IdentityMetadata = "ConnectorIdentityMetadata",
     Message = "ConnectorMessage",
     Messages = "ConnectorMessages",
     MessageWithAttachments = "ConnectorMessageWithAttachments",

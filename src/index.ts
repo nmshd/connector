@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 import yargs from "yargs";
-import { yargsIdentityDeletionCancelCommand, yargsIdentityDeletionInitCommand, yargsIdentityStatusCommand, yargsStartConnectorCommand } from "./cli/commands";
+import { hideBin } from "yargs/helpers";
+import { startConnectorCommand, yargsIdentityDeletionCancelCommand, yargsIdentityDeletionInitCommand, yargsIdentityStatusCommand } from "./cli/commands";
 
-const argv = yargs(process.argv.slice(2))
+yargs(hideBin(process.argv))
     .command({
         command: "identity [command]",
         describe: "Identity related commands",
@@ -24,16 +25,14 @@ const argv = yargs(process.argv.slice(2))
             yargs.showHelp("log");
         }
     })
-    .command(yargsStartConnectorCommand)
+    .command(startConnectorCommand)
     .demandCommand(1, 1, "Please specify a command")
-    .help("h")
-    .alias("h", "help")
-    .scriptName("connector")
+    .scriptName("")
     .strict()
-    .parse();
-
-Promise.resolve(argv).catch((e) => {
-    // eslint-disable-next-line no-console
-    console.error(e);
-    process.exit(1);
-});
+    .alias("h", "help")
+    .parseAsync()
+    .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.error(e);
+        process.exit(1);
+    });
