@@ -1,7 +1,8 @@
 include:
   - compose.backbone.yml
+
 services:
-  connector-1:
+  connector:
     build:
       context: ..
       dockerfile: Dockerfile
