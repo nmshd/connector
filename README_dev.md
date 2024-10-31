@@ -101,6 +101,26 @@ Set the following environment variables:
 
 > We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
 
+### Local Backbone Prod Docker image testing
+
+To test the productive image you can use the `startProdLikeContainer.sh` script
+
+The script accepts all docker compose commands.
+
+For example to start the compose you can run it like
+`.dev/scripts/startProdLikeContainer.sh up --build -d`
+
+or to take it down again
+`.dev/scripts/startProdLikeContainer.sh down`
+
+to check if the prod image still works you can run.
+
+`docker logs -f connector`
+
+to see the logs of the connector.
+
+Afterward you can use the connector-tui or an REST client to test the connector.
+
 ### Run the tests
 
 ```shell
