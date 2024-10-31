@@ -1,1 +1,1 @@
-docker compose -f .dev/compose.prodtest.yml -f .dev/compose.backbone.yml --env-file .dev/compose.backbone.env "$@"
+docker compose -f .dev/compose.prodtest.yml --env-file .dev/compose.backbone.env "$@"
