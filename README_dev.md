@@ -32,7 +32,7 @@ docker compose -f .dev/compose.yml --env-file [path_to_your_env_file] up --build
 After a few seconds you should see the following output:
 
 ```console
-connector-1  | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transportinitialized
+connector-1  | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transport initialized
 ...
 connector-1  | [2021-01-25T11:27:41.241] [INFO] HttpServerModule - Listening on port 80
 ...
@@ -101,6 +101,24 @@ Set the following environment variables:
 
 > We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
 
+### Local Backbone Prod Docker image testing
+
+To test the productive image you can use `docker compose -f .dev/compose.prodtest.yml --env-file .dev/compose.backbone.env`.
+
+For example to start the compose you can run it like
+`docker compose -f .dev/compose.prodtest.yml --env-file .dev/compose.backbone.env up --build -d`
+
+or to take it down again
+`docker compose -f .dev/compose.prodtest.yml --env-file .dev/compose.backbone.env down`
+
+to check if the prod image still works you can run.
+
+`docker logs -f connector`
+
+to see the logs of the connector.
+
+Afterward you can use the connector-tui or an REST client to test the connector.
+
 ### Run the tests
 
 ```shell
@@ -120,6 +138,7 @@ npm run test:local -- testSuiteName
 3. install the npm dependencies `npm i`
 4. build the connector `npm run build`
 5. create a config file (for example `local.config.json`)
+
     ```
     {
       "debug": true,
@@ -130,12 +149,13 @@ npm run test:local -- testSuiteName
       },
       "database": { "driver": "lokijs", "folder": "./" },
       "logging": { "categories": { "default": { "appenders": ["console"] } } },
-      "infrastructure": { "httpServer": { "apiKey": "xxx", port: 8080 } },
+      "infrastructure": { "httpServer": { "apiKey": "xxx", "port": 8080 } },
       "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
     }
     ```
+
 6. replace ... in the config with real values
-7. start the connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/index.js`
+7. start the connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/index.js start`
 
 It's now possible to access the connector on port 8080. Validating this is possible by accessing `http://localhost:8080/docs/swagger` in the browser.
 

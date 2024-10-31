@@ -1,0 +1,38 @@
+include:
+  - compose.backbone.yml
+
+services:
+  connector:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        VERSION: "{{version}}"
+        BUILD_NUMBER: "test"
+        COMMIT_HASH: "test"
+    container_name: connector
+    ports:
+      - "3000:80" # Webserver
+    environment:
+      DATABASE_NAME: "prod_connector"
+      transportLibrary__baseUrl: "http://consumer-api:8080"
+      transportLibrary__platformClientId: "test"
+      transportLibrary__platformClientSecret: "test"
+      transportLibrary__addressGenerationHostnameOverride: "localhost"
+      DATABASE_CONNECTION_STRING: "mongodb://mongo:27017"
+      API_KEY: xxx
+      DEBUG: true
+    depends_on:
+      mongo:
+        condition: service_started
+      consumer-api:
+        condition: service_healthy
+
+  mongo:
+    container_name: mongo
+    hostname: mongo
+    image: mongo
+    ports:
+      - "27017:27017"
+    logging:
+      driver: none
