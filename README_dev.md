@@ -103,15 +103,13 @@ Set the following environment variables:
 
 ### Local Backbone Prod Docker image testing
 
-To test the productive image you can use the `startProdLikeContainer.sh` script
-
-The script accepts all docker compose commands.
+To test the productive image you can use `docker compose -f .dev/compose.prodtest.yml --env-file .dev/compose.backbone.env`.
 
 For example to start the compose you can run it like
-`.dev/scripts/startProdLikeContainer.sh up --build -d`
+`docker compose -f .dev/compose.prodtest.yml --env-file .dev/compose.backbone.env up --build -d`
 
 or to take it down again
-`.dev/scripts/startProdLikeContainer.sh down`
+`docker compose -f .dev/compose.prodtest.yml --env-file .dev/compose.backbone.env down`
 
 to check if the prod image still works you can run.
 
