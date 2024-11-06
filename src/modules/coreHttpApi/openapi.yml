@@ -2319,7 +2319,7 @@ paths:
                     cc: [did:e:<base-url>:dids:<22-characters>]
                     subject: Subject
                     body: Body
-                  description: Either a Mail, a Request, a ResponseWrapper, a Notification or an ArbitraryMessageContent must be provided as the 'content' of the Message.
+                  description: Either a Mail, a Request, a ResponseWrapper, a Notification or an ArbitraryMessageContent must be provided as the `content` of the Message.
                 attachments:
                   type: array
                   nullable: true
@@ -3256,7 +3256,7 @@ paths:
                     value:
                       prop1: "value"
                       prop2: 1
-                  description: Either a RelationshipTemplateContent or an ArbitraryRelationshipTemplateContent must be provided as the 'content' of the RelationshipTemplate.
+                  description: Either a RelationshipTemplateContent or an ArbitraryRelationshipTemplateContent must be provided as the `content` of the RelationshipTemplate.
               required:
                 - expiresAt
                 - content
@@ -5280,7 +5280,7 @@ components:
                 oneOf:
                   - $ref: "#/components/schemas/RequestItemGroup"
                   - $ref: "#/components/schemas/RequestItem"
-                description: The 'items' of a Request can be of type RequestItemGroup or RequestItem.
+                description: The `items` of a Request can be of type RequestItemGroup or RequestItem.
         peer:
           description: The address of the peer that will receive the request. This is optional because in case of a RelationshipTemplate you do not know the peer address yet. For better results you should specify `peer` whenever you know it.
           allOf:
@@ -5304,7 +5304,7 @@ components:
                 oneOf:
                   - $ref: "#/components/schemas/RequestItemGroup"
                   - $ref: "#/components/schemas/RequestItem"
-                description: The 'items' of a Request can be of type RequestItemGroup or RequestItem.
+                description: The `items` of a Request can be of type RequestItemGroup or RequestItem.
         peer:
           allOf:
             - $ref: "#/components/schemas/Address"
