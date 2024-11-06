@@ -2563,7 +2563,7 @@ paths:
   /api/v2/Relationships/CanCreate:
     put:
       operationId: canCreateRelationship
-      description: Checks if a Relationship with a given RelationshipTemplate and creationContent can be created.
+      description: Checks if a Relationship can be created with a given RelationshipTemplate to its creator. Optionally, the potential `creationContent` of the Relationship can also be validated.
       tags:
         - Relationships
       requestBody:
@@ -2586,10 +2586,9 @@ paths:
                     value:
                       prop1: value
                       prop2: 1
-                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the 'creationContent' of the Relationship.
+                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the `creationContent` of the Relationship.
               required:
                 - templateId
-                - creationContent
       responses:
         200:
           description: Success
@@ -2645,7 +2644,7 @@ paths:
                     value:
                       prop1: value
                       prop2: 1
-                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the 'creationContent' of the Relationship.
+                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the `creationContent` of the Relationship.
               required:
                 - templateId
                 - creationContent
