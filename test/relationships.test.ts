@@ -29,10 +29,15 @@ describe("Relationships", () => {
         const templateId = loadRelationshipResponse.result.id;
 
         const canCreateRelationshipResponse = await client2.relationships.canCreateRelationship({
+            templateId
+        });
+        expect(canCreateRelationshipResponse.isSuccess).toBe(true);
+
+        const canCreateRelationshipWithProvidedCreationContentResponse = await client2.relationships.canCreateRelationship({
             templateId,
             creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} }
         });
-        expect(canCreateRelationshipResponse.isSuccess).toBe(true);
+        expect(canCreateRelationshipWithProvidedCreationContentResponse.isSuccess).toBe(true);
 
         const createRelationshipResponse = await client2.relationships.createRelationship({
             templateId,

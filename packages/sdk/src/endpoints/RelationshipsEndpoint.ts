@@ -1,4 +1,5 @@
 import {
+    CanCreateRelationshipRequest,
     CanCreateRelationshipResponse,
     ConnectorAttributes,
     ConnectorHttpResponse,
@@ -10,7 +11,7 @@ import {
 import { Endpoint } from "./Endpoint";
 
 export class RelationshipsEndpoint extends Endpoint {
-    public async canCreateRelationship(request: CreateRelationshipRequest): Promise<ConnectorHttpResponse<CanCreateRelationshipResponse>> {
+    public async canCreateRelationship(request: CanCreateRelationshipRequest): Promise<ConnectorHttpResponse<CanCreateRelationshipResponse>> {
         return await this.put("/api/v2/Relationships/CanCreate", request);
     }
 
