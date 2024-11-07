@@ -152,7 +152,6 @@ npm run test:local -- testSuiteName
       "infrastructure": { "httpServer": { "apiKey": "xxx", "port": 8080 } },
       "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
     }
-
     ```
 
 6. replace ... in the config with real values
