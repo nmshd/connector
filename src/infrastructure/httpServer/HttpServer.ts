@@ -190,6 +190,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useApiKey() {
+        if (!this.configuration.apiKey && this.connectorMode === "debug") return;
         if (!this.configuration.apiKey && this.connectorMode === "production") {
             throw new Error("No API key set in configuration. This is required in production mode.");
         }
