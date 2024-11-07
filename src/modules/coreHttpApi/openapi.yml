@@ -5089,7 +5089,6 @@ components:
               - $ref: "#/components/schemas/RequestItem"
               - $ref: "#/components/schemas/RequestItemGroup"
       required:
-        - "@type"
         - items
 
     RequestResponseContentItem:
