@@ -28,7 +28,6 @@ RUN npm ci --omit=dev
 
 COPY --from=builder /usr/app/dist/ dist/
 
-
 LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
 
 USER node
