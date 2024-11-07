@@ -2319,7 +2319,7 @@ paths:
                     cc: [did:e:<base-url>:dids:<22-characters>]
                     subject: Subject
                     body: Body
-                  description: Either a Mail, a Request, a ResponseWrapper, a Notification or an ArbitraryMessageContent must be provided as the 'content' of the Message.
+                  description: Either a Mail, a Request, a ResponseWrapper, a Notification or an ArbitraryMessageContent must be provided as the `content` of the Message.
                 attachments:
                   type: array
                   nullable: true
@@ -2563,7 +2563,7 @@ paths:
   /api/v2/Relationships/CanCreate:
     put:
       operationId: canCreateRelationship
-      description: Checks if a Relationship with a given RelationshipTemplate and creationContent can be created.
+      description: Checks if a Relationship can be created with a given RelationshipTemplate to its creator. Optionally, the potential `creationContent` of the Relationship can also be validated.
       tags:
         - Relationships
       requestBody:
@@ -2586,10 +2586,9 @@ paths:
                     value:
                       prop1: value
                       prop2: 1
-                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the 'creationContent' of the Relationship.
+                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the `creationContent` of the Relationship.
               required:
                 - templateId
-                - creationContent
       responses:
         200:
           description: Success
@@ -2645,7 +2644,7 @@ paths:
                     value:
                       prop1: value
                       prop2: 1
-                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the 'creationContent' of the Relationship.
+                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the `creationContent` of the Relationship.
               required:
                 - templateId
                 - creationContent
@@ -3257,7 +3256,7 @@ paths:
                     value:
                       prop1: "value"
                       prop2: 1
-                  description: Either a RelationshipTemplateContent or an ArbitraryRelationshipTemplateContent must be provided as the 'content' of the RelationshipTemplate.
+                  description: Either a RelationshipTemplateContent or an ArbitraryRelationshipTemplateContent must be provided as the `content` of the RelationshipTemplate.
               required:
                 - expiresAt
                 - content
@@ -5281,7 +5280,7 @@ components:
                 oneOf:
                   - $ref: "#/components/schemas/RequestItemGroup"
                   - $ref: "#/components/schemas/RequestItem"
-                description: The 'items' of a Request can be of type RequestItemGroup or RequestItem.
+                description: The `items` of a Request can be of type RequestItemGroup or RequestItem.
         peer:
           description: The address of the peer that will receive the request. This is optional because in case of a RelationshipTemplate you do not know the peer address yet. For better results you should specify `peer` whenever you know it.
           allOf:
@@ -5305,7 +5304,7 @@ components:
                 oneOf:
                   - $ref: "#/components/schemas/RequestItemGroup"
                   - $ref: "#/components/schemas/RequestItem"
-                description: The 'items' of a Request can be of type RequestItemGroup or RequestItem.
+                description: The `items` of a Request can be of type RequestItemGroup or RequestItem.
         peer:
           allOf:
             - $ref: "#/components/schemas/Address"

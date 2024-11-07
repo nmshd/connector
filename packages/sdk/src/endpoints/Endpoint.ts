@@ -39,6 +39,7 @@ export abstract class Endpoint {
                 case "POST":
                     expectedStatus = 201;
                     break;
+                case undefined:
                 default:
                     expectedStatus = 200;
                     break;
