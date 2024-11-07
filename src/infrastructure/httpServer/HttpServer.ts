@@ -91,21 +91,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.useUnsecuredCustomEndpoints();
 
         this.useHealthEndpoint();
-
-        if (this.configuration.apiKey) {
-            this.app.use(async (req, res, next) => {
-                const apiKeyFromHeader = req.headers["x-api-key"];
-                if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
-                    await sleep(1000);
-                    res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
-                    return;
-                }
-
-                next();
-            });
-        } else {
-            this.logger.warn("No api key set in config, this Connector runs without any authentication! This is strongly discouraged.");
-        }
+        this.useApiKey();
 
         this.useVersionEndpoint();
         this.useResponsesEndpoint();
@@ -201,6 +187,26 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private useErrorHandlers() {
         this.app.use(csrfErrorHandler);
         this.app.use(genericErrorHandler(this.connectorMode));
+    }
+
+    private useApiKey() {
+        if (!this.configuration.apiKey && this.connectorMode === "production") {
+            throw new Error("No API key set in configuration. This is required in production mode.");
+        }
+
+        if (!this.configuration.apiKey) return;
+        this.app.use(async (req, res, next) => {
+            const apiKeyFromHeader = req.headers["x-api-key"];
+            if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
+                // sleep for 1 to 4 seconds
+                await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
+
+                res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
+                return;
+            }
+
+            next();
+        });
     }
 
     private useHealthEndpoint() {
