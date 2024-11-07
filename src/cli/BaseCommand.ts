@@ -37,7 +37,6 @@ export abstract class BaseCommand {
                     default: { appenders: ["console"], level: "OFF" }
                 }
             };
-            this.connectorConfig = this.enhanceConfig(this.connectorConfig);
             return await this.runInternal(this.connectorConfig);
         } catch (error: any) {
             this.log.log("Error creating identity: ", error);
@@ -46,10 +45,6 @@ export abstract class BaseCommand {
                 await this.cliRuntime.stop();
             }
         }
-    }
-
-    protected enhanceConfig(connectorConfig: ConnectorRuntimeConfig): ConnectorRuntimeConfig {
-        return connectorConfig;
     }
 
     protected async createRuntime(): Promise<void> {
