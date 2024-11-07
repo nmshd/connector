@@ -1,11 +1,7 @@
-import { IDatabaseConnection } from "@js-soft/docdb-access-abstractions";
-import { LokiJsConnection } from "@js-soft/docdb-access-loki";
-import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import yargs from "yargs";
 import { ConnectorRuntime } from "../ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "../ConnectorRuntimeConfig";
 import { createConnectorConfig } from "../CreateConnectorConfig";
-import { DocumentationLink } from "../DocumentationLink";
 
 export interface ConfigFileOptions {
     config: string | undefined;
@@ -25,33 +21,6 @@ export abstract class BaseCommand {
     private connectorConfig?: ConnectorRuntimeConfig;
     protected cliRuntime?: ConnectorRuntime;
     protected log = console;
-
-    public static readonly enableJsonFlag = true;
-
-    public static async createDBConnection(runtimeConfig: ConnectorRuntimeConfig): Promise<IDatabaseConnection> {
-        if (runtimeConfig.database.driver === "lokijs") {
-            if (!runtimeConfig.debug) throw new Error("LokiJS is only available in debug mode.");
-
-            const folder = runtimeConfig.database.folder;
-            if (!folder) throw new Error("No folder provided for LokiJS database.");
-
-            return new LokiJsConnection(folder, undefined, { autoload: true, autosave: true, persistenceMethod: "fs" });
-        }
-
-        if (!runtimeConfig.database.connectionString) {
-            throw new Error(`No database connection string provided. See ${DocumentationLink.operate__configuration("database")} on how to configure the database connection.`);
-        }
-
-        const mongodbConnection = new MongoDbConnection(runtimeConfig.database.connectionString);
-
-        try {
-            await mongodbConnection.connect();
-        } catch (e) {
-            throw new Error(`Could not connect to the configured database. Try to check the connection string and the database status. Root error: ${e}`);
-        }
-
-        return mongodbConnection;
-    }
 
     public async run(configPath: string | undefined): Promise<any> {
         if (configPath) {
