@@ -1,6 +1,7 @@
 import { sleep } from "@js-soft/ts-utils";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
+import { passwordStrength as checkAPIKeyStrength } from "check-password-strength";
 import compression from "compression";
 import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
@@ -190,12 +191,24 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useApiKey() {
-        if (!this.configuration.apiKey && this.connectorMode === "debug") return;
-        if (!this.configuration.apiKey && this.connectorMode === "production") {
-            throw new Error("No API key set in configuration. This is required in production mode.");
+        if (!this.configuration.apiKey) {
+            switch (this.connectorMode) {
+                case "debug":
+                    return;
+                case "production":
+                    throw new Error("No API key set in configuration. This is required in production mode.");
+            }
         }
 
-        if (!this.configuration.apiKey) return;
+        const apiKeyStrength = checkAPIKeyStrength(this.configuration.apiKey, [
+            { id: 0, value: "Very Weak", minDiversity: 0, minLength: 0 },
+            { id: 1, value: "Strong", minDiversity: 0, minLength: 30 }
+        ]);
+        if (apiKeyStrength.value !== "Strong") {
+            this.logger.warn(
+                "The configured API key does not meet the requirements. It must be 30 chars and contain at least 1 digit, 1 uppercase, 1 lowercase, and 1 special char."
+            );
+        }
 
         this.app.use(async (req, res, next) => {
             const apiKeyFromHeader = req.headers["x-api-key"];
