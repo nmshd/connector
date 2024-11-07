@@ -195,6 +195,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         }
 
         if (!this.configuration.apiKey) return;
+
         this.app.use(async (req, res, next) => {
             const apiKeyFromHeader = req.headers["x-api-key"];
             if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
