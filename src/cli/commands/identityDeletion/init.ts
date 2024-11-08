@@ -2,7 +2,8 @@ import { CommandModule } from "yargs";
 import { BaseCommand, ConfigFileOptions, configOptionBuilder } from "../../BaseCommand";
 
 export const identityDeletionInitHandler = async ({ config }: ConfigFileOptions): Promise<void> => {
-    await new InitIdentityDeletion().run(config);
+    const command = new InitIdentityDeletion();
+    await command.run(config);
 };
 export const yargsIdentityDeletionInitCommand: CommandModule<{}, ConfigFileOptions> = {
     command: "init",

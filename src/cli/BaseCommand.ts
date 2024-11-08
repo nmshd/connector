@@ -4,7 +4,7 @@ import { ConnectorRuntimeConfig } from "../ConnectorRuntimeConfig";
 import { createConnectorConfig } from "../CreateConnectorConfig";
 
 export interface ConfigFileOptions {
-    config: string | undefined;
+    config?: string;
 }
 
 export const configOptionBuilder = (yargs: yargs.Argv<{}>): yargs.Argv<ConfigFileOptions> => {
@@ -29,6 +29,8 @@ export abstract class BaseCommand {
 
         try {
             this.connectorConfig = createConnectorConfig();
+            this.connectorConfig.infrastructure.httpServer.enabled = false;
+            this.connectorConfig.modules.coreHttpApi.enabled = false;
             this.connectorConfig.logging = {
                 appenders: {
                     console: { type: "console" }
