@@ -89,7 +89,6 @@
         "agentkeepalive": "4.5.0",
         "amqplib": "^0.10.4",
         "axios": "^1.7.7",
-        "check-password-strength": "^2.0.10",
         "compression": "1.7.5",
         "correlation-id": "^5.2.0",
         "cors": "2.8.5",
