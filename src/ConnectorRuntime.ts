@@ -38,11 +38,11 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     private _transportServices: TransportServices;
     private _consumptionServices: ConsumptionServices;
 
-    private _dataViewExpander: DataViewExpander;
-
-    public get connectorMode(): ConnectorMode {
+    private get connectorMode(): ConnectorMode {
         return this.runtimeConfig.debug ? "debug" : "production";
     }
+
+    private _dataViewExpander: DataViewExpander;
 
     public override getServices(): RuntimeServices {
         return {

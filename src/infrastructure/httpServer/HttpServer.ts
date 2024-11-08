@@ -86,7 +86,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.app.use(setDurationHeader);
         this.app.use(setResponseTimeHeader);
         this.app.use((req, _res, next) => {
-            req._debugMode = this.runtime.connectorMode === "debug";
+            req._debugMode = this.connectorMode === "debug";
             next();
         });
 
