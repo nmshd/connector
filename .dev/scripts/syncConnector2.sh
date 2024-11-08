@@ -2,4 +2,4 @@
 
 set -e
 
-curl -H "X-API-KEY: 48op_B!W)%UKy6LOEXb=29UC;A7&0w" -X POST http://localhost:3001/api/v2/Account/Sync
+curl -H "X-API-KEY: This_is_a_test_APIKEY_with_30_chars" -X POST http://localhost:3001/api/v2/Account/Sync
