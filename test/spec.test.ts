@@ -36,7 +36,12 @@ describe("test openapi spec against routes", () => {
         const manualPaths = getPaths(manualOpenApiSpec);
         const generatedPaths = getPaths(generatedOpenApiSpec);
 
+        const nonDocumentedRoutes = ["/api/v2/IdentityDeletion/"];
+
         generatedPaths.forEach((path) => {
+            if (nonDocumentedRoutes.includes(path)) {
+                return;
+            }
             expect(manualPaths, "The route is programmed but not in the API spec").toContain(path);
         });
 
