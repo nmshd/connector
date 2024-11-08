@@ -4,12 +4,12 @@ import { ConnectorClient, ConnectorRelationshipStatus } from "@nmshd/connector-s
 async function run() {
     const connector1 = ConnectorClient.create({
         baseUrl: "http://localhost:3000",
-        apiKey: "xxx"
+        apiKey: "48op_B!W)%UKy6LOEXb=29UC;A7&0w"
     });
 
     const connector2 = ConnectorClient.create({
         baseUrl: "http://localhost:3001",
-        apiKey: "xxx"
+        apiKey: "48op_B!W)%UKy6LOEXb=29UC;A7&0w"
     });
 
     const { connector1Address, connector2Address } = await establishOrReturnRelationship(connector1, connector2);

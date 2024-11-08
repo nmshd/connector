@@ -149,7 +149,7 @@ npm run test:local -- testSuiteName
       },
       "database": { "driver": "lokijs", "folder": "./" },
       "logging": { "categories": { "default": { "appenders": ["console"] } } },
-      "infrastructure": { "httpServer": { "apiKey": "xxx", "port": 8080 } },
+      "infrastructure": { "httpServer": { "apiKey": "", "port": 8080 } },
       "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
     }
     ```
