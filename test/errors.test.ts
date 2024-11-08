@@ -10,7 +10,9 @@ beforeAll(async () => {
     const baseUrl = await launcher.launchSimple();
     axiosClient = axios.create({
         baseURL: baseUrl,
-        validateStatus: (_) => true
+        validateStatus: (_) => true,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        headers: { "X-API-KEY": launcher.apiKey }
     });
 }, getTimeout(30000));
 
@@ -18,37 +20,28 @@ afterAll(() => launcher.stop());
 
 describe("Errors", () => {
     test("http error 401", async () => {
-        const response = await axiosClient.get<any>("/api/v2/Files");
+        const response = await axiosClient.get<any>("/api/v2/Files", {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            headers: { "X-API-KEY": "invalid" }
+        });
         expect(response.status).toBe(401);
         validateSchema(ValidationSchema.Error, response.data.error);
     });
 
     test("http error 404", async () => {
-        const response = await axiosClient.get<any>("/apii/v2/Files", {
-            headers: {
-                "X-API-KEY": "xxx" // eslint-disable-line @typescript-eslint/naming-convention
-            }
-        });
+        const response = await axiosClient.get<any>("/apii/v2/Files");
         expect(response.status).toBe(404);
         validateSchema(ValidationSchema.Error, response.data.error);
     });
 
     test("http error 405", async () => {
-        const response = await axiosClient.patch<any>("/api/v2/Files", undefined, {
-            headers: {
-                "X-API-KEY": "xxx" // eslint-disable-line @typescript-eslint/naming-convention
-            }
-        });
+        const response = await axiosClient.patch<any>("/api/v2/Files", undefined);
         expect(response.status).toBe(405);
         validateSchema(ValidationSchema.Error, response.data.error);
     });
 
     test("http error 400", async () => {
-        const response = await axiosClient.post<any>("/api/v2/Files/Own", undefined, {
-            headers: {
-                "X-API-KEY": "xxx" // eslint-disable-line @typescript-eslint/naming-convention
-            }
-        });
+        const response = await axiosClient.post<any>("/api/v2/Files/Own", undefined);
         expect(response.status).toBe(400);
         expect(response.data.error.docs).toBe("https://enmeshed.eu/integrate/error-codes#error.runtime.validation.invalidPropertyValue");
         validateSchema(ValidationSchema.Error, response.data.error);

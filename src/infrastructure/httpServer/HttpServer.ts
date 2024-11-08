@@ -102,21 +102,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.useUnsecuredCustomEndpoints();
 
         this.useHealthEndpoint();
-
-        if (this.configuration.apiKey) {
-            this.app.use(async (req, res, next) => {
-                const apiKeyFromHeader = req.headers["x-api-key"];
-                if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
-                    await sleep(1000);
-                    res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
-                    return;
-                }
-
-                next();
-            });
-        } else {
-            this.logger.warn("No api key set in config, this Connector runs without any authentication! This is strongly discouraged.");
-        }
+        this.useApiKey();
 
         this.useVersionEndpoint();
         this.useResponsesEndpoint();
@@ -212,6 +198,36 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private useErrorHandlers() {
         this.app.use(csrfErrorHandler);
         this.app.use(genericErrorHandler(this.connectorMode));
+    }
+
+    private useApiKey() {
+        if (!this.configuration.apiKey) {
+            switch (this.connectorMode) {
+                case "debug":
+                    return;
+                case "production":
+                    throw new Error("No API key set in configuration. This is required in production mode.");
+            }
+        }
+
+        const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
+        if (!this.configuration.apiKey.match(apiKeyPolicy)) {
+            this.logger.warn(
+                "The configured API key does not meet the requirements. It must be at least 30 characters long and contain at least 2 digits, 2 uppercase letters, 2 lowercase letters and 1 special character (!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~])."
+            );
+            this.logger.warn("The API key will be used as is, but it is recommended to change it as it will not be supported in future versions.");
+        }
+
+        this.app.use(async (req, res, next) => {
+            const apiKeyFromHeader = req.headers["x-api-key"];
+            if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
+                await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
+                res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
+                return;
+            }
+
+            next();
+        });
     }
 
     private useHealthEndpoint() {
