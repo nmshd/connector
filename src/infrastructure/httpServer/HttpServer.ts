@@ -202,8 +202,9 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
         if (!this.configuration.apiKey.match(apiKeyPolicy)) {
             this.logger.warn(
-                "The configured API key does not meet the requirements. It must be 30 chars and contain at least 1 digit, 1 uppercase, 1 lowercase, and 1 special char."
+                "The configured API key does not meet the requirements. It must be at least 30 characters long and contain at least 2 digits, 2 uppercase letters, 2 lowercase letters and 1 special character (!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~])."
             );
+            this.logger.warn("The API key will be used as is, but it is recommended to change it as it will not be supported in future versions.");
         }
 
         this.app.use(async (req, res, next) => {
