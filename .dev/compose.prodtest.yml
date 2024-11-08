@@ -20,7 +20,7 @@ services:
       transportLibrary__platformClientSecret: "test"
       transportLibrary__addressGenerationHostnameOverride: "localhost"
       DATABASE_CONNECTION_STRING: "mongodb://mongo:27017"
-      API_KEY: xxx
+      API_KEY: This_is_a_test_APIKEY_with_30_chars+
       DEBUG: true
     depends_on:
       mongo:
