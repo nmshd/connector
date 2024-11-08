@@ -20,7 +20,7 @@ export type ConnectorClientWithMetadata = ConnectorClient & {
 
 export class Launcher {
     private readonly _processes: { connector: ChildProcess; webhookServer: Server | undefined }[] = [];
-    public readonly apiKey = "This_is_a_test_APIKEY_with_30_chars";
+    public readonly apiKey = "This_is_a_test_APIKEY_with_30_chars+";
 
     public async launchSimple(): Promise<string> {
         const port = await getPort();
