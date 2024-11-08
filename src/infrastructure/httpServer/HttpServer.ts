@@ -209,9 +209,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.app.use(async (req, res, next) => {
             const apiKeyFromHeader = req.headers["x-api-key"];
             if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
-                // sleep for 1 to 4 seconds
                 await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
-
                 res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
                 return;
             }
