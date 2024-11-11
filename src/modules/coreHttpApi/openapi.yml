@@ -5659,6 +5659,7 @@ components:
         - template
         - status
         - peer
+        - peerIdentity
         - creationContent
         - auditLog
 
