@@ -18,13 +18,6 @@ import { requestLogger } from "./middlewares/requestLogger";
 import { setDurationHeader } from "./middlewares/setResponseDurationHeader";
 import { setResponseTimeHeader } from "./middlewares/setResponseTimeHeader";
 
-declare module "express-serve-static-core" {
-    interface Request {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        _debugMode?: boolean;
-    }
-}
-
 export interface CustomEndpoint {
     httpMethod: HttpMethod;
     route: string;
@@ -85,10 +78,6 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
         this.app.use(setDurationHeader);
         this.app.use(setResponseTimeHeader);
-        this.app.use((req, _res, next) => {
-            req._debugMode = this.connectorMode === "debug";
-            next();
-        });
 
         if (this.configuration.cors) {
             this.app.use(cors(this.configuration.cors));
