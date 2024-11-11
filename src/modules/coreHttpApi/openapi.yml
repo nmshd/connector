@@ -5133,7 +5133,6 @@ components:
               - $ref: "#/components/schemas/RequestResponseContentItem"
               - $ref: "#/components/schemas/RequestResponseContentItemGroup"
       required:
-        - "@type"
         - result
         - requestId
         - items
@@ -5635,6 +5634,20 @@ components:
             - $ref: "#/components/schemas/Address"
           nullable: false
           description: The address of the peer identity.
+        peerIdentity:
+          type: object
+          additionalProperties: false
+          properties:
+            address:
+              allOf:
+                - $ref: "#/components/schemas/Address"
+              nullable: false
+            publicKey:
+              type: string
+              nullable: false
+          required:
+            - address
+            - publicKey
         peerDeletionInfo:
           type: object
           additionalProperties: false
@@ -5666,6 +5679,7 @@ components:
         - template
         - status
         - peer
+        - peerIdentity
         - creationContent
         - auditLog
 
