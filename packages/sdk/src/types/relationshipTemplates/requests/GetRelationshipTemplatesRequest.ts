@@ -4,5 +4,6 @@ export interface GetRelationshipTemplatesRequest {
     createdBy?: string | string[];
     createdByDevice?: string | string[];
     maxNumberOfAllocations?: number | number[];
+    forIdentity?: string | string[];
     isOwn?: boolean | boolean[];
 }
