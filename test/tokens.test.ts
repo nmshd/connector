@@ -34,12 +34,15 @@ test("load a token", async () => {
 });
 
 test("send and receive a personalized token", async () => {
-    const template = await uploadOwnToken(client1, (await client2.account.getIdentityInfo()).result.address);
+    const client2address = (await client2.account.getIdentityInfo()).result.address;
+    const template = await uploadOwnToken(client1, client2address);
+    expect(template.forIdentity).toBe(client2address);
 
     const response = await client2.tokens.loadPeerToken({
         reference: template.truncatedReference
     });
     expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response.result.forIdentity).toBe(client2address);
 });
 
 describe("Tokens query", () => {
