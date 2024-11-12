@@ -31,7 +31,7 @@ interface IdentityDeletionProcess {
 }
 
 describe("Identity Deletion Process", () => {
-    afterEach(async () => await axiosInstance.get("/api/v2/IdentityDeletionProcess"));
+    afterEach(async () => await axiosInstance.delete("/api/v2/IdentityDeletionProcess"));
 
     test("should return 400 when no identity deletion process is active", async () => {
         const getResult = await axiosInstance.get("/api/v2/IdentityDeletionProcess");
