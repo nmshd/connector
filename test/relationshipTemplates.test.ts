@@ -105,6 +105,18 @@ describe("Template Tests", () => {
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
         expect(response.result.forIdentity).toBe(client2address);
     });
+
+    test("send and receive a non-personalized template via personalized token", async () => {
+        const client2address = (await client2.account.getIdentityInfo()).result.address;
+        const template = await createTemplate(client1, client2address);
+        const token = (await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { forIdentity: client2address })).result;
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: token.truncatedReference
+        });
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response.result.forIdentity).toBe(client2address);
+    });
 });
 
 describe("Serialization Errors", () => {
