@@ -1,6 +1,6 @@
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, GET, Path, POST } from "@nmshd/typescript-rest";
+import { Accept, DELETE, GET, Path, POST } from "@nmshd/typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -11,7 +11,6 @@ export class IdentityDeletionProcessController extends BaseController {
     }
 
     @POST
-    @Path("/")
     @Accept("application/json")
     public async initiateIdentityDeletionProcess(): Promise<Envelope> {
         const result = await this.transportServices.identityDeletionProcesses.initiateIdentityDeletionProcess();
@@ -19,15 +18,13 @@ export class IdentityDeletionProcessController extends BaseController {
     }
 
     @GET
-    @Path("/")
     @Accept("application/json")
     public async getActiveIdentityDeletionProcess(): Promise<Envelope> {
         const result = await this.transportServices.identityDeletionProcesses.getActiveIdentityDeletionProcess();
         return this.ok(result);
     }
 
-    @POST
-    @Path("/cancel")
+    @DELETE
     @Accept("application/json")
     public async cancelIdentityDeletionProcess(): Promise<Envelope> {
         const result = await this.transportServices.identityDeletionProcesses.cancelIdentityDeletionProcess();
