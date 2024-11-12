@@ -139,12 +139,11 @@ export async function syncUntilHasMessageWithResponse(client: ConnectorClientWit
     ).data.message;
 }
 
-export async function uploadOwnToken(client: ConnectorClient): Promise<ConnectorToken> {
+export async function uploadOwnToken(client: ConnectorClient, forIdentity?: string): Promise<ConnectorToken> {
     const response = await client.tokens.createOwnToken({
-        content: {
-            content: "Hello"
-        },
-        expiresAt: DateTime.utc().plus({ days: 1 }).toString()
+        content: { aKey: "aValue" },
+        expiresAt: DateTime.utc().plus({ days: 1 }).toString(),
+        forIdentity
     });
 
     expect(response).toBeSuccessful(ValidationSchema.Token);
@@ -233,8 +232,8 @@ export async function exchangeFile(clientCreator: ConnectorClient, clientRecpipi
     return response.result;
 }
 
-export async function exchangeToken(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient): Promise<ConnectorToken> {
-    const token = await uploadOwnToken(clientCreator);
+export async function exchangeToken(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient, forIdentity?: string): Promise<ConnectorToken> {
+    const token = await uploadOwnToken(clientCreator, forIdentity);
 
     const response = await clientRecpipient.tokens.loadPeerToken({ reference: token.truncatedReference });
     expect(response).toBeSuccessful(ValidationSchema.Token);
