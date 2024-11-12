@@ -1,7 +1,20 @@
-import { ConnectorAttributes, ConnectorHttpResponse, ConnectorRelationship, ConnectorRelationships, CreateRelationshipRequest, GetRelationshipsRequest } from "../types";
+import {
+    CanCreateRelationshipRequest,
+    CanCreateRelationshipResponse,
+    ConnectorAttributes,
+    ConnectorHttpResponse,
+    ConnectorRelationship,
+    ConnectorRelationships,
+    CreateRelationshipRequest,
+    GetRelationshipsRequest
+} from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class RelationshipsEndpoint extends Endpoint {
+    public async canCreateRelationship(request: CanCreateRelationshipRequest): Promise<ConnectorHttpResponse<CanCreateRelationshipResponse>> {
+        return await this.put("/api/v2/Relationships/CanCreate", request);
+    }
+
     public async createRelationship(request: CreateRelationshipRequest): Promise<ConnectorHttpResponse<ConnectorRelationship>> {
         return await this.post("/api/v2/Relationships", request);
     }

@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 
 servers:
   - url: /
@@ -18,7 +18,7 @@ info:
     name: MIT
     url: https://raw.githubusercontent.com/nmshd/connector/main/LICENSE
   contact:
-    name: j&s-soft GmbH
+    name: j&s-soft AG
     email: info@js-soft.com
     url: https://www.js-soft.com/
 
@@ -1128,21 +1128,21 @@ paths:
 
   /api/v2/Attributes/ThirdParty/{id}:
     delete:
-      operationId: deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer
-      description: Delete a third party relationship attribute and notify the owner.
+      operationId: deleteThirdPartyRelationshipAttributeAndNotifyPeer
+      description: Delete a ThirdPartyRelationshipAttribute and notify the peer.
       tags:
         - Attributes
       parameters:
         - in: path
           name: id
-          description: The ID of the third party relationship attribute to delete.
+          description: The ID of the ThirdPartyRelationshipAttribute to delete.
           required: true
           schema:
             $ref: "#/components/schemas/AttributeID"
       responses:
         200:
           description: |
-            Success. Deleting a third party relationship attribute and notifying the owner returns the notificationId of the send notification.
+            Success. Deleting a ThirdPartyRelationshipAttribute and notifying the peer returns the NotificationId of the sent Notification.
           content:
             application/json:
               schema:
@@ -2162,6 +2162,131 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
+  # ------------------- IdentityMetadata -------------------
+
+  /api/v2/IdentityMetadata:
+    put:
+      operationId: upsertIdentityMetadata
+      description: Creates or updates an IdentityMetadata object for the specified `reference` and `key` combination.
+      tags:
+        - IdentityMetadata
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/UpsertIdentityMetadataRequest"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/IdentityMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    get:
+      operationId: getIdentityMetadata
+      description: Fetches the IdentityMetadata with the given `reference` and `key` combination.
+      tags:
+        - IdentityMetadata
+      parameters:
+        - in: query
+          name: reference
+          description: The reference of the IdentityMetadata.
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+        - in: query
+          name: key
+          description: The optional key of the IdentityMetadata.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/IdentityMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      operationId: deleteIdentityMetadata
+      description: Deletes the IdentityMetadata with the given `reference` and `key` combination.
+      tags:
+        - IdentityMetadata
+      parameters:
+        - in: query
+          name: reference
+          description: The reference of the IdentityMetadata.
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+        - in: query
+          name: key
+          description: The optional key of the IdentityMetadata.
+          required: false
+          schema:
+            type: string
+      responses:
+        204:
+          description: Success
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
   # ------------------- Messages -------------------
 
   /api/v2/Messages:
@@ -2194,11 +2319,11 @@ paths:
                   nullable: false
                   example:
                     "@type": Mail
-                    to: [did:e:_________________________________]
-                    cc: [did:e:_________________________________]
+                    to: [did:e:<base-url>:dids:<22-characters>]
+                    cc: [did:e:<base-url>:dids:<22-characters>]
                     subject: Subject
                     body: Body
-                  description: Either a Mail, a Request, a ResponseWrapper, a Notification or an ArbitraryMessageContent must be provided as the 'content' of the Message.
+                  description: Either a Mail, a Request, a ResponseWrapper, a Notification or an ArbitraryMessageContent must be provided as the `content` of the Message.
                 attachments:
                   type: array
                   nullable: true
@@ -2439,6 +2564,64 @@ paths:
 
   # ------------------- Relationships -------------------
 
+  /api/v2/Relationships/CanCreate:
+    put:
+      operationId: canCreateRelationship
+      description: Checks if a Relationship can be created with a given RelationshipTemplate to its creator. Optionally, the potential `creationContent` of the Relationship can also be validated.
+      tags:
+        - Relationships
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                templateId:
+                  allOf:
+                    - $ref: "#/components/schemas/RelationshipTemplateID"
+                  nullable: false
+                creationContent:
+                  oneOf:
+                    - $ref: "#/components/schemas/RelationshipCreationContent"
+                    - $ref: "#/components/schemas/ArbitraryRelationshipCreationContent"
+                  nullable: false
+                  example:
+                    "@type": "ArbitraryRelationshipCreationContent"
+                    value:
+                      prop1: value
+                      prop2: 1
+                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the `creationContent` of the Relationship.
+              required:
+                - templateId
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/CanCreateRelationshipResponse"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
   /api/v2/Relationships:
     post:
       operationId: createRelationship
@@ -2465,7 +2648,7 @@ paths:
                     value:
                       prop1: value
                       prop2: 1
-                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the 'creationContent' of the Relationship.
+                  description: Either a RelationshipCreationContent or an ArbitraryRelationshipCreationContent must be provided as the `creationContent` of the Relationship.
               required:
                 - templateId
                 - creationContent
@@ -3085,7 +3268,7 @@ paths:
                     value:
                       prop1: "value"
                       prop2: 1
-                  description: Either a RelationshipTemplateContent or an ArbitraryRelationshipTemplateContent must be provided as the 'content' of the RelationshipTemplate.
+                  description: Either a RelationshipTemplateContent or an ArbitraryRelationshipTemplateContent must be provided as the `content` of the RelationshipTemplate.
               required:
                 - expiresAt
                 - content
@@ -3347,7 +3530,7 @@ paths:
                 forIdentity:
                   $ref: "#/components/schemas/Address"
                   nullable: true
-                  description: The only Identity that may load this Token.
+                  description: The only Identity that may load this Token. If forIdentity is set for the RelationshipTemplate, that Identity must also be given here.
       responses:
         201:
           description: Success
@@ -4416,7 +4599,7 @@ components:
       type: string
       format: Address
       minLength: 35
-      example: did:e:_________________________________
+      example: did:e:<base-url>:dids:<22-characters>
 
     AttributeID:
       type: string
@@ -4922,7 +5105,6 @@ components:
               - $ref: "#/components/schemas/RequestItem"
               - $ref: "#/components/schemas/RequestItemGroup"
       required:
-        - "@type"
         - items
 
     RequestResponseContentItem:
@@ -4967,7 +5149,6 @@ components:
               - $ref: "#/components/schemas/RequestResponseContentItem"
               - $ref: "#/components/schemas/RequestResponseContentItemGroup"
       required:
-        - "@type"
         - result
         - requestId
         - items
@@ -5133,7 +5314,7 @@ components:
                 oneOf:
                   - $ref: "#/components/schemas/RequestItemGroup"
                   - $ref: "#/components/schemas/RequestItem"
-                description: The 'items' of a Request can be of type RequestItemGroup or RequestItem.
+                description: The `items` of a Request can be of type RequestItemGroup or RequestItem.
         peer:
           description: The address of the peer that will receive the request. This is optional because in case of a RelationshipTemplate you do not know the peer address yet. For better results you should specify `peer` whenever you know it.
           allOf:
@@ -5157,7 +5338,7 @@ components:
                 oneOf:
                   - $ref: "#/components/schemas/RequestItemGroup"
                   - $ref: "#/components/schemas/RequestItem"
-                description: The 'items' of a Request can be of type RequestItemGroup or RequestItem.
+                description: The `items` of a Request can be of type RequestItemGroup or RequestItem.
         peer:
           allOf:
             - $ref: "#/components/schemas/Address"
@@ -5424,6 +5605,32 @@ components:
           items:
             type: object
 
+    CanCreateRelationshipResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+      oneOf:
+        - properties:
+            isSuccess:
+              const: true
+          required:
+            - isSuccess
+          additionalProperties: false
+
+        - properties:
+            isSuccess:
+              const: false
+            code:
+              type: string
+            message:
+              type: string
+          required:
+            - isSuccess
+            - code
+            - message
+          additionalProperties: false
+
     Relationship:
       type: object
       properties:
@@ -5443,6 +5650,20 @@ components:
             - $ref: "#/components/schemas/Address"
           nullable: false
           description: The address of the peer identity.
+        peerIdentity:
+          type: object
+          additionalProperties: false
+          properties:
+            address:
+              allOf:
+                - $ref: "#/components/schemas/Address"
+              nullable: false
+            publicKey:
+              type: string
+              nullable: false
+          required:
+            - address
+            - publicKey
         peerDeletionInfo:
           type: object
           additionalProperties: false
@@ -5474,6 +5695,7 @@ components:
         - template
         - status
         - peer
+        - peerIdentity
         - creationContent
         - auditLog
 
@@ -5763,6 +5985,45 @@ components:
     TokenContent:
       type: object
       description: The arbitrary JSON object which should be shared between creator of the Token and the recipient.
+
+    IdentityMetadata:
+      type: object
+      additionalProperties: false
+      properties:
+        reference:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+          description: The address of the identity for that the metadata is stored for.
+        key:
+          type: string
+          nullable: true
+          description: An optional key to identify the metadata. Can be used to store multiple metadata entries for the same identity. There can be at most one IdentityMetadata per `reference` and `key` combination.
+        value:
+          type: object
+          example: { "key": "value" }
+          description: The metadata value as a JSON object.
+      required:
+        - reference
+        - value
+
+    UpsertIdentityMetadataRequest:
+      type: object
+      properties:
+        reference:
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          nullable: false
+        key:
+          type: string
+          nullable: true
+        value:
+          type: object
+          nullable: false
+          example: { "key": "value" }
+      required:
+        - reference
+        - value
 
     # ------------------- General -------------------
 

@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
-import { createTemplate, exchangeTemplate } from "./lib/testUtils";
+import { createTemplate, exchangeTemplate, getTemplateToken } from "./lib/testUtils";
 import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
@@ -84,34 +84,26 @@ describe("Template Tests", () => {
     });
 
     test("send and receive a personalized template", async () => {
-        const template = await createTemplate(client1, (await client2.account.getIdentityInfo()).result.address);
+        const client2address = (await client2.account.getIdentityInfo()).result.address;
+        const template = await createTemplate(client1, client2address);
+        expect(template.forIdentity).toBe(client2address);
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: template.truncatedReference
         });
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response.result.forIdentity).toBe(client2address);
     });
 
-    test("create and load a token for a template", async () => {
-        const template = await createTemplate(client1);
+    test("send and receive a personalized template via token", async () => {
+        const client2address = (await client2.account.getIdentityInfo()).result.address;
+        const templateToken = await getTemplateToken(client1, client2address);
 
-        const tokenResponse = await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id);
-        expect(tokenResponse).toBeSuccessful(ValidationSchema.Token);
-
-        const templateResponse = await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: tokenResponse.result.truncatedReference });
-        expect(templateResponse).toBeSuccessful(ValidationSchema.RelationshipTemplate);
-    });
-
-    test("create and load a personalized token for a template", async () => {
-        const template = await createTemplate(client1);
-
-        const tokenResponse = await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, {
-            forIdentity: (await client1.account.getIdentityInfo()).result.address
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: templateToken.truncatedReference
         });
-        expect(tokenResponse).toBeSuccessful(ValidationSchema.Token);
-
-        const templateResponse = await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: tokenResponse.result.truncatedReference });
-        expect(templateResponse).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response.result.forIdentity).toBe(client2address);
     });
 });
 

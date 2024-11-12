@@ -13,7 +13,7 @@
         "directory": "/packages/sdk"
     },
     "license": "MIT",
-    "author": "j&s-soft GmbH",
+    "author": "j&s-soft AG",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "files": [
@@ -26,17 +26,17 @@
         "build": "tsc && npm run build:schemas",
         "build:watch": "tsc --watch",
         "build:ci": "npm run build",
-        "build:schemas": "npx ts-json-schema-generator --path './src/types/**/*.ts' -o schemas.json --id https://enmeshed.eu/schemas/connector-api",
+        "build:schemas": "npx ts-json-schema-generator --path './src/types/**/*.ts' -o schemas.json --id https://enmeshed.eu/schemas/connector-api --tsconfig ./tsconfig.json",
         "build:schemas:watch": "npx nodemon -e ts -w 'src/types' --exec 'npm run build:schemas'"
     },
     "dependencies": {
-        "@nmshd/content": "6.3.1",
+        "@nmshd/content": "6.7.0",
         "axios": "^1.7.7",
         "form-data": "^4.0.1",
         "qs": "^6.13.0"
     },
     "devDependencies": {
-        "@types/qs": "^6.9.16",
+        "@types/qs": "^6.9.17",
         "ts-json-schema-generator": "^2.3.0"
     },
     "publishConfig": {

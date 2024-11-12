@@ -1,4 +1,4 @@
-import { RuntimeConfig } from "@nmshd/runtime";
+import { DeciderModuleConfiguration, RuntimeConfig } from "@nmshd/runtime";
 import * as log4js from "log4js";
 import { ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
 import { HttpServerConfiguration } from "./infrastructure";
@@ -20,9 +20,14 @@ export interface ConnectorRuntimeConfig extends RuntimeConfig {
 
     logging: log4js.Configuration;
 
-    modules: Record<string, ConnectorRuntimeModuleConfiguration>;
+    modules: Record<string, ConnectorRuntimeModuleConfiguration> & {
+        decider: DeciderModuleConfiguration;
+    };
 
     infrastructure: {
         httpServer: HttpServerConfiguration;
     };
+
+    pinnedTLSCertificateSHA256Fingerprints?: Record<string, string[]>;
+    enforceCertificatePinning?: boolean;
 }

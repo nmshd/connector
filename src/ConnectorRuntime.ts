@@ -9,10 +9,9 @@ import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleC
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import correlator from "correlation-id";
-import fs from "fs";
 import { HttpsProxyAgent } from "https-proxy-agent";
-import { validate as validateSchema } from "jsonschema";
 import path from "path";
+import { checkServerIdentity, PeerCertificate } from "tls";
 import { ConnectorMode } from "./ConnectorMode";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
@@ -62,24 +61,11 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
     }
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
-        const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
-        const runtimeConfigSchemaString = fs.readFileSync(schemaPath).toString();
-        const runtimeConfigSchema = JSON.parse(runtimeConfigSchemaString);
-        const result = validateSchema(connectorConfig, runtimeConfigSchema);
-        if (!result.valid) {
-            let errorMessage = "The configuration is not valid:";
-            for (const error of result.errors) {
-                errorMessage += `\r\n  - ${error.stack}`;
-            }
-
-            console.error(errorMessage); // eslint-disable-line no-console
-            throw new Error(errorMessage);
-        }
-
-        this.forceEnableMandatoryModules(connectorConfig);
-
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
         ConnectorLoggerFactory.init(loggerFactory);
+
+        this.setServerIdentityCheckFromKeyPinning(connectorConfig, loggerFactory.getLogger(ConnectorRuntime));
+        this.forceEnableMandatoryModules(connectorConfig);
 
         const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
         await runtime.init();
@@ -90,6 +76,43 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         runtime.setupGlobalExceptionHandling();
 
         return runtime;
+    }
+
+    private static setServerIdentityCheckFromKeyPinning(connectorConfig: ConnectorRuntimeConfig, logger: ILogger) {
+        if (!connectorConfig.pinnedTLSCertificateSHA256Fingerprints) return;
+        const pinnedFingerprints = connectorConfig.pinnedTLSCertificateSHA256Fingerprints;
+
+        for (const host in pinnedFingerprints) {
+            if (!host.match(/^((([A-Za-z0-9]+(-[A-Za-z0-9]+)*)\.)+[a-z]{2,}|localhost)$/)) {
+                throw new Error(`Invalid host '${host}' in pinnedTLSCertificateSHA256Fingerprints. The host must not contain a protocol, path or query.`);
+            }
+
+            logger.info(`Certificate pinning is enforced for host '${host}' with fingerprint(s) '${pinnedFingerprints[host].join(", ")}'.`);
+        }
+
+        connectorConfig.transportLibrary.httpsAgentOptions = {
+            ...connectorConfig.transportLibrary.httpsAgentOptions,
+            checkServerIdentity: (host: string, certificate: PeerCertificate) => {
+                const error = checkServerIdentity(host, certificate);
+                if (error) return error;
+
+                if (connectorConfig.enforceCertificatePinning && !(host in pinnedFingerprints)) {
+                    return new Error(
+                        `Certificate verification error: Certificate pinning is enforced, but no pinned certificate fingerprint is provided in the configuration for the requested host '${host}'.`
+                    );
+                }
+
+                if (!(host in pinnedFingerprints)) return;
+                const pinnedFingerprintsForHost = pinnedFingerprints[host];
+
+                const fingerprint = certificate.fingerprint256.replaceAll(":", "").toLocaleLowerCase();
+                if (pinnedFingerprintsForHost.find((e) => e.replaceAll(":", "").toLocaleLowerCase() === fingerprint)) return;
+
+                return new Error(
+                    `Certificate verification error: The SHA256 fingerprint of the received certificate '${fingerprint}' doesn't match a pinned certificate fingerprint for host '${host}'.`
+                );
+            }
+        };
     }
 
     private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
