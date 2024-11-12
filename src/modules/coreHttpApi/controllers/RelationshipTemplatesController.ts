@@ -96,7 +96,8 @@ export class RelationshipTemplatesController extends BaseController {
             case "image/png":
                 const qrCodeResult = await this.transportServices.relationshipTemplates.createTokenQRCodeForOwnTemplate({
                     templateId: id,
-                    expiresAt: request.expiresAt
+                    expiresAt: request.expiresAt,
+                    forIdentity: request.forIdentity
                 });
                 return this.file(
                     qrCodeResult,
@@ -110,7 +111,8 @@ export class RelationshipTemplatesController extends BaseController {
                 const jsonResult = await this.transportServices.relationshipTemplates.createTokenForOwnTemplate({
                     templateId: id,
                     expiresAt: request.expiresAt,
-                    ephemeral: request.ephemeral
+                    ephemeral: request.ephemeral,
+                    forIdentity: request.forIdentity
                 });
                 return this.created(jsonResult);
         }
