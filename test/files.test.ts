@@ -211,6 +211,15 @@ describe("Load peer file with token reference", () => {
         expect(response.result).toContainEqual({ ...file, isOwn: false });
     });
 
+    test("token can be personalized", async () => {
+        const client2address = (await client2.account.getIdentityInfo()).result.address;
+        const token = (await client1.files.createTokenForFile(file.id, { forIdentity: client2address })).result;
+        expect(token.forIdentity).toBe(client2address);
+
+        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference });
+        expect(response).toBeSuccessful(ValidationSchema.File);
+    });
+
     test("passing token id as truncated token reference causes an error", async () => {
         const file = await uploadFile(client1);
         const token = (await client1.files.createTokenForFile(file.id)).result;
