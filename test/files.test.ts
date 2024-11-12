@@ -217,7 +217,6 @@ describe("Load peer file with token reference", () => {
         expect(token.forIdentity).toBe(client2address);
 
         const response = await client2.files.loadPeerFile({ reference: token.truncatedReference });
-
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
