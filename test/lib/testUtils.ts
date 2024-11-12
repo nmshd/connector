@@ -141,9 +141,7 @@ export async function syncUntilHasMessageWithResponse(client: ConnectorClientWit
 
 export async function uploadOwnToken(client: ConnectorClient, forIdentity?: string): Promise<ConnectorToken> {
     const response = await client.tokens.createOwnToken({
-        content: {
-            content: "token-content"
-        },
+        content: { aKey: "aValue" },
         expiresAt: DateTime.utc().plus({ days: 1 }).toString(),
         forIdentity
     });

@@ -15,9 +15,7 @@ afterAll(() => launcher.stop());
 
 test("send a token", async () => {
     const response = await client1.tokens.createOwnToken({
-        content: {
-            content: "token-content"
-        },
+        content: { aKey: "aValue" },
         expiresAt: DateTime.utc().plus({ days: 1 }).toString()
     });
     expect(response).toBeSuccessful(ValidationSchema.Token);
