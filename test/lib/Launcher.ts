@@ -143,8 +143,6 @@ export class Launcher {
 
     public stopClient(connector: ChildProcess, webhookServer: Server | undefined): void {
         connector.kill();
-        connector.on("exit", () => {
-            webhookServer?.close();
-        });
+        connector.on("exit", () => webhookServer?.close());
     }
 }
