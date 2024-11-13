@@ -11,7 +11,7 @@ describe("test openapi spec against routes", () => {
     beforeAll(async () => {
         manualOpenApiSpec = yamljs.load("src/modules/coreHttpApi/openapi.yml");
 
-        const files = "src/modules/**/*.ts";
+        const files = "src/modules/coreHttpApi/controllers/**/*.ts";
         const metadata = new MetadataGenerator([files], "tsconfig.json").generate();
         const defaultOptions = {
             basePath: "/",
