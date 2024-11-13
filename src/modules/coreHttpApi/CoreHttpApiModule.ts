@@ -30,6 +30,10 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
         }
 
         this.runtime.infrastructure.httpServer.addControllers(["controllers/*.js", "controllers/*.ts", "!controllers/*.d.ts"], this.baseDirectory);
+
+        if (this.connectorMode === "debug") {
+            this.runtime.infrastructure.httpServer.addControllers(["debug-controllers/*.js", "debug-controllers/*.ts", "!debug-controllers/*.d.ts"], this.baseDirectory);
+        }
     }
 
     private addDocumentation() {
