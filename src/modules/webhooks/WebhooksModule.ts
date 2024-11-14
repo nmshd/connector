@@ -49,7 +49,6 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
             let headers = webhook.target.headers;
 
             const correlationId = correlator.getId();
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             if (correlationId) headers = { ...headers, "x-correlation-id": correlationId };
 
             const response = await this.axios.post(url, payload, { headers });
