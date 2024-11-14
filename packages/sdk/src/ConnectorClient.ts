@@ -33,7 +33,7 @@ export class ConnectorClient {
         const axiosInstance = axios.create({
             baseURL: config.baseUrl,
             headers: {
-                "X-API-KEY": config.apiKey // eslint-disable-line @typescript-eslint/naming-convention
+                "X-API-KEY": config.apiKey
             },
             httpAgent: config.httpAgent,
             httpsAgent: config.httpsAgent,
