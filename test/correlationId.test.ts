@@ -54,12 +54,9 @@ describe("test the correlation ids", () => {
                 },
                 peer: account2Address
             },
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             { headers: { "x-correlation-id": customCorrelationId } }
         );
 
-        await connectorClient1._eventBus?.waitForEvent("consumption.outgoingRequestCreated", (event: any) => {
-            return event.headers["x-correlation-id"] === customCorrelationId;
-        });
+        await connectorClient1._eventBus?.waitForEvent("consumption.outgoingRequestCreated", (event: any) => event.headers["x-correlation-id"] === customCorrelationId);
     });
 });

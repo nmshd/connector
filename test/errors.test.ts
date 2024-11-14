@@ -11,7 +11,6 @@ beforeAll(async () => {
     axiosClient = axios.create({
         baseURL: baseUrl,
         validateStatus: (_) => true,
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         headers: { "X-API-KEY": launcher.apiKey }
     });
 }, getTimeout(30000));
@@ -20,10 +19,7 @@ afterAll(() => launcher.stop());
 
 describe("Errors", () => {
     test("http error 401", async () => {
-        const response = await axiosClient.get<any>("/api/v2/Files", {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            headers: { "X-API-KEY": "invalid" }
-        });
+        const response = await axiosClient.get<any>("/api/v2/Files", { headers: { "X-API-KEY": "invalid" } });
         expect(response.status).toBe(401);
         validateSchema(ValidationSchema.Error, response.data.error);
     });
