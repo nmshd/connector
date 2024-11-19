@@ -8,5 +8,6 @@ export enum ConnectorRelationshipAuditLogEntryReason {
     AcceptanceOfReactivation = "AcceptanceOfReactivation",
     RejectionOfReactivation = "RejectionOfReactivation",
     RevocationOfReactivation = "RevocationOfReactivation",
-    Decomposition = "Decomposition"
+    Decomposition = "Decomposition",
+    DecompositionDueToIdentityDeletion = "DecompositionDueToIdentityDeletion"
 }

@@ -5849,7 +5849,6 @@ components:
       required:
         - createdAt
         - createdBy
-        - createdByDevice
         - reason
         - newStatus
 
@@ -5866,6 +5865,7 @@ components:
         - RejectionOfReactivation
         - RevocationOfReactivation
         - Decomposition
+        - DecompositionDueToIdentityDeletion
 
     RelationshipStatus:
       type: string
