@@ -2,8 +2,9 @@ import { sleep } from "@js-soft/ts-utils";
 import { identityDeletionInitHandler, identityStatusHandler } from "../../../../dist/cli/commands";
 import { resetDB, setupEnvironment } from "../setup";
 
-describe("identity status", () => {
+describe("Identity status", () => {
     const identityStatusPattern = /Id: did:e:((([A-Za-z0-9]+(-[A-Za-z0-9]+)*)\.)+[a-z]{2,}|localhost):dids:[0-9a-f]{22}/;
+
     beforeAll(() => {
         setupEnvironment();
     });

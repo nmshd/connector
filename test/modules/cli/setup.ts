@@ -17,10 +17,11 @@ export function setupEnvironment(): void {
     process.env["transportLibrary:platformClientId"] = process.env["NMSHD_TEST_CLIENTID"];
     process.env["transportLibrary:platformClientSecret"] = process.env["NMSHD_TEST_CLIENTSECRET"];
 }
+
 export async function resetDB(): Promise<void> {
     try {
         await rm(join(__dirname, `../../../test-default${process.pid}.db`));
     } catch (_e) {
-        // Ignore
+        // ignore
     }
 }

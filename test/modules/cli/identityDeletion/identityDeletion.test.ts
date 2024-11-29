@@ -1,7 +1,7 @@
 import { identityDeletionCancelHandler, identityDeletionInitHandler } from "../../../../dist/cli/commands";
 import { resetDB, setupEnvironment } from "../setup";
 
-describe("identity deletion", () => {
+describe("Identity deletion", () => {
     beforeAll(() => {
         setupEnvironment();
     });
@@ -24,7 +24,7 @@ describe("identity deletion", () => {
     test("cancel identity deletion", async () => {
         const consoleSpy = jest.spyOn(console, "log");
         await identityDeletionCancelHandler({});
-        expect(consoleSpy).toHaveBeenCalledWith("Identity deletion canceled");
+        expect(consoleSpy).toHaveBeenCalledWith("Identity deletion cancelled");
         expect(consoleSpy).toHaveBeenCalledTimes(1);
     });
 });

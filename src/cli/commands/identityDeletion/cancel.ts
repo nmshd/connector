@@ -4,9 +4,10 @@ import { BaseCommand, ConfigFileOptions, configOptionBuilder } from "../../BaseC
 export const identityDeletionCancelHandler = async ({ config }: ConfigFileOptions): Promise<void> => {
     await new CancelIdentityDeletion().run(config);
 };
+
 export const yargsIdentityDeletionCancelCommand: CommandModule<{}, ConfigFileOptions> = {
     command: "cancel",
-    describe: "cancel the identity deletion",
+    describe: "Cancel the identity deletion",
     handler: identityDeletionCancelHandler,
     builder: configOptionBuilder
 };
@@ -18,12 +19,12 @@ export default class CancelIdentityDeletion extends BaseCommand {
             throw new Error("Failed to initialize runtime");
         }
 
-        const identityDeletionCancelationResult = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.cancelIdentityDeletionProcess();
+        const identityDeletionCancellationResult = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.cancelIdentityDeletionProcess();
 
-        if (identityDeletionCancelationResult.isSuccess) {
-            this.log.log("Identity deletion canceled");
+        if (identityDeletionCancellationResult.isSuccess) {
+            this.log.log("Identity deletion cancelled");
             return;
         }
-        this.log.log(identityDeletionCancelationResult.error.toString());
+        this.log.log(identityDeletionCancellationResult.error.toString());
     }
 }

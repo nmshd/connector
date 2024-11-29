@@ -5,9 +5,10 @@ export const identityDeletionInitHandler = async ({ config }: ConfigFileOptions)
     const command = new InitIdentityDeletion();
     await command.run(config);
 };
+
 export const yargsIdentityDeletionInitCommand: CommandModule<{}, ConfigFileOptions> = {
     command: "init",
-    describe: "initialize the identity deletion",
+    describe: "Initialize the identity deletion",
     handler: identityDeletionInitHandler,
     builder: configOptionBuilder
 };
