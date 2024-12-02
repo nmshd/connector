@@ -2132,7 +2132,7 @@ paths:
                 passwordProtection:
                   $ref: "#/components/schemas/PasswordProtection"
                   nullable: true
-                  description: The password that will be required to load this Token and related information.
+                  description: The password that will be required to load this Token and information about the password.
       responses:
         201:
           description: Success
@@ -3264,7 +3264,7 @@ paths:
                 passwordProtection:
                   $ref: "#/components/schemas/PasswordProtection"
                   nullable: true
-                  description: The password that will be required to load this RelationshipTemplate and related information.
+                  description: The password that will be required to load this RelationshipTemplate and information about the password.
                 content:
                   oneOf:
                     - $ref: "#/components/schemas/RelationshipTemplateContent"
@@ -3540,7 +3540,7 @@ paths:
                 passwordProtection:
                   $ref: "#/components/schemas/PasswordProtection"
                   nullable: true
-                  description: The password that will be required to load this Token and related information. If passwordProtection is set for the RelationshipTemplate, the same passwordProtection must also be given here.
+                  description: The password that will be required to load this Token and information about the password. If passwordProtection is set for the RelationshipTemplate, the same passwordProtection must also be given here.
       responses:
         201:
           description: Success
@@ -4140,7 +4140,7 @@ paths:
                 passwordProtection:
                   $ref: "#/components/schemas/PasswordProtection"
                   nullable: true
-                  description: The password that will be required to load this Token and related information.
+                  description: The password that will be required to load this Token and information about the password.
               required:
                 - content
                 - expiresAt
@@ -5824,6 +5824,10 @@ components:
           $ref: "#/components/schemas/Address"
           nullable: true
           description: The only Identity that may load this RelationshipTemplate.
+        passwordProtection:
+          $ref: "#/components/schemas/PasswordProtection"
+          nullable: true
+          description: The password that is required to load this RelationshipTemplate and information about the password.
         content:
           oneOf:
             - $ref: "#/components/schemas/RelationshipTemplateContent"
@@ -5974,6 +5978,10 @@ components:
           $ref: "#/components/schemas/Address"
           nullable: true
           description: The only Identity that may load this Token.
+        passwordProtection:
+          $ref: "#/components/schemas/PasswordProtection"
+          nullable: true
+          description: The password that is required to load this Token and information about the password.
         truncatedReference:
           type: string
           format: byte
