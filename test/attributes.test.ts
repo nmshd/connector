@@ -92,7 +92,7 @@ describe("Attributes", () => {
         expect(getAttributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
     });
 
-    test.only("should succeed a Repository Attribute", async () => {
+    test("should succeed a Repository Attribute", async () => {
         const newRepositoryAttribute: CreateRepositoryAttributeRequest = {
             content: {
                 value: {
@@ -110,7 +110,7 @@ describe("Attributes", () => {
             successorContent: {
                 value: {
                     "@type": "GivenName",
-                    value: "ADifferentGivenName"
+                    value: "ANewGivenName"
                 },
                 tags: ["content:edu.de"]
             }
@@ -120,7 +120,8 @@ describe("Attributes", () => {
 
         const succeededAttribute = (await client1.attributes.getAttribute(succeedAttributeResponse.result.successor.id)).result;
 
-        expect(succeededAttribute.content).toStrictEqualExcluding(newRepositoryAttribute.content, "@type", "owner");
+        expect(succeededAttribute.content).toStrictEqualExcluding(newRepositoryAttribute.content, "@type", "owner", "value.value");
+        expect((succeededAttribute.content.value as GivenNameJSON).value).toBe("ANewGivenName");
     });
 
     test("Should notify peer about Repository Attribute Succession", async () => {
