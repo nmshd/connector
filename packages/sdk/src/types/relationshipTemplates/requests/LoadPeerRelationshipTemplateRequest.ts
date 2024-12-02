@@ -4,4 +4,5 @@ export interface LoadPeerRelationshipTemplateRequest {
      * starting with 'UkxU' for a direct truncated RelationshipTemplateReference
      */
     reference: string;
+    password?: string;
 }
