@@ -117,6 +117,81 @@ describe("Template Tests", () => {
         expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
         expect(response.result.forIdentity).toBe(client2address);
     });
+
+    test("send and receive a password-protected template", async () => {
+        const template = await createTemplate(client1, undefined, { password: "password" });
+        expect(template.passwordProtection?.password).toBe("password");
+        expect(template.passwordProtection?.passwordIsPin).toBeUndefined();
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: template.truncatedReference,
+            password: "password"
+        });
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response.result.passwordProtection?.password).toBe("password");
+        expect(response.result.passwordProtection?.passwordIsPin).toBeUndefined();
+    });
+
+    test("send and receive a PIN-protected template", async () => {
+        const template = await createTemplate(client1, undefined, { password: "1234", passwordIsPin: true });
+        expect(template.passwordProtection?.password).toBe("1234");
+        expect(template.passwordProtection?.passwordIsPin).toBe(true);
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: template.truncatedReference,
+            password: "1234"
+        });
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response.result.passwordProtection?.password).toBe("1234");
+        expect(response.result.passwordProtection?.passwordIsPin).toBe(true);
+    });
+
+    test("send and receive a password-protected template via token", async () => {
+        const templateToken = await getTemplateToken(client1, undefined, { password: "password" });
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: templateToken.truncatedReference,
+            password: "password"
+        });
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response.result.passwordProtection?.password).toBe("password");
+        expect(response.result.passwordProtection?.passwordIsPin).toBeUndefined();
+    });
+
+    test("send and receive a PIN-protected template via token", async () => {
+        const templateToken = await getTemplateToken(client1, undefined, { password: "1234", passwordIsPin: true });
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: templateToken.truncatedReference,
+            password: "1234"
+        });
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response.result.passwordProtection?.password).toBe("1234");
+        expect(response.result.passwordProtection?.passwordIsPin).toBe(true);
+    });
+
+    test("send and receive an unprotected template via password-protected token", async () => {
+        const template = await createTemplate(client1);
+        const token = (await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { passwordProtection: { password: "password" } })).result;
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: token.truncatedReference,
+            password: "password"
+        });
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+    });
+
+    test("send and receive an unprotected template via PIN-protected token", async () => {
+        const template = await createTemplate(client1);
+        const token = (await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { passwordProtection: { password: "1234", passwordIsPin: true } }))
+            .result;
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: token.truncatedReference,
+            password: "1234"
+        });
+        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+    });
 });
 
 describe("Serialization Errors", () => {
