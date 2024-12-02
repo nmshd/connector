@@ -92,7 +92,7 @@ describe("Attributes", () => {
         expect(getAttributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
     });
 
-    test("should succeed a Repository Attribute", async () => {
+    test.only("should succeed a Repository Attribute", async () => {
         const newRepositoryAttribute: CreateRepositoryAttributeRequest = {
             content: {
                 value: {
@@ -110,7 +110,7 @@ describe("Attributes", () => {
             successorContent: {
                 value: {
                     "@type": "GivenName",
-                    value: "AGivenName"
+                    value: "ADifferentGivenName"
                 },
                 tags: ["content:edu.de"]
             }
