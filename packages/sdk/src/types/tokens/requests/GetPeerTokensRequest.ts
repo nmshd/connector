@@ -3,4 +3,6 @@ export interface GetPeerTokensRequest {
     createdBy?: string | string[];
     expiresAt?: string | string[];
     forIdentity?: string;
+    password?: string | string[];
+    passwordIsPin?: "true" | "!";
 }

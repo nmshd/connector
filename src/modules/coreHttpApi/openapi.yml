@@ -3204,6 +3204,14 @@ paths:
           schema:
             $ref: "#/components/schemas/IdFilter"
         - in: query
+          name: password
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: passwordIsPin
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
+        - in: query
           name: isOwn
           schema:
             $ref: "#/components/schemas/BooleanFilter"
@@ -3332,6 +3340,14 @@ paths:
           name: forIdentity
           schema:
             $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: password
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: passwordIsPin
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
       responses:
         200:
           description: Success
@@ -3435,6 +3451,14 @@ paths:
           name: forIdentity
           schema:
             $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: password
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: passwordIsPin
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
       responses:
         200:
           description: Success
@@ -4193,6 +4217,14 @@ paths:
           name: forIdentity
           schema:
             $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: password
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: passwordIsPin
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
       responses:
         200:
           description: Success
@@ -4294,6 +4326,14 @@ paths:
           name: forIdentity
           schema:
             $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: password
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: passwordIsPin
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
       responses:
         200:
           description: Success

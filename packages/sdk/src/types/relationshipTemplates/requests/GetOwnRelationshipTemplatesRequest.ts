@@ -4,4 +4,6 @@ export interface GetOwnTemplatesRequest {
     createdByDevice?: string | string[];
     maxNumberOfAllocations?: number | number[];
     forIdentity?: string | string[];
+    password?: string | string[];
+    passwordIsPin?: "true" | "!";
 }

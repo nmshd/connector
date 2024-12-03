@@ -3,4 +3,6 @@ export interface GetOwnTokensRequest {
     createdByDevice?: string | string[];
     expiresAt?: string | string[];
     forIdentity?: string | string[];
+    password?: string | string[];
+    passwordIsPin?: "true" | "!";
 }
