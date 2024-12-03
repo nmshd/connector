@@ -148,6 +148,8 @@ describe("Template Tests", () => {
 
     test("send and receive a password-protected template via token", async () => {
         const templateToken = await getTemplateToken(client1, undefined, { password: "password" });
+        expect(templateToken.passwordProtection?.password).toBe("password");
+        expect(templateToken.passwordProtection?.passwordIsPin).toBeUndefined();
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: templateToken.truncatedReference,
@@ -160,6 +162,8 @@ describe("Template Tests", () => {
 
     test("send and receive a PIN-protected template via token", async () => {
         const templateToken = await getTemplateToken(client1, undefined, { password: "1234", passwordIsPin: true });
+        expect(templateToken.passwordProtection?.password).toBe("1234");
+        expect(templateToken.passwordProtection?.passwordIsPin).toBe(true);
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: templateToken.truncatedReference,
@@ -173,6 +177,8 @@ describe("Template Tests", () => {
     test("send and receive an unprotected template via password-protected token", async () => {
         const template = await createTemplate(client1);
         const token = (await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { passwordProtection: { password: "password" } })).result;
+        expect(token.passwordProtection?.password).toBe("password");
+        expect(token.passwordProtection?.passwordIsPin).toBeUndefined();
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: token.truncatedReference,
@@ -185,6 +191,8 @@ describe("Template Tests", () => {
         const template = await createTemplate(client1);
         const token = (await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { passwordProtection: { password: "1234", passwordIsPin: true } }))
             .result;
+        expect(token.passwordProtection?.password).toBe("1234");
+        expect(token.passwordProtection?.passwordIsPin).toBe(true);
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: token.truncatedReference,
