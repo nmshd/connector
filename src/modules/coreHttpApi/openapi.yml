@@ -1908,20 +1908,19 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: "#/components/schemas/FileReferenceTruncated"
-                - $ref: "#/components/schemas/TokenReferenceTruncated"
-            examples:
-              FileReferenceTruncated:
-                value: |
-                  {
-                    "reference": "YOUR_REFERENCE"
-                  }
-              TokenReferenceTruncated:
-                value: |
-                  {
-                    "reference": "YOUR_REFERENCE"
-                  }
+              type: object
+              properties:
+                reference:
+                  type: string
+                  format: byte
+                  nullable: false
+                  description: The base64 encoded truncated reference of the File, alternatively of a Token for the File. It consists of all information to get and decrypt it.
+                password:
+                  type: string
+                  nullable: true
+                  description: The password to load the File. Only required when loading with a password-protected Token.
+              required:
+                - reference
       responses:
         201:
           description: Success
@@ -2130,6 +2129,10 @@ paths:
                   $ref: "#/components/schemas/Address"
                   nullable: true
                   description: The only Identity that may load this Token.
+                passwordProtection:
+                  $ref: "#/components/schemas/PasswordProtection"
+                  nullable: true
+                  description: The password that will be required to load this Token and information about the password.
       responses:
         201:
           description: Success
@@ -3258,6 +3261,10 @@ paths:
                   $ref: "#/components/schemas/Address"
                   nullable: true
                   description: The only Identity that may load this RelationshipTemplate.
+                passwordProtection:
+                  $ref: "#/components/schemas/PasswordProtection"
+                  nullable: true
+                  description: The password that will be required to load this RelationshipTemplate and information about the password.
                 content:
                   oneOf:
                     - $ref: "#/components/schemas/RelationshipTemplateContent"
@@ -3362,20 +3369,19 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: "#/components/schemas/RelationshipTemplateReferenceTruncated"
-                - $ref: "#/components/schemas/TokenReferenceTruncated"
-            examples:
-              RelationshipTemplateReferenceTruncated:
-                value: |
-                  {
-                    "reference": "YOUR_REFERENCE"
-                  }
-              TokenReferenceTruncated:
-                value: |
-                  {
-                    "reference": "YOUR_REFERENCE"
-                  }
+              type: object
+              properties:
+                reference:
+                  type: string
+                  format: byte
+                  nullable: false
+                  description: The base64 encoded truncated reference of the RelationshipTemplate, alternatively of a Token for the RelationshipTemplate. It consists of all information to get and decrypt it.
+                password:
+                  type: string
+                  nullable: true
+                  description: The password to load the RelationshipTemplate. Only required if the RelationshipTemplate resp. the Token for the RelationshipTemplate is password-protected.
+              required:
+                - reference
       responses:
         201:
           description: Success
@@ -3531,6 +3537,10 @@ paths:
                   $ref: "#/components/schemas/Address"
                   nullable: true
                   description: The only Identity that may load this Token. If forIdentity is set for the RelationshipTemplate, that Identity must also be given here.
+                passwordProtection:
+                  $ref: "#/components/schemas/PasswordProtection"
+                  nullable: true
+                  description: The password that will be required to load this Token and information about the password. If passwordProtection is set for the RelationshipTemplate, the same passwordProtection must also be given here.
       responses:
         201:
           description: Success
@@ -4127,6 +4137,10 @@ paths:
                   $ref: "#/components/schemas/Address"
                   nullable: true
                   description: The only Identity that may load this Token.
+                passwordProtection:
+                  $ref: "#/components/schemas/PasswordProtection"
+                  nullable: true
+                  description: The password that will be required to load this Token and information about the password.
               required:
                 - content
                 - expiresAt
@@ -4225,14 +4239,12 @@ paths:
                 ephemeral:
                   description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
                   type: boolean
+                password:
+                  type: string
+                  nullable: true
+                  description: The password to load the Token. Only required if the Token is password-protected.
               required:
                 - reference
-            examples:
-              TokenReferenceTruncated:
-                value: |
-                  {
-                    "reference": "YOUR_REFERENCE"
-                  }
       responses:
         201:
           description: Success
@@ -5029,6 +5041,21 @@ components:
       required:
         - reference
 
+    PasswordProtection:
+      type: object
+      properties:
+        password:
+          type: string
+          nullable: false
+          description: The password that the object is protected with.
+        passwordIsPin:
+          type: boolean
+          enum: [true]
+          nullable: true
+          description: true if the password is a PIN, undefined otherwise. If it's a PIN, a numpad is displayed when entering the password in the app.
+      required:
+        - password
+
     Recipient:
       type: object
       description: Information about the recipient of a message.
@@ -5797,6 +5824,10 @@ components:
           $ref: "#/components/schemas/Address"
           nullable: true
           description: The only Identity that may load this RelationshipTemplate.
+        passwordProtection:
+          $ref: "#/components/schemas/PasswordProtection"
+          nullable: true
+          description: The password that is required to load this RelationshipTemplate and information about the password.
         content:
           oneOf:
             - $ref: "#/components/schemas/RelationshipTemplateContent"
@@ -5816,16 +5847,6 @@ components:
         - expiresAt
         - content
         - truncatedReference
-
-    RelationshipTemplateReferenceTruncated:
-      type: object
-      properties:
-        reference:
-          type: string
-          nullable: false
-          description: The base64 encoded truncated reference of the RelationshipTemplate.
-      required:
-        - reference
 
     RelationshipAuditLogEntry:
       type: object
@@ -5957,6 +5978,10 @@ components:
           $ref: "#/components/schemas/Address"
           nullable: true
           description: The only Identity that may load this Token.
+        passwordProtection:
+          $ref: "#/components/schemas/PasswordProtection"
+          nullable: true
+          description: The password that is required to load this Token and information about the password.
         truncatedReference:
           type: string
           format: byte
@@ -5970,17 +5995,6 @@ components:
         - createdAt
         - expiresAt
         - truncatedReference
-
-    TokenReferenceTruncated:
-      type: object
-      properties:
-        reference:
-          type: string
-          format: byte
-          nullable: false
-          description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
-      required:
-        - reference
 
     TokenContent:
       type: object

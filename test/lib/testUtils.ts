@@ -139,11 +139,12 @@ export async function syncUntilHasMessageWithResponse(client: ConnectorClientWit
     ).data.message;
 }
 
-export async function uploadOwnToken(client: ConnectorClient, forIdentity?: string): Promise<ConnectorToken> {
+export async function uploadOwnToken(client: ConnectorClient, forIdentity?: string, passwordProtection?: { password: string; passwordIsPin?: true }): Promise<ConnectorToken> {
     const response = await client.tokens.createOwnToken({
         content: { aKey: "aValue" },
         expiresAt: DateTime.utc().plus({ days: 1 }).toString(),
-        forIdentity
+        forIdentity,
+        passwordProtection
     });
 
     expect(response).toBeSuccessful(ValidationSchema.Token);
@@ -178,7 +179,11 @@ export async function makeUploadRequest(values: Partial<UploadOwnFileRequest> = 
     };
 }
 
-export async function createTemplate(client: ConnectorClient, forIdentity?: string): Promise<ConnectorRelationshipTemplate> {
+export async function createTemplate(
+    client: ConnectorClient,
+    forIdentity?: string,
+    passwordProtection?: { password: string; passwordIsPin?: true }
+): Promise<ConnectorRelationshipTemplate> {
     const response = await client.relationshipTemplates.createOwnRelationshipTemplate({
         maxNumberOfAllocations: 1,
         expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
@@ -186,7 +191,8 @@ export async function createTemplate(client: ConnectorClient, forIdentity?: stri
             "@type": "ArbitraryRelationshipTemplateContent",
             value: { a: "b" }
         },
-        forIdentity
+        forIdentity,
+        passwordProtection
     });
 
     expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
@@ -194,10 +200,10 @@ export async function createTemplate(client: ConnectorClient, forIdentity?: stri
     return response.result;
 }
 
-export async function getTemplateToken(client: ConnectorClient, forIdentity?: string): Promise<ConnectorToken> {
-    const template = await createTemplate(client, forIdentity);
+export async function getTemplateToken(client: ConnectorClient, forIdentity?: string, passwordProtection?: { password: string; passwordIsPin?: true }): Promise<ConnectorToken> {
+    const template = await createTemplate(client, forIdentity, passwordProtection);
 
-    const response = await client.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { forIdentity });
+    const response = await client.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { forIdentity, passwordProtection });
     expect(response).toBeSuccessful(ValidationSchema.Token);
 
     return response.result;
