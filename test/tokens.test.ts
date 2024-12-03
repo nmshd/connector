@@ -42,6 +42,34 @@ test("send and receive a personalized token", async () => {
     expect(response.result.forIdentity).toBe(client2address);
 });
 
+test("send and receive a password-protected token", async () => {
+    const token = await uploadOwnToken(client1, undefined, { password: "password" });
+    expect(token.passwordProtection?.password).toBe("password");
+    expect(token.passwordProtection?.passwordIsPin).toBeUndefined();
+
+    const response = await client2.tokens.loadPeerToken({
+        reference: token.truncatedReference,
+        password: "password"
+    });
+    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response.result.passwordProtection?.password).toBe("password");
+    expect(response.result.passwordProtection?.passwordIsPin).toBeUndefined();
+});
+
+test("send and receive a PIN-protected token", async () => {
+    const token = await uploadOwnToken(client1, undefined, { password: "1234", passwordIsPin: true });
+    expect(token.passwordProtection?.password).toBe("1234");
+    expect(token.passwordProtection?.passwordIsPin).toBe(true);
+
+    const response = await client2.tokens.loadPeerToken({
+        reference: token.truncatedReference,
+        password: "1234"
+    });
+    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response.result.passwordProtection?.password).toBe("1234");
+    expect(response.result.passwordProtection?.passwordIsPin).toBe(true);
+});
+
 describe("Tokens query", () => {
     test("query own tokens", async () => {
         const token = await uploadOwnToken(client1, (await client1.account.getIdentityInfo()).result.address);

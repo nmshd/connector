@@ -127,7 +127,8 @@ export class FilesController extends BaseController {
                 const qrCodeResult = await this.transportServices.files.createTokenQRCodeForFile({
                     fileId: id,
                     expiresAt: request.expiresAt,
-                    forIdentity: request.forIdentity
+                    forIdentity: request.forIdentity,
+                    passwordProtection: request.passwordProtection
                 });
                 return this.file(
                     qrCodeResult,
@@ -142,7 +143,8 @@ export class FilesController extends BaseController {
                     fileId: id,
                     expiresAt: request.expiresAt,
                     ephemeral: request.ephemeral,
-                    forIdentity: request.forIdentity
+                    forIdentity: request.forIdentity,
+                    passwordProtection: request.passwordProtection
                 });
                 return this.created(jsonResult);
         }

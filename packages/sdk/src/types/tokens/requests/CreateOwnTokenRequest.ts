@@ -3,4 +3,8 @@ export interface CreateOwnTokenRequest {
     content: unknown;
     ephemeral?: boolean;
     forIdentity?: string;
+    passwordProtection?: {
+        password: string;
+        passwordIsPin?: true;
+    };
 }
