@@ -341,7 +341,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         }
     }
 
-    protected async stop(): Promise<void> {
+    public async stop(): Promise<void> {
         if (this.isStarted) {
             try {
                 await super.stop();
