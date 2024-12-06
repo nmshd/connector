@@ -30,7 +30,6 @@ export class ConnectorClient {
     public readonly relationships: RelationshipsEndpoint;
     public readonly relationshipTemplates: RelationshipTemplatesEndpoint;
     public readonly tokens: TokensEndpoint;
-    public readonly startCorrelation: (id: string, fn: () => void) => void;
     public readonly createCorrelationId: () => UUID;
 
     private constructor(config: ConnectorConfig) {
@@ -57,13 +56,6 @@ export class ConnectorClient {
         this.relationships = new RelationshipsEndpoint(axiosInstance);
         this.relationshipTemplates = new RelationshipTemplatesEndpoint(axiosInstance);
         this.tokens = new TokensEndpoint(axiosInstance);
-        this.startCorrelation = (id: string, fn: () => void) => {
-            if (id) {
-                correlator.withId(id, fn);
-            } else {
-                correlator.withId(fn);
-            }
-        };
         this.createCorrelationId = randomUUID;
 
         axiosInstance.interceptors.request.use((config) => {
@@ -71,6 +63,11 @@ export class ConnectorClient {
             config.headers["x-correlation-id"] = correlationId;
             return config;
         });
+    }
+
+    public startCorrelation<T>(id: string, fn: () => T): T {
+        if (!id) id = this.createCorrelationId();
+        return correlator.withId(id, fn);
     }
 
     public static create(config: ConnectorConfig): ConnectorClient {
