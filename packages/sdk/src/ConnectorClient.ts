@@ -1,4 +1,6 @@
 import axios from "axios";
+import correlator from "correlation-id";
+import { randomUUID, UUID } from "crypto";
 import { ConnectorConfig } from "./ConnectorConfig";
 import {
     AccountEndpoint,
@@ -28,6 +30,8 @@ export class ConnectorClient {
     public readonly relationships: RelationshipsEndpoint;
     public readonly relationshipTemplates: RelationshipTemplatesEndpoint;
     public readonly tokens: TokensEndpoint;
+    public readonly startCorrelation: (id: string, fn: () => void) => void;
+    public readonly createCorrelationId: () => UUID;
 
     private constructor(config: ConnectorConfig) {
         const axiosInstance = axios.create({
@@ -53,6 +57,20 @@ export class ConnectorClient {
         this.relationships = new RelationshipsEndpoint(axiosInstance);
         this.relationshipTemplates = new RelationshipTemplatesEndpoint(axiosInstance);
         this.tokens = new TokensEndpoint(axiosInstance);
+        this.startCorrelation = (id: string, fn: () => void) => {
+            if (id) {
+                correlator.withId(id, fn);
+            } else {
+                correlator.withId(fn);
+            }
+        };
+        this.createCorrelationId = randomUUID;
+
+        axiosInstance.interceptors.request.use((config) => {
+            const correlationId = correlator.getId();
+            config.headers["x-correlation-id"] = correlationId;
+            return config;
+        });
     }
 
     public static create(config: ConnectorConfig): ConnectorClient {
