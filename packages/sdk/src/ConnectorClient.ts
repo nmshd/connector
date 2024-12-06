@@ -69,7 +69,7 @@ export class ConnectorClient {
     public startCorrelation<T>(idOrFn: string, fn: () => T): T;
     public startCorrelation<T>(idOrFn: string | (() => T), fn?: () => T): T {
         let id = "";
-        if (!fn && idOrFn instanceof Function) {
+        if (idOrFn instanceof Function) {
             fn = idOrFn;
             idOrFn = this.createCorrelationId();
         } else if (typeof idOrFn === "string") {
