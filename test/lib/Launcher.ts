@@ -50,7 +50,7 @@ export class Launcher {
             const port = await getPort();
             const accountName = `${i + 1}-${await this.randomString()}`;
 
-            const connectorClient = ConnectorClient.create({
+            const connectorClient = ConnectorClient.idOrFn({
                 baseUrl: `http://localhost:${port}`,
                 apiKey: this.apiKey,
                 httpAgent: debugging ? new http.Agent({ keepAlive: false }) : undefined,
