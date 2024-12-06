@@ -65,9 +65,17 @@ export class ConnectorClient {
         });
     }
 
-    public startCorrelation<T>(id: string, fn: () => T): T {
-        if (!id) id = this.createCorrelationId();
-        return correlator.withId(id, fn);
+    public startCorrelation<T>(idOrFn: () => T): T;
+    public startCorrelation<T>(idOrFn: string, fn: () => T): T;
+    public startCorrelation<T>(idOrFn: string | (() => T), fn?: () => T): T {
+        let id = "";
+        if (!fn && idOrFn instanceof Function) {
+            fn = idOrFn;
+            idOrFn = this.createCorrelationId();
+        } else if (typeof idOrFn === "string") {
+            id = idOrFn;
+        }
+        return correlator.withId(id, fn!);
     }
 
     public static create(config: ConnectorConfig): ConnectorClient {

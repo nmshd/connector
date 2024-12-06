@@ -22,7 +22,7 @@ describe("test the correlation ids", () => {
     test("should send a random correlation id via webhook", async () => {
         connectorClient1._eventBus?.reset();
 
-        await connectorClient1.startCorrelation("", async () => {
+        await connectorClient1.startCorrelation(async () => {
             await connectorClient1.outgoingRequests.createRequest({
                 content: {
                     items: [{ "@type": "ReadAttributeRequestItem", mustBeAccepted: false, query: { "@type": "IdentityAttributeQuery", valueType: "Surname" } }],
