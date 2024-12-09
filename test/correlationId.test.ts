@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { getTimeout } from "./lib/setTimeout";
@@ -22,14 +23,12 @@ describe("test the correlation ids", () => {
     test("should send a random correlation id via webhook", async () => {
         connectorClient1._eventBus?.reset();
 
-        await connectorClient1.startCorrelation(async () => {
-            await connectorClient1.outgoingRequests.createRequest({
-                content: {
-                    items: [{ "@type": "ReadAttributeRequestItem", mustBeAccepted: false, query: { "@type": "IdentityAttributeQuery", valueType: "Surname" } }],
-                    expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
-                },
-                peer: account2Address
-            });
+        await connectorClient1.outgoingRequests.createRequest({
+            content: {
+                items: [{ "@type": "ReadAttributeRequestItem", mustBeAccepted: false, query: { "@type": "IdentityAttributeQuery", valueType: "Surname" } }],
+                expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
+            },
+            peer: account2Address
         });
 
         await connectorClient1._eventBus?.waitForEvent("consumption.outgoingRequestCreated", (event: any) => {
@@ -41,17 +40,18 @@ describe("test the correlation ids", () => {
     test("should send a custom correlation id via webhook", async () => {
         connectorClient1._eventBus?.reset();
 
-        const customCorrelationId = connectorClient1.createCorrelationId();
+        const customCorrelationId = randomUUID();
 
-        await connectorClient1.startCorrelation(customCorrelationId, async () => {
-            await connectorClient1.outgoingRequests.createRequest({
+        await connectorClient1.outgoingRequests.createRequest(
+            {
                 content: {
                     items: [{ "@type": "ReadAttributeRequestItem", mustBeAccepted: false, query: { "@type": "IdentityAttributeQuery", valueType: "Surname" } }],
                     expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
                 },
                 peer: account2Address
-            });
-        });
+            },
+            customCorrelationId
+        );
 
         await connectorClient1._eventBus?.waitForEvent("consumption.outgoingRequestCreated", (event: any) => event.headers["x-correlation-id"] === customCorrelationId);
     });
