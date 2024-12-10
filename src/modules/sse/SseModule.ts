@@ -1,10 +1,7 @@
 import { ILogger } from "@js-soft/logging-abstractions";
-import axios from "axios";
 import correlator from "correlation-id";
-import { EventSource, FetchLikeResponse } from "eventsource";
-import { HttpProxyAgent } from "http-proxy-agent";
-import * as https from "https";
-import { HttpsProxyAgent } from "https-proxy-agent";
+import { EventSource } from "eventsource";
+import { Agent, fetch, ProxyAgent } from "undici";
 import { ConnectorMode } from "../../ConnectorMode";
 import { ConnectorRuntime } from "../../ConnectorRuntime";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
@@ -57,28 +54,12 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
 
         this.logger.info(`Connecting to SSE endpoint: ${sseUrl}`);
 
+        const proxy = process.env.https_proxy ?? process.env.HTTPS_PROXY ?? process.env.http_proxy ?? process.env.HTTP_PROXY;
+        const dispatcher = proxy ? new ProxyAgent({ uri: proxy, connect: { rejectUnauthorized: false } }) : new Agent({ connect: { rejectUnauthorized: false } });
+
         const token = await this.runtime.getBackboneAuthenticationToken();
-
-        const httpsProxy = process.env.https_proxy ?? process.env.HTTPS_PROXY;
-        const httpsAgent = httpsProxy ? new HttpsProxyAgent(httpsProxy, { rejectUnauthorized: true }) : new https.Agent({ rejectUnauthorized: true });
-
-        const httpProxy = process.env.http_proxy ?? process.env.HTTP_PROXY;
-        const httpAgent = httpProxy ? new HttpProxyAgent(httpProxy) : undefined;
-
-        const client = axios.create({ httpsAgent, httpAgent, headers: { authorization: `Bearer ${token}` } });
-
         const eventSource = new EventSource(sseUrl, {
-            fetch: async (url, options): Promise<FetchLikeResponse> => {
-                const response = await client.request({ ...options, url: url.toString() });
-
-                return {
-                    status: response.status,
-                    body: response.data,
-                    url: response.config.url ?? "",
-                    redirected: response.request.res.responseUrl !== response.config.url,
-                    headers: { get: (name: string) => response.headers[name] }
-                };
-            }
+            fetch: async (url, options) => await fetch(url, { ...options, dispatcher, headers: { ...options?.headers, authorization: `Bearer ${token}` } })
         });
 
         this.eventSource = eventSource;
