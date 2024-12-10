@@ -1,6 +1,10 @@
 import { ILogger } from "@js-soft/logging-abstractions";
+import axios from "axios";
 import correlator from "correlation-id";
-import eventSourceModule from "eventsource";
+import { EventSource, FetchLikeResponse } from "eventsource";
+import { HttpProxyAgent } from "http-proxy-agent";
+import * as https from "https";
+import { HttpsProxyAgent } from "https-proxy-agent";
 import { ConnectorMode } from "../../ConnectorMode";
 import { ConnectorRuntime } from "../../ConnectorRuntime";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
@@ -21,7 +25,7 @@ export interface SseModuleConfiguration extends ConnectorRuntimeModuleConfigurat
 }
 
 export default class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
-    private eventSource: eventSourceModule | undefined;
+    private eventSource: EventSource | undefined;
 
     public constructor(runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) {
         super(runtime, configuration, logger, connectorMode);
@@ -55,11 +59,28 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
 
         const token = await this.runtime.getBackboneAuthenticationToken();
 
-        const eventSource = new eventSourceModule(sseUrl, {
-            https: { rejectUnauthorized: true },
-            proxy: process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY,
-            headers: { authorization: `Bearer ${token}` }
+        const httpsProxy = process.env.https_proxy ?? process.env.HTTPS_PROXY;
+        const httpsAgent = httpsProxy ? new HttpsProxyAgent(httpsProxy, { rejectUnauthorized: true }) : new https.Agent({ rejectUnauthorized: true });
+
+        const httpProxy = process.env.http_proxy ?? process.env.HTTP_PROXY;
+        const httpAgent = httpProxy ? new HttpProxyAgent(httpProxy) : undefined;
+
+        const client = axios.create({ httpsAgent, httpAgent, headers: { authorization: `Bearer ${token}` } });
+
+        const eventSource = new EventSource(sseUrl, {
+            fetch: async (url, options): Promise<FetchLikeResponse> => {
+                const response = await client.request({ ...options, url: url.toString() });
+
+                return {
+                    status: response.status,
+                    body: response.data,
+                    url: response.config.url ?? "",
+                    redirected: response.request.res.responseUrl !== response.config.url,
+                    headers: { get: (name: string) => response.headers[name] }
+                };
+            }
         });
+
         this.eventSource = eventSource;
 
         eventSource.addEventListener("ExternalEventCreated", async () => await this.runSync());
