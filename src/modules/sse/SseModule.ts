@@ -1,6 +1,7 @@
 import { ILogger } from "@js-soft/logging-abstractions";
 import correlator from "correlation-id";
-import eventSourceModule from "eventsource";
+import { EventSource } from "eventsource";
+import { Agent, fetch, ProxyAgent } from "undici";
 import { ConnectorMode } from "../../ConnectorMode";
 import { ConnectorRuntime } from "../../ConnectorRuntime";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
@@ -21,7 +22,7 @@ export interface SseModuleConfiguration extends ConnectorRuntimeModuleConfigurat
 }
 
 export default class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
-    private eventSource: eventSourceModule | undefined;
+    private eventSource: EventSource | undefined;
 
     public constructor(runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) {
         super(runtime, configuration, logger, connectorMode);
@@ -53,13 +54,19 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
 
         this.logger.info(`Connecting to SSE endpoint: ${sseUrl}`);
 
+        const baseOptions = { connect: { rejectUnauthorized: false } };
+        const proxy = baseUrl.startsWith("https://") ? (process.env.https_proxy ?? process.env.HTTPS_PROXY) : (process.env.http_proxy ?? process.env.HTTP_PROXY);
         const token = await this.runtime.getBackboneAuthenticationToken();
 
-        const eventSource = new eventSourceModule(sseUrl, {
-            https: { rejectUnauthorized: true },
-            proxy: process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY,
-            headers: { authorization: `Bearer ${token}` }
+        const eventSource = new EventSource(sseUrl, {
+            fetch: (url, options) =>
+                fetch(url, {
+                    ...options,
+                    dispatcher: proxy ? new ProxyAgent({ ...baseOptions, uri: proxy }) : new Agent(baseOptions),
+                    headers: { ...options?.headers, authorization: `Bearer ${token}` }
+                })
         });
+
         this.eventSource = eventSource;
 
         eventSource.addEventListener("ExternalEventCreated", async () => await this.runSync());
