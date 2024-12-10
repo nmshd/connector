@@ -1268,6 +1268,38 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  /api/v2/Attributes/TagCollection:
+    get:
+      operationId: getAttributeTagCollection
+      description: List valid Tags for Attributes
+      tags:
+        - Attributes
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AttributeTagCollection"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
   /api/v2/Attributes/ExecuteIdentityAttributeQuery:
     post:
       operationId: executeIdentityQuery
@@ -4874,6 +4906,48 @@ components:
           type: string
       required:
         - "@type"
+
+    AttributeTagCollection:
+      type: object
+      additionalProperties: false
+      properties:
+        supportedLanguages:
+          type: array
+          items:
+            type: string
+          example: ["en", "de"]
+        tagsForAttributeValueTypes:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              "$ref": "#/components/schemas/AttributeTag"
+          example:
+            PhoneNumber:
+              emergency:
+                displayNames: { de: "Notfallkontakt", en: "Emergency Contact" }
+                children:
+                  first: { displayNames: { de: "Erster Notfallkontakt", en: "First Emergency Contact" } }
+                  second: { displayNames: { de: "Zweiter Notfallkontakt", en: "Second Emergency Contact" } }
+              private: { displayNames: { de: "Privat", en: "Private" } }
+      required:
+        - supportedLanguages
+        - tagsForAttributeValueTypes
+
+    AttributeTag:
+      type: object
+      additionalProperties: false
+      properties:
+        children:
+          additionalProperties:
+            "$ref": "#/components/schemas/AttributeTag"
+          type: object
+        displayNames:
+          additionalProperties:
+            type: string
+          type: object
+      required:
+        - displayNames
 
     ConnectorHealth:
       type: object
