@@ -155,6 +155,14 @@ export class AttributesController extends BaseController {
         return this.ok(result);
     }
 
+    @GET
+    @Path("/TagCollection")
+    @Accept("application/json")
+    public async getAttributeTagCollection(): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.getAttributeTagCollection();
+        return this.ok(result);
+    }
+
     @POST
     @Path("/ExecuteIdentityAttributeQuery")
     @Accept("application/json")
