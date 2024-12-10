@@ -59,7 +59,7 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
 
         const token = await this.runtime.getBackboneAuthenticationToken();
         const eventSource = new EventSource(sseUrl, {
-            fetch: async (url, options) => await fetch(url, { ...options, dispatcher, headers: { ...options?.headers, authorization: `Bearer ${token}` } })
+            fetch: (url, options) => fetch(url, { ...options, dispatcher, headers: { ...options?.headers, authorization: `Bearer ${token}` } })
         });
 
         this.eventSource = eventSource;
