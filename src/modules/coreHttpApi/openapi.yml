@@ -3206,7 +3206,7 @@ paths:
         - in: query
           name: passwordProtection
           schema:
-            $ref: "#/components/schemas/IsSetFilter"
+            $ref: "#/components/schemas/ExistenceFilter"
         - in: query
           name: passwordProtection.password
           schema:
@@ -3214,7 +3214,7 @@ paths:
         - in: query
           name: passwordProtection.passwordIsPin
           schema:
-            $ref: "#/components/schemas/ModifiedBooleanFilter"
+            $ref: "#/components/schemas/PartialBooleanFilter"
         - in: query
           name: isOwn
           schema:
@@ -3347,7 +3347,7 @@ paths:
         - in: query
           name: passwordProtection
           schema:
-            $ref: "#/components/schemas/IsSetFilter"
+            $ref: "#/components/schemas/ExistenceFilter"
         - in: query
           name: passwordProtection.password
           schema:
@@ -3355,7 +3355,7 @@ paths:
         - in: query
           name: passwordProtection.passwordIsPin
           schema:
-            $ref: "#/components/schemas/ModifiedBooleanFilter"
+            $ref: "#/components/schemas/PartialBooleanFilter"
       responses:
         200:
           description: Success
@@ -3462,7 +3462,7 @@ paths:
         - in: query
           name: passwordProtection
           schema:
-            $ref: "#/components/schemas/IsSetFilter"
+            $ref: "#/components/schemas/ExistenceFilter"
         - in: query
           name: passwordProtection.password
           schema:
@@ -3470,7 +3470,7 @@ paths:
         - in: query
           name: passwordProtection.passwordIsPin
           schema:
-            $ref: "#/components/schemas/ModifiedBooleanFilter"
+            $ref: "#/components/schemas/PartialBooleanFilter"
       responses:
         200:
           description: Success
@@ -4232,7 +4232,7 @@ paths:
         - in: query
           name: passwordProtection
           schema:
-            $ref: "#/components/schemas/IsSetFilter"
+            $ref: "#/components/schemas/ExistenceFilter"
         - in: query
           name: passwordProtection.password
           schema:
@@ -4240,7 +4240,7 @@ paths:
         - in: query
           name: passwordProtection.passwordIsPin
           schema:
-            $ref: "#/components/schemas/ModifiedBooleanFilter"
+            $ref: "#/components/schemas/PartialBooleanFilter"
       responses:
         200:
           description: Success
@@ -4345,7 +4345,7 @@ paths:
         - in: query
           name: passwordProtection
           schema:
-            $ref: "#/components/schemas/IsSetFilter"
+            $ref: "#/components/schemas/ExistenceFilter"
         - in: query
           name: passwordProtection.password
           schema:
@@ -4353,7 +4353,7 @@ paths:
         - in: query
           name: passwordProtection.passwordIsPin
           schema:
-            $ref: "#/components/schemas/ModifiedBooleanFilter"
+            $ref: "#/components/schemas/PartialBooleanFilter"
       responses:
         200:
           description: Success
@@ -4599,20 +4599,20 @@ components:
             <th>Example</th>
           </tr>
           <tr>
-            <td>true</td>
+            <td>is true</td>
             <td>?foo=true</td>
           </tr>
           <tr>
-            <td>false</td>
+            <td>is false</td>
             <td>?foo=!true</td>
           </tr>
         </table>
         <p>* Due to limitations of Swagger UI, this feature cannot be tested in Swagger UI. Use a REST Client instead (e.g. Postman).</p>
 
-    ModifiedBooleanFilter:
+    PartialBooleanFilter:
       type: string
       description: >
-        <p>Filters for either true or undefined.
+        <p>Filters for a boolean that's either true or undefined.
         <p>The following operators are supported:</p>
         <table>
           <tr>
@@ -4620,20 +4620,20 @@ components:
             <th>Example</th>
           </tr>
           <tr>
-            <td>true</td>
+            <td>is true</td>
             <td>?foo=true</td>
           </tr>
           <tr>
-            <td>undefined</td>
+            <td>is undefined</td>
             <td>?foo=!</td>
           </tr>
         </table>
         <p>* Due to limitations of Swagger UI, this feature cannot be tested in Swagger UI. Use a REST Client instead (e.g. Postman).</p>
 
-    IsSetFilter:
+    ExistenceFilter:
       type: string
       description: >
-        <p>Filters if something is defined.
+        <p>Filters for whether a property exists, i. e. is not undefined.
         <p>The following operators are supported:</p>
         <table>
           <tr>
@@ -4641,11 +4641,11 @@ components:
             <th>Example</th>
           </tr>
           <tr>
-            <td>is defined</td>
+            <td>exists</td>
             <td>?foo=</td>
           </tr>
           <tr>
-            <td>is not defined</td>
+            <td>doesn't exist</td>
             <td>?foo=!</td>
           </tr>
         </table>
