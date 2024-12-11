@@ -3236,6 +3236,18 @@ paths:
           schema:
             $ref: "#/components/schemas/IdFilter"
         - in: query
+          name: passwordProtection
+          schema:
+            $ref: "#/components/schemas/ExistenceFilter"
+        - in: query
+          name: passwordProtection.password
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: passwordProtection.passwordIsPin
+          schema:
+            $ref: "#/components/schemas/PartialBooleanFilter"
+        - in: query
           name: isOwn
           schema:
             $ref: "#/components/schemas/BooleanFilter"
@@ -3364,6 +3376,18 @@ paths:
           name: forIdentity
           schema:
             $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: passwordProtection
+          schema:
+            $ref: "#/components/schemas/ExistenceFilter"
+        - in: query
+          name: passwordProtection.password
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: passwordProtection.passwordIsPin
+          schema:
+            $ref: "#/components/schemas/PartialBooleanFilter"
       responses:
         200:
           description: Success
@@ -3467,6 +3491,18 @@ paths:
           name: forIdentity
           schema:
             $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: passwordProtection
+          schema:
+            $ref: "#/components/schemas/ExistenceFilter"
+        - in: query
+          name: passwordProtection.password
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: passwordProtection.passwordIsPin
+          schema:
+            $ref: "#/components/schemas/PartialBooleanFilter"
       responses:
         200:
           description: Success
@@ -4225,6 +4261,18 @@ paths:
           name: forIdentity
           schema:
             $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: passwordProtection
+          schema:
+            $ref: "#/components/schemas/ExistenceFilter"
+        - in: query
+          name: passwordProtection.password
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: passwordProtection.passwordIsPin
+          schema:
+            $ref: "#/components/schemas/PartialBooleanFilter"
       responses:
         200:
           description: Success
@@ -4326,6 +4374,18 @@ paths:
           name: forIdentity
           schema:
             $ref: "#/components/schemas/IdFilter"
+        - in: query
+          name: passwordProtection
+          schema:
+            $ref: "#/components/schemas/ExistenceFilter"
+        - in: query
+          name: passwordProtection.password
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: passwordProtection.passwordIsPin
+          schema:
+            $ref: "#/components/schemas/PartialBooleanFilter"
       responses:
         200:
           description: Success
@@ -4571,12 +4631,54 @@ components:
             <th>Example</th>
           </tr>
           <tr>
-            <td>equal</td>
+            <td>is true</td>
             <td>?foo=true</td>
           </tr>
           <tr>
-            <td>not equal</td>
+            <td>is false</td>
             <td>?foo=!true</td>
+          </tr>
+        </table>
+        <p>* Due to limitations of Swagger UI, this feature cannot be tested in Swagger UI. Use a REST Client instead (e.g. Postman).</p>
+
+    PartialBooleanFilter:
+      type: string
+      description: >
+        <p>Filters for a boolean that's either true or undefined.
+        <p>The following operators are supported:</p>
+        <table>
+          <tr>
+            <th>Operation</th>
+            <th>Example</th>
+          </tr>
+          <tr>
+            <td>is true</td>
+            <td>?foo=true</td>
+          </tr>
+          <tr>
+            <td>is undefined</td>
+            <td>?foo=!</td>
+          </tr>
+        </table>
+        <p>* Due to limitations of Swagger UI, this feature cannot be tested in Swagger UI. Use a REST Client instead (e.g. Postman).</p>
+
+    ExistenceFilter:
+      type: string
+      description: >
+        <p>Filters for whether a property exists, i. e. is not undefined.
+        <p>The following operators are supported:</p>
+        <table>
+          <tr>
+            <th>Operation</th>
+            <th>Example</th>
+          </tr>
+          <tr>
+            <td>exists</td>
+            <td>?foo=</td>
+          </tr>
+          <tr>
+            <td>doesn't exist</td>
+            <td>?foo=!</td>
           </tr>
         </table>
         <p>* Due to limitations of Swagger UI, this feature cannot be tested in Swagger UI. Use a REST Client instead (e.g. Postman).</p>

@@ -72,14 +72,70 @@ test("send and receive a PIN-protected token", async () => {
 
 describe("Tokens query", () => {
     test("query own tokens", async () => {
-        const token = await uploadOwnToken(client1, (await client1.account.getIdentityInfo()).result.address);
-        const conditions = new QueryParamConditions(token, client1).addDateSet("expiresAt").addDateSet("createdAt").addStringSet("createdByDevice").addStringSet("forIdentity");
+        const token = await uploadOwnToken(client1, (await client1.account.getIdentityInfo()).result.address, { password: "password" });
+        const conditions = new QueryParamConditions(token, client1)
+            .addDateSet("expiresAt")
+            .addDateSet("createdAt")
+            .addStringSet("createdByDevice")
+            .addStringSet("forIdentity")
+            .addSingleCondition({
+                expectedResult: true,
+                key: "passwordProtection",
+                value: ""
+            })
+            .addSingleCondition({
+                expectedResult: false,
+                key: "passwordProtection",
+                value: "!"
+            })
+            .addStringSet("passwordProtection.password")
+            .addSingleCondition({
+                expectedResult: false,
+                key: "passwordProtection.passwordIsPin",
+                value: "true"
+            })
+            .addSingleCondition({
+                expectedResult: true,
+                key: "passwordProtection.passwordIsPin",
+                value: "!"
+            });
+        await conditions.executeTests((c, q) => c.tokens.getOwnTokens(q), ValidationSchema.Tokens);
+    });
+
+    test("query own PIN-protected tokens", async () => {
+        const token = await uploadOwnToken(client1, (await client1.account.getIdentityInfo()).result.address, { password: "1234", passwordIsPin: true });
+        const conditions = new QueryParamConditions(token, client1)
+            .addStringSet("passwordProtection.password")
+            .addSingleCondition({
+                expectedResult: true,
+                key: "passwordProtection.passwordIsPin",
+                value: "true"
+            })
+            .addSingleCondition({
+                expectedResult: false,
+                key: "passwordProtection.passwordIsPin",
+                value: "!"
+            });
         await conditions.executeTests((c, q) => c.tokens.getOwnTokens(q), ValidationSchema.Tokens);
     });
 
     test("query peer tokens", async () => {
         const token = await exchangeToken(client1, client2, (await client2.account.getIdentityInfo()).result.address);
-        const conditions = new QueryParamConditions(token, client2).addDateSet("expiresAt").addDateSet("createdAt").addStringSet("createdBy").addStringSet("forIdentity");
+        const conditions = new QueryParamConditions(token, client2)
+            .addDateSet("expiresAt")
+            .addDateSet("createdAt")
+            .addStringSet("createdBy")
+            .addStringSet("forIdentity")
+            .addSingleCondition({
+                expectedResult: false,
+                key: "passwordProtection",
+                value: ""
+            })
+            .addSingleCondition({
+                expectedResult: true,
+                key: "passwordProtection",
+                value: "!"
+            });
         await conditions.executeTests((c, q) => c.tokens.getPeerTokens(q), ValidationSchema.Tokens);
     });
 });

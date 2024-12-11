@@ -4,4 +4,7 @@ export interface GetPeerRelationshipTemplatesRequest {
     createdBy?: string | string[];
     maxNumberOfAllocations?: number | number[];
     forIdentity?: string;
+    passwordProtection?: "" | "!";
+    "passwordProtection.password"?: string | string[];
+    "passwordProtection.passwordIsPin"?: "true" | "!";
 }
