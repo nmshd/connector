@@ -5,5 +5,8 @@ export interface GetRelationshipTemplatesRequest {
     createdByDevice?: string | string[];
     maxNumberOfAllocations?: number | number[];
     forIdentity?: string | string[];
+    passwordProtection?: "" | "!";
+    "passwordProtection.password"?: string | string[];
+    "passwordProtection.passwordIsPin"?: "true" | "!";
     isOwn?: boolean | boolean[];
 }
