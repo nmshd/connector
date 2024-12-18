@@ -96,4 +96,10 @@ function validateConnectorConfig(connectorConfig: ConnectorRuntimeConfig): void 
         }
         throw new Error(errorMessage);
     }
+
+    if (!connectorConfig.transportLibrary.baseUrl.startsWith("http://") || !connectorConfig.transportLibrary.baseUrl.startsWith("https://")) {
+        // eslint-disable-next-line no-console
+        console.error("The 'transportLibrary.baseUrl' must either start with 'http://' or 'https://'.");
+        process.exit(1);
+    }
 }
