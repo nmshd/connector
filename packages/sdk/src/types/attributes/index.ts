@@ -1,5 +1,6 @@
 export * from "./ConnectorAttribute";
 export * from "./ConnectorAttributes";
+export * from "./ConnectorAttributeTagCollection";
 export * from "./IdentityAttributeQuery";
 export * from "./IQLQuery";
 export * from "./RelationshipAttributeQuery";

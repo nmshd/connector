@@ -1,5 +1,6 @@
 import {
     ConnectorAttribute,
+    ConnectorAttributeTagCollection,
     ConnectorAttributes,
     ConnectorHttpResponse,
     CreateRepositoryAttributeRequest,
@@ -54,6 +55,10 @@ export class AttributesEndpoint extends Endpoint {
 
     public async getValidAttributes(request: GetValidAttributesRequest, correlationId?: CorrelationID): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Valid", request, correlationId);
+    }
+
+    public async getAttributeTagCollection(correlationId?: CorrelationID): Promise<ConnectorHttpResponse<ConnectorAttributeTagCollection>> {
+        return await this.get("/api/v2/Attributes/TagCollection", undefined, correlationId);
     }
 
     public async getOwnRepositoryAttributes(request?: GetOwnRepositoryAttributesRequest, correlationId?: CorrelationID): Promise<ConnectorHttpResponse<ConnectorAttributes>> {

@@ -225,7 +225,7 @@ describe("Serialization Errors", () => {
 
 describe("RelationshipTemplates Query", () => {
     test("query templates", async () => {
-        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address);
+        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address, { password: "password" });
         const conditions = new QueryParamConditions(template, client1)
             .addBooleanSet("isOwn")
             .addDateSet("createdAt")
@@ -233,20 +233,52 @@ describe("RelationshipTemplates Query", () => {
             .addStringSet("createdBy")
             .addStringSet("createdByDevice")
             .addNumberSet("maxNumberOfAllocations")
-            .addStringSet("forIdentity");
+            .addStringSet("forIdentity")
+            .addSingleCondition({
+                expectedResult: true,
+                key: "passwordProtection",
+                value: ""
+            })
+            .addSingleCondition({
+                expectedResult: false,
+                key: "passwordProtection",
+                value: "!"
+            })
+            .addStringSet("passwordProtection.password")
+            .addSingleCondition({
+                expectedResult: false,
+                key: "passwordProtection.passwordIsPin",
+                value: "true"
+            })
+            .addSingleCondition({
+                expectedResult: true,
+                key: "passwordProtection.passwordIsPin",
+                value: "!"
+            });
 
         await conditions.executeTests((c, q) => c.relationshipTemplates.getRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
     });
 
     test("query own templates", async () => {
-        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address);
+        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address, { password: "1234", passwordIsPin: true });
         const conditions = new QueryParamConditions(template, client1)
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
             .addStringSet("createdByDevice")
             .addNumberSet("maxNumberOfAllocations")
-            .addStringSet("forIdentity");
+            .addStringSet("forIdentity")
+            .addStringSet("passwordProtection.password")
+            .addSingleCondition({
+                expectedResult: true,
+                key: "passwordProtection.passwordIsPin",
+                value: "true"
+            })
+            .addSingleCondition({
+                expectedResult: false,
+                key: "passwordProtection.passwordIsPin",
+                value: "!"
+            });
         await conditions.executeTests((c, q) => c.relationshipTemplates.getOwnRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
     });
 
@@ -258,7 +290,17 @@ describe("RelationshipTemplates Query", () => {
             .addStringSet("createdBy")
             .addStringSet("createdByDevice")
             .addNumberSet("maxNumberOfAllocations")
-            .addStringSet("forIdentity");
+            .addStringSet("forIdentity")
+            .addSingleCondition({
+                expectedResult: false,
+                key: "passwordProtection",
+                value: ""
+            })
+            .addSingleCondition({
+                expectedResult: true,
+                key: "passwordProtection",
+                value: "!"
+            });
 
         await conditions.executeTests((c, q) => c.relationshipTemplates.getPeerRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
     });

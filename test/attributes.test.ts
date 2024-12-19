@@ -623,3 +623,10 @@ describe("Delete attributes", () => {
         expect(client3DeletedAttribute.isError).toBe(true);
     });
 });
+
+describe("Attributes Tag Collection", () => {
+    test("should get all valid tags", async () => {
+        const response = await client1.attributes.getAttributeTagCollection();
+        expect(response).toBeSuccessful(ValidationSchema.ConnectorAttributeTagCollection);
+    });
+});

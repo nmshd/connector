@@ -36,6 +36,7 @@ export enum ValidationSchema {
     ConnectorRequests = "ConnectorRequests",
     ConnectorAttribute = "ConnectorAttribute",
     ConnectorAttributes = "ConnectorAttributes",
+    ConnectorAttributeTagCollection = "ConnectorAttributeTagCollection",
     SucceedAttributeResponse = "SucceedAttributeResponse"
 }
 
