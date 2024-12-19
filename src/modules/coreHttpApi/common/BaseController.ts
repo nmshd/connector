@@ -42,9 +42,7 @@ export abstract class BaseController {
         const filename = filenamePredicate(result);
         const mimetype = mimetypePredicate(result);
 
-        if (!content || content.length <= 0) {
-            throw new Error("'content' cannot be empty or undefined");
-        }
+        if (!content) throw new Error("'content' cannot be undefined");
 
         let buffer: Buffer;
         if (content instanceof Buffer) {
