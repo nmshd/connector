@@ -24,7 +24,7 @@ export class FilesController extends BaseController {
         const result = await this.transportServices.files.uploadOwnFile({
             content: file?.buffer,
             expiresAt,
-            filename: file?.originalname ? Buffer.from(file.originalname, "latin1").toString("utf8") : "",
+            filename: file?.originalname ? Buffer.from(file.originalname, "latin1").toString("utf8") : undefined,
             mimetype: file?.mimetype,
             title,
             description
