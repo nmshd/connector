@@ -25,6 +25,26 @@ describe("File Upload", () => {
         file = response.result;
     });
 
+    test("can upload file with umlaut in title and filename", async () => {
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ title: "ÄÖÜ", filename: "ÄÖÜ.txt" }));
+
+        expect(response).toBeSuccessful(ValidationSchema.File);
+
+        const file = response.result;
+        expect(file.title).toBe("ÄÖÜ");
+        expect(file.filename).toBe("ÄÖÜ.txt");
+    });
+
+    test("can upload file with space in title and filename", async () => {
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ title: "a file", filename: "a file.txt" }));
+
+        expect(response).toBeSuccessful(ValidationSchema.File);
+
+        const file = response.result;
+        expect(file.title).toBe("a file");
+        expect(file.filename).toBe("a file.txt");
+    });
+
     test("can upload file without description", async () => {
         const response = await client1.files.uploadOwnFile({
             title: "File Title",
