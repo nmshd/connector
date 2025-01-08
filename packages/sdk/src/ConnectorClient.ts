@@ -16,6 +16,13 @@ import {
 } from "./endpoints";
 
 export class ConnectorClient {
+    #correlationId: string | null = null;
+    public withCorrelationId(correlationId: string): this {
+        this.#correlationId = correlationId;
+
+        return this;
+    }
+
     public readonly account: AccountEndpoint;
     public readonly attributes: AttributesEndpoint;
     public readonly challenges: ChallengesEndpoint;
@@ -39,6 +46,16 @@ export class ConnectorClient {
             httpsAgent: config.httpsAgent,
             validateStatus: (_) => true,
             paramsSerializer: { dots: true, indexes: null }
+        });
+
+        axiosInstance.interceptors.request.use((config) => {
+            const correlationId = this.#correlationId;
+            if (correlationId) {
+                config.headers["x-correlation-id"] = correlationId;
+                this.#correlationId = null;
+            }
+
+            return config;
         });
 
         this.account = new AccountEndpoint(axiosInstance);
