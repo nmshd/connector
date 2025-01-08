@@ -36,7 +36,6 @@ describe("test the correlation ids", () => {
         expect(event).toBeDefined();
     });
 
-    // eslint-disable-next-line jest/expect-expect
     test("should send a custom correlation id via webhook", async () => {
         connectorClient1._eventBus?.reset();
 
@@ -50,6 +49,10 @@ describe("test the correlation ids", () => {
             peer: account2Address
         });
 
-        await connectorClient1._eventBus?.waitForEvent("consumption.outgoingRequestCreated", (event: any) => event.headers["x-correlation-id"] === customCorrelationId);
+        const event = await connectorClient1._eventBus?.waitForEvent(
+            "consumption.outgoingRequestCreated",
+            (event: any) => event.headers["x-correlation-id"] === customCorrelationId
+        );
+        expect(event).toBeDefined();
     });
 });
