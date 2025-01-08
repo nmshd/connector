@@ -32,7 +32,7 @@ docker compose -f .dev/compose.yml --env-file [path_to_your_env_file] up --build
 After a few seconds you should see the following output:
 
 ```console
-connector-1  | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transportinitialized
+connector-1  | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transport initialized
 ...
 connector-1  | [2021-01-25T11:27:41.241] [INFO] HttpServerModule - Listening on port 80
 ...
@@ -79,9 +79,9 @@ To use the npm version of the runtime again you need to run `npm run unlink-runt
 
 Set the following environment variables:
 
--   NMSHD_TEST_BASEURL (the backbone baseUrl to test against)
--   NMSHD_TEST_CLIENTID (the backbone clientId for the configured baseUrl)
--   NMSHD_TEST_CLIENTSECRET (the backbone clientSecret for the configured baseUrl)
+- NMSHD_TEST_BASEURL (the backbone baseUrl to test against)
+- NMSHD_TEST_CLIENTID (the backbone clientId for the configured baseUrl)
+- NMSHD_TEST_CLIENTSECRET (the backbone clientSecret for the configured baseUrl)
 
 > We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
 
@@ -95,11 +95,29 @@ npm run start:backbone
 
 Set the following environment variables:
 
--   NMSHD_TEST_BASEURL to `http://localhost:8090`
--   NMSHD_TEST_CLIENTID to `test`
--   NMSHD_TEST_CLIENTSECRET to `test`
+- NMSHD_TEST_BASEURL to `http://localhost:8090`
+- NMSHD_TEST_CLIENTID to `test`
+- NMSHD_TEST_CLIENTSECRET to `test`
 
 > We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
+
+### Local Backbone Prod Docker image testing
+
+To test the productive image you can use `docker compose -f .dev/compose.prodtest.yml --env-file .dev/compose.backbone.env`.
+
+For example to start the compose you can run it like
+`docker compose -f .dev/compose.prodtest.yml --env-file .dev/compose.backbone.env up --build -d`
+
+or to take it down again
+`docker compose -f .dev/compose.prodtest.yml --env-file .dev/compose.backbone.env down`
+
+to check if the prod image still works you can run.
+
+`docker logs -f connector`
+
+to see the logs of the connector.
+
+Afterward you can use the connector-tui or an REST client to test the connector.
 
 ### Run the tests
 
@@ -119,28 +137,26 @@ npm run test:local -- testSuiteName
 2. change into the directory `cd connector`
 3. install the npm dependencies `npm i`
 4. build the connector `npm run build`
-5. install the connector as cli locally `npm link .`
-6. create a config file (for example `local.config.json`)
+5. create a config file (for example `local.config.json`)
 
     ```
     {
       "debug": true,
       "transportLibrary": {
-          "baseUrl": "...",
-          "platformClientId": "...",
-          "platformClientSecret": "..."
+          "baseUrl": "<base-url>",
+          "platformClientId": "<client-id>",
+          "platformClientSecret": "<client-secret>"
       },
       "database": { "driver": "lokijs", "folder": "./", "dbName": "local", "dbNamePrefix": "l" },
       "logging": { "categories": { "default": { "appenders": ["console"] } } },
-      "infrastructure": { "httpServer": { "apiKey": "xxx", "port": 8080 } },
-      "modules": { "coreHttpApi": { "docs": { "enabled": true } } },
-      "transportLibrary": { "allowIdentityCreation": true }
+      "infrastructure": { "httpServer": { "apiKey": "<api-key-or-empty-string>", "port": 8080 } },
+      "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
     }
 
     ```
 
-7. replace ... in the config with real values
-8. start the connector using `nmshd-connector start --config ./local.config.json`
+6. replace the placeholders in the config with real values
+7. start the connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/index.js start`
 
 It's now possible to access the connector on port 8080. Validating this is possible by accessing `http://localhost:8080/docs/swagger` in the browser.
 
@@ -148,8 +164,8 @@ It's now possible to access the connector on port 8080. Validating this is possi
 
 ## Build
 
--   run `npm ci` (this will symlink the SDK in the node_modules of the Connector)
--   run `npm run build --workspaces` to build the changes for the Connector and its packages
+- run `npm ci` (this will symlink the SDK in the node_modules of the Connector)
+- run `npm run build --workspaces` to build the changes for the Connector and its packages
 
 ## Publish
 

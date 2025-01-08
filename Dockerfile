@@ -1,4 +1,4 @@
-FROM node:22.9.0 AS builder
+FROM node:23.5.0 AS builder
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
 ARG VERSION
@@ -13,7 +13,7 @@ COPY src src
 RUN npm run build
 RUN .ci/writeBuildInformation.sh
 
-FROM node:22.9.0-alpine
+FROM node:23.5.0-alpine
 RUN apk add --no-cache tini
 RUN apk add libcap && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/node && apk del libcap
 
@@ -34,5 +34,5 @@ LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
 
 USER node
 
-ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["nmshd-connector", "start"]
+ENTRYPOINT ["/sbin/tini", "--", "node", "/usr/app/dist/index.js"]
+CMD ["start"]

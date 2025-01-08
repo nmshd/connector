@@ -1053,6 +1053,18 @@
             },
             "type": "object"
         },
+        "pinnedTLSCertificateSHA256Fingerprints": {
+            "additionalProperties": {
+                "items": {
+                    "type": "string"
+                },
+                "type": "array"
+            },
+            "type": "object"
+        },
+        "enforceCertificatePinning": {
+            "type": "boolean"
+        },
         "transportLibrary": {
             "additionalProperties": false,
             "properties": {

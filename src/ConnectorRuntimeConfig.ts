@@ -1,7 +1,4 @@
-import { RuntimeConfig } from "@nmshd/runtime";
-import correlator from "correlation-id";
-import fs from "fs";
-import { validate as validateSchema } from "jsonschema";
+import { DeciderModuleConfiguration, RuntimeConfig } from "@nmshd/runtime";
 import * as log4js from "log4js";
 import nconf from "nconf";
 import path from "path";
@@ -25,11 +22,16 @@ export interface ConnectorRuntimeConfig extends RuntimeConfig {
 
     logging: log4js.Configuration;
 
-    modules: Record<string, ConnectorRuntimeModuleConfiguration>;
+    modules: Record<string, ConnectorRuntimeModuleConfiguration> & {
+        decider: DeciderModuleConfiguration;
+    };
 
     infrastructure: {
         httpServer: HttpServerConfiguration;
     };
+
+    pinnedTLSCertificateSHA256Fingerprints?: Record<string, string[]>;
+    enforceCertificatePinning?: boolean;
 }
 export function createConnectorConfig(overrides?: RuntimeConfig, customConfigLocation?: string): ConnectorRuntimeConfig {
     nconf

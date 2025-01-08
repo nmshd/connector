@@ -110,7 +110,7 @@ describe("Attributes", () => {
             successorContent: {
                 value: {
                     "@type": "GivenName",
-                    value: "AGivenName"
+                    value: "ANewGivenName"
                 },
                 tags: ["content:edu.de"]
             }
@@ -120,7 +120,8 @@ describe("Attributes", () => {
 
         const succeededAttribute = (await client1.attributes.getAttribute(succeedAttributeResponse.result.successor.id)).result;
 
-        expect(succeededAttribute.content).toStrictEqualExcluding(newRepositoryAttribute.content, "@type", "owner");
+        expect(succeededAttribute.content).toStrictEqualExcluding(newRepositoryAttribute.content, "@type", "owner", "value.value");
+        expect((succeededAttribute.content.value as GivenNameJSON).value).toBe("ANewGivenName");
     });
 
     test("Should notify peer about Repository Attribute Succession", async () => {
@@ -550,7 +551,7 @@ describe("Delete attributes", () => {
         expect(getAttributeResponse.isSuccess).toBe(false);
     });
 
-    test("should delete a third party attribute and notify owner", async () => {
+    test("should delete a ThirdPartyRelationshipAttribute and notify the peer", async () => {
         const [client3] = await launcher.launch(1);
 
         await establishRelationship(client3, client2);
@@ -611,14 +612,21 @@ describe("Delete attributes", () => {
 
         const thirdPartyRelationshipAttribute = (await client3.attributes.getAttribute((message.content as any).response.items[0].attributeId)).result;
 
-        const deleteResponse = await client3.attributes.deleteThirdPartyOwnedRelationshipAttributeAndNotifyPeer(thirdPartyRelationshipAttribute.id);
+        const deleteResponse = await client3.attributes.deleteThirdPartyRelationshipAttributeAndNotifyPeer(thirdPartyRelationshipAttribute.id);
 
         await syncUntilHasMessageWithNotification(client2, deleteResponse.result.notificationId);
-        await client2._eventBus?.waitForEvent<DataEvent<any>>("consumption.thirdPartyOwnedRelationshipAttributeDeletedByPeer", (event) => {
+        await client2._eventBus?.waitForEvent<DataEvent<any>>("consumption.thirdPartyRelationshipAttributeDeletedByPeer", (event) => {
             return event.data.id.toString() === thirdPartyRelationshipAttribute.id;
         });
 
         const client3DeletedAttribute = await client3.attributes.getAttribute(thirdPartyRelationshipAttribute.id);
         expect(client3DeletedAttribute.isError).toBe(true);
+    });
+});
+
+describe("Attributes Tag Collection", () => {
+    test("should get all valid tags", async () => {
+        const response = await client1.attributes.getAttributeTagCollection();
+        expect(response).toBeSuccessful(ValidationSchema.ConnectorAttributeTagCollection);
     });
 });

@@ -4,16 +4,11 @@ import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../
 export interface AutoAcceptPendingRelationshipsModuleConfiguration extends ConnectorRuntimeModuleConfiguration {}
 
 export default class AutoAcceptPendingRelationshipsModule extends ConnectorRuntimeModule<AutoAcceptPendingRelationshipsModuleConfiguration> {
-    private currentIdentity: string;
-
     public init(): void {
         // Nothing to do here
     }
 
-    public async start(): Promise<void> {
-        const currentIdentityResult = await this.runtime.getServices().transportServices.account.getIdentityInfo();
-        this.currentIdentity = currentIdentityResult.value.address;
-
+    public start(): void {
         this.subscribeToEvent(RelationshipChangedEvent, this.handleRelationshipChanged.bind(this));
     }
 
@@ -32,12 +27,11 @@ export default class AutoAcceptPendingRelationshipsModule extends ConnectorRunti
     }
 
     private isIncomingPendingRelationship(event: RelationshipChangedEvent) {
-        const data = event.data;
-        if (data.status !== RelationshipStatus.Pending) return false;
-        if (data.auditLog.length !== 1) return false;
+        const relationship = event.data;
+        if (relationship.status !== RelationshipStatus.Pending) return false;
+        if (relationship.auditLog.length !== 1) return false;
 
-        const auditLogEntry = data.auditLog[0];
-        return auditLogEntry.createdBy !== this.currentIdentity;
+        return relationship.auditLog[0].createdBy !== event.eventTargetAddress;
     }
 
     public stop(): void {

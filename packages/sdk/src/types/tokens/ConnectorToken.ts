@@ -5,6 +5,11 @@ export interface ConnectorToken {
     content: unknown;
     createdAt: string;
     expiresAt: string;
+    forIdentity?: string;
+    passwordProtection?: {
+        password: string;
+        passwordIsPin?: true;
+    };
     truncatedReference: string;
     isEphemeral: boolean;
 }

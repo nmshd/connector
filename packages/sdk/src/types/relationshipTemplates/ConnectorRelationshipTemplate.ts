@@ -9,5 +9,10 @@ export interface ConnectorRelationshipTemplate {
     createdAt: string;
     content: RelationshipTemplateContentJSON | ArbitraryRelationshipTemplateContentJSON;
     expiresAt?: string;
+    forIdentity?: string;
+    passwordProtection?: {
+        password: string;
+        passwordIsPin?: true;
+    };
     truncatedReference: string;
 }

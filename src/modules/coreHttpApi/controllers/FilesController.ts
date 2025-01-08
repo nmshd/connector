@@ -24,7 +24,7 @@ export class FilesController extends BaseController {
         const result = await this.transportServices.files.uploadOwnFile({
             content: file?.buffer,
             expiresAt,
-            filename: file?.originalname,
+            filename: file?.originalname !== undefined ? Buffer.from(file.originalname, "latin1").toString("utf8") : undefined,
             mimetype: file?.mimetype,
             title,
             description
@@ -126,7 +126,9 @@ export class FilesController extends BaseController {
             case "image/png":
                 const qrCodeResult = await this.transportServices.files.createTokenQRCodeForFile({
                     fileId: id,
-                    expiresAt: request.expiresAt
+                    expiresAt: request.expiresAt,
+                    forIdentity: request.forIdentity,
+                    passwordProtection: request.passwordProtection
                 });
                 return this.file(
                     qrCodeResult,
@@ -140,7 +142,9 @@ export class FilesController extends BaseController {
                 const jsonResult = await this.transportServices.files.createTokenForFile({
                     fileId: id,
                     expiresAt: request.expiresAt,
-                    ephemeral: request.ephemeral
+                    ephemeral: request.ephemeral,
+                    forIdentity: request.forIdentity,
+                    passwordProtection: request.passwordProtection
                 });
                 return this.created(jsonResult);
         }

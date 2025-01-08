@@ -11,7 +11,7 @@ describe("test openapi spec against routes", () => {
     beforeAll(async () => {
         manualOpenApiSpec = yamljs.load("src/modules/coreHttpApi/openapi.yml");
 
-        const files = "src/modules/**/*.ts";
+        const files = "src/modules/coreHttpApi/controllers/**/*.ts";
         const metadata = new MetadataGenerator([files], "tsconfig.json").generate();
         const defaultOptions = {
             basePath: "/",
@@ -59,7 +59,8 @@ describe("test openapi spec against routes", () => {
             "/api/v2/Attributes/ValidateIQLQuery": { post: "200" },
             "/api/v2/Challenges/Validate": { post: "200" },
             "/api/v2/Relationships/{param}": { delete: "204" },
-            "/api/v2/Attributes/{param}": { delete: "204" }
+            "/api/v2/Attributes/{param}": { delete: "204" },
+            "/api/v2/IdentityMetadata": { delete: "204" }
         };
         /* eslint-enable @typescript-eslint/naming-convention */
 

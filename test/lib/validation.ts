@@ -13,6 +13,7 @@ export enum ValidationSchema {
     Error = "ConnectorError",
     File = "ConnectorFile",
     Files = "ConnectorFiles",
+    IdentityMetadata = "ConnectorIdentityMetadata",
     Message = "ConnectorMessage",
     Messages = "ConnectorMessages",
     MessageWithAttachments = "ConnectorMessageWithAttachments",
@@ -35,6 +36,7 @@ export enum ValidationSchema {
     ConnectorRequests = "ConnectorRequests",
     ConnectorAttribute = "ConnectorAttribute",
     ConnectorAttributes = "ConnectorAttributes",
+    ConnectorAttributeTagCollection = "ConnectorAttributeTagCollection",
     SucceedAttributeResponse = "SucceedAttributeResponse"
 }
 

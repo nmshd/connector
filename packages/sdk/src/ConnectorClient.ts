@@ -5,6 +5,7 @@ import {
     AttributesEndpoint,
     ChallengesEndpoint,
     FilesEndpoint,
+    IdentityMetadataEndpoint,
     IncomingRequestsEndpoint,
     MessagesEndpoint,
     MonitoringEndpoint,
@@ -15,10 +16,18 @@ import {
 } from "./endpoints";
 
 export class ConnectorClient {
+    #correlationId: string | null = null;
+    public withCorrelationId(correlationId: string): this {
+        this.#correlationId = correlationId;
+
+        return this;
+    }
+
     public readonly account: AccountEndpoint;
     public readonly attributes: AttributesEndpoint;
     public readonly challenges: ChallengesEndpoint;
     public readonly files: FilesEndpoint;
+    public readonly identityMetadata: IdentityMetadataEndpoint;
     public readonly incomingRequests: IncomingRequestsEndpoint;
     public readonly messages: MessagesEndpoint;
     public readonly monitoring: MonitoringEndpoint;
@@ -31,7 +40,7 @@ export class ConnectorClient {
         const axiosInstance = axios.create({
             baseURL: config.baseUrl,
             headers: {
-                "X-API-KEY": config.apiKey // eslint-disable-line @typescript-eslint/naming-convention
+                "X-API-KEY": config.apiKey
             },
             httpAgent: config.httpAgent,
             httpsAgent: config.httpsAgent,
@@ -39,10 +48,21 @@ export class ConnectorClient {
             paramsSerializer: { dots: true, indexes: null }
         });
 
+        axiosInstance.interceptors.request.use((config) => {
+            const correlationId = this.#correlationId;
+            if (correlationId) {
+                config.headers["x-correlation-id"] = correlationId;
+                this.#correlationId = null;
+            }
+
+            return config;
+        });
+
         this.account = new AccountEndpoint(axiosInstance);
         this.attributes = new AttributesEndpoint(axiosInstance);
         this.challenges = new ChallengesEndpoint(axiosInstance);
         this.files = new FilesEndpoint(axiosInstance);
+        this.identityMetadata = new IdentityMetadataEndpoint(axiosInstance);
         this.incomingRequests = new IncomingRequestsEndpoint(axiosInstance);
         this.messages = new MessagesEndpoint(axiosInstance);
         this.monitoring = new MonitoringEndpoint(axiosInstance);

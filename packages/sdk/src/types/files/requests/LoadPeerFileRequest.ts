@@ -4,4 +4,5 @@ export interface LoadPeerFileRequest {
      * starting with 'RklM' for a direct truncated FileReference
      */
     reference: string;
+    password?: string;
 }

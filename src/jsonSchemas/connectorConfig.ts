@@ -19,6 +19,10 @@ export interface ConnectorConfig {
     logging: Log4jsConfiguration;
     modules: Record<string, ModuleConfiguration>;
     infrastructure: InfrastructureConfiguration;
+
+    pinnedTLSCertificateSHA256Fingerprints?: Record<string, string[]>;
+    enforceCertificatePinning?: boolean;
+
     [key: string]: any;
 }
 

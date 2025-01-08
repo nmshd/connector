@@ -25,6 +25,26 @@ describe("File Upload", () => {
         file = response.result;
     });
 
+    test("can upload file with umlaut in title and filename", async () => {
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ title: "ÄÖÜ", filename: "ÄÖÜ.txt" }));
+
+        expect(response).toBeSuccessful(ValidationSchema.File);
+
+        const file = response.result;
+        expect(file.title).toBe("ÄÖÜ");
+        expect(file.filename).toBe("ÄÖÜ.txt");
+    });
+
+    test("can upload file with space in title and filename", async () => {
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ title: "a file", filename: "a file.txt" }));
+
+        expect(response).toBeSuccessful(ValidationSchema.File);
+
+        const file = response.result;
+        expect(file.title).toBe("a file");
+        expect(file.filename).toBe("a file.txt");
+    });
+
     test("can upload file without description", async () => {
         const response = await client1.files.uploadOwnFile({
             title: "File Title",
@@ -67,9 +87,13 @@ describe("File Upload", () => {
         expect(response.result.byteLength).toBe(4);
     });
 
-    test("cannot upload an empty file", async () => {
+    test("can upload an empty file", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest({ file: Buffer.of() }));
-        expect(response).toBeAnError("'content' is empty", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeSuccessful(ValidationSchema.File);
+
+        const downloadResponse = await client1.files.downloadFile(response.result.id);
+        expect(downloadResponse.isSuccess).toBeTruthy();
+        expect(downloadResponse.result.byteLength).toBe(0);
     });
 
     test("cannot upload a file that is null", async () => {
@@ -211,6 +235,15 @@ describe("Load peer file with token reference", () => {
         expect(response.result).toContainEqual({ ...file, isOwn: false });
     });
 
+    test("token can be personalized", async () => {
+        const client2address = (await client2.account.getIdentityInfo()).result.address;
+        const token = (await client1.files.createTokenForFile(file.id, { forIdentity: client2address })).result;
+        expect(token.forIdentity).toBe(client2address);
+
+        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference });
+        expect(response).toBeSuccessful(ValidationSchema.File);
+    });
+
     test("passing token id as truncated token reference causes an error", async () => {
         const file = await uploadFile(client1);
         const token = (await client1.files.createTokenForFile(file.id)).result;
@@ -277,5 +310,33 @@ describe("Load peer file with reference", () => {
         const response = await client2.files.getFiles({ createdAt: file.createdAt });
         expect(response).toBeSuccessful(ValidationSchema.Files);
         expect(response.result).toContainEqual({ ...file, isOwn: false });
+    });
+});
+
+describe("Password-protected tokens for files", () => {
+    test("send and receive an unprotected template via password-protected token", async () => {
+        const file = await uploadFile(client1);
+        const token = (await client1.files.createTokenForFile(file.id, { passwordProtection: { password: "password" } })).result;
+        expect(token.passwordProtection?.password).toBe("password");
+        expect(token.passwordProtection?.passwordIsPin).toBeUndefined();
+
+        const response = await client2.files.loadPeerFile({
+            reference: token.truncatedReference,
+            password: "password"
+        });
+        expect(response).toBeSuccessful(ValidationSchema.File);
+    });
+
+    test("send and receive an unprotected template via PIN-protected token", async () => {
+        const file = await uploadFile(client1);
+        const token = (await client1.files.createTokenForFile(file.id, { passwordProtection: { password: "1234", passwordIsPin: true } })).result;
+        expect(token.passwordProtection?.password).toBe("1234");
+        expect(token.passwordProtection?.passwordIsPin).toBe(true);
+
+        const response = await client2.files.loadPeerFile({
+            reference: token.truncatedReference,
+            password: "1234"
+        });
+        expect(response).toBeSuccessful(ValidationSchema.File);
     });
 });

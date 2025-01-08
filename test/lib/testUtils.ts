@@ -139,12 +139,12 @@ export async function syncUntilHasMessageWithResponse(client: ConnectorClientWit
     ).data.message;
 }
 
-export async function uploadOwnToken(client: ConnectorClient): Promise<ConnectorToken> {
+export async function uploadOwnToken(client: ConnectorClient, forIdentity?: string, passwordProtection?: { password: string; passwordIsPin?: true }): Promise<ConnectorToken> {
     const response = await client.tokens.createOwnToken({
-        content: {
-            content: "Hello"
-        },
-        expiresAt: DateTime.utc().plus({ days: 1 }).toString()
+        content: { aKey: "aValue" },
+        expiresAt: DateTime.utc().plus({ days: 1 }).toString(),
+        forIdentity,
+        passwordProtection
     });
 
     expect(response).toBeSuccessful(ValidationSchema.Token);
@@ -179,14 +179,20 @@ export async function makeUploadRequest(values: Partial<UploadOwnFileRequest> = 
     };
 }
 
-export async function createTemplate(client: ConnectorClient): Promise<ConnectorRelationshipTemplate> {
+export async function createTemplate(
+    client: ConnectorClient,
+    forIdentity?: string,
+    passwordProtection?: { password: string; passwordIsPin?: true }
+): Promise<ConnectorRelationshipTemplate> {
     const response = await client.relationshipTemplates.createOwnRelationshipTemplate({
         maxNumberOfAllocations: 1,
         expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
         content: {
             "@type": "ArbitraryRelationshipTemplateContent",
             value: { a: "b" }
-        }
+        },
+        forIdentity,
+        passwordProtection
     });
 
     expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
@@ -194,10 +200,10 @@ export async function createTemplate(client: ConnectorClient): Promise<Connector
     return response.result;
 }
 
-export async function getTemplateToken(client: ConnectorClient): Promise<ConnectorToken> {
-    const template = await createTemplate(client);
+export async function getTemplateToken(client: ConnectorClient, forIdentity?: string, passwordProtection?: { password: string; passwordIsPin?: true }): Promise<ConnectorToken> {
+    const template = await createTemplate(client, forIdentity, passwordProtection);
 
-    const response = await client.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id);
+    const response = await client.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { forIdentity, passwordProtection });
     expect(response).toBeSuccessful(ValidationSchema.Token);
 
     return response.result;
@@ -212,8 +218,8 @@ export async function getFileToken(client: ConnectorClient): Promise<ConnectorTo
     return response.result;
 }
 
-export async function exchangeTemplate(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient): Promise<ConnectorRelationshipTemplate> {
-    const templateToken = await getTemplateToken(clientCreator);
+export async function exchangeTemplate(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient, forIdentity?: string): Promise<ConnectorRelationshipTemplate> {
+    const templateToken = await getTemplateToken(clientCreator, forIdentity);
 
     const response = await clientRecpipient.relationshipTemplates.loadPeerRelationshipTemplate({
         reference: templateToken.truncatedReference
@@ -232,8 +238,8 @@ export async function exchangeFile(clientCreator: ConnectorClient, clientRecpipi
     return response.result;
 }
 
-export async function exchangeToken(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient): Promise<ConnectorToken> {
-    const token = await uploadOwnToken(clientCreator);
+export async function exchangeToken(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient, forIdentity?: string): Promise<ConnectorToken> {
+    const token = await uploadOwnToken(clientCreator, forIdentity);
 
     const response = await clientRecpipient.tokens.loadPeerToken({ reference: token.truncatedReference });
     expect(response).toBeSuccessful(ValidationSchema.Token);

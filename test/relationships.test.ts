@@ -28,6 +28,17 @@ describe("Relationships", () => {
         expect(loadRelationshipResponse).toBeSuccessful(ValidationSchema.RelationshipTemplate);
         const templateId = loadRelationshipResponse.result.id;
 
+        const canCreateRelationshipResponse = await client2.relationships.canCreateRelationship({
+            templateId
+        });
+        expect(canCreateRelationshipResponse.isSuccess).toBe(true);
+
+        const canCreateRelationshipWithProvidedCreationContentResponse = await client2.relationships.canCreateRelationship({
+            templateId,
+            creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} }
+        });
+        expect(canCreateRelationshipWithProvidedCreationContentResponse.isSuccess).toBe(true);
+
         const createRelationshipResponse = await client2.relationships.createRelationship({
             templateId,
             creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} }
