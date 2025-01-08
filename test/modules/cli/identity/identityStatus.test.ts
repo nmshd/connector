@@ -3,7 +3,7 @@ import { identityDeletionInitHandler, identityStatusHandler } from "../../../../
 import { resetDB, setupEnvironment } from "../setup";
 
 describe("Identity status", () => {
-    const identityStatusPattern = /Id: did:e:((([A-Za-z0-9]+(-[A-Za-z0-9]+)*)\.)+[a-z]{2,}|localhost):dids:[0-9a-f]{22}/;
+    const identityStatusPattern = /Identity Address: did:e:((([A-Za-z0-9]+(-[A-Za-z0-9]+)*)\.)+[a-z]{2,}|localhost):dids:[0-9a-f]{22}/;
 
     beforeAll(() => {
         setupEnvironment();
