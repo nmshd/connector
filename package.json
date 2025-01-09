@@ -12,7 +12,7 @@
     ],
     "scripts": {
         "lint": "npm run lint:tsc && npm run lint:prettier && npm run lint:eslint",
-        "lint:prettier": "prettier --check ./src ./test ./packages/*/src",
+        "lint:prettier": "prettier --check .",
         "lint:eslint": "eslint --ext .ts ./src ./test ./packages/*/src",
         "lint:tsc": "npm run build --workspaces && tsc -p test/tsconfig.json --noEmit",
         "build": "run-p tsc copy-additional-files",

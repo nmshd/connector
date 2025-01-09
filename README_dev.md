@@ -79,9 +79,9 @@ To use the npm version of the runtime again you need to run `npm run unlink-runt
 
 Set the following environment variables:
 
--   NMSHD_TEST_BASEURL (the backbone baseUrl to test against)
--   NMSHD_TEST_CLIENTID (the backbone clientId for the configured baseUrl)
--   NMSHD_TEST_CLIENTSECRET (the backbone clientSecret for the configured baseUrl)
+- NMSHD_TEST_BASEURL (the backbone baseUrl to test against)
+- NMSHD_TEST_CLIENTID (the backbone clientId for the configured baseUrl)
+- NMSHD_TEST_CLIENTSECRET (the backbone clientSecret for the configured baseUrl)
 
 > We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
 
@@ -95,9 +95,9 @@ npm run start:backbone
 
 Set the following environment variables:
 
--   NMSHD_TEST_BASEURL to `http://localhost:8090`
--   NMSHD_TEST_CLIENTID to `test`
--   NMSHD_TEST_CLIENTSECRET to `test`
+- NMSHD_TEST_BASEURL to `http://localhost:8090`
+- NMSHD_TEST_CLIENTID to `test`
+- NMSHD_TEST_CLIENTSECRET to `test`
 
 > We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
 
@@ -131,7 +131,7 @@ If you only want to run a single test suite you can use the following command:
 npm run test:local -- testSuiteName
 ```
 
-## Run the Connector without Docker MongoDB or other Dependencies
+## Run the Connector without Docker, MongoDB or other Dependencies
 
 1. clone this repository `git clone https://github.com/nmshd/connector.git`
 2. change into the directory `cd connector`
@@ -163,8 +163,8 @@ It's now possible to access the connector on port 8080. Validating this is possi
 
 ## Build
 
--   run `npm ci` (this will symlink the SDK in the node_modules of the Connector)
--   run `npm run build --workspaces` to build the changes for the Connector and its packages
+- run `npm ci` (this will symlink the SDK in the node_modules of the Connector)
+- run `npm run build --workspaces` to build the changes for the Connector and its packages
 
 ## Publish
 
