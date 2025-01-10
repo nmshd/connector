@@ -38,5 +38,5 @@ npm i @nmshd/connector-sdk
 
 For a description of the different methods you can look at one of the OpenAPI UIs, which are hosted on your Connector:
 
--   SwaggerUI: https://<INSERT_YOUR_CONNECTOR_DOMAIN_HERE>/docs/swagger
--   SwaggerUI: https://<INSERT_YOUR_CONNECTOR_DOMAIN_HERE>/docs/rapidoc
+- SwaggerUI: https://<INSERT_YOUR_CONNECTOR_DOMAIN_HERE>/docs/swagger
+- SwaggerUI: https://<INSERT_YOUR_CONNECTOR_DOMAIN_HERE>/docs/rapidoc
