@@ -1,0 +1,34 @@
+import { AccountController } from "@nmshd/transport";
+import { CommandModule } from "yargs";
+import { BaseCommand, ConfigFileOptions, configOptionBuilder } from "../../BaseCommand";
+
+export const identityInitHandler = async ({ config }: ConfigFileOptions): Promise<void> => {
+    await new IdentityInit().run(config);
+};
+export const yargsIdentityInitCommand: CommandModule<{}, ConfigFileOptions> = {
+    command: "init",
+    describe: "initialize the identity",
+    handler: identityInitHandler,
+    builder: configOptionBuilder
+};
+
+export default class IdentityInit extends BaseCommand {
+    protected async runInternal(): Promise<void> {
+        await this.createTransport();
+        if (!this.transport || !this.connectorConfig) {
+            throw new Error("Transport or connectorConfig not initialized");
+        }
+        const db = await this.transport.createDatabase(`${this.connectorConfig.database.dbNamePrefix}${this.connectorConfig.database.dbName}`);
+        const identityCollection = await db.getMap("AccountInfo");
+        const identity = await identityCollection.get("identity");
+        if (identity) {
+            this.log.log(`Identity already created!`);
+            return;
+        }
+        const accountController = new AccountController(this.transport, db, this.transport.config);
+        await accountController.init();
+
+        this.log.log(`Identity with address ${accountController.identity.address} created successfully!`);
+        await accountController.close();
+    }
+}
