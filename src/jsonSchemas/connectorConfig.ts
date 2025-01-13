@@ -14,13 +14,9 @@ export interface LokiJSSettings {
 
 export interface ConnectorConfig {
     debug: boolean;
-
     database: (MongoDBSettings | LokiJSSettings) & { dbName: string; dbNamePrefix: string };
-
     transportLibrary: IConfigOverwrite;
-
     logging: Log4jsConfiguration;
-
     modules: Record<string, ModuleConfiguration>;
     infrastructure: InfrastructureConfiguration;
 
@@ -60,6 +56,7 @@ interface IConfigOverwrite {
     addressGenerationHostnameOverride?: string;
     datawalletEnabled?: boolean;
     debug?: boolean;
+    allowIdentityCreation?: boolean;
 }
 
 // ================================ log4js ================================
