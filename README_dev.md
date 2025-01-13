@@ -131,7 +131,7 @@ If you only want to run a single test suite you can use the following command:
 npm run test:local -- testSuiteName
 ```
 
-## Run the Connector without Docker MongoDB or other Dependencies
+## Run the Connector without Docker, MongoDB or other Dependencies
 
 1. clone this repository `git clone https://github.com/nmshd/connector.git`
 2. change into the directory `cd connector`
