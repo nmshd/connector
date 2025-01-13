@@ -40,8 +40,7 @@
         "teardown": "npm run teardown:backbone && npm run teardown:test-env && npm run teardown:testconnectors",
         "teardown:backbone": "docker compose -p connector-test-backbone --env-file .dev/compose.backbone.env -f .dev/compose.backbone.yml down -v",
         "teardown:test-env": "docker compose -p connector-tests -f test/compose.yml down -v",
-        "teardown:testconnectors": "docker compose -f .dev/compose.yml down -v",
-        "cli-readme": "ts-node .dev/scripts/updateCliReadme.ts && npx markdown-toc -i CLI-README.md"
+        "teardown:testconnectors": "docker compose -f .dev/compose.yml down -v"
     },
     "jest": {
         "maxWorkers": 2,

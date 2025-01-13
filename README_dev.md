@@ -147,12 +147,11 @@ npm run test:local -- testSuiteName
           "platformClientId": "<client-id>",
           "platformClientSecret": "<client-secret>"
       },
-      "database": { "driver": "lokijs", "folder": "./", "dbName": "local", "dbNamePrefix": "l" },
+      "database": { "driver": "lokijs", "folder": "./" },
       "logging": { "categories": { "default": { "appenders": ["console"] } } },
       "infrastructure": { "httpServer": { "apiKey": "<api-key-or-empty-string>", "port": 8080 } },
       "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
     }
-
     ```
 
 6. replace the placeholders in the config with real values
