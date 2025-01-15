@@ -7,6 +7,7 @@ import { getTimeout } from "./lib/setTimeout";
 import {
     connectAndEmptyCollection,
     createRepositoryAttribute,
+    deleteAllAttributes,
     establishRelationship,
     executeFullCreateAndShareRelationshipAttributeFlow,
     executeFullCreateAndShareRepositoryAttributeFlow,
@@ -31,7 +32,9 @@ beforeAll(async () => {
 }, getTimeout(30000));
 afterAll(() => launcher.stop());
 
-beforeEach(() => {
+beforeEach(async () => {
+    await deleteAllAttributes(client1, client1Address);
+    await deleteAllAttributes(client2, client2Address);
     client1._eventBus?.reset();
     client2._eventBus?.reset();
 });

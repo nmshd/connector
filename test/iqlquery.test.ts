@@ -37,7 +37,7 @@ beforeAll(async () => {
             owner: client1Address,
             value: {
                 "@type": "GivenName",
-                value: "AGivenName"
+                value: "ASecondGivenName"
             },
             tags: ["language:de", "content:edu.de.higher"]
         }

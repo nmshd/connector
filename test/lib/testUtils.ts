@@ -519,3 +519,36 @@ export async function waitForEvent<TEvent>(
         clearTimeout(timeoutId);
     });
 }
+
+export async function deleteAllAttributes(client: ConnectorClient, clientAddress: string): Promise<void> {
+    const attributesResponse = await client.attributes.getAttributes({});
+    expect(attributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+
+    for (const attribute of attributesResponse.result) {
+        if (!attribute.shareInfo) {
+            const result = await client.attributes.deleteRepositoryAttribute(attribute.id);
+            expect(result).toBeSuccessfulVoidResult();
+            continue;
+        }
+
+        if (attribute.shareInfo.thirdPartyAddress) {
+            const result = await client.attributes.deleteThirdPartyRelationshipAttributeAndNotifyPeer(attribute.id);
+            expect(result).toBeSuccessful(ValidationSchema.DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse);
+            continue;
+        }
+
+        if (attribute.content.owner === clientAddress) {
+            const result = await client.attributes.deleteOwnSharedAttributeAndNotifyPeer(attribute.id);
+            expect(result).toBeSuccessful(ValidationSchema.DeleteOwnSharedAttributeAndNotifyPeerResponse);
+            continue;
+        }
+
+        if (attribute.content.owner !== clientAddress) {
+            const result = await client.attributes.deletePeerSharedAttributeAndNotifyOwner(attribute.id);
+            expect(result).toBeSuccessful(ValidationSchema.DeletePeerSharedAttributeAndNotifyOwnerResponse);
+            continue;
+        }
+
+        throw new Error("No delete method called");
+    }
+}
