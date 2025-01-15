@@ -527,10 +527,10 @@ export async function deleteAllAttributes(client: ConnectorClient, clientAddress
 
     for (const attribute of attributesResponse.result) {
         let result: ConnectorHttpResponse<any> = ConnectorHttpResponse.error({
-            code: "UnknownError",
-            message: "UnknownError",
-            docs: "UnknownError",
-            time: "UnknownError",
+            code: "",
+            message: "No delete method called",
+            docs: "",
+            time: "",
             id: ""
         });
         if (!attribute.shareInfo) {
