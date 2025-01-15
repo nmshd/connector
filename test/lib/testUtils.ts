@@ -545,6 +545,6 @@ export async function deleteAllAttributes(client: ConnectorClient, clientAddress
         if (attribute.shareInfo?.thirdPartyAddress) {
             result = await client.attributes.deleteThirdPartyRelationshipAttributeAndNotifyPeer(attribute.id);
         }
-        expect(result.result).toBeDefined();
+        expect(result.error).toBeUndefined();
     }
 }
