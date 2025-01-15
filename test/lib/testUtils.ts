@@ -4,7 +4,6 @@ import {
     ConnectorAttribute,
     ConnectorClient,
     ConnectorFile,
-    ConnectorHttpResponse,
     ConnectorMessage,
     ConnectorRelationship,
     ConnectorRelationshipTemplate,
@@ -528,25 +527,25 @@ export async function deleteAllAttributes(client: ConnectorClient, clientAddress
     for (const attribute of attributesResponse.result) {
         if (!attribute.shareInfo) {
             const result = await client.attributes.deleteRepositoryAttribute(attribute.id);
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessfulVoidResult();
             continue;
         }
 
         if (attribute.content.owner === clientAddress) {
             const result = await client.attributes.deleteOwnSharedAttributeAndNotifyPeer(attribute.id);
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful(ValidationSchema.DeleteOwnSharedAttributeAndNotifyPeerResponse);
             continue;
         }
 
-        if (attribute.content.owner !== clientAddress) {
+        if (attribute.content.owner !== clientAddress && !attribute.shareInfo.thirdPartyAddress) {
             const result = await client.attributes.deletePeerSharedAttributeAndNotifyOwner(attribute.id);
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful(ValidationSchema.DeletePeerSharedAttributeAndNotifyOwnerResponse);
             continue;
         }
 
         if (attribute.shareInfo.thirdPartyAddress) {
             const result = await client.attributes.deleteThirdPartyRelationshipAttributeAndNotifyPeer(attribute.id);
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful(ValidationSchema.DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse);
             continue;
         }
 
