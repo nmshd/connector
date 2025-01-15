@@ -15,26 +15,23 @@ afterAll(() => launcher.stop());
 describe("IdentityMetadata", () => {
     test.each([
         {
-            reference: client1Address,
             key: undefined,
             value: "value"
         },
         {
-            reference: client1Address,
             key: undefined,
             value: { a: "json" }
         },
         {
-            reference: client1Address,
             key: "key",
             value: "value"
         }
     ])("should upsert an IdentityMetadata with key '$key' and value '$value'", async (data) => {
-        const result = await client1.identityMetadata.upsertIdentityMetadata(data);
+        const result = await client1.identityMetadata.upsertIdentityMetadata({ ...data, reference: client1Address });
         expect(result).toBeSuccessful(ValidationSchema.IdentityMetadata);
 
         const identityMetadata = result.result;
-        expect(identityMetadata.reference.toString()).toStrictEqual(data.reference);
+        expect(identityMetadata.reference.toString()).toStrictEqual(client1Address);
         expect(identityMetadata.key).toStrictEqual(data.key);
         expect(identityMetadata.value).toStrictEqual(data.value);
     });
@@ -56,6 +53,6 @@ describe("IdentityMetadata", () => {
         expect(result).toBeSuccessfulVoidResult();
 
         const getResult = await client1.identityMetadata.getIdentityMetadata(client1Address);
-        expect(getResult).toBeAnError("IdentityMetadata not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+        expect(getResult).toBeAnError("There is no stored IdentityMetadata for the specified combination of reference and key.", "error.runtime.identityMetadata.notFound");
     });
 });
