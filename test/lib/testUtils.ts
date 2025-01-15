@@ -526,25 +526,30 @@ export async function deleteAllAttributes(client: ConnectorClient, clientAddress
     expect(attributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
 
     for (const attribute of attributesResponse.result) {
-        let result: ConnectorHttpResponse<any> = ConnectorHttpResponse.error({
-            code: "",
-            message: "No delete method called",
-            docs: "",
-            time: "",
-            id: ""
-        });
         if (!attribute.shareInfo) {
-            result = await client.attributes.deleteRepositoryAttribute(attribute.id);
+            const result = await client.attributes.deleteRepositoryAttribute(attribute.id);
+            expect(result.isSuccess).toBe(true);
+            continue;
         }
-        if (attribute.shareInfo && attribute.content.owner === clientAddress) {
-            result = await client.attributes.deleteOwnSharedAttributeAndNotifyPeer(attribute.id);
+
+        if (attribute.content.owner === clientAddress) {
+            const result = await client.attributes.deleteOwnSharedAttributeAndNotifyPeer(attribute.id);
+            expect(result.isSuccess).toBe(true);
+            continue;
         }
-        if (attribute.shareInfo && attribute.content.owner !== clientAddress) {
-            result = await client.attributes.deletePeerSharedAttributeAndNotifyOwner(attribute.id);
+
+        if (attribute.content.owner !== clientAddress) {
+            const result = await client.attributes.deletePeerSharedAttributeAndNotifyOwner(attribute.id);
+            expect(result.isSuccess).toBe(true);
+            continue;
         }
-        if (attribute.shareInfo?.thirdPartyAddress) {
-            result = await client.attributes.deleteThirdPartyRelationshipAttributeAndNotifyPeer(attribute.id);
+
+        if (attribute.shareInfo.thirdPartyAddress) {
+            const result = await client.attributes.deleteThirdPartyRelationshipAttributeAndNotifyPeer(attribute.id);
+            expect(result.isSuccess).toBe(true);
+            continue;
         }
-        expect(result.error).toBeUndefined();
+
+        throw new Error("No delete method called");
     }
 }
