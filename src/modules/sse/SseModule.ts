@@ -56,15 +56,17 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
 
         const baseOptions = { connect: { rejectUnauthorized: false } };
         const proxy = baseUrl.startsWith("https://") ? (process.env.https_proxy ?? process.env.HTTPS_PROXY) : (process.env.http_proxy ?? process.env.HTTP_PROXY);
-        const token = await this.runtime.getBackboneAuthenticationToken();
 
         const eventSource = new EventSource(sseUrl, {
-            fetch: (url, options) =>
-                fetch(url, {
+            fetch: async (url, options) => {
+                const token = await this.runtime.getBackboneAuthenticationToken();
+
+                return await fetch(url, {
                     ...options,
                     dispatcher: proxy ? new ProxyAgent({ ...baseOptions, uri: proxy }) : new Agent(baseOptions),
                     headers: { ...options?.headers, authorization: `Bearer ${token}` }
-                })
+                });
+            }
         });
 
         this.eventSource = eventSource;
