@@ -1,12 +1,13 @@
-import { Random, RandomCharacterRange } from "@nmshd/transport";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClientWithMetadata;
+let client1Address: string;
 
 beforeAll(async () => {
     [client1] = await launcher.launch(1);
+    client1Address = (await client1.account.getIdentityInfo()).result.address;
 }, 30000);
 
 afterAll(() => launcher.stop());
@@ -14,17 +15,17 @@ afterAll(() => launcher.stop());
 describe("IdentityMetadata", () => {
     test.each([
         {
-            reference: "did:e:localhost:dids:1234567890abcdef123456",
+            reference: client1Address,
             key: undefined,
             value: "value"
         },
         {
-            reference: "did:e:localhost:dids:1234567890abcdef123456",
+            reference: client1Address,
             key: undefined,
             value: { a: "json" }
         },
         {
-            reference: "did:e:localhost:dids:1234567890abcdef123456",
+            reference: client1Address,
             key: "key",
             value: "value"
         }
@@ -39,10 +40,9 @@ describe("IdentityMetadata", () => {
     });
 
     test("should get an IdentityMetadata", async () => {
-        const reference = await generateReference();
-        await client1.identityMetadata.upsertIdentityMetadata({ reference: reference, value: "value" });
+        await client1.identityMetadata.upsertIdentityMetadata({ reference: client1Address, value: "value" });
 
-        const result = await client1.identityMetadata.getIdentityMetadata(reference);
+        const result = await client1.identityMetadata.getIdentityMetadata(client1Address);
         expect(result).toBeSuccessful(ValidationSchema.IdentityMetadata);
 
         const identityMetadata = result.result;
@@ -50,18 +50,12 @@ describe("IdentityMetadata", () => {
     });
 
     test("should delete an IdentityMetadata", async () => {
-        const reference = await generateReference();
-        await client1.identityMetadata.upsertIdentityMetadata({ reference: reference, value: "value" });
+        await client1.identityMetadata.upsertIdentityMetadata({ reference: client1Address, value: "value" });
 
-        const result = await client1.identityMetadata.deleteIdentityMetadata(reference);
+        const result = await client1.identityMetadata.deleteIdentityMetadata(client1Address);
         expect(result).toBeSuccessfulVoidResult();
 
-        const getResult = await client1.identityMetadata.getIdentityMetadata(reference);
+        const getResult = await client1.identityMetadata.getIdentityMetadata(client1Address);
         expect(getResult).toBeAnError("IdentityMetadata not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 });
-
-async function generateReference(): Promise<string> {
-    const identityPart = await Random.string(22, `${RandomCharacterRange.Digit}abcdef`);
-    return `did:e:localhost:dids:${identityPart}`;
-}

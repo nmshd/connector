@@ -4,6 +4,7 @@ import {
     ConnectorAttribute,
     ConnectorClient,
     ConnectorFile,
+    ConnectorHttpResponse,
     ConnectorMessage,
     ConnectorRelationship,
     ConnectorRelationshipTemplate,
@@ -518,4 +519,32 @@ export async function waitForEvent<TEvent>(
         eventBus.unsubscribe(subscriptionId);
         clearTimeout(timeoutId);
     });
+}
+
+export async function deleteAllAttributes(client: ConnectorClient, clientAddress: string): Promise<void> {
+    const attributesResponse = await client.attributes.getAttributes({});
+    expect(attributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+
+    for (const attribute of attributesResponse.result) {
+        let result: ConnectorHttpResponse<any> = ConnectorHttpResponse.error({
+            code: "UnknownError",
+            message: "UnknownError",
+            docs: "UnknownError",
+            time: "UnknownError",
+            id: ""
+        });
+        if (!attribute.shareInfo) {
+            result = await client.attributes.deleteRepositoryAttribute(attribute.id);
+        }
+        if (attribute.shareInfo && attribute.content.owner === clientAddress) {
+            result = await client.attributes.deleteOwnSharedAttributeAndNotifyPeer(attribute.id);
+        }
+        if (attribute.shareInfo && attribute.content.owner !== clientAddress) {
+            result = await client.attributes.deletePeerSharedAttributeAndNotifyOwner(attribute.id);
+        }
+        if (attribute.shareInfo?.thirdPartyAddress) {
+            result = await client.attributes.deleteThirdPartyRelationshipAttributeAndNotifyPeer(attribute.id);
+        }
+        expect(result.result).toBeDefined();
+    }
 }
