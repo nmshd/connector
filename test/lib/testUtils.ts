@@ -531,21 +531,21 @@ export async function deleteAllAttributes(client: ConnectorClient, clientAddress
             continue;
         }
 
+        if (attribute.shareInfo.thirdPartyAddress) {
+            const result = await client.attributes.deleteThirdPartyRelationshipAttributeAndNotifyPeer(attribute.id);
+            expect(result).toBeSuccessful(ValidationSchema.DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse);
+            continue;
+        }
+
         if (attribute.content.owner === clientAddress) {
             const result = await client.attributes.deleteOwnSharedAttributeAndNotifyPeer(attribute.id);
             expect(result).toBeSuccessful(ValidationSchema.DeleteOwnSharedAttributeAndNotifyPeerResponse);
             continue;
         }
 
-        if (attribute.content.owner !== clientAddress && !attribute.shareInfo.thirdPartyAddress) {
+        if (attribute.content.owner !== clientAddress) {
             const result = await client.attributes.deletePeerSharedAttributeAndNotifyOwner(attribute.id);
             expect(result).toBeSuccessful(ValidationSchema.DeletePeerSharedAttributeAndNotifyOwnerResponse);
-            continue;
-        }
-
-        if (attribute.shareInfo.thirdPartyAddress) {
-            const result = await client.attributes.deleteThirdPartyRelationshipAttributeAndNotifyPeer(attribute.id);
-            expect(result).toBeSuccessful(ValidationSchema.DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse);
             continue;
         }
 
