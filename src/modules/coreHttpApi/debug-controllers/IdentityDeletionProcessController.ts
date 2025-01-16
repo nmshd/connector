@@ -12,10 +12,8 @@ export class IdentityDeletionProcessController extends BaseController {
 
     @POST
     @Accept("application/json")
-    public async initiateIdentityDeletionProcess(@QueryParam("lengthOfGracePeriodInDays") lengthOfGracePeriodInDays: number): Promise<Envelope> {
-        const result = await this.transportServices.identityDeletionProcesses.initiateIdentityDeletionProcess({
-            lengthOfGracePeriodInDays
-        });
+    public async initiateIdentityDeletionProcess(@QueryParam("lengthOfGracePeriodInDays") lengthOfGracePeriodInDays?: number): Promise<Envelope> {
+        const result = await this.transportServices.identityDeletionProcesses.initiateIdentityDeletionProcess({ lengthOfGracePeriodInDays });
         return this.ok(result);
     }
 
