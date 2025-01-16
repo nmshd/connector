@@ -33,14 +33,14 @@ export class AttributesController extends BaseController {
 
         if (predecessor.content["@type"] === "IdentityAttribute") {
             const result = await this.consumptionServices.attributes.succeedRepositoryAttribute({
-                predecessorId: predecessorId,
+                predecessorId,
                 ...request
             });
             return this.created(result);
         }
 
         const successionResult = await this.consumptionServices.attributes.succeedRelationshipAttributeAndNotifyPeer({
-            predecessorId: predecessorId,
+            predecessorId,
             ...request
         });
         return this.created(successionResult);
@@ -50,7 +50,7 @@ export class AttributesController extends BaseController {
     @Path("/:attributeId/NotifyPeer")
     @Accept("application/json")
     public async notifyPeerAboutRepositoryAttributeSuccession(@PathParam("attributeId") attributeId: string, request: any): Promise<Return.NewResource<Envelope>> {
-        const result = await this.consumptionServices.attributes.notifyPeerAboutRepositoryAttributeSuccession({ attributeId: attributeId, peer: request.peer });
+        const result = await this.consumptionServices.attributes.notifyPeerAboutRepositoryAttributeSuccession({ attributeId, peer: request.peer });
         return this.created(result);
     }
 
@@ -64,10 +64,10 @@ export class AttributesController extends BaseController {
     @GET
     @Path("/Own/Repository")
     @Accept("application/json")
-    public async getOwnRepositoryAttributes(@Context context: ServiceContext, @QueryParam("onlyLatestVersions") onlyLatestVersions?: string): Promise<Envelope> {
+    public async getOwnRepositoryAttributes(@Context context: ServiceContext, @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean): Promise<Envelope> {
         const query: Record<string, any> = this.extractQuery(context.request.query, ["onlyLatestVersions"]);
         const result = await this.consumptionServices.attributes.getRepositoryAttributes({
-            onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
+            onlyLatestVersions,
             query
         });
         return this.ok(result);
@@ -79,18 +79,18 @@ export class AttributesController extends BaseController {
     public async getOwnSharedIdentityAttributes(
         @Context context: ServiceContext,
         @QueryParam("peer") peer: string,
-        @QueryParam("hideTechnical") hideTechnical?: string,
-        @QueryParam("onlyLatestVersions") onlyLatestVersions?: string,
-        @QueryParam("onlyValid") onlyValid?: string
+        @QueryParam("hideTechnical") hideTechnical?: boolean,
+        @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean,
+        @QueryParam("onlyValid") onlyValid?: boolean
     ): Promise<Envelope> {
         const query: Record<string, any> = this.extractQuery(context.request.query, ["peer", "hideTechnical", "onlyLatestVersions", "onlyValid"]);
 
         const result = await this.consumptionServices.attributes.getOwnSharedAttributes({
             peer,
-            hideTechnical: this.stringToBoolean(hideTechnical),
+            hideTechnical,
             query,
-            onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
-            onlyValid: this.stringToBoolean(onlyValid)
+            onlyLatestVersions,
+            onlyValid
         });
         return this.ok(result);
     }
@@ -101,18 +101,18 @@ export class AttributesController extends BaseController {
     public async getPeerSharedIdentityAttributes(
         @Context context: ServiceContext,
         @QueryParam("peer") peer: string,
-        @QueryParam("hideTechnical") hideTechnical?: string,
-        @QueryParam("onlyLatestVersions") onlyLatestVersions?: string,
-        @QueryParam("onlyValid") onlyValid?: string
+        @QueryParam("hideTechnical") hideTechnical?: boolean,
+        @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean,
+        @QueryParam("onlyValid") onlyValid?: boolean
     ): Promise<Envelope> {
         const query: Record<string, any> = this.extractQuery(context.request.query, ["peer", "hideTechnical", "onlyLatestVersions", "onlyValid"]);
 
         const result = await this.consumptionServices.attributes.getPeerSharedAttributes({
             peer,
-            hideTechnical: this.stringToBoolean(hideTechnical),
+            hideTechnical,
             query,
-            onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
-            onlyValid: this.stringToBoolean(onlyValid)
+            onlyLatestVersions,
+            onlyValid
         });
         return this.ok(result);
     }
@@ -133,7 +133,7 @@ export class AttributesController extends BaseController {
     public async getSharedVersionsOfAttribute(
         @PathParam("id") attributeId: string,
         @QueryParam("peers") peers?: string | string[],
-        @QueryParam("onlyLatestVersions") onlyLatestVersions?: string
+        @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean
     ): Promise<Envelope> {
         if (typeof peers === "string") {
             peers = [peers];
@@ -141,7 +141,7 @@ export class AttributesController extends BaseController {
 
         const result = await this.consumptionServices.attributes.getSharedVersionsOfAttribute({
             attributeId,
-            onlyLatestVersions: this.stringToBoolean(onlyLatestVersions),
+            onlyLatestVersions,
             peers
         });
         return this.ok(result);
@@ -237,14 +237,6 @@ export class AttributesController extends BaseController {
     public async deleteRepositoryAttribute(@PathParam("id") attributeId: string): Promise<void> {
         const result = await this.consumptionServices.attributes.deleteRepositoryAttribute({ attributeId });
         return this.noContent(result);
-    }
-
-    private stringToBoolean(value: string | undefined): boolean | undefined {
-        if (value === undefined) {
-            return undefined;
-        }
-
-        return value.toLowerCase() === "true";
     }
 
     private extractQuery(query: ServiceContext["request"]["query"], nonQueryParams: string[]): Record<string, any> {
