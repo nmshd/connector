@@ -1,6 +1,6 @@
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, DELETE, GET, Path, POST } from "@nmshd/typescript-rest";
+import { Accept, DELETE, GET, Path, POST, QueryParam } from "@nmshd/typescript-rest";
 import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
@@ -12,8 +12,12 @@ export class IdentityDeletionProcessController extends BaseController {
 
     @POST
     @Accept("application/json")
-    public async initiateIdentityDeletionProcess(): Promise<Envelope> {
-        const result = await this.transportServices.identityDeletionProcesses.initiateIdentityDeletionProcess();
+    public async initiateIdentityDeletionProcess(@QueryParam("lengthOfGracePeriodInDays") lengthOfGracePeriodInDays: string): Promise<Envelope> {
+        let parsedLengthOfGracePeriodInDays: number | undefined = parseInt(lengthOfGracePeriodInDays, 10);
+        parsedLengthOfGracePeriodInDays = isNaN(parsedLengthOfGracePeriodInDays) ? undefined : parsedLengthOfGracePeriodInDays;
+        const result = await this.transportServices.identityDeletionProcesses.initiateIdentityDeletionProcess({
+            lengthOfGracePeriodInDays: parsedLengthOfGracePeriodInDays
+        });
         return this.ok(result);
     }
 
