@@ -4,7 +4,16 @@ import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { ILogger } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
-import { AbstractConnectorRuntime, ConnectorMode, ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector";
+import {
+    AbstractConnectorRuntime,
+    ConnectorInfrastructureRegistry,
+    ConnectorLoggerFactory,
+    ConnectorMode,
+    ConnectorRuntimeModule,
+    ConnectorRuntimeModuleConfiguration,
+    HttpServer
+} from "@nmshd/connector";
+import { DocumentationLink } from "@nmshd/connector/src/DocumentationLink";
 import { ConsumptionController } from "@nmshd/consumption";
 import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";
@@ -14,12 +23,8 @@ import { HttpsProxyAgent } from "https-proxy-agent";
 import path from "path";
 import { checkServerIdentity, PeerCertificate } from "tls";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
-import { DocumentationLink } from "./DocumentationLink";
 import { HealthChecker } from "./HealthChecker";
 import { buildInformation } from "./buildInformation";
-import { HttpServer } from "./infrastructure";
-import { ConnectorInfrastructureRegistry } from "./infrastructure/ConnectorInfrastructureRegistry";
-import { ConnectorLoggerFactory } from "./logging/ConnectorLoggerFactory";
 
 interface SupportInformation {
     health: RuntimeHealth;
@@ -325,7 +330,14 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
     protected async initInfrastructure(): Promise<void> {
         if (this.runtimeConfig.infrastructure.httpServer.enabled) {
-            const httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer), "httpServer", this.connectorMode);
+            const httpServer = new HttpServer(
+                this,
+                this.runtimeConfig.infrastructure.httpServer,
+                this.loggerFactory.getLogger(HttpServer),
+                "httpServer",
+                this.connectorMode,
+                buildInformation
+            );
             this.infrastructure.add(httpServer);
         }
 

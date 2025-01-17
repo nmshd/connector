@@ -1,11 +1,11 @@
 import { ApplicationError } from "@js-soft/ts-utils";
-import { ConnectorMode } from "@nmshd/connector";
 import { RuntimeErrors } from "@nmshd/runtime";
 import { RequestError, TransportCoreErrors } from "@nmshd/transport";
 import { Errors } from "@nmshd/typescript-rest";
 import express from "express";
 import stringify from "json-stringify-safe";
-import { ConnectorLoggerFactory } from "../../../logging/ConnectorLoggerFactory";
+import { ConnectorLoggerFactory } from "../../../ConnectorLoggerFactory";
+import { ConnectorMode } from "../../../ConnectorMode";
 import { Envelope, HttpError, HttpErrors } from "../common";
 
 export class RouteNotFoundError extends Error {}

@@ -1,7 +1,7 @@
+import { Envelope } from "@nmshd/connector";
 import { ConsumptionServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, DELETE, GET, PUT, Path, QueryParam } from "@nmshd/typescript-rest";
-import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
 @Path("/api/v2/IdentityMetadata")

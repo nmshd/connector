@@ -1,8 +1,8 @@
+import { Envelope } from "@nmshd/connector";
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, ContextResponse, GET, Path, PathParam, POST, Return, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
-import { Envelope } from "../../../infrastructure";
 import { BaseController, Mimetype } from "../common/BaseController";
 
 @Path("/api/v2/Messages")

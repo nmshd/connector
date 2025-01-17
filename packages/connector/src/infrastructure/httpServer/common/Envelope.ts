@@ -1,4 +1,4 @@
-import { ConnectorMode } from "@nmshd/connector";
+import { ConnectorMode } from "../../../ConnectorMode";
 import { HttpError, HttpErrorJSON } from "./HttpError";
 
 export class Envelope {

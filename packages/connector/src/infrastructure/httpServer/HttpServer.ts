@@ -1,3 +1,4 @@
+import { ILogger } from "@js-soft/logging-abstractions";
 import { sleep } from "@js-soft/ts-utils";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
@@ -7,8 +8,9 @@ import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
-import { buildInformation } from "../../buildInformation";
-import { ConnectorInfrastructure, InfrastructureConfiguration } from "../ConnectorInfastructure";
+import { AbstractConnectorRuntime } from "../../AbstractConnectorRuntime";
+import { ConnectorMode } from "../../ConnectorMode";
+import { ConnectorInfrastructure, InfrastructureConfiguration } from "../ConnectorInfrastructure";
 import { HttpMethod } from "./HttpMethod";
 import { RequestTracker } from "./RequestTracker";
 import { Envelope, HttpErrors } from "./common";
@@ -51,6 +53,17 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private server?: http.Server;
 
     private readonly requestTracker = new RequestTracker();
+
+    public constructor(
+        runtime: AbstractConnectorRuntime,
+        configuration: HttpServerConfiguration,
+        logger: ILogger,
+        name: string,
+        connectorMode: ConnectorMode,
+        private readonly buildInformation: unknown
+    ) {
+        super(runtime, configuration, logger, name, connectorMode);
+    }
 
     public init(): void {
         this.app = express();
@@ -228,7 +241,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
     private useVersionEndpoint() {
         this.app.get("/Monitoring/Version", (_req: any, res: any) => {
-            res.status(200).json(buildInformation);
+            res.status(200).json(this.buildInformation);
         });
     }
 
