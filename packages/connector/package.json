@@ -1,0 +1,20 @@
+{
+    "name": "@nmshd/connector",
+    "description": "the enmeshed connector extension kit",
+    "homepage": "https://enmeshed.eu/integrate/connector-sdks#typescript-sdk",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nmshd/connector.git",
+        "directory": "/packages/connector"
+    },
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "dependencies": {
+        "@js-soft/logging-abstractions": "^1.0.1",
+        "@nmshd/runtime": "^6.23.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.10.7",
+        "typescript": "^5.7.3"
+    }
+}

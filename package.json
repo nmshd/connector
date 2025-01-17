@@ -1,5 +1,5 @@
 {
-    "name": "@nmshd/connector",
+    "name": "@nmshd/connector-root",
     "private": true,
     "description": "The Enmeshed Connector",
     "homepage": "https://enmeshed.eu/integrate",
@@ -8,7 +8,8 @@
     "author": "j&s-soft AG",
     "workspaces": [
         ".",
-        "packages/sdk"
+        "packages/sdk",
+        "packages/connector"
     ],
     "scripts": {
         "lint": "npm run lint:tsc && npm run lint:prettier && npm run lint:eslint",

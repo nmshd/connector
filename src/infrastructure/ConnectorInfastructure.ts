@@ -1,5 +1,5 @@
 import { ILogger } from "@js-soft/logging-abstractions";
-import { ConnectorMode } from "../ConnectorMode";
+import { ConnectorMode } from "@nmshd/connector";
 import { ConnectorRuntime } from "../ConnectorRuntime";
 
 export interface InfrastructureConfiguration {

@@ -4,17 +4,16 @@ import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { ILogger } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
+import { AbstractConnectorRuntime, ConnectorMode, ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector";
 import { ConsumptionController } from "@nmshd/consumption";
-import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
+import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import correlator from "correlation-id";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import path from "path";
 import { checkServerIdentity, PeerCertificate } from "tls";
-import { ConnectorMode } from "./ConnectorMode";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
 import { DocumentationLink } from "./DocumentationLink";
 import { HealthChecker } from "./HealthChecker";
 import { buildInformation } from "./buildInformation";
@@ -29,7 +28,7 @@ interface SupportInformation {
     identityInfo: GetIdentityInfoResponse | { error: string };
 }
 
-export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
+export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeConfig> {
     private static readonly MODULES_DIRECTORY = path.join(__dirname, "modules");
 
     private databaseConnection?: IDatabaseConnection;
