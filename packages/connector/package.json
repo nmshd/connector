@@ -9,6 +9,11 @@
     },
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc && npm run build:schemas",
+        "build:ci": "npm run build",
+        "build:watch": "tsc --watch"
+    },
     "dependencies": {
         "@js-soft/logging-abstractions": "^1.0.1",
         "@nmshd/runtime": "^6.23.0"
