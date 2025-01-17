@@ -10,7 +10,7 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
-        "build": "tsc && npm run build:schemas",
+        "build": "tsc",
         "build:ci": "npm run build",
         "build:watch": "tsc --watch"
     },
