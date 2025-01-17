@@ -7,9 +7,9 @@
     "license": "MIT",
     "author": "j&s-soft AG",
     "workspaces": [
+        "packages/connector",
         ".",
-        "packages/sdk",
-        "packages/connector"
+        "packages/sdk"
     ],
     "scripts": {
         "lint": "npm run lint:tsc && npm run lint:prettier && npm run lint:eslint",
