@@ -1,6 +1,6 @@
+import { ConnectorRuntimeModuleConfiguration } from "@nmshd/connector";
 import { DeciderModuleConfiguration, RuntimeConfig } from "@nmshd/runtime";
 import * as log4js from "log4js";
-import { ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
 import { HttpServerConfiguration } from "./infrastructure";
 
 export interface MongoDBSettings {

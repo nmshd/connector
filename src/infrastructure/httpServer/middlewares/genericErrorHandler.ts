@@ -1,10 +1,10 @@
 import { ApplicationError } from "@js-soft/ts-utils";
+import { ConnectorMode } from "@nmshd/connector";
 import { RuntimeErrors } from "@nmshd/runtime";
 import { RequestError, TransportCoreErrors } from "@nmshd/transport";
 import { Errors } from "@nmshd/typescript-rest";
 import express from "express";
 import stringify from "json-stringify-safe";
-import { ConnectorMode } from "../../../ConnectorMode";
 import { ConnectorLoggerFactory } from "../../../logging/ConnectorLoggerFactory";
 import { Envelope, HttpError, HttpErrors } from "../common";
 
