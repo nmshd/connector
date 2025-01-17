@@ -5,10 +5,12 @@ ARG VERSION
 
 WORKDIR /usr/app
 COPY package.json package-lock.json tsconfig.json ./
+COPY package/connector/package.json package/connector/tsconfig.json packages/connector/
 COPY .ci .ci
 
 RUN npm ci
 COPY src src
+COPY packages/connector/src packages/connector/src
 
 RUN npm run build
 RUN .ci/writeBuildInformation.sh
