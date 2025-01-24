@@ -1837,7 +1837,6 @@ paths:
                   nullable: false
               required:
                 - title
-                - expiresAt
                 - file
       responses:
         201:
