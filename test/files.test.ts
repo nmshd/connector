@@ -314,7 +314,7 @@ describe("Load peer file with reference", () => {
 });
 
 describe("Password-protected tokens for files", () => {
-    test("send and receive an unprotected template via password-protected token", async () => {
+    test("send and receive an unprotected file via password-protected token", async () => {
         const file = await uploadFile(client1);
         const token = (await client1.files.createTokenForFile(file.id, { passwordProtection: { password: "password" } })).result;
         expect(token.passwordProtection?.password).toBe("password");
@@ -327,7 +327,7 @@ describe("Password-protected tokens for files", () => {
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
-    test("send and receive an unprotected template via PIN-protected token", async () => {
+    test("send and receive an unprotected file via PIN-protected token", async () => {
         const file = await uploadFile(client1);
         const token = (await client1.files.createTokenForFile(file.id, { passwordProtection: { password: "1234", passwordIsPin: true } })).result;
         expect(token.passwordProtection?.password).toBe("1234");
