@@ -2046,7 +2046,7 @@ paths:
     get:
       operationId: getFileMetadata
       description: |
-        Gets metadata for the file with the given `idOrReference` when the accept header is set to `application/json` or a QrCode containing the reference to the file if the accept header it set to `image/png`.
+        Gets metadata for the file with the given `idOrReference` when the accept header is set to `application/json` or a QR Code containing the reference to the file if the accept header it set to `image/png`.
 
         `idOrReference` can either be a FileId (starting with `FIL`) or a FileReference (starting with `RklM`).
       tags:
@@ -3531,7 +3531,7 @@ paths:
   /api/v2/RelationshipTemplates/{id}:
     get:
       operationId: getRelationshipTemplate
-      description: Fetches the `RelationshipTemplate` with the given `id` when the accept header is set to `application/json` or a QrCode containing the reference to the RelationshipTemplate if the accept header it set to `image/png`.
+      description: Fetches the `RelationshipTemplate` with the given `id` when the accept header is set to `application/json` or a QR Code containing the reference to the RelationshipTemplate if the accept header it set to `image/png`.
       tags:
         - RelationshipTemplates
       parameters:
