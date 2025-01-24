@@ -1836,7 +1836,6 @@ paths:
                   format: binary
                   nullable: false
               required:
-                - title
                 - file
       responses:
         201:
