@@ -6,17 +6,6 @@ import { ConnectorMode } from "../../ConnectorMode";
 import { ConnectorRuntime } from "../../ConnectorRuntime";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
-export enum BackboneEventName {
-    DatawalletModificationsCreated = "DatawalletModificationsCreated",
-    ExternalEventCreated = "ExternalEventCreated"
-}
-
-export interface IBackboneEventContent {
-    eventName: BackboneEventName;
-    sentAt: string;
-    payload: any;
-}
-
 export interface SseModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     baseUrlOverride?: string;
 }
