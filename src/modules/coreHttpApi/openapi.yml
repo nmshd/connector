@@ -6030,9 +6030,7 @@ components:
           format: date-time
           nullable: false
         createdBy:
-          type: string
-          format: date-time
-          nullable: false
+          $ref: "#/components/schemas/Address"
         createdByDevice:
           $ref: "#/components/schemas/DeviceID"
         reason:
