@@ -5,17 +5,6 @@ import { EventSource } from "eventsource";
 import { Agent, fetch, ProxyAgent } from "undici";
 import { ConnectorRuntime } from "../../ConnectorRuntime";
 
-export enum BackboneEventName {
-    DatawalletModificationsCreated = "DatawalletModificationsCreated",
-    ExternalEventCreated = "ExternalEventCreated"
-}
-
-export interface IBackboneEventContent {
-    eventName: BackboneEventName;
-    sentAt: string;
-    payload: any;
-}
-
 export interface SseModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     baseUrlOverride?: string;
 }
