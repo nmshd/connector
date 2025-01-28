@@ -14,8 +14,8 @@ RUN npm run build
 RUN .ci/writeBuildInformation.sh
 
 FROM node:23.6.1-slim
-RUN apk add --no-cache tini
-RUN apk add libcap && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/node && apk del libcap
+
+RUN apt-get update && apt-get -qq install -y --no-install-recommends tini && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /var/log/enmeshed-connector && chown -R node:node /var/log/enmeshed-connector
 
