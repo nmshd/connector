@@ -78,7 +78,7 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
         });
 
         eventSource.onerror = async (error) => {
-            if (error.status === 401) await this.recreateEventSource();
+            if (error.code === 401) await this.recreateEventSource();
         };
     }
 
