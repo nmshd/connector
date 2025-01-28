@@ -13,9 +13,10 @@ COPY src src
 RUN npm run build
 RUN .ci/writeBuildInformation.sh
 
-FROM node:23.6.1-alpine
-RUN apk add --no-cache tini
-RUN apk add libcap && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/node && apk del libcap
+FROM node:23.6.1-slim
+
+ENV TINI_VERSION=v0.19.0
+ADD --chmod=755 https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/local/bin/tini
 
 RUN mkdir -p /var/log/enmeshed-connector && chown -R node:node /var/log/enmeshed-connector
 
@@ -32,5 +33,5 @@ LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
 
 USER node
 
-ENTRYPOINT ["/sbin/tini", "--", "node", "/usr/app/dist/index.js"]
+ENTRYPOINT ["/usr/local/bin/tini", "--", "node", "/usr/app/dist/index.js"]
 CMD ["start"]
