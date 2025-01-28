@@ -1,8 +1,7 @@
+import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration, HttpMethod } from "@nmshd/connector";
 import path from "path";
 import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
 import yamlJs from "yamljs";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
-import { HttpMethod } from "../../infrastructure";
 
 export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     docs: {

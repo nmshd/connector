@@ -1,5 +1,5 @@
 import { DocumentationLink } from "../DocumentationLink";
-import { ConnectorInfrastructure } from "./ConnectorInfastructure";
+import { ConnectorInfrastructure } from "./ConnectorInfrastructure";
 import { HttpServer } from "./httpServer";
 
 export class ConnectorInfrastructureRegistry {

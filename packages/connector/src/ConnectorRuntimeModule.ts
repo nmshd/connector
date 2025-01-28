@@ -1,7 +1,7 @@
 import { ILogger } from "@js-soft/logging-abstractions";
 import { ModuleConfiguration, RuntimeModule } from "@nmshd/runtime";
+import { AbstractConnectorRuntime } from "./AbstractConnectorRuntime";
 import { ConnectorMode } from "./ConnectorMode";
-import { ConnectorRuntime } from "./ConnectorRuntime";
 
 export interface ConnectorRuntimeModuleConfiguration extends ModuleConfiguration {
     requiredInfrastructure?: string[];
@@ -9,10 +9,10 @@ export interface ConnectorRuntimeModuleConfiguration extends ModuleConfiguration
 
 export abstract class ConnectorRuntimeModule<TConfig extends ConnectorRuntimeModuleConfiguration = ConnectorRuntimeModuleConfiguration> extends RuntimeModule<
     TConfig,
-    ConnectorRuntime
+    AbstractConnectorRuntime
 > {
     public constructor(
-        runtime: ConnectorRuntime,
+        runtime: AbstractConnectorRuntime,
         configuration: TConfig,
         logger: ILogger,
         protected readonly connectorMode: ConnectorMode
