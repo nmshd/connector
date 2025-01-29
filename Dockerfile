@@ -15,7 +15,7 @@ RUN .ci/writeBuildInformation.sh
 
 FROM node:23.6.1-slim
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=5 CMD ["node","-e",'require("http").get("http://localhost/health", res => process.exit(res.statusCode === 200 ? 0 : 1))']
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=5 CMD [ "node", "/usr/app/dist/healthcheck.js" ]
 LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
 
 RUN apt-get update && apt-get -qq install -y --no-install-recommends tini && apt-get clean && rm -rf /var/lib/apt/lists/*
