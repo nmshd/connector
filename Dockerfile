@@ -15,8 +15,7 @@ RUN .ci/writeBuildInformation.sh
 
 FROM node:23.6.1-slim
 
-ENV TINI_VERSION=v0.19.0
-ADD --chmod=755 https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/local/bin/tini
+RUN apt-get update && apt-get -qq install -y --no-install-recommends tini && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /var/log/enmeshed-connector && chown -R node:node /var/log/enmeshed-connector
 
