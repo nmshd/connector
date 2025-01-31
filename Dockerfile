@@ -25,10 +25,12 @@ WORKDIR /usr/app
 
 COPY config config
 COPY package.json package-lock.json ./
+COPY packages/connector/package.json packages/connector/package-lock.json packages/connector/
 
 RUN npm ci --omit=dev
 
 COPY --from=builder /usr/app/dist/ dist/
+COPY --from=builder /usr/app/packages/connector/dist packages/connector/dist/
 
 LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
 
