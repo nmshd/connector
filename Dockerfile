@@ -5,14 +5,14 @@ ARG VERSION
 
 WORKDIR /usr/app
 COPY package.json package-lock.json tsconfig.json ./
-COPY package/connector/package.json package/connector/tsconfig.json packages/connector/
+COPY packages/connector/package.json packages/connector/tsconfig.json packages/connector/
 COPY .ci .ci
 
 RUN npm ci
 COPY src src
 COPY packages/connector/src packages/connector/src
 
-RUN npm run build
+RUN npm run build --ws
 RUN .ci/writeBuildInformation.sh
 
 FROM node:23.6.0-alpine
