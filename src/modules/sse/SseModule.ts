@@ -66,20 +66,11 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
         eventSource.addEventListener("ExternalEventCreated", async () => await this.runSync());
 
         await new Promise<void>((resolve, reject) => {
-            eventSource.onopen = () => {
-                this.logger.info("Connected to SSE endpoint");
-                resolve();
-
-                eventSource.onopen = () => {
-                    // noop
-                };
-            };
-
-            eventSource.onerror = (error) => {
-                reject(error);
-            };
+            eventSource.onopen = () => resolve();
+            eventSource.onerror = (error) => reject(error);
         });
 
+        eventSource.onopen = async () => await this.runSync();
         eventSource.onerror = async (error) => {
             if (error.code === 401) await this.recreateEventSource();
         };
