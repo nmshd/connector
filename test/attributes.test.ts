@@ -40,6 +40,20 @@ beforeEach(async () => {
 });
 
 describe("Attributes", () => {
+    test("should check if a repository attribute can be created", async () => {
+        const canCreateAttributeResponse = await client1.attributes.canCreateRepositoryAttribute({
+            content: {
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
+                },
+                tags: ["content:edu.de"]
+            }
+        });
+
+        expect(canCreateAttributeResponse.result.isSuccess).toBe(true);
+    });
+
     test("should create a repository attribute", async () => {
         const createAttributeResponse = await client1.attributes.createRepositoryAttribute({
             content: {

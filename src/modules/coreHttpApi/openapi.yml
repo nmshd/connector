@@ -258,6 +258,56 @@ paths:
   # ------------------- Attributes -------------------
 
   /api/v2/Attributes:
+    put:
+      operationId: canCreateRepositoryAttribute
+      description: "Checks if a Repository Attribute can be created with the given parameters."
+      tags:
+        - Attributes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: false
+              properties:
+                content:
+                  type: object
+                  additionalProperties: false
+                  required:
+                    - value
+                  properties:
+                    value:
+                      $ref: "#/components/schemas/AttributeValue"
+                    tags:
+                      $ref: "#/components/schemas/IdentityAttributeContent_tags"
+                    validFrom:
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
+                    validTo:
+                      $ref: "#/components/schemas/AttributeContent_validTo"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/CanCreateRepositoryAttributeResponse"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
     post:
       operationId: createRepositoryAttribute
       description: "Creates a Repository Attribute."
