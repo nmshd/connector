@@ -257,7 +257,7 @@ paths:
 
   # ------------------- Attributes -------------------
 
-  /api/v2/Attributes:
+  /api/v2/Attributes/CanCreate:
     put:
       operationId: canCreateRepositoryAttribute
       description: "Checks if a Repository Attribute can be created with the given parameters."
@@ -308,6 +308,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  /api/v2/Attributes:
     post:
       operationId: createRepositoryAttribute
       description: "Creates a Repository Attribute."
@@ -5098,6 +5099,32 @@ components:
           type: object
       required:
         - displayNames
+
+    CanCreateRepositoryAttributeResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+      oneOf:
+        - properties:
+            isSuccess:
+              const: true
+          required:
+            - isSuccess
+          additionalProperties: false
+
+        - properties:
+            isSuccess:
+              const: false
+            code:
+              type: string
+            message:
+              type: string
+          required:
+            - isSuccess
+            - code
+            - message
+          additionalProperties: false
 
     ConnectorHealth:
       type: object
