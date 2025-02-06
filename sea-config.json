@@ -3,6 +3,7 @@
     "output": "sea-prep.blob",
     "disableExperimentalSEAWarning": true,
     "assets": {
-        "connectorConfig.json": "dist/jsonSchemas/connectorConfig.json"
+        "connectorConfig.json": "dist/jsonSchemas/connectorConfig.json",
+        "default-config": "config/default.json"
     }
 }

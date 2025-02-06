@@ -28,8 +28,14 @@ export function createConnectorConfig(overrides?: RuntimeConfig, customConfigLoc
             }
         })
         .file("file-from-env", { file: process.env.CUSTOM_CONFIG_LOCATION ?? customConfigLocation ?? "config/custom.json" })
-        .file("config-env-file", { file: `config/${process.env.NODE_CONFIG_ENV}.json` })
-        .file("default-file", { file: "config/default.json" });
+        .file("config-env-file", { file: `config/${process.env.NODE_CONFIG_ENV}.json` });
+
+    if (sea.isSea()) {
+        const defaultConfig = sea.getAsset("default-config", "utf-8");
+        nconf.overrides(JSON.parse(defaultConfig));
+    } else {
+        nconf.file("default-file", { file: "config/default.json" });
+    }
 
     const connectorConfig = nconf.get() as ConnectorRuntimeConfig;
 
