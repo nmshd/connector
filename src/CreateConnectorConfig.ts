@@ -3,6 +3,7 @@ import correlator from "correlation-id";
 import fs from "fs";
 import { validate as validateSchema } from "jsonschema";
 import nconf from "nconf";
+import sea from "node:sea";
 import path from "path";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 
@@ -85,8 +86,15 @@ function parseString(value: string) {
 }
 
 function validateConnectorConfig(connectorConfig: ConnectorRuntimeConfig): void {
-    const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
-    const runtimeConfigSchemaString = fs.readFileSync(schemaPath).toString();
+    let runtimeConfigSchemaString: string;
+
+    if (sea.isSea()) {
+        runtimeConfigSchemaString = sea.getAsset("connectorConfig.json", "utf-8");
+    } else {
+        const schemaPath = path.join(__dirname, "jsonSchemas", "connectorConfig.json");
+        runtimeConfigSchemaString = fs.readFileSync(schemaPath).toString();
+    }
+
     const runtimeConfigSchema = JSON.parse(runtimeConfigSchemaString);
     const result = validateSchema(connectorConfig, runtimeConfigSchema);
     if (!result.valid) {
