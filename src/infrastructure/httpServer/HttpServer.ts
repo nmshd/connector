@@ -278,7 +278,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     public async start(): Promise<void> {
         this.configure();
         return await new Promise((resolve) => {
-            const port = this.configuration.port ?? 80;
+            const port = this.configuration.port ?? 8080;
             this.server = this.app.listen(port, () => {
                 this.logger.info(`Listening on port ${port}`);
                 resolve();

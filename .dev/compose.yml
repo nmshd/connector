@@ -7,7 +7,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
-      - "3000:80" # Webserver
+      - "3000:8080" # Webserver
       - "9229:9229" # Debugger
     environment:
       - CUSTOM_CONFIG_LOCATION=/config.json
@@ -36,7 +36,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
-      - "3001:80" # Webserver
+      - "3001:8080" # Webserver
       - "9231:9229" # Debugger
     environment:
       - CUSTOM_CONFIG_LOCATION=/config.json
