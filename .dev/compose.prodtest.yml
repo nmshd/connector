@@ -12,7 +12,7 @@ services:
         COMMIT_HASH: "test"
     container_name: connector
     ports:
-      - "3000:80" # Webserver
+      - "3000:8080" # Webserver
     environment:
       DATABASE_NAME: "prod_connector"
       transportLibrary__baseUrl: "http://consumer-api:8080"
