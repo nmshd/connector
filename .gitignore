@@ -20,3 +20,9 @@ packages/runtime
 .local
 test/manualTest.ts
 coverage
+
+# sea
+sea-prep.blob
+connector
+connector.exe
+bundle.js
