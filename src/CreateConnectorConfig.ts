@@ -32,7 +32,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig, customConfigLoc
 
     if (sea.isSea()) {
         const defaultConfig = sea.getAsset("default-config", "utf-8");
-        nconf.overrides(JSON.parse(defaultConfig));
+        nconf.defaults(JSON.parse(defaultConfig));
     } else {
         nconf.file("default-file", { file: "config/default.json" });
     }
