@@ -1,7 +1,7 @@
 import yargs from "yargs";
 import { ConnectorRuntime } from "../ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "../ConnectorRuntimeConfig";
-import { createConnectorConfig } from "../CreateConnectorConfig";
+import { createConnectorConfig } from "../createConnectorConfig";
 
 export interface ConfigFileOptions {
     config?: string;
