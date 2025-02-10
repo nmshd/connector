@@ -27,7 +27,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig, customConfigLoc
                 return variable;
             }
         })
-        .file("file-from-env", { file: process.env.CUSTOM_CONFIG_LOCATION ?? customConfigLocation ?? "config/custom.json" })
+        .file("file-from-env", { file: path.resolve(process.env.CUSTOM_CONFIG_LOCATION ?? customConfigLocation ?? "config/custom.json") })
         .file("config-env-file", { file: `config/${process.env.NODE_CONFIG_ENV}.json` });
 
     if (sea.isSea()) {
