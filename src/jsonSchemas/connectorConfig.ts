@@ -17,7 +17,7 @@ export interface ConnectorConfig {
 
     database: (MongoDBSettings | LokiJSSettings) & { dbName: string; dbNamePrefix: string };
 
-    transportLibrary: IConfigOverwrite;
+    transportLibrary: IConfigOverwrite | { baseUrl: string; platformClientId: string; platformClientSecret: string };
 
     logging: Log4jsConfiguration;
 
