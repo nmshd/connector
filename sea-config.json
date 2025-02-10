@@ -3,7 +3,9 @@
     "output": "sea-prep.blob",
     "disableExperimentalSEAWarning": true,
     "assets": {
-        "connectorConfig.json": "dist/jsonSchemas/connectorConfig.json",
-        "default-config": "config/default.json"
+        "connectorConfig.json": "src/jsonSchemas/connectorConfig.json",
+        "default-config": "config/default.json",
+        "openapi.yml": "src/modules/coreHttpApi/openapi.yml",
+        "favicon.ico": "src/modules/coreHttpApi/static/favicon.ico"
     }
 }

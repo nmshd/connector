@@ -47,6 +47,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private app: Application;
     private readonly customEndpoints: CustomEndpoint[] = [];
     private readonly controllers: ControllerConfig[] = [];
+    private readonly resolvedControllers: Function[] = [];
     private readonly middlewares: MiddlewareConfig[] = [];
     private server?: http.Server;
 
@@ -272,6 +273,10 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             Server.loadControllers(this.app, controller.globs, controller.baseDirectory);
         }
 
+        for (const controller of this.resolvedControllers) {
+            Server.buildServices(this.app, controller);
+        }
+
         Server.ignoreNextMiddlewares(true);
     }
 
@@ -292,6 +297,10 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
     public addEndpoint(httpMethod: HttpMethod, route: string, authenticationRequired: boolean, handler: RequestHandler): void {
         this.customEndpoints.push({ httpMethod, route, authenticationRequired, handler });
+    }
+
+    public addResolvedControllers(controllers: Function[]): void {
+        this.resolvedControllers.push(...controllers);
     }
 
     public addControllers(controllerGlobs: string[], baseDirectory: string): void {
