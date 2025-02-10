@@ -10,7 +10,7 @@ export interface SseModuleConfiguration extends ConnectorRuntimeModuleConfigurat
     baseUrlOverride?: string;
 }
 
-export default class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
+export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
     private eventSource: EventSource | undefined;
 
     public constructor(runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) {

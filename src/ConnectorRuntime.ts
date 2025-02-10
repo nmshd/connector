@@ -21,6 +21,13 @@ import { buildInformation } from "./buildInformation";
 import { HttpServer } from "./infrastructure";
 import { ConnectorInfrastructureRegistry } from "./infrastructure/ConnectorInfrastructureRegistry";
 import { ConnectorLoggerFactory } from "./logging/ConnectorLoggerFactory";
+import { AutoAcceptPendingRelationshipsModule } from "./modules/autoAcceptPendingRelationships/AutoAcceptPendingRelationshipsModule";
+import { AutoDecomposeDeletionProposedRelationshipsModule } from "./modules/autoDecomposeDeletionProposedRelationships/AutoDecomposeDeletionProposedRelationshipsModule";
+import { CoreHttpApiModule } from "./modules/coreHttpApi/CoreHttpApiModule";
+import { MessageBrokerPublisherModule } from "./modules/messageBrokerPublisher/MessageBrokerPublisherModule";
+import { SseModule } from "./modules/sse/SseModule";
+import { SyncModule } from "./modules/sync/SyncModule";
+import { WebhooksModule } from "./modules/webhooks/WebhooksModule";
 
 interface SupportInformation {
     health: RuntimeHealth;
@@ -267,7 +274,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         return await this.accountController.authenticator.getToken();
     }
 
-    protected async loadModule(moduleConfiguration: ModuleConfiguration): Promise<void> {
+    // TODO: loadModule should be Promise<void> | void
+    protected loadModule(moduleConfiguration: ModuleConfiguration): Promise<void> {
         const connectorModuleConfiguration = moduleConfiguration as ConnectorRuntimeModuleConfiguration;
 
         for (const requiredInfrastructure of connectorModuleConfiguration.requiredInfrastructure ?? []) {
@@ -280,47 +288,44 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             }
         }
 
-        const modulePath = path.join(ConnectorRuntime.MODULES_DIRECTORY, moduleConfiguration.location);
-        const nodeModule = await this.import(modulePath);
-
-        if (!nodeModule) {
-            this.logger.error(
-                `Module '${this.getModuleName(moduleConfiguration)}' could not be loaded: the location of the module (${moduleConfiguration.location}) does not exist.`
-            );
-            return;
-        }
-
-        const moduleConstructor = nodeModule.default as
-            | (new (runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule)
-            | undefined;
-
-        if (!moduleConstructor) {
-            this.logger.error(
-                `Module '${this.getModuleName(
-                    moduleConfiguration
-                )}' could not be loaded: the constructor could not be found. Remember to use the default export ('export default class MyModule...').`
-            );
-            return;
-        }
+        const moduleConstructor = this.import(moduleConfiguration.location) as new (
+            runtime: ConnectorRuntime,
+            configuration: ConnectorRuntimeModuleConfiguration,
+            logger: ILogger,
+            connectorMode: ConnectorMode
+        ) => ConnectorRuntimeModule;
 
         const module = new moduleConstructor(this, connectorModuleConfiguration, this.loggerFactory.getLogger(moduleConstructor), this.connectorMode);
 
         this.modules.add(module);
 
         this.logger.info(`Module '${this.getModuleName(moduleConfiguration)}' was loaded successfully.`);
+
+        return Promise.resolve();
     }
 
-    private async import(moduleName: string) {
-        try {
-            const module = await import(moduleName);
-            return module;
-        } catch (e: any) {
-            if (e.code === "MODULE_NOT_FOUND" && e.message.includes(`Cannot find module '${moduleName}'`)) {
-                return;
-            }
+    private import(moduleLocation: string) {
+        if (!moduleLocation.startsWith("@nmshd/connector:")) {
+            throw new Error(`Module location '${moduleLocation}' is not resolvable.`);
+        }
 
-            this.logger.error(e);
-            throw e;
+        switch (moduleLocation.replace("@nmshd/connector:", "")) {
+            case "AutoAcceptPendingRelationshipsModule":
+                return AutoAcceptPendingRelationshipsModule;
+            case "AutoDecomposeDeletionProposedRelationshipsModule":
+                return AutoDecomposeDeletionProposedRelationshipsModule;
+            case "CoreHttpApiModule":
+                return CoreHttpApiModule;
+            case "WebhooksModule":
+                return WebhooksModule;
+            case "MessageBrokerPublisherModule":
+                return MessageBrokerPublisherModule;
+            case "SyncModule":
+                return SyncModule;
+            case "SseModule":
+                return SseModule;
+            default:
+                throw new Error(`Module location '${moduleLocation}' is not resolvable.`);
         }
     }
 

@@ -1,8 +1,10 @@
+import sea from "node:sea";
 import path from "path";
 import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
 import yamlJs from "yamljs";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 import { HttpMethod } from "../../infrastructure";
+import * as controllers from "./controllers";
 
 export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     docs: {
@@ -13,7 +15,7 @@ export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleCo
     };
 }
 
-export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleConfiguration> {
+export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleConfiguration> {
     public get baseDirectory(): string {
         return __dirname;
     }
@@ -27,6 +29,13 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
                     this.addDocumentation();
                     break;
             }
+        }
+
+        console.log(Object.values(controllers));
+        if (sea.isSea()) {
+            console.log(Object.values(controllers));
+            this.runtime.infrastructure.httpServer.addResolvedControllers(Object.values(controllers));
+            return;
         }
 
         this.runtime.infrastructure.httpServer.addControllers(["controllers/*.js", "controllers/*.ts", "!controllers/*.d.ts"], this.baseDirectory);
@@ -52,6 +61,11 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
     }
 
     private useRapidoc() {
+        if (sea.isSea()) {
+            this.logger.info("Rapidoc is not supported in SEA mode.");
+            return;
+        }
+
         this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/rapidoc/rapidoc-min.js", false, (_req, res) => {
             res.sendFile(require.resolve("rapidoc"));
         });
@@ -86,6 +100,16 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
     }
 
     private useFavicon() {
+        if (sea.isSea()) {
+            this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/favicon.ico", false, (_req, res) => {
+                const favicon = sea.getAsset("favicon.ico");
+                res.writeHead(200, [["Content-Type", "image/x-icon"]]);
+                res.end(Buffer.from(favicon));
+            });
+
+            return;
+        }
+
         this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/favicon.ico", false, (_req, res) => {
             res.sendFile(path.join(this.baseDirectory, "static", "favicon.ico"));
         });
@@ -105,6 +129,11 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
     }
 
     private useSwagger() {
+        if (sea.isSea()) {
+            this.logger.info("Swagger is not supported in SEA mode.");
+            return;
+        }
+
         const swaggerUiOptions: SwaggerUiOptions = {
             explorer: true,
             customfavIcon: "/favicon.ico",
@@ -122,6 +151,12 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
     }
 
     private loadOpenApiSpec() {
+        if (sea.isSea()) {
+            const content = sea.getAsset("openapi.yml", "utf-8");
+            const swaggerDocument = yamlJs.parse(content);
+            return swaggerDocument;
+        }
+
         const swaggerDocument = yamlJs.load(path.join(this.baseDirectory, "openapi.yml"));
         return swaggerDocument;
     }
