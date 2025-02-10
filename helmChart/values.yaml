@@ -43,8 +43,6 @@ pod:
     # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources
     resources: {}
 
-    containerPort: 8080
-
   # configuration for the FerretDB (https://docs.ferretdb.io) sidecar
   ferretdb:
     enabled: false
@@ -74,4 +72,4 @@ service:
   type: ClusterIP
 
   # the service port
-  port: 8080
+  port: 80

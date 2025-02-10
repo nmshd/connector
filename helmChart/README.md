@@ -45,12 +45,8 @@ config:
     infrastructure:
         httpServer:
             apiKey: "<api-key>"
-            port: 8080
 
 pod:
-    connector:
-        containerPort: 8080
-
     ferretdb:
         enabled: true
         tag: 0.8.1

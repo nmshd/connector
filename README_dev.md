@@ -34,7 +34,7 @@ After a few seconds you should see the following output:
 ```console
 connector-1  | [2021-01-25T11:27:40.788] [INFO] Transport.Transport - Transport initialized
 ...
-connector-1  | [2021-01-25T11:27:41.241] [INFO] HttpServerModule - Listening on port 8080
+connector-1  | [2021-01-25T11:27:41.241] [INFO] HttpServerModule - Listening on port 80
 ...
 connector-1  | [2021-01-25T11:27:41.241] [INFO] Runtime - Started all modules.
 ```
@@ -149,7 +149,7 @@ npm run test:local -- testSuiteName
       },
       "database": { "driver": "lokijs", "folder": "./" },
       "logging": { "categories": { "default": { "appenders": ["console"] } } },
-      "infrastructure": { "httpServer": { "apiKey": "<api-key-or-empty-string>" } },
+      "infrastructure": { "httpServer": { "apiKey": "<api-key-or-empty-string>", "port": 8080 } },
       "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
     }
     ```
