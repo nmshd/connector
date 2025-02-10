@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 # bundle the connector
-npx esbuild --format=cjs --target=node20 --platform=node --bundle --outfile=bundle.js src/index.ts
+npx esbuild --format=cjs --target=node20 --platform=node --bundle --minify --keep-names --outfile=bundle.js src/index.ts
 
 # copy the nodejs executable to the connector
 cp $(command -v node) connector
