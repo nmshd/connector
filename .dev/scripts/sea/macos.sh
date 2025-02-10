@@ -19,4 +19,4 @@ npx postject connector NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE
 codesign --sign - connector
 
 # run the connector
-CUSTOM_CONFIG_LOCATION=./dev/config.json ./connector start
+CUSTOM_CONFIG_LOCATION=config.json ./connector start
