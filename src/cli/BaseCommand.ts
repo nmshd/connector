@@ -23,12 +23,8 @@ export abstract class BaseCommand {
     protected log = console;
 
     public async run(configPath: string | undefined): Promise<any> {
-        if (configPath) {
-            process.env.CUSTOM_CONFIG_LOCATION = configPath;
-        }
-
         try {
-            this.connectorConfig = createConnectorConfig();
+            this.connectorConfig = createConnectorConfig(configPath);
             this.connectorConfig.infrastructure.httpServer.enabled = false;
             this.connectorConfig.modules.coreHttpApi.enabled = false;
             this.connectorConfig.logging = {

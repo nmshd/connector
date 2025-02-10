@@ -1,4 +1,3 @@
-import { RuntimeConfig } from "@nmshd/runtime";
 import correlator from "correlation-id";
 import fs from "fs";
 import { validate as validateSchema } from "jsonschema";
@@ -7,9 +6,8 @@ import sea from "node:sea";
 import path from "path";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 
-export function createConnectorConfig(overrides?: RuntimeConfig, customConfigLocation?: string): ConnectorRuntimeConfig {
+export function createConnectorConfig(customConfigLocation?: string): ConnectorRuntimeConfig {
     nconf
-        .overrides(overrides)
         .env({
             transform: (variable: { key: string; value: any }) => {
                 applyAlias(variable);
@@ -27,7 +25,7 @@ export function createConnectorConfig(overrides?: RuntimeConfig, customConfigLoc
                 return variable;
             }
         })
-        .file("file-from-env", { file: path.resolve(process.env.CUSTOM_CONFIG_LOCATION ?? customConfigLocation ?? "config/custom.json") })
+        .file("file-from-env", { file: path.resolve(customConfigLocation ?? process.env.CUSTOM_CONFIG_LOCATION ?? "config/custom.json") })
         .file("config-env-file", { file: `config/${process.env.NODE_CONFIG_ENV}.json` });
 
     if (sea.isSea()) {
