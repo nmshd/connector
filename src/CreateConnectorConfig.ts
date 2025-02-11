@@ -1,4 +1,3 @@
-import { RuntimeConfig } from "@nmshd/runtime";
 import correlator from "correlation-id";
 import fs from "fs";
 import { validate as validateSchema } from "jsonschema";
@@ -6,9 +5,8 @@ import nconf from "nconf";
 import path from "path";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 
-export function createConnectorConfig(overrides?: RuntimeConfig, customConfigLocation?: string): ConnectorRuntimeConfig {
+export function createConnectorConfig(customConfigLocation?: string): ConnectorRuntimeConfig {
     nconf
-        .overrides(overrides)
         .env({
             transform: (variable: { key: string; value: any }) => {
                 applyAlias(variable);
