@@ -1,5 +1,5 @@
 import http from "http";
-import { createConnectorConfig } from "./CreateConnectorConfig";
+import { createConnectorConfig } from "./createConnectorConfig";
 
 const config = createConnectorConfig();
 const port = config.infrastructure.httpServer.port ?? 80;

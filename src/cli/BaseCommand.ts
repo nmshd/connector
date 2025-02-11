@@ -1,7 +1,7 @@
 import yargs from "yargs";
 import { ConnectorRuntime } from "../ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "../ConnectorRuntimeConfig";
-import { createConnectorConfig } from "../CreateConnectorConfig";
+import { createConnectorConfig } from "../createConnectorConfig";
 
 export interface ConfigFileOptions {
     config?: string;
@@ -23,12 +23,8 @@ export abstract class BaseCommand {
     protected log = console;
 
     public async run(configPath: string | undefined): Promise<any> {
-        if (configPath) {
-            process.env.CUSTOM_CONFIG_LOCATION = configPath;
-        }
-
         try {
-            this.connectorConfig = createConnectorConfig();
+            this.connectorConfig = createConnectorConfig(configPath);
             this.connectorConfig.infrastructure.httpServer.enabled = false;
             this.connectorConfig.modules.coreHttpApi.enabled = false;
             this.connectorConfig.logging = {

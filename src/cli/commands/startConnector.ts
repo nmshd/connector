@@ -1,10 +1,10 @@
 import { CommandModule } from "yargs";
 import { ConnectorRuntime } from "../../ConnectorRuntime";
-import { createConnectorConfig } from "../../CreateConnectorConfig";
+import { createConnectorConfig } from "../../createConnectorConfig";
 import { ConfigFileOptions, configOptionBuilder } from "../BaseCommand";
 
 const startConnectorHandler = async ({ config }: ConfigFileOptions): Promise<void> => {
-    const connectorConfig = createConnectorConfig(undefined, config);
+    const connectorConfig = createConnectorConfig(config);
     if (!connectorConfig.debug) process.env.TLS_REJECT_UNAUTHORIZED = "1";
     const runtime = await ConnectorRuntime.create(connectorConfig);
     await runtime.start();
