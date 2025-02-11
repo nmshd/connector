@@ -9,7 +9,7 @@ export function setupEnvironment(): void {
         dbName: `default${process.pid}`,
         dbNamePrefix: "test-"
     });
-    process.env.NODE_CONFIG_ENV = "test";
+    process.env.CUSTOM_CONFIG_LOCATION = ".dev/test.json";
     process.env.API_KEY = "test";
     process.env["infrastructure:httpServer:port"] = getPort().toString();
 
