@@ -16,7 +16,7 @@ if [ -z "$COMMIT_HASH" ]; then
     exit 1
 fi
 
-DATE=$(date -u --iso-8601=seconds)
+DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 TARGET_FILE="./dist/buildInformation.js"
 
