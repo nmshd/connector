@@ -24,7 +24,6 @@ RUN mkdir -p /var/log/enmeshed-connector && chown -R node:node /var/log/enmeshed
 
 WORKDIR /usr/app
 
-COPY config config
 COPY package.json package-lock.json ./
 
 RUN npm ci --omit=dev

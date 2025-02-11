@@ -102,7 +102,7 @@ export class Launcher {
         env["transportLibrary:platformClientId"] = process.env["NMSHD_TEST_CLIENTID"];
         env["transportLibrary:platformClientSecret"] = process.env["NMSHD_TEST_CLIENTSECRET"];
 
-        env.NODE_CONFIG_ENV = "test";
+        env.CUSTOM_CONFIG_LOCATION = ".dev/test.json";
         env.DATABASE_NAME = accountName;
 
         let webhookServer: Server | undefined;
