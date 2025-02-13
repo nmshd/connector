@@ -9,7 +9,7 @@ fi
 
 npm ci
 
-npm run build
+npm run build:ci
 .ci/writeBuildInformation.sh
 
-zip -r "connector-$VERSION.zip" dist package.json package-lock.json -x dist/**/*.d.ts dist/**/*.d.ts.map dist/**/*.js.map
+zip -r "connector-$VERSION.zip" dist package.json package-lock.json
