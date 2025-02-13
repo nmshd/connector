@@ -10,7 +10,7 @@ COPY .ci .ci
 RUN npm ci
 COPY src src
 
-RUN npm run build
+RUN npm run build:ci
 RUN .ci/writeBuildInformation.sh
 
 FROM node:23.7.0-slim
