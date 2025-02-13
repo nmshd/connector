@@ -222,7 +222,8 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private useHealthEndpoint() {
         this.app.get("/health", async (_req: any, res: any) => {
             const health = await this.runtime.getHealth();
-            res.status(200).json(health);
+            const httpStatus = health.isHealthy ? 200 : 500;
+            res.status(httpStatus).json(health);
         });
     }
 

@@ -5,8 +5,8 @@ import { ConnectorHttpResponse } from "../types/ConnectorHttpResponse";
 export abstract class Endpoint {
     public constructor(private readonly httpClient: AxiosInstance) {}
 
-    protected async getPlain<T>(path: string): Promise<T> {
-        const reponse = await this.httpClient.get<T>(path, { validateStatus: (status) => status === 200 });
+    protected async getPlain<T>(path: string, validateStatus?: (status: number) => boolean): Promise<T> {
+        const reponse = await this.httpClient.get<T>(path, { validateStatus: validateStatus ?? ((status) => status === 200) });
         return reponse.data;
     }
 
