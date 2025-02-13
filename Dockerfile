@@ -4,7 +4,7 @@ ARG BUILD_NUMBER
 ARG VERSION
 
 WORKDIR /usr/app
-COPY package.json package-lock.json tsconfig.json ./
+COPY package.json package-lock.json tsconfig.json tsconfig.publish.json ./
 COPY .ci .ci
 
 RUN npm ci
