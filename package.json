@@ -16,7 +16,7 @@
         "lint:eslint": "eslint --ext .ts ./src ./test ./packages/*/src",
         "lint:tsc": "npm run build --workspaces && tsc -p test/tsconfig.json --noEmit",
         "build": "run-p tsc copy-additional-files",
-        "build:ci": "npm run build",
+        "build:ci": "tsc -p tsconfig.publish.json && npm run copy-additional-files",
         "build:watch": "run-p -r tsc:watch copy-additional-files:watch sdk:build:watch sdk:schemas:watch",
         "sdk:build": "npm run --workspace packages/sdk build",
         "sdk:build:watch": "npm run --workspace packages/sdk build:watch",
