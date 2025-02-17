@@ -6,6 +6,7 @@ export * from "./ConnectorHttpResponse";
 export * from "./files";
 export * from "./identityMetadata";
 export * from "./messages";
+export * from "./monitoring";
 export * from "./relationships";
 export * from "./relationshipTemplates";
 export * from "./requests";
