@@ -1,4 +1,4 @@
-FROM node:23.7.0 AS builder
+FROM node:23.8.0 AS builder
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
 ARG VERSION
@@ -13,7 +13,7 @@ COPY src src
 RUN npm run build:ci
 RUN .ci/writeBuildInformation.sh
 
-FROM node:23.7.0-slim
+FROM node:23.8.0-slim
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=5 CMD [ "node", "/usr/app/dist/healthcheck.js" ]
 LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
