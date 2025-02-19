@@ -1812,6 +1812,10 @@ paths:
           schema:
             $ref: "#/components/schemas/TextFilter"
         - in: query
+          name: tags
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
           name: filesize
           schema:
             $ref: "#/components/schemas/NumberFilter"
@@ -1886,6 +1890,14 @@ paths:
                   type: string
                   format: binary
                   nullable: false
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  description: Tags for the file.
+                  example: ["tag1", "tag2"]
+                  nullable: false
+
               required:
                 - file
       responses:
@@ -1938,6 +1950,10 @@ paths:
             $ref: "#/components/schemas/DateFilter"
         - in: query
           name: filename
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: tags
           schema:
             $ref: "#/components/schemas/TextFilter"
         - in: query
@@ -2052,6 +2068,10 @@ paths:
             $ref: "#/components/schemas/DateFilter"
         - in: query
           name: filename
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: tags
           schema:
             $ref: "#/components/schemas/TextFilter"
         - in: query
@@ -5232,6 +5252,13 @@ components:
           description: The name of the file.
           example: CurriculumVitae.pdf
           nullable: false
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags for the file.
+          example: [tag1, tag2]
+          nullable: true
         filesize:
           type: integer
           format: int64
