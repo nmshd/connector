@@ -117,6 +117,12 @@ describe("File Upload", () => {
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
+    test("can upload file with tags", async () => {
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ tags: ["tag1", "tag2"] }));
+        expect(response).toBeSuccessful(ValidationSchema.File);
+        expect(response.result.tags).toStrictEqual(["tag1", "tag2"]);
+    });
+
     test("cannot upload a file with expiry date in the past", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "1970-01-01T00:00:00.000Z" }));
         expect(response).toBeAnError("'expiresAt' must be in the future", "error.runtime.validation.invalidPropertyValue");
@@ -320,10 +326,7 @@ describe("Password-protected tokens for files", () => {
         expect(token.passwordProtection?.password).toBe("password");
         expect(token.passwordProtection?.passwordIsPin).toBeUndefined();
 
-        const response = await client2.files.loadPeerFile({
-            reference: token.truncatedReference,
-            password: "password"
-        });
+        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference, password: "password" });
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
@@ -333,10 +336,7 @@ describe("Password-protected tokens for files", () => {
         expect(token.passwordProtection?.password).toBe("1234");
         expect(token.passwordProtection?.passwordIsPin).toBe(true);
 
-        const response = await client2.files.loadPeerFile({
-            reference: token.truncatedReference,
-            password: "1234"
-        });
+        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference, password: "1234" });
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 });
