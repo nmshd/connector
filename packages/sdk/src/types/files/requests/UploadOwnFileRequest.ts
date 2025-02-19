@@ -4,4 +4,5 @@ export interface UploadOwnFileRequest {
     expiresAt: string;
     file: ArrayBuffer;
     filename: string;
+    tags?: string[];
 }
