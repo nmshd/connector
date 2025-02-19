@@ -7,4 +7,5 @@ export interface GetPeerFilesRequest {
     filesize?: string | string[];
     mimetype?: string | string[];
     title?: string | string[];
+    tags?: string | string[];
 }

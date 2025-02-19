@@ -19,7 +19,8 @@ export class FilesController extends BaseController {
         @FormParam("expiresAt") expiresAt: string,
         @FormParam("title") title: string,
         @FileParam("file") file?: Express.Multer.File,
-        @FormParam("description") description?: string
+        @FormParam("description") description?: string,
+        @FormParam("tags") tags?: string[]
     ): Promise<Return.NewResource<Envelope>> {
         const result = await this.transportServices.files.uploadOwnFile({
             content: file?.buffer,
@@ -27,7 +28,8 @@ export class FilesController extends BaseController {
             filename: file?.originalname !== undefined ? Buffer.from(file.originalname, "latin1").toString("utf8") : undefined,
             mimetype: file?.mimetype,
             title,
-            description
+            description,
+            tags
         } as any);
         return this.created(result);
     }
@@ -58,9 +60,7 @@ export class FilesController extends BaseController {
     @GET
     @Accept("application/json")
     public async getFiles(@Context context: ServiceContext): Promise<Envelope> {
-        const result = await this.transportServices.files.getFiles({
-            query: context.request.query
-        });
+        const result = await this.transportServices.files.getFiles({ query: context.request.query });
         return this.ok(result);
     }
 
@@ -68,10 +68,7 @@ export class FilesController extends BaseController {
     @Path("/Own")
     @Accept("application/json")
     public async getOwnFiles(@Context context: ServiceContext): Promise<Envelope> {
-        const result = await this.transportServices.files.getFiles({
-            query: context.request.query,
-            ownerRestriction: OwnerRestriction.Own
-        });
+        const result = await this.transportServices.files.getFiles({ query: context.request.query, ownerRestriction: OwnerRestriction.Own });
         return this.ok(result);
     }
 
@@ -79,10 +76,7 @@ export class FilesController extends BaseController {
     @Path("/Peer")
     @Accept("application/json")
     public async getPeerFiles(@Context context: ServiceContext): Promise<Envelope> {
-        const result = await this.transportServices.files.getFiles({
-            query: context.request.query,
-            ownerRestriction: OwnerRestriction.Peer
-        });
+        const result = await this.transportServices.files.getFiles({ query: context.request.query, ownerRestriction: OwnerRestriction.Peer });
         return this.ok(result);
     }
 
