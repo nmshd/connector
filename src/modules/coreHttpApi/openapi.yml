@@ -1897,7 +1897,6 @@ paths:
                   description: Tags for the file.
                   example: ["tag1", "tag2"]
                   nullable: false
-
               required:
                 - file
       responses:
