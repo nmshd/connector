@@ -4,14 +4,7 @@ import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { ILogger } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
-import {
-    AbstractConnectorRuntime,
-    ConnectorInfrastructureRegistry,
-    ConnectorMode,
-    ConnectorRuntimeModule,
-    ConnectorRuntimeModuleConfiguration,
-    DocumentationLink
-} from "@nmshd/connector-types";
+import { AbstractConnectorRuntime, ConnectorMode, ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration, DocumentationLink } from "@nmshd/connector-types";
 import { ConsumptionController } from "@nmshd/consumption";
 import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";
@@ -23,7 +16,7 @@ import { checkServerIdentity, PeerCertificate } from "tls";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { HealthChecker } from "./HealthChecker";
 import { buildInformation } from "./buildInformation";
-import { HttpServer } from "./infrastructure";
+import { ConnectorInfrastructureRegistry, HttpServer } from "./infrastructure";
 import {
     AutoAcceptPendingRelationshipsModule,
     AutoDecomposeDeletionProposedRelationshipsModule,
