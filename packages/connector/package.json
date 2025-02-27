@@ -11,7 +11,7 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "build": "tsc",
-        "build:ci": "npm run build",
+        "build:ci": "tsc -p tsconfig.publish.json",
         "build:watch": "tsc --watch"
     },
     "dependencies": {
