@@ -21,12 +21,9 @@ import {
     AutoAcceptPendingRelationshipsModule,
     AutoDecomposeDeletionProposedRelationshipsModule,
     CoreHttpApiModule,
-    CoreHttpApiModuleConfiguration,
     MessageBrokerPublisherModule,
-    MessageBrokerPublisherModuleConfiguration,
     SseModule,
     SyncModule,
-    SyncModuleConfiguration,
     WebhooksModule
 } from "./modules";
 
@@ -287,12 +284,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             }
         }
 
-        if (moduleConfiguration.location.startsWith("@nmshd/connector:")) {
-            this.loadInternalModule(connectorModuleConfiguration);
-            return;
-        }
-
-        const nodeModule = await this.import(moduleConfiguration.location);
+        const nodeModule = await this.resolveModule(moduleConfiguration);
 
         if (!nodeModule) {
             this.logger.error(
@@ -301,7 +293,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             return;
         }
 
-        const moduleConstructor = nodeModule.default as
+        const moduleConstructor = nodeModule as
             | (new (runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule)
             | undefined;
 
@@ -321,95 +313,38 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         this.logger.info(`Module '${this.getModuleName(moduleConfiguration)}' was loaded successfully.`);
     }
 
-    private loadInternalModule(connectorModuleConfiguration: ConnectorRuntimeModuleConfiguration): void {
-        const moduleName = connectorModuleConfiguration.location.split(":")[1];
+    private async resolveModule(
+        configuration: ConnectorRuntimeModuleConfiguration
+    ): Promise<(new (runtime: ConnectorRuntime, configuration: any, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule) | undefined> {
+        if (configuration.location.startsWith("@nmshd/connector:")) {
+            return this.resolveInternalModule(configuration.location);
+        }
+
+        return (await this.import(configuration.location))?.default;
+    }
+
+    private resolveInternalModule(
+        location: string
+    ): (new (runtime: ConnectorRuntime, configuration: any, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule) | undefined {
+        const moduleName = location.split(":")[1];
 
         switch (moduleName) {
-            case "AutoAcceptPendingRelationshipsModule": {
-                const module = new AutoAcceptPendingRelationshipsModule(
-                    this,
-                    connectorModuleConfiguration,
-                    this.loggerFactory.getLogger(AutoAcceptPendingRelationshipsModule),
-                    this.connectorMode
-                );
-
-                this.modules.add(module);
-
-                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
-                break;
-            }
-
-            case "AutoDecomposeDeletionProposedRelationshipsModule": {
-                const module = new AutoDecomposeDeletionProposedRelationshipsModule(
-                    this,
-                    connectorModuleConfiguration,
-                    this.loggerFactory.getLogger(AutoDecomposeDeletionProposedRelationshipsModule),
-                    this.connectorMode
-                );
-
-                this.modules.add(module);
-
-                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
-                break;
-            }
-
-            case "CoreHttpApiModule": {
-                const module = new CoreHttpApiModule(
-                    this,
-                    connectorModuleConfiguration as CoreHttpApiModuleConfiguration,
-                    this.loggerFactory.getLogger(CoreHttpApiModule),
-                    this.connectorMode
-                );
-
-                this.modules.add(module);
-
-                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
-                break;
-            }
-
-            case "WebhooksModule": {
-                const module = new WebhooksModule(this, connectorModuleConfiguration, this.loggerFactory.getLogger(WebhooksModule), this.connectorMode);
-
-                this.modules.add(module);
-
-                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
-                break;
-            }
-
-            case "MessageBrokerPublisherModule": {
-                const module = new MessageBrokerPublisherModule(
-                    this,
-                    connectorModuleConfiguration as MessageBrokerPublisherModuleConfiguration,
-                    this.loggerFactory.getLogger(MessageBrokerPublisherModule),
-                    this.connectorMode
-                );
-
-                this.modules.add(module);
-
-                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
-                break;
-            }
-
-            case "SyncModule": {
-                const module = new SyncModule(this, connectorModuleConfiguration as SyncModuleConfiguration, this.loggerFactory.getLogger(SyncModule), this.connectorMode);
-
-                this.modules.add(module);
-
-                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
-                break;
-            }
-
-            case "SseModule": {
-                const module = new SseModule(this, connectorModuleConfiguration, this.loggerFactory.getLogger(SseModule), this.connectorMode);
-
-                this.modules.add(module);
-
-                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
-                break;
-            }
-
+            case "AutoAcceptPendingRelationshipsModule":
+                return AutoAcceptPendingRelationshipsModule;
+            case "AutoDecomposeDeletionProposedRelationshipsModule":
+                return AutoDecomposeDeletionProposedRelationshipsModule;
+            case "CoreHttpApiModule":
+                return CoreHttpApiModule;
+            case "WebhooksModule":
+                return WebhooksModule;
+            case "MessageBrokerPublisherModule":
+                return MessageBrokerPublisherModule;
+            case "SyncModule":
+                return SyncModule;
+            case "SseModule":
+                return SseModule;
             default:
-                throw new Error(`Module '${this.getModuleName(connectorModuleConfiguration)}' could not be loaded: the module does not exist.`);
+                return undefined;
         }
     }
 
