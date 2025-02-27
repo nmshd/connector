@@ -10,8 +10,7 @@ import {
     ConnectorMode,
     ConnectorRuntimeModule,
     ConnectorRuntimeModuleConfiguration,
-    DocumentationLink,
-    HttpServer
+    DocumentationLink
 } from "@nmshd/connector";
 import { ConsumptionController } from "@nmshd/consumption";
 import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
@@ -24,6 +23,7 @@ import { checkServerIdentity, PeerCertificate } from "tls";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { HealthChecker } from "./HealthChecker";
 import { buildInformation } from "./buildInformation";
+import { HttpServer } from "./infrastructure";
 import {
     AutoAcceptPendingRelationshipsModule,
     AutoDecomposeDeletionProposedRelationshipsModule,

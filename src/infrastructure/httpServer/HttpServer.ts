@@ -1,5 +1,6 @@
 import { ILogger } from "@js-soft/logging-abstractions";
 import { sleep } from "@js-soft/ts-utils";
+import { AbstractConnectorRuntime, ConnectorInfrastructure, ConnectorMode, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration } from "@nmshd/connector";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
 import compression from "compression";
@@ -8,12 +9,7 @@ import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
-import { AbstractConnectorRuntime } from "../../AbstractConnectorRuntime";
-import { ConnectorMode } from "../../ConnectorMode";
-import { ConnectorInfrastructure, InfrastructureConfiguration } from "../ConnectorInfrastructure";
-import { HttpMethod } from "./HttpMethod";
 import { RequestTracker } from "./RequestTracker";
-import { Envelope, HttpErrors } from "./common";
 import { csrfErrorHandler } from "./middlewares/csrfErrorHandler";
 import { RouteNotFoundError, genericErrorHandler } from "./middlewares/genericErrorHandler";
 import { requestLogger } from "./middlewares/requestLogger";
@@ -45,7 +41,7 @@ export interface HttpServerConfiguration extends InfrastructureConfiguration {
     helmetOptions?: HelmetOptions;
 }
 
-export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration> {
+export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration> implements IHttpServer {
     private app: Application;
     private readonly customEndpoints: CustomEndpoint[] = [];
     private readonly controllers: ControllerConfig[] = [];

@@ -6,7 +6,16 @@ export interface InfrastructureConfiguration {
     enabled: boolean;
 }
 
-export abstract class ConnectorInfrastructure<TConfig extends InfrastructureConfiguration = InfrastructureConfiguration> {
+export interface IConnectorInfrastructure {
+    readonly name: string;
+    readonly isEnabled: boolean;
+
+    init(): Promise<void> | void;
+    start(): Promise<void> | void;
+    stop(): Promise<void> | void;
+}
+
+export abstract class ConnectorInfrastructure<TConfig extends InfrastructureConfiguration = InfrastructureConfiguration> implements IConnectorInfrastructure {
     public constructor(
         protected runtime: AbstractConnectorRuntime,
         protected configuration: TConfig,

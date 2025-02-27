@@ -1,16 +1,16 @@
 import { DocumentationLink } from "../DocumentationLink";
-import { ConnectorInfrastructure } from "./ConnectorInfrastructure";
-import { HttpServer } from "./httpServer";
+import { ConnectorInfrastructure, IConnectorInfrastructure } from "./ConnectorInfrastructure";
+import { IHttpServer } from "./httpServer";
 
 export class ConnectorInfrastructureRegistry {
-    private readonly infrastructure: Record<string, ConnectorInfrastructure | undefined> = {};
+    private readonly infrastructure: Record<string, IConnectorInfrastructure | undefined> = {};
 
-    public get httpServer(): HttpServer {
-        const httpServer = this.getByName<HttpServer>("httpServer");
+    public get httpServer(): IHttpServer {
+        const httpServer = this.getByName<IHttpServer>("httpServer");
         return httpServer;
     }
 
-    public getByName<T extends ConnectorInfrastructure>(name: string): T {
+    public getByName<T extends IConnectorInfrastructure>(name: string): T {
         const infrastructure = this.infrastructure[name.toLowerCase()];
         if (!infrastructure) {
             const docLink = DocumentationLink.operate__configuration(name);
