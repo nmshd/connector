@@ -3,7 +3,7 @@ import { Endpoint } from "./Endpoint";
 
 export class MonitoringEndpoint extends Endpoint {
     public async getHealth(): Promise<ConnectorHealth> {
-        return await this.getPlain("/health");
+        return await this.getPlain("/health", (status) => status === 200 || status === 500);
     }
 
     public async getVersion(): Promise<ConnectorVersionInfo> {

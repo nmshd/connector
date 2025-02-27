@@ -7,4 +7,3 @@ logs
 dist
 node_modules
 scripts
-config/test.json

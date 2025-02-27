@@ -257,6 +257,57 @@ paths:
 
   # ------------------- Attributes -------------------
 
+  /api/v2/Attributes/CanCreate:
+    put:
+      operationId: canCreateRepositoryAttribute
+      description: "Checks if a Repository Attribute can be created with the given parameters."
+      tags:
+        - Attributes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: false
+              properties:
+                content:
+                  type: object
+                  additionalProperties: false
+                  required:
+                    - value
+                  properties:
+                    value:
+                      $ref: "#/components/schemas/AttributeValue"
+                    tags:
+                      $ref: "#/components/schemas/IdentityAttributeContent_tags"
+                    validFrom:
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
+                    validTo:
+                      $ref: "#/components/schemas/AttributeContent_validTo"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/CanCreateRepositoryAttributeResponse"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
   /api/v2/Attributes:
     post:
       operationId: createRepositoryAttribute
@@ -1761,6 +1812,10 @@ paths:
           schema:
             $ref: "#/components/schemas/TextFilter"
         - in: query
+          name: tags
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
           name: filesize
           schema:
             $ref: "#/components/schemas/NumberFilter"
@@ -1835,6 +1890,13 @@ paths:
                   type: string
                   format: binary
                   nullable: false
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  description: Tags for the file.
+                  example: ["tag1", "tag2"]
+                  nullable: false
               required:
                 - file
       responses:
@@ -1887,6 +1949,10 @@ paths:
             $ref: "#/components/schemas/DateFilter"
         - in: query
           name: filename
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: tags
           schema:
             $ref: "#/components/schemas/TextFilter"
         - in: query
@@ -2001,6 +2067,10 @@ paths:
             $ref: "#/components/schemas/DateFilter"
         - in: query
           name: filename
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: tags
           schema:
             $ref: "#/components/schemas/TextFilter"
         - in: query
@@ -5049,6 +5119,32 @@ components:
       required:
         - displayNames
 
+    CanCreateRepositoryAttributeResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+      oneOf:
+        - properties:
+            isSuccess:
+              const: true
+          required:
+            - isSuccess
+          additionalProperties: false
+
+        - properties:
+            isSuccess:
+              const: false
+            code:
+              type: string
+            message:
+              type: string
+          required:
+            - isSuccess
+            - code
+            - message
+          additionalProperties: false
+
     ConnectorHealth:
       type: object
       properties:
@@ -5155,6 +5251,13 @@ components:
           description: The name of the file.
           example: CurriculumVitae.pdf
           nullable: false
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags for the file.
+          example: [tag1, tag2]
+          nullable: true
         filesize:
           type: integer
           format: int64

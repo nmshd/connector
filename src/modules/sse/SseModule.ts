@@ -40,8 +40,6 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
         const baseUrl = this.configuration.baseUrlOverride ?? this.runtime["runtimeConfig"].transportLibrary.baseUrl;
         const sseUrl = `${baseUrl}/api/v1/sse`;
 
-        this.logger.info(`Connecting to SSE endpoint: ${sseUrl}`);
-
         const baseOptions = { connect: { rejectUnauthorized: false } };
         const proxy = baseUrl.startsWith("https://") ? (process.env.https_proxy ?? process.env.HTTPS_PROXY) : (process.env.http_proxy ?? process.env.HTTP_PROXY);
 
@@ -49,11 +47,16 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
             fetch: async (url, options) => {
                 const token = await this.runtime.getBackboneAuthenticationToken();
 
-                return await fetch(url, {
+                this.logger.info(`Connecting to SSE endpoint: ${sseUrl}`);
+                const response = await fetch(url, {
                     ...options,
                     dispatcher: proxy ? new ProxyAgent({ ...baseOptions, uri: proxy }) : new Agent(baseOptions),
                     headers: { ...options?.headers, authorization: `Bearer ${token}` }
                 });
+
+                this.logger.info(`Connected to SSE endpoint: ${sseUrl}`);
+
+                return response;
             }
         });
 
@@ -62,22 +65,13 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
         eventSource.addEventListener("ExternalEventCreated", async () => await this.runSync());
 
         await new Promise<void>((resolve, reject) => {
-            eventSource.onopen = () => {
-                this.logger.info("Connected to SSE endpoint");
-                resolve();
-
-                eventSource.onopen = () => {
-                    // noop
-                };
-            };
-
-            eventSource.onerror = (error) => {
-                reject(error);
-            };
+            eventSource.onopen = () => resolve();
+            eventSource.onerror = (error) => reject(error);
         });
 
+        eventSource.onopen = async () => await this.runSync();
         eventSource.onerror = async (error) => {
-            if (error.status === 401) await this.recreateEventSource();
+            if (error.code === 401) await this.recreateEventSource();
         };
     }
 

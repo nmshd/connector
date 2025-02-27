@@ -7,4 +7,5 @@ export interface GetOwnFilesRequest {
     filesize?: string | string[];
     mimetype?: string | string[];
     title?: string | string[];
+    tags?: string | string[];
 }

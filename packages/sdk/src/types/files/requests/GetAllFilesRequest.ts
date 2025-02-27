@@ -9,4 +9,5 @@ export interface GetAllFilesRequest {
     mimetype?: string | string[];
     title?: string | string[];
     isOwn?: boolean | boolean[];
+    tags?: string | string[];
 }

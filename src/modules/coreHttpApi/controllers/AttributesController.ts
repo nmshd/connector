@@ -1,7 +1,7 @@
 import { Envelope } from "@nmshd/connector";
 import { ConsumptionServices, RuntimeErrors, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, Context, DELETE, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "@nmshd/typescript-rest";
+import { Accept, Context, DELETE, GET, POST, PUT, Path, PathParam, QueryParam, Return, ServiceContext } from "@nmshd/typescript-rest";
 import { BaseController } from "../common/BaseController";
 
 @Path("/api/v2/Attributes")
@@ -11,6 +11,14 @@ export class AttributesController extends BaseController {
         @Inject private readonly transportServices: TransportServices
     ) {
         super();
+    }
+
+    @PUT
+    @Path("CanCreate")
+    @Accept("application/json")
+    public async canCreateRepositoryAttribute(request: any): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.canCreateRepositoryAttribute(request);
+        return this.ok(result);
     }
 
     @POST

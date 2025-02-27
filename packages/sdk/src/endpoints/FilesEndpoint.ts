@@ -21,12 +21,7 @@ export class FilesEndpoint extends Endpoint {
     public async uploadOwnFile(request: UploadOwnFileRequest): Promise<ConnectorHttpResponse<ConnectorFile>> {
         const response = await this.postMultipart(
             "/api/v2/Files/Own",
-            {
-                title: request.title,
-                description: request.description,
-                expiresAt: request.expiresAt,
-                file: request.file
-            },
+            { title: request.title, description: request.description, expiresAt: request.expiresAt, file: request.file, tags: request.tags },
             request.filename
         );
         return this.makeResult(response);
