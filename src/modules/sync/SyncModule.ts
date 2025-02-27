@@ -1,4 +1,4 @@
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector";
+import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import correlator from "correlation-id";
 
 export interface SyncModuleConfiguration extends ConnectorRuntimeModuleConfiguration {

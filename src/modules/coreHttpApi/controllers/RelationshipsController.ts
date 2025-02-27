@@ -1,4 +1,4 @@
-import { Envelope } from "@nmshd/connector";
+import { Envelope } from "@nmshd/connector-types";
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, DELETE, GET, Path, PathParam, POST, PUT, Return, ServiceContext } from "@nmshd/typescript-rest";

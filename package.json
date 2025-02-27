@@ -1,5 +1,5 @@
 {
-    "name": "@nmshd/connector-root",
+    "name": "@nmshd/connector",
     "private": true,
     "description": "The Enmeshed Connector",
     "homepage": "https://enmeshed.eu/integrate",
@@ -7,7 +7,7 @@
     "license": "MIT",
     "author": "j&s-soft AG",
     "workspaces": [
-        "packages/connector",
+        "packages/connector-types",
         ".",
         "packages/sdk"
     ],

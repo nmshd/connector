@@ -1,5 +1,5 @@
 import { ILogger } from "@js-soft/logging-abstractions";
-import { ConnectorMode, ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector";
+import { ConnectorMode, ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import correlator from "correlation-id";
 import { EventSource } from "eventsource";
 import { Agent, fetch, ProxyAgent } from "undici";

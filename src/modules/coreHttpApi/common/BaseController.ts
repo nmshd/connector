@@ -1,5 +1,5 @@
 import { Result } from "@js-soft/ts-utils";
-import { Envelope } from "@nmshd/connector";
+import { Envelope } from "@nmshd/connector-types";
 import { Return } from "@nmshd/typescript-rest";
 import express from "express";
 

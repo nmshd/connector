@@ -1,4 +1,4 @@
-import { ConnectorRuntimeModuleConfiguration } from "@nmshd/connector";
+import { ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 
 export interface WebhooksModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     targets?: Record<string, WebhooksModuleConfigurationTarget>;

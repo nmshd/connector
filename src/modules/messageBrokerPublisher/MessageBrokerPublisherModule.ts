@@ -1,5 +1,5 @@
 import { DataEvent, Event } from "@js-soft/ts-utils";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector";
+import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import {
     AMQPConnector,
     AMQPConnectorConfiguration,

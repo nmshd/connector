@@ -1,4 +1,4 @@
-import { Envelope } from "@nmshd/connector";
+import { Envelope } from "@nmshd/connector-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Reference } from "@nmshd/transport";
 import { Inject } from "@nmshd/typescript-ioc";

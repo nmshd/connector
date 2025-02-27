@@ -1,11 +1,11 @@
 {
-    "name": "@nmshd/connector",
-    "description": "the enmeshed connector extension kit",
-    "homepage": "https://enmeshed.eu/integrate/connector-sdks#typescript-sdk",
+    "name": "@nmshd/connector-types",
+    "description": "the enmeshed connector types",
+    "homepage": "https://enmeshed.eu/integrate",
     "repository": {
         "type": "git",
         "url": "https://github.com/nmshd/connector.git",
-        "directory": "/packages/connector"
+        "directory": "/packages/connector-types"
     },
     "main": "dist/index.js",
     "types": "dist/index.d.ts",

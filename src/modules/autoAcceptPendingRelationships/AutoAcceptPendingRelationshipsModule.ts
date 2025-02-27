@@ -1,4 +1,4 @@
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector";
+import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import { RelationshipChangedEvent, RelationshipStatus } from "@nmshd/runtime";
 
 export interface AutoAcceptPendingRelationshipsModuleConfiguration extends ConnectorRuntimeModuleConfiguration {}

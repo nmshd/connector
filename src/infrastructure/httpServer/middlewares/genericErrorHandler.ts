@@ -1,6 +1,6 @@
 import { ILogger } from "@js-soft/logging-abstractions";
 import { ApplicationError } from "@js-soft/ts-utils";
-import { ConnectorMode, Envelope, HttpError, HttpErrors } from "@nmshd/connector";
+import { ConnectorMode, Envelope, HttpError, HttpErrors } from "@nmshd/connector-types";
 import { RuntimeErrors } from "@nmshd/runtime";
 import { RequestError, TransportCoreErrors } from "@nmshd/transport";
 import { Errors } from "@nmshd/typescript-rest";

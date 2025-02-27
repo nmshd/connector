@@ -11,7 +11,7 @@ import {
     ConnectorRuntimeModule,
     ConnectorRuntimeModuleConfiguration,
     DocumentationLink
-} from "@nmshd/connector";
+} from "@nmshd/connector-types";
 import { ConsumptionController } from "@nmshd/consumption";
 import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";

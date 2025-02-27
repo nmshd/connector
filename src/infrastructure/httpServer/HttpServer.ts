@@ -1,6 +1,15 @@
 import { ILogger } from "@js-soft/logging-abstractions";
 import { sleep } from "@js-soft/ts-utils";
-import { AbstractConnectorRuntime, ConnectorInfrastructure, ConnectorMode, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration } from "@nmshd/connector";
+import {
+    AbstractConnectorRuntime,
+    ConnectorInfrastructure,
+    ConnectorMode,
+    Envelope,
+    HttpErrors,
+    HttpMethod,
+    IHttpServer,
+    InfrastructureConfiguration
+} from "@nmshd/connector-types";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
 import compression from "compression";
