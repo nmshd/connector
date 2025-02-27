@@ -328,7 +328,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         this.logger.info(`Module '${this.getModuleName(moduleConfiguration)}' was loaded successfully.`);
     }
 
-    private loadInternalModule(connectorModuleConfiguration: ConnectorRuntimeModuleConfiguration): Promise<void> {
+    private loadInternalModule(connectorModuleConfiguration: ConnectorRuntimeModuleConfiguration): void {
         const moduleName = connectorModuleConfiguration.location.split(":")[1];
 
         switch (moduleName) {
@@ -343,6 +343,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
                 this.modules.add(module);
 
                 this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+                break;
             }
 
             case "AutoDecomposeDeletionProposedRelationshipsModule": {
@@ -356,6 +357,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
                 this.modules.add(module);
 
                 this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+                break;
             }
 
             case "CoreHttpApiModule": {
@@ -369,6 +371,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
                 this.modules.add(module);
 
                 this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+                break;
             }
 
             case "WebhooksModule": {
@@ -377,6 +380,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
                 this.modules.add(module);
 
                 this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+                break;
             }
 
             case "MessageBrokerPublisherModule": {
@@ -390,6 +394,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
                 this.modules.add(module);
 
                 this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+                break;
             }
 
             case "SyncModule": {
@@ -398,6 +403,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
                 this.modules.add(module);
 
                 this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+                break;
             }
 
             case "SseModule": {
@@ -406,6 +412,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
                 this.modules.add(module);
 
                 this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+                break;
             }
 
             default:
