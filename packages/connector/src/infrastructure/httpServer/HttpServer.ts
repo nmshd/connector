@@ -199,7 +199,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
     private useErrorHandlers() {
         this.app.use(csrfErrorHandler);
-        this.app.use(genericErrorHandler(this.connectorMode));
+        this.app.use(genericErrorHandler(this.connectorMode, this.logger));
     }
 
     private useApiKey() {

@@ -7,13 +7,12 @@ import { ApplicationError } from "@js-soft/ts-utils";
 import {
     AbstractConnectorRuntime,
     ConnectorInfrastructureRegistry,
-    ConnectorLoggerFactory,
     ConnectorMode,
     ConnectorRuntimeModule,
     ConnectorRuntimeModuleConfiguration,
+    DocumentationLink,
     HttpServer
 } from "@nmshd/connector";
-import { DocumentationLink } from "@nmshd/connector/src/DocumentationLink";
 import { ConsumptionController } from "@nmshd/consumption";
 import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";
@@ -78,7 +77,6 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
-        ConnectorLoggerFactory.init(loggerFactory);
 
         this.setServerIdentityCheckFromKeyPinning(connectorConfig, loggerFactory.getLogger(ConnectorRuntime));
         this.forceEnableMandatoryModules(connectorConfig);
