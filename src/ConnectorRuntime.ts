@@ -295,7 +295,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         }
 
         if (moduleConfiguration.location.startsWith("@nmshd/connector:")) {
-            await this.loadInternalModule(connectorModuleConfiguration);
+            this.loadInternalModule(connectorModuleConfiguration);
             return;
         }
 
