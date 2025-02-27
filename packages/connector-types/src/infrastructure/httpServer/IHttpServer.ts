@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
-import { IConnectorInfrastructure } from "../ConnectorInfrastructure";
+import { ConnectorInfrastructure } from "../ConnectorInfrastructure";
 import { HttpMethod } from "./HttpMethod";
 
-export interface IHttpServer extends IConnectorInfrastructure {
+export interface IHttpServer extends ConnectorInfrastructure {
     start(): Promise<void>;
     stop(): void;
     addEndpoint(httpMethod: HttpMethod, route: string, authenticationRequired: boolean, handler: RequestHandler): void;

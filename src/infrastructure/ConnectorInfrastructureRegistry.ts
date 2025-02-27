@@ -1,15 +1,15 @@
-import { ConnectorInfrastructure, DocumentationLink, IConnectorInfrastructure, IConnectorInfrastructureRegistry } from "@nmshd/connector-types";
+import { ConnectorInfrastructure, DocumentationLink, IConnectorInfrastructureRegistry } from "@nmshd/connector-types";
 import { HttpServer } from "./httpServer";
 
 export class ConnectorInfrastructureRegistry implements IConnectorInfrastructureRegistry {
-    private readonly infrastructure: Record<string, IConnectorInfrastructure | undefined> = {};
+    private readonly infrastructure: Record<string, ConnectorInfrastructure | undefined> = {};
 
     public get httpServer(): HttpServer {
         const httpServer = this.getByName<HttpServer>("httpServer");
         return httpServer;
     }
 
-    public getByName<T extends IConnectorInfrastructure>(name: string): T {
+    public getByName<T extends ConnectorInfrastructure>(name: string): T {
         const infrastructure = this.infrastructure[name.toLowerCase()];
         if (!infrastructure) {
             const docLink = DocumentationLink.operate__configuration(name);
