@@ -25,6 +25,18 @@ import { checkServerIdentity, PeerCertificate } from "tls";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { HealthChecker } from "./HealthChecker";
 import { buildInformation } from "./buildInformation";
+import {
+    AutoAcceptPendingRelationshipsModule,
+    AutoDecomposeDeletionProposedRelationshipsModule,
+    CoreHttpApiModule,
+    CoreHttpApiModuleConfiguration,
+    MessageBrokerPublisherModule,
+    MessageBrokerPublisherModuleConfiguration,
+    SseModule,
+    SyncModule,
+    SyncModuleConfiguration,
+    WebhooksModule
+} from "./modules";
 
 interface SupportInformation {
     health: RuntimeHealth;
@@ -284,8 +296,12 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             }
         }
 
-        const modulePath = path.join(ConnectorRuntime.MODULES_DIRECTORY, moduleConfiguration.location);
-        const nodeModule = await this.import(modulePath);
+        if (moduleConfiguration.location.startsWith("@nmshd/connector:")) {
+            await this.loadInternalModule(connectorModuleConfiguration);
+            return;
+        }
+
+        const nodeModule = await this.import(moduleConfiguration.location);
 
         if (!nodeModule) {
             this.logger.error(
@@ -312,6 +328,91 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         this.modules.add(module);
 
         this.logger.info(`Module '${this.getModuleName(moduleConfiguration)}' was loaded successfully.`);
+    }
+
+    private loadInternalModule(connectorModuleConfiguration: ConnectorRuntimeModuleConfiguration): Promise<void> {
+        const moduleName = connectorModuleConfiguration.location.split(":")[1];
+
+        switch (moduleName) {
+            case "AutoAcceptPendingRelationshipsModule": {
+                const module = new AutoAcceptPendingRelationshipsModule(
+                    this,
+                    connectorModuleConfiguration,
+                    this.loggerFactory.getLogger(AutoAcceptPendingRelationshipsModule),
+                    this.connectorMode
+                );
+
+                this.modules.add(module);
+
+                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+            }
+
+            case "AutoDecomposeDeletionProposedRelationshipsModule": {
+                const module = new AutoDecomposeDeletionProposedRelationshipsModule(
+                    this,
+                    connectorModuleConfiguration,
+                    this.loggerFactory.getLogger(AutoDecomposeDeletionProposedRelationshipsModule),
+                    this.connectorMode
+                );
+
+                this.modules.add(module);
+
+                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+            }
+
+            case "CoreHttpApiModule": {
+                const module = new CoreHttpApiModule(
+                    this,
+                    connectorModuleConfiguration as CoreHttpApiModuleConfiguration,
+                    this.loggerFactory.getLogger(CoreHttpApiModule),
+                    this.connectorMode
+                );
+
+                this.modules.add(module);
+
+                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+            }
+
+            case "WebhooksModule": {
+                const module = new WebhooksModule(this, connectorModuleConfiguration, this.loggerFactory.getLogger(WebhooksModule), this.connectorMode);
+
+                this.modules.add(module);
+
+                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+            }
+
+            case "MessageBrokerPublisherModule": {
+                const module = new MessageBrokerPublisherModule(
+                    this,
+                    connectorModuleConfiguration as MessageBrokerPublisherModuleConfiguration,
+                    this.loggerFactory.getLogger(MessageBrokerPublisherModule),
+                    this.connectorMode
+                );
+
+                this.modules.add(module);
+
+                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+            }
+
+            case "SyncModule": {
+                const module = new SyncModule(this, connectorModuleConfiguration as SyncModuleConfiguration, this.loggerFactory.getLogger(SyncModule), this.connectorMode);
+
+                this.modules.add(module);
+
+                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+            }
+
+            case "SseModule": {
+                const module = new SseModule(this, connectorModuleConfiguration, this.loggerFactory.getLogger(SseModule), this.connectorMode);
+
+                this.modules.add(module);
+
+                this.logger.info(`Module '${this.getModuleName(connectorModuleConfiguration)}' was loaded successfully.`);
+            }
+
+            default:
+                throw new Error(`Module '${this.getModuleName(connectorModuleConfiguration)}' could not be loaded: the module does not exist.`);
+        }
     }
 
     private async import(moduleName: string) {
