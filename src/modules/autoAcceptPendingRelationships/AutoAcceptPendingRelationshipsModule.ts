@@ -3,7 +3,7 @@ import { RelationshipChangedEvent, RelationshipStatus } from "@nmshd/runtime";
 
 export interface AutoAcceptPendingRelationshipsModuleConfiguration extends ConnectorRuntimeModuleConfiguration {}
 
-export default class AutoAcceptPendingRelationshipsModule extends ConnectorRuntimeModule<AutoAcceptPendingRelationshipsModuleConfiguration> {
+export class AutoAcceptPendingRelationshipsModule extends ConnectorRuntimeModule<AutoAcceptPendingRelationshipsModuleConfiguration> {
     public init(): void {
         // Nothing to do here
     }

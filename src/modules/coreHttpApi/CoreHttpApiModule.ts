@@ -12,7 +12,7 @@ export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleCo
     };
 }
 
-export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleConfiguration> {
+export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleConfiguration> {
     public get baseDirectory(): string {
         return __dirname;
     }

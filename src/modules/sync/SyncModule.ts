@@ -5,7 +5,7 @@ export interface SyncModuleConfiguration extends ConnectorRuntimeModuleConfigura
     interval: number;
 }
 
-export default class SyncModule extends ConnectorRuntimeModule<SyncModuleConfiguration> {
+export class SyncModule extends ConnectorRuntimeModule<SyncModuleConfiguration> {
     private syncTimeout: NodeJS.Timeout;
 
     public init(): void {
