@@ -83,6 +83,7 @@
         "@js-soft/docdb-access-mongo": "1.2.0",
         "@js-soft/node-logger": "1.2.0",
         "@js-soft/ts-utils": "^2.3.3",
+        "@nmshd/connector-types": "*",
         "@nmshd/runtime": "6.28.0",
         "@nmshd/typescript-ioc": "^3.2.4",
         "@nmshd/typescript-rest": "^3.1.0",
