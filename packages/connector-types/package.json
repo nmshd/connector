@@ -1,14 +1,24 @@
 {
     "name": "@nmshd/connector-types",
     "description": "the enmeshed connector types",
+    "keywords": [
+        "enmeshed",
+        "connector"
+    ],
     "homepage": "https://enmeshed.eu/integrate",
     "repository": {
         "type": "git",
         "url": "https://github.com/nmshd/connector.git",
         "directory": "/packages/connector-types"
     },
+    "license": "MIT",
+    "author": "j&s-soft AG",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "files": [
+        "dist/",
+        "README.md"
+    ],
     "scripts": {
         "build": "tsc",
         "build:ci": "tsc",
@@ -23,5 +33,9 @@
         "@types/luxon": "^3.4.2",
         "@types/node": "^22.10.7",
         "typescript": "^5.7.3"
+    },
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
     }
 }
