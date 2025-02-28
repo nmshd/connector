@@ -14,7 +14,7 @@
         "build:ci": "tsc",
         "build:watch": "tsc --watch"
     },
-    "dependencies": {
+    "peerDependencies": {
         "@js-soft/logging-abstractions": "^1.0.1",
         "@nmshd/runtime": "^6.23.0"
     },
