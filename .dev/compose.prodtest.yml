@@ -7,7 +7,7 @@ services:
       context: ..
       dockerfile: Dockerfile
       args:
-        VERSION: "{{version}}"
+        VERSION: "1.0.0"
         BUILD_NUMBER: "test"
         COMMIT_HASH: "test"
     container_name: connector
