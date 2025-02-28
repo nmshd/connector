@@ -97,17 +97,17 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                 },
                 autoAcceptPendingRelationships: {
                     displayName: "Auto Accept Pending Relationships",
-                    location: "autoAcceptPendingRelationships/AutoAcceptPendingRelationshipsModule",
+                    location: "@nmshd/connector:AutoAcceptPendingRelationshipsModule",
                     enabled: false
                 },
                 autoDecomposeDeletionProposedRelationships: {
                     displayName: "Auto Decompose DeletionProposed Relationships",
-                    location: "autoDecomposeDeletionProposedRelationships/AutoDecomposeDeletionProposedRelationshipsModule",
+                    location: "@nmshd/connector:AutoDecomposeDeletionProposedRelationshipsModule",
                     enabled: false
                 },
                 coreHttpApi: {
                     displayName: "Core HTTP API",
-                    location: "coreHttpApi/CoreHttpApiModule",
+                    location: "@nmshd/connector:CoreHttpApiModule",
                     enabled: true,
 
                     requiredInfrastructure: ["httpServer"],
@@ -122,19 +122,19 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                 webhooks: {
                     displayName: "Webhooks",
                     enabled: false,
-                    location: "webhooks/WebhooksModule",
+                    location: "@nmshd/connector:WebhooksModule",
                     targets: {},
                     webhooks: []
                 },
                 messageBrokerPublisher: {
                     enabled: false,
                     displayName: "Message Broker Publisher",
-                    location: "messageBrokerPublisher/MessageBrokerPublisherModule",
+                    location: "@nmshd/connector:MessageBrokerPublisherModule",
                     brokers: []
                 },
                 sync: {
                     displayName: "Sync",
-                    location: "sync/SyncModule",
+                    location: "@nmshd/connector:SyncModule",
                     enabled: false,
 
                     interval: 60
@@ -142,7 +142,7 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                 sse: {
                     enabled: false,
                     displayName: "Server Sent Events",
-                    location: "sse/SseModule"
+                    location: "@nmshd/connector:SseModule"
                 }
             }
         });

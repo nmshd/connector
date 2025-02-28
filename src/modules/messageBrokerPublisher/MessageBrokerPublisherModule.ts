@@ -1,5 +1,5 @@
 import { DataEvent, Event } from "@js-soft/ts-utils";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
+import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import {
     AMQPConnector,
     AMQPConnectorConfiguration,
@@ -22,7 +22,7 @@ export interface MessageBrokerPublisherModuleConfiguration extends ConnectorRunt
     brokers: Broker[];
 }
 
-export default class MessageBrokerPublisherModule extends ConnectorRuntimeModule<MessageBrokerPublisherModuleConfiguration> {
+export class MessageBrokerPublisherModule extends ConnectorRuntimeModule<MessageBrokerPublisherModuleConfiguration> {
     private readonly connectors: MessageBrokerConnector<any>[] = [];
 
     public async init(): Promise<void> {

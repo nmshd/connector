@@ -1,8 +1,7 @@
-import { DocumentationLink } from "../DocumentationLink";
-import { ConnectorInfrastructure } from "./ConnectorInfastructure";
+import { ConnectorInfrastructure, DocumentationLink, IConnectorInfrastructureRegistry } from "@nmshd/connector-types";
 import { HttpServer } from "./httpServer";
 
-export class ConnectorInfrastructureRegistry {
+export class ConnectorInfrastructureRegistry implements IConnectorInfrastructureRegistry {
     private readonly infrastructure: Record<string, ConnectorInfrastructure | undefined> = {};
 
     public get httpServer(): HttpServer {
