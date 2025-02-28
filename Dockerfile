@@ -5,12 +5,10 @@ ARG VERSION
 
 WORKDIR /usr/app
 COPY package.json package-lock.json tsconfig.json tsconfig.publish.json ./
-COPY packages/connector/package.json packages/connector/tsconfig.json packages/connector/
 COPY .ci .ci
 
 RUN npm ci
 COPY src src
-COPY packages/connector/src packages/connector/src
 
 RUN npm run build:ci --ws
 RUN .ci/writeBuildInformation.sh
@@ -27,12 +25,10 @@ RUN mkdir -p /var/log/enmeshed-connector && chown -R node:node /var/log/enmeshed
 WORKDIR /usr/app
 
 COPY package.json package-lock.json ./
-COPY packages/connector/package.json packages/connector/
 
 RUN npm ci --omit=dev
 
 COPY --from=builder /usr/app/dist/ dist/
-COPY --from=builder /usr/app/packages/connector/dist packages/connector/dist/
 
 USER node
 
