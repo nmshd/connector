@@ -1,15 +1,5 @@
-import { ILogger } from "@js-soft/logging-abstractions";
 import { sleep } from "@js-soft/ts-utils";
-import {
-    AbstractConnectorRuntime,
-    ConnectorInfrastructure,
-    ConnectorMode,
-    Envelope,
-    HttpErrors,
-    HttpMethod,
-    IHttpServer,
-    InfrastructureConfiguration
-} from "@nmshd/connector-types";
+import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration } from "@nmshd/connector-types";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
 import compression from "compression";
@@ -18,6 +8,7 @@ import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
+import { buildInformation } from "../../buildInformation";
 import { RequestTracker } from "./RequestTracker";
 import { csrfErrorHandler } from "./middlewares/csrfErrorHandler";
 import { RouteNotFoundError, genericErrorHandler } from "./middlewares/genericErrorHandler";
@@ -58,17 +49,6 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private server?: http.Server;
 
     private readonly requestTracker = new RequestTracker();
-
-    public constructor(
-        runtime: AbstractConnectorRuntime,
-        configuration: HttpServerConfiguration,
-        logger: ILogger,
-        name: string,
-        connectorMode: ConnectorMode,
-        private readonly buildInformation: unknown
-    ) {
-        super(runtime, configuration, logger, name, connectorMode);
-    }
 
     public init(): void {
         this.app = express();
@@ -247,7 +227,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
     private useVersionEndpoint() {
         this.app.get("/Monitoring/Version", (_req: any, res: any) => {
-            res.status(200).json(this.buildInformation);
+            res.status(200).json(buildInformation);
         });
     }
 
