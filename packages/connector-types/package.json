@@ -15,10 +15,12 @@
         "build:watch": "tsc --watch"
     },
     "peerDependencies": {
-        "@js-soft/logging-abstractions": "^1.0.1",
         "@nmshd/runtime": "^6.23.0"
     },
     "devDependencies": {
+        "@js-soft/logging-abstractions": "^1.0.1",
+        "@types/express": "^5.0.0",
+        "@types/luxon": "^3.4.2",
         "@types/node": "^22.10.7",
         "typescript": "^5.7.3"
     }
