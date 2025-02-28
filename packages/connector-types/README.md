@@ -1,8 +1,36 @@
-# Warning
+# Connector Types
 
-This package is still in development and should not be used yet.
+[![npm version](https://badge.fury.io/js/%40nmshd%2fconnector-types.svg)](https://www.npmjs.com/package/@nmshd/connector-types)
 
-# Installation
+> ### Warning
+>
+> This package is still in development and should not be used yet.
+
+This package provides TypeScript types for writing connector modules.
+
+## Documentation
+
+The documentation for this project is available at https://enmeshed.eu/integrate.
+
+To get started developing in this repository, see the [developer's guide](README_dev.md).
+
+## Feedback
+
+Please file any bugs or feature requests by creating an [issue](https://github.com/nmshd/feedback/issues).
+
+Share your feedback with the Enmeshed team by contributing to the [discussions](https://github.com/nmshd/feedback/discussions).
+
+## Contribute
+
+Contribution to this project is highly apprecicated. Head over to our [contribution guide](https://github.com/nmshd/.github/blob/main/CONTRIBUTING.md) to learn more.
+
+## License
+
+[MIT](LICENSE)
+
+## How To use
+
+### Installation
 
 ```
 npm i @nmshd/connector-types
@@ -10,6 +38,6 @@ npm i @nmshd/connector-types
 
 TODO: only add as peer dependency
 
-# Usage
+### Usage
 
 TODO: how to write a connector module??
