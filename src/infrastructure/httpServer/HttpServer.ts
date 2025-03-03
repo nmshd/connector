@@ -148,18 +148,26 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useCustomEndpoint(endpoint: CustomEndpoint) {
+        const handlerWithAsyncErrorHandling: RequestHandler = async (req, res, next) => {
+            try {
+                await endpoint.handler(req, res, next);
+            } catch (e) {
+                next(e);
+            }
+        };
+
         switch (endpoint.httpMethod) {
             case HttpMethod.Get:
-                this.app.get(endpoint.route, endpoint.handler);
+                this.app.get(endpoint.route, handlerWithAsyncErrorHandling);
                 break;
             case HttpMethod.Post:
-                this.app.post(endpoint.route, endpoint.handler);
+                this.app.post(endpoint.route, handlerWithAsyncErrorHandling);
                 break;
             case HttpMethod.Put:
-                this.app.put(endpoint.route, endpoint.handler);
+                this.app.put(endpoint.route, handlerWithAsyncErrorHandling);
                 break;
             case HttpMethod.Delete:
-                this.app.delete(endpoint.route, endpoint.handler);
+                this.app.delete(endpoint.route, handlerWithAsyncErrorHandling);
                 break;
         }
     }
