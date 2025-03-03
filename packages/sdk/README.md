@@ -62,7 +62,7 @@ npm i @nmshd/connector-sdk
     }
     ```
 
-# Documentation
+### Further Documentation
 
 For a description of the different methods you can look at one of the OpenAPI UIs, which are hosted on your Connector:
 
