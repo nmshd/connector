@@ -36,11 +36,6 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
             },
             logging: {
                 appenders: {
-                    fileAppender: {
-                        type: "dateFile",
-                        filename: "/var/log/enmeshed-connector/latest.log",
-                        layout: { type: "pattern", pattern: "[%d] [%p] %c - %m %x{correlationId}" }
-                    },
                     consoleAppender: {
                         type: "stdout",
                         layout: { type: "pattern", pattern: "%[[%d] [%p] %c - %m %x{correlationId}%]" }
@@ -49,17 +44,12 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                         type: "logLevelFilter",
                         level: "INFO",
                         appender: "consoleAppender"
-                    },
-                    file: {
-                        type: "logLevelFilter",
-                        level: "INFO",
-                        appender: "fileAppender"
                     }
                 },
 
                 categories: {
                     default: {
-                        appenders: ["file", "console"],
+                        appenders: ["console"],
                         level: "TRACE"
                     }
                 }
