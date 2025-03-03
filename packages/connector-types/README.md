@@ -27,17 +27,3 @@ Contribution to this project is highly apprecicated. Head over to our [contribut
 ## License
 
 [MIT](LICENSE)
-
-## How To use
-
-### Installation
-
-```
-npm i @nmshd/connector-types
-```
-
-TODO: only add as peer dependency
-
-### Usage
-
-TODO: how to write a connector module??
