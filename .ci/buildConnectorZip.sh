@@ -7,6 +7,9 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+rm -rf packages
+jq --indent 4 -M ".dependencies.\"@nmshd/connector-types\" = \"$VERSION\"" package.json >package.out.json && mv package.out.json package.json
+
 npm ci
 
 npm run build:ci

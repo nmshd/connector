@@ -1,7 +1,7 @@
+import { Envelope } from "@nmshd/connector-types";
 import { ConsumptionServices, RuntimeErrors, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, DELETE, GET, POST, PUT, Path, PathParam, QueryParam, Return, ServiceContext } from "@nmshd/typescript-rest";
-import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
 @Path("/api/v2/Attributes")
