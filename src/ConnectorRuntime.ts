@@ -284,24 +284,11 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             }
         }
 
-        const nodeModule = await this.resolveModule(moduleConfiguration);
-
-        if (!nodeModule) {
-            this.logger.error(
-                `Module '${this.getModuleName(moduleConfiguration)}' could not be loaded: the location of the module (${moduleConfiguration.location}) does not exist.`
-            );
-            return;
-        }
-
-        const moduleConstructor = nodeModule as
-            | (new (runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule)
-            | undefined;
+        const moduleConstructor = await this.resolveModule(moduleConfiguration);
 
         if (!moduleConstructor) {
             this.logger.error(
-                `Module '${this.getModuleName(
-                    moduleConfiguration
-                )}' could not be loaded: the constructor could not be found. Remember to use the default export ('export default class MyModule...').`
+                `Module '${this.getModuleName(moduleConfiguration)}' could not be loaded: the constructor could not be found or the location of the module (${moduleConfiguration.location}) does not exist. Remember to use the default export ('export default class MyModule...').`
             );
             return;
         }
