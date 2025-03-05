@@ -12,6 +12,3 @@ for dir in ./packages/*; do
     npx enhanced-publish --if-possible --use-preid-as-tag
     cd ../../
 done
-
-# wait for npmjs to update its indices because the connector types are used by the docker build of the connector
-sleep 60
