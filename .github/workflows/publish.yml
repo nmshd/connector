@@ -67,7 +67,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - uses: gr2m/await-npm-package-version-action@v1
         with:
-          package: example
+          package: "@nmshd/connector-types"
           version: ${{ github.ref_name }}
           registry: https://registry.npmjs.org
       - name: Put the connector types package into the cache
