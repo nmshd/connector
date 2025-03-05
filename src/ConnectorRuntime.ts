@@ -49,7 +49,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
     private _dataViewExpander: DataViewExpander;
 
-    public override getServices(): RuntimeServices {
+    public getServices(): RuntimeServices {
         return {
             transportServices: this._transportServices,
             consumptionServices: this._consumptionServices,
@@ -367,12 +367,16 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         for (const infrastructure of this.infrastructure) {
             await infrastructure.init();
         }
+
+        await super.initInfrastructure();
     }
 
     protected override async startInfrastructure(): Promise<void> {
         for (const infrastructure of this.infrastructure) {
             await infrastructure.start();
         }
+
+        await super.startInfrastructure();
     }
 
     public override async stop(): Promise<void> {
@@ -402,6 +406,8 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         for (const infrastructure of this.infrastructure) {
             await infrastructure.stop();
         }
+
+        await super.stopInfrastructure();
     }
 
     private scheduleKillTask() {
