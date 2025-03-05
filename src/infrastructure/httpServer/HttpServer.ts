@@ -156,20 +156,36 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             }
         };
 
-        switch (endpoint.httpMethod) {
-            case HttpMethod.Get:
-                this.app.get(endpoint.route, handlerWithAsyncErrorHandling);
-                break;
-            case HttpMethod.Post:
-                this.app.post(endpoint.route, handlerWithAsyncErrorHandling);
-                break;
-            case HttpMethod.Put:
-                this.app.put(endpoint.route, handlerWithAsyncErrorHandling);
-                break;
-            case HttpMethod.Delete:
-                this.app.delete(endpoint.route, handlerWithAsyncErrorHandling);
-                break;
-        }
+        this.app[endpoint.httpMethod](endpoint.route, handlerWithAsyncErrorHandling);
+        // switch (endpoint.httpMethod) {
+
+        //     case HttpMethod.Get:
+        //         this.app.get(endpoint.route, handlerWithAsyncErrorHandling);
+        //         break;
+        //     case HttpMethod.Post:
+        //         this.app.post(endpoint.route, handlerWithAsyncErrorHandling);
+        //         break;
+        //     case HttpMethod.Put:
+        //         this.app.put(endpoint.route, handlerWithAsyncErrorHandling);
+        //         break;
+        //     case HttpMethod.Delete:
+        //         this.app.delete(endpoint.route, handlerWithAsyncErrorHandling);
+        //         break;
+        //     case HttpMethod.Patch:
+        //         this.app.patch(endpoint.route, handlerWithAsyncErrorHandling);
+        //     case HttpMethod.Options:
+        //         this.app.options(endpoint.route, handlerWithAsyncErrorHandling);
+        //         break;
+        //     case HttpMethod.Head:
+        //         this.app.head(endpoint.route, handlerWithAsyncErrorHandling);
+        //         break;
+        //     case HttpMethod.Trace:
+        //         this.app.trace(endpoint.route, handlerWithAsyncErrorHandling);
+        //         break;
+        //     case HttpMethod.Connect:
+        //         this.app.connect(endpoint.route, handlerWithAsyncErrorHandling);
+        //         break;
+        // }
     }
 
     private useUnsecuredCustomMiddlewares() {

@@ -1,6 +1,25 @@
-export enum HttpMethod {
-    Get = "GET",
-    Put = "PUT",
-    Post = "POST",
-    Delete = "DELETE"
-}
+// taken from https://expressjs.com/en/4x/api.html#app.METHOD
+export type HttpMethod =
+    | "checkout"
+    | "copy"
+    | "delete"
+    | "get"
+    | "head"
+    | "lock"
+    | "merge"
+    | "mkactivity"
+    | "mkcol"
+    | "move"
+    | "m-search"
+    | "notify"
+    | "options"
+    | "patch"
+    | "post"
+    | "purge"
+    | "put"
+    | "report"
+    | "search"
+    | "subscribe"
+    | "trace"
+    | "unlock"
+    | "unsubscribe";

@@ -1,4 +1,4 @@
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration, HttpMethod } from "@nmshd/connector-types";
+import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import path from "path";
 import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
 import yamlJs from "yamljs";
@@ -36,11 +36,11 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
     }
 
     private addDocumentation() {
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/api-docs*", false, (_req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/api-docs*", false, (_req, res) => {
             res.redirect(301, "/docs/swagger");
         });
 
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs", false, (_req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/docs", false, (_req, res) => {
             res.redirect(301, "/docs/swagger");
         });
 
@@ -51,11 +51,11 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
     }
 
     private useRapidoc() {
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/rapidoc/rapidoc-min.js", false, (_req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/rapidoc/rapidoc-min.js", false, (_req, res) => {
             res.sendFile(require.resolve("rapidoc"));
         });
 
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/rapidoc", false, (_req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/docs/rapidoc", false, (_req, res) => {
             res.send(`
                 <!doctype html>
                     <head>
@@ -85,7 +85,7 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
     }
 
     private useFavicon() {
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/favicon.ico", false, (_req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/favicon.ico", false, (_req, res) => {
             res.sendFile(path.join(this.baseDirectory, "static", "favicon.ico"));
         });
     }
@@ -93,11 +93,11 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
     private useOpenApi() {
         const swaggerDocument = this.loadOpenApiSpec();
 
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/json", false, (_, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/docs/json", false, (_, res) => {
             res.send(swaggerDocument);
         });
 
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/yaml", false, (_, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/docs/yaml", false, (_, res) => {
             res.set("Content-Type", "text/vnd.yaml");
             res.send(yamlJs.stringify(swaggerDocument, 1000));
         });
@@ -117,7 +117,7 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
         const spec = this.loadOpenApiSpec();
 
         this.runtime.infrastructure.httpServer.addMiddleware("/docs/swagger", false, ...swaggerUi.serve);
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/swagger", false, swaggerUi.setup(spec, swaggerUiOptions));
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/docs/swagger", false, swaggerUi.setup(spec, swaggerUiOptions));
     }
 
     private loadOpenApiSpec() {
