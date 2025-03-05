@@ -156,36 +156,10 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             }
         };
 
-        this.app[endpoint.httpMethod](endpoint.route, handlerWithAsyncErrorHandling);
-        // switch (endpoint.httpMethod) {
+        const method = this.app[endpoint.httpMethod];
+        if (!method) throw new Error(`Invalid HTTP method: ${endpoint.httpMethod}`);
 
-        //     case HttpMethod.Get:
-        //         this.app.get(endpoint.route, handlerWithAsyncErrorHandling);
-        //         break;
-        //     case HttpMethod.Post:
-        //         this.app.post(endpoint.route, handlerWithAsyncErrorHandling);
-        //         break;
-        //     case HttpMethod.Put:
-        //         this.app.put(endpoint.route, handlerWithAsyncErrorHandling);
-        //         break;
-        //     case HttpMethod.Delete:
-        //         this.app.delete(endpoint.route, handlerWithAsyncErrorHandling);
-        //         break;
-        //     case HttpMethod.Patch:
-        //         this.app.patch(endpoint.route, handlerWithAsyncErrorHandling);
-        //     case HttpMethod.Options:
-        //         this.app.options(endpoint.route, handlerWithAsyncErrorHandling);
-        //         break;
-        //     case HttpMethod.Head:
-        //         this.app.head(endpoint.route, handlerWithAsyncErrorHandling);
-        //         break;
-        //     case HttpMethod.Trace:
-        //         this.app.trace(endpoint.route, handlerWithAsyncErrorHandling);
-        //         break;
-        //     case HttpMethod.Connect:
-        //         this.app.connect(endpoint.route, handlerWithAsyncErrorHandling);
-        //         break;
-        // }
+        method(endpoint.route, handlerWithAsyncErrorHandling);
     }
 
     private useUnsecuredCustomMiddlewares() {
