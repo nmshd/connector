@@ -70,6 +70,8 @@ jobs:
           package: example
           version: ${{ github.ref_name }}
           registry: https://registry.npmjs.org
+      - name: Put the connector types package into the cache
+        run: npm cache add @nmshd/connector-types && npm cache verify
       - run: bash .ci/buildConnectorZip.sh
         env:
           BUILD_NUMBER: ${{ github.run_number }}
@@ -79,7 +81,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: connector-${{ github.ref_name }}.zip
-    needs: ["run-checks", "publish-npm"]
+    needs: ["publish-npm"]
 
   publish-helm:
     runs-on: ubuntu-latest
