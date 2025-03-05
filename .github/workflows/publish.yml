@@ -61,6 +61,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: current
+          registry-url: https://registry.npmjs.org/
+      - uses: gr2m/await-npm-package-version-action@v1
+        with:
+          package: "@nmshd/connector-types"
+          version: ${{ github.ref_name }}
+          registry: https://registry.npmjs.org
       - run: bash .ci/buildConnectorZip.sh
         env:
           BUILD_NUMBER: ${{ github.run_number }}
@@ -70,7 +79,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: connector-${{ github.ref_name }}.zip
-    needs: ["run-checks", "publish-npm"]
+    needs: ["publish-npm"]
 
   publish-helm:
     runs-on: ubuntu-latest
