@@ -61,6 +61,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: current
+          registry-url: https://registry.npmjs.org/
       - run: bash .ci/buildConnectorZip.sh
         env:
           BUILD_NUMBER: ${{ github.run_number }}
