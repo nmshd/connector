@@ -10,7 +10,7 @@ fi
 rm -rf packages
 jq --indent 4 -M ".dependencies.\"@nmshd/connector-types\" = \"$VERSION\"" package.json >package.out.json && mv package.out.json package.json
 
-npm ci
+npm i
 
 npm run build:ci
 .ci/writeBuildInformation.sh
