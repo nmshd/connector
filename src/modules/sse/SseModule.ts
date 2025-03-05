@@ -88,7 +88,7 @@ export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
         });
     }
 
-    public stop(): void {
+    public override stop(): void {
         this.eventSource?.close();
     }
 }

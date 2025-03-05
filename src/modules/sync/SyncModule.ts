@@ -25,7 +25,7 @@ export class SyncModule extends ConnectorRuntimeModule<SyncModuleConfiguration> 
         this.syncTimeout = setTimeout(async () => await this.sync(), this.configuration.interval * 1000);
     }
 
-    public stop(): void {
+    public override stop(): void {
         clearTimeout(this.syncTimeout);
     }
 }

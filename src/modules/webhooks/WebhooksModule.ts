@@ -62,10 +62,6 @@ export class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfigu
             this.logger.error(`Request to webhook '${url}' failed with the following error:`, e);
         }
     }
-
-    public stop(): void {
-        this.unsubscribeFromAllEvents();
-    }
 }
 
 interface WebhookPayload {

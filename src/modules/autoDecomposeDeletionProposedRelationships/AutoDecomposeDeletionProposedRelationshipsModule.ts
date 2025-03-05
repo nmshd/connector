@@ -42,8 +42,4 @@ export class AutoDecomposeDeletionProposedRelationshipsModule extends ConnectorR
             this.logger.error("Error while decomposing 'DeletionProposed' Relationship:", result.error);
         }
     }
-
-    public stop(): void {
-        this.unsubscribeFromAllEvents();
-    }
 }
