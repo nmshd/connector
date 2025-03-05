@@ -1,4 +1,4 @@
 {
     "extends": "./tsconfig.json",
-    "references": [{ "path": "packages/connector-types" }, { "path": "packages/sdk" }]
+    "references": [{ "path": "packages/types" }, { "path": "packages/sdk" }]
 }
