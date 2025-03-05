@@ -65,9 +65,7 @@ export class MessageBrokerPublisherModule extends ConnectorRuntimeModule<Message
         }
     }
 
-    public async stop(): Promise<void> {
-        this.unsubscribeFromAllEvents();
-
+    public override async stop(): Promise<void> {
         for (const connector of this.connectors) {
             await connector.close();
         }

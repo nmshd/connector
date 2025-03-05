@@ -49,7 +49,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
     private _dataViewExpander: DataViewExpander;
 
-    public override getServices(): RuntimeServices {
+    public getServices(): RuntimeServices {
         return {
             transportServices: this._transportServices,
             consumptionServices: this._consumptionServices,
@@ -253,7 +253,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         return config;
     }
 
-    public async getSupportInformation(): Promise<SupportInformation> {
+    public override async getSupportInformation(): Promise<SupportInformation> {
         const supportInformation = await super.getSupportInformation();
 
         const identityInfoResult = await this._transportServices.account.getIdentityInfo();
@@ -358,7 +358,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         }
     }
 
-    protected async initInfrastructure(): Promise<void> {
+    protected override async initInfrastructure(): Promise<void> {
         if (this.runtimeConfig.infrastructure.httpServer.enabled) {
             const httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer), "httpServer", this.connectorMode);
             this.infrastructure.add(httpServer);
@@ -367,15 +367,19 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         for (const infrastructure of this.infrastructure) {
             await infrastructure.init();
         }
+
+        await super.initInfrastructure();
     }
 
-    protected async startInfrastructure(): Promise<void> {
+    protected override async startInfrastructure(): Promise<void> {
         for (const infrastructure of this.infrastructure) {
             await infrastructure.start();
         }
+
+        await super.startInfrastructure();
     }
 
-    public async stop(): Promise<void> {
+    public override async stop(): Promise<void> {
         if (this.isStarted) {
             try {
                 await super.stop();
@@ -398,10 +402,12 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         (this.loggerFactory as NodeLoggerFactory).close();
     }
 
-    protected async stopInfrastructure(): Promise<void> {
+    protected override async stopInfrastructure(): Promise<void> {
         for (const infrastructure of this.infrastructure) {
             await infrastructure.stop();
         }
+
+        await super.stopInfrastructure();
     }
 
     private scheduleKillTask() {

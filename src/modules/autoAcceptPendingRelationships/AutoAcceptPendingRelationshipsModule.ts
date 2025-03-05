@@ -33,8 +33,4 @@ export class AutoAcceptPendingRelationshipsModule extends ConnectorRuntimeModule
 
         return relationship.auditLog[0].createdBy !== event.eventTargetAddress;
     }
-
-    public stop(): void {
-        this.unsubscribeFromAllEvents();
-    }
 }

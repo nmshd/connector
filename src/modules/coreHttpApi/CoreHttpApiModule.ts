@@ -128,8 +128,4 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
     public start(): void {
         // Nothing to do here
     }
-
-    public stop(): void {
-        // Nothing to do here
-    }
 }
