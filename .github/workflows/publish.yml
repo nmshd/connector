@@ -70,8 +70,6 @@ jobs:
           package: "@nmshd/connector-types"
           version: ${{ github.ref_name }}
           registry: https://registry.npmjs.org
-      - name: Put the connector types package into the cache
-        run: npm cache add @nmshd/connector-types && npm cache verify
       - run: bash .ci/buildConnectorZip.sh
         env:
           BUILD_NUMBER: ${{ github.run_number }}
