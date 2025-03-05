@@ -1,7 +1,7 @@
+import { Envelope } from "@nmshd/connector-types";
 import { ConsumptionServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, GET, Path, PathParam, POST, Return, ServiceContext } from "@nmshd/typescript-rest";
-import { Envelope } from "../../../infrastructure";
 import { BaseController } from "../common/BaseController";
 
 @Path("/api/v2/Requests/Outgoing")

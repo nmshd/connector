@@ -4,23 +4,28 @@ import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { ILogger } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
+import { AbstractConnectorRuntime, ConnectorMode, ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration, DocumentationLink } from "@nmshd/connector-types";
 import { ConsumptionController } from "@nmshd/consumption";
-import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
+import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import correlator from "correlation-id";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import path from "path";
 import { checkServerIdentity, PeerCertificate } from "tls";
-import { ConnectorMode } from "./ConnectorMode";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
-import { DocumentationLink } from "./DocumentationLink";
 import { HealthChecker } from "./HealthChecker";
 import { buildInformation } from "./buildInformation";
-import { HttpServer } from "./infrastructure";
-import { ConnectorInfrastructureRegistry } from "./infrastructure/ConnectorInfrastructureRegistry";
-import { ConnectorLoggerFactory } from "./logging/ConnectorLoggerFactory";
+import { ConnectorInfrastructureRegistry, HttpServer } from "./infrastructure";
+import {
+    AutoAcceptPendingRelationshipsModule,
+    AutoDecomposeDeletionProposedRelationshipsModule,
+    CoreHttpApiModule,
+    MessageBrokerPublisherModule,
+    SseModule,
+    SyncModule,
+    WebhooksModule
+} from "./modules";
 
 interface SupportInformation {
     health: RuntimeHealth;
@@ -29,7 +34,7 @@ interface SupportInformation {
     identityInfo: GetIdentityInfoResponse | { error: string };
 }
 
-export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
+export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeConfig> {
     private static readonly MODULES_DIRECTORY = path.join(__dirname, "modules");
 
     private databaseConnection?: IDatabaseConnection;
@@ -62,7 +67,6 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
-        ConnectorLoggerFactory.init(loggerFactory);
 
         this.setServerIdentityCheckFromKeyPinning(connectorConfig, loggerFactory.getLogger(ConnectorRuntime));
         this.forceEnableMandatoryModules(connectorConfig);
@@ -280,34 +284,64 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             }
         }
 
-        const modulePath = path.join(ConnectorRuntime.MODULES_DIRECTORY, moduleConfiguration.location);
-        const nodeModule = await this.import(modulePath);
-
-        if (!nodeModule) {
-            this.logger.error(
-                `Module '${this.getModuleName(moduleConfiguration)}' could not be loaded: the location of the module (${moduleConfiguration.location}) does not exist.`
-            );
-            return;
-        }
-
-        const moduleConstructor = nodeModule.default as
-            | (new (runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule)
-            | undefined;
-
-        if (!moduleConstructor) {
-            this.logger.error(
-                `Module '${this.getModuleName(
-                    moduleConfiguration
-                )}' could not be loaded: the constructor could not be found. Remember to use the default export ('export default class MyModule...').`
-            );
-            return;
-        }
+        const moduleConstructor = await this.resolveModule(moduleConfiguration);
+        if (!moduleConstructor) return;
 
         const module = new moduleConstructor(this, connectorModuleConfiguration, this.loggerFactory.getLogger(moduleConstructor), this.connectorMode);
 
         this.modules.add(module);
 
         this.logger.info(`Module '${this.getModuleName(moduleConfiguration)}' was loaded successfully.`);
+    }
+
+    private async resolveModule(
+        configuration: ConnectorRuntimeModuleConfiguration
+    ): Promise<(new (runtime: ConnectorRuntime, configuration: any, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule) | undefined> {
+        if (configuration.location.startsWith("@nmshd/connector:")) {
+            return this.resolveInternalModule(configuration.location);
+        }
+
+        const importedModule = await this.import(configuration.location);
+        if (!importedModule) {
+            this.logger.error(`The Module '${this.getModuleName(configuration)}' could not be loaded: the location of the module (${configuration.location}) does not exist.`);
+            return;
+        }
+
+        const defaultExport = importedModule?.default;
+        if (!defaultExport) {
+            this.logger.error(
+                `The Module '${this.getModuleName(configuration)}' could not be loaded: the constructor could not be found. Remember to use the default export ('export default class MyModule...').`
+            );
+            return;
+        }
+
+        return defaultExport;
+    }
+
+    private resolveInternalModule(
+        location: string
+    ): (new (runtime: ConnectorRuntime, configuration: any, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule) | undefined {
+        const moduleName = location.split(":")[1];
+
+        switch (moduleName) {
+            case "AutoAcceptPendingRelationshipsModule":
+                return AutoAcceptPendingRelationshipsModule;
+            case "AutoDecomposeDeletionProposedRelationshipsModule":
+                return AutoDecomposeDeletionProposedRelationshipsModule;
+            case "CoreHttpApiModule":
+                return CoreHttpApiModule;
+            case "WebhooksModule":
+                return WebhooksModule;
+            case "MessageBrokerPublisherModule":
+                return MessageBrokerPublisherModule;
+            case "SyncModule":
+                return SyncModule;
+            case "SseModule":
+                return SseModule;
+            default:
+                this.logger.error(`The internal Module '${moduleName}' could not be loaded because it is not registered as an internal module.`);
+                return undefined;
+        }
     }
 
     private async import(moduleName: string) {

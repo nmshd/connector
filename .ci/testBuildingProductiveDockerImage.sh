@@ -1,6 +1,6 @@
 COMMIT_HASH=c
 BUILD_NUMBER=b
-VERSION=v
+VERSION=1.0.0-beta.1
 
 docker build --no-cache --progress=plain \
     --tag ghcr.io/nmshd/connector:prod \

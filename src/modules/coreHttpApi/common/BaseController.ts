@@ -1,7 +1,7 @@
 import { Result } from "@js-soft/ts-utils";
+import { Envelope } from "@nmshd/connector-types";
 import { Return } from "@nmshd/typescript-rest";
 import express from "express";
-import { Envelope } from "../../../infrastructure";
 
 export abstract class BaseController {
     protected created<T>(result: Result<T>): Return.NewResource<Envelope> {

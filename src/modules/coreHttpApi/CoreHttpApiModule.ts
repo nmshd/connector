@@ -1,8 +1,7 @@
+import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import path from "path";
 import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
 import yamlJs from "yamljs";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
-import { HttpMethod } from "../../infrastructure";
 
 export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     docs: {
@@ -13,7 +12,7 @@ export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleCo
     };
 }
 
-export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleConfiguration> {
+export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleConfiguration> {
     public get baseDirectory(): string {
         return __dirname;
     }
@@ -37,11 +36,11 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
     }
 
     private addDocumentation() {
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/api-docs*", false, (_req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/api-docs*", false, (_req, res) => {
             res.redirect(301, "/docs/swagger");
         });
 
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs", false, (_req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/docs", false, (_req, res) => {
             res.redirect(301, "/docs/swagger");
         });
 
@@ -52,11 +51,11 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
     }
 
     private useRapidoc() {
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/rapidoc/rapidoc-min.js", false, (_req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/rapidoc/rapidoc-min.js", false, (_req, res) => {
             res.sendFile(require.resolve("rapidoc"));
         });
 
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/rapidoc", false, (_req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/docs/rapidoc", false, (_req, res) => {
             res.send(`
                 <!doctype html>
                     <head>
@@ -86,7 +85,7 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
     }
 
     private useFavicon() {
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/favicon.ico", false, (_req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/favicon.ico", false, (_req, res) => {
             res.sendFile(path.join(this.baseDirectory, "static", "favicon.ico"));
         });
     }
@@ -94,11 +93,11 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
     private useOpenApi() {
         const swaggerDocument = this.loadOpenApiSpec();
 
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/json", false, (_, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/docs/json", false, (_, res) => {
             res.send(swaggerDocument);
         });
 
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/yaml", false, (_, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/docs/yaml", false, (_, res) => {
             res.set("Content-Type", "text/vnd.yaml");
             res.send(yamlJs.stringify(swaggerDocument, 1000));
         });
@@ -118,7 +117,7 @@ export default class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpAp
         const spec = this.loadOpenApiSpec();
 
         this.runtime.infrastructure.httpServer.addMiddleware("/docs/swagger", false, ...swaggerUi.serve);
-        this.runtime.infrastructure.httpServer.addEndpoint(HttpMethod.Get, "/docs/swagger", false, swaggerUi.setup(spec, swaggerUiOptions));
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/docs/swagger", false, swaggerUi.setup(spec, swaggerUiOptions));
     }
 
     private loadOpenApiSpec() {

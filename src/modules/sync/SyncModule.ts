@@ -1,11 +1,11 @@
+import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import correlator from "correlation-id";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
 export interface SyncModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     interval: number;
 }
 
-export default class SyncModule extends ConnectorRuntimeModule<SyncModuleConfiguration> {
+export class SyncModule extends ConnectorRuntimeModule<SyncModuleConfiguration> {
     private syncTimeout: NodeJS.Timeout;
 
     public init(): void {

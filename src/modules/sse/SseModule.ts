@@ -1,16 +1,15 @@
 import { ILogger } from "@js-soft/logging-abstractions";
+import { ConnectorMode, ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import correlator from "correlation-id";
 import { EventSource } from "eventsource";
 import { Agent, fetch, ProxyAgent } from "undici";
-import { ConnectorMode } from "../../ConnectorMode";
 import { ConnectorRuntime } from "../../ConnectorRuntime";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
 export interface SseModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     baseUrlOverride?: string;
 }
 
-export default class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
+export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
     private eventSource: EventSource | undefined;
 
     public constructor(runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) {
