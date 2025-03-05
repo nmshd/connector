@@ -157,6 +157,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         };
 
         const method = this.app[endpoint.httpMethod];
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if the method is defined as it's possible to pass an invalid method when not using TypeScript
         if (!method) throw new Error(`Invalid HTTP method: ${endpoint.httpMethod}`);
 
         method(endpoint.route, handlerWithAsyncErrorHandling);
