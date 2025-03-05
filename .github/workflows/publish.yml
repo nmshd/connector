@@ -65,6 +65,11 @@ jobs:
         with:
           node-version: current
           registry-url: https://registry.npmjs.org/
+      - uses: gr2m/await-npm-package-version-action@v1
+        with:
+          package: example
+          version: ${{ github.ref_name }}
+          registry: https://registry.npmjs.org
       - run: bash .ci/buildConnectorZip.sh
         env:
           BUILD_NUMBER: ${{ github.run_number }}
