@@ -10,7 +10,7 @@ for dir in ./packages/*; do
     cd $dir
     npm version $VERSION --no-git-tag-version
     npx enhanced-publish --if-possible --use-preid-as-tag
-    cd ../
+    cd ../../
 done
 
 # wait for npmjs to update its indices because the connector types are used by the docker build of the connector
