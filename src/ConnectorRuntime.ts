@@ -285,13 +285,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         }
 
         const moduleConstructor = await this.resolveModule(moduleConfiguration);
-
-        if (!moduleConstructor) {
-            this.logger.error(
-                `Module '${this.getModuleName(moduleConfiguration)}' could not be loaded: the constructor could not be found or the location of the module (${moduleConfiguration.location}) does not exist. Remember to use the default export ('export default class MyModule...').`
-            );
-            return;
-        }
+        if (!moduleConstructor) return;
 
         const module = new moduleConstructor(this, connectorModuleConfiguration, this.loggerFactory.getLogger(moduleConstructor), this.connectorMode);
 
@@ -307,7 +301,21 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             return this.resolveInternalModule(configuration.location);
         }
 
-        return (await this.import(configuration.location))?.default;
+        const importedModule = await this.import(configuration.location);
+        if (!importedModule) {
+            this.logger.error(`The Module '${this.getModuleName(configuration)}' could not be loaded: the location of the module (${configuration.location}) does not exist.`);
+            return;
+        }
+
+        const defaultExport = importedModule?.default;
+        if (!defaultExport) {
+            this.logger.error(
+                `The Module '${this.getModuleName(configuration)}' could not be loaded: the constructor could not be found. Remember to use the default export ('export default class MyModule...').`
+            );
+            return;
+        }
+
+        return defaultExport;
     }
 
     private resolveInternalModule(
@@ -331,6 +339,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             case "SseModule":
                 return SseModule;
             default:
+                this.logger.error(`The internal Module '${moduleName}' could not be loaded because it is not registered as an internal module.`);
                 return undefined;
         }
     }
