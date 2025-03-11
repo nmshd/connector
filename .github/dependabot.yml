@@ -19,6 +19,7 @@ updates:
     directories:
       - "/"
       - "/packages/sdk"
+      - "/packages/types"
     schedule:
       interval: "weekly"
     groups:
