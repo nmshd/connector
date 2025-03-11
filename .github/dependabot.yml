@@ -36,6 +36,7 @@ updates:
           - "@nmshd/core-types"
     reviewers:
       - "jkoenig134"
+      - "Milena-Czierlinski"
     labels:
       - "dependencies"
 
@@ -52,5 +53,6 @@ updates:
           - "*"
     reviewers:
       - "jkoenig134"
+      - "Milena-Czierlinski"
     labels:
       - "dependencies"
