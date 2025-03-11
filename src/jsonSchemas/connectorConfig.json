@@ -1099,6 +1099,7 @@
                     "type": "number"
                 }
             },
+            "required": ["baseUrl", "platformClientId", "platformClientSecret"],
             "type": "object"
         }
     },
