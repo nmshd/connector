@@ -1,5 +1,5 @@
 import { ConnectorClient } from "@nmshd/connector-sdk";
-import { Random, RandomCharacterRange } from "@nmshd/transport";
+import { Random, RandomCharacterRange } from "@nmshd/core-types";
 import { ChildProcess, spawn } from "child_process";
 import express from "express";
 import http, { Server } from "node:http";
