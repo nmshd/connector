@@ -1,4 +1,4 @@
-FROM node:23.9.0 AS builder
+FROM node:23.10.0 AS builder
 
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
@@ -16,7 +16,7 @@ COPY packages/types/src packages/types/src
 RUN npm run build:ci --ws
 RUN .ci/writeBuildInformation.sh
 
-FROM node:23.9.0-slim
+FROM node:23.10.0-slim
 
 ARG VERSION
 
