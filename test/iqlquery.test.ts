@@ -188,8 +188,8 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
     };
     await client1.incomingRequests.accept(incomingRequest.id, requestResponse);
     const syncRes = await syncUntilHasMessages(client2);
-    const attribute = (syncRes[0] as any).content.response.items[0].attribute;
-    expect(attribute).toStrictEqual(attributes[table[0].matches]);
+    const responseItem = (syncRes[0] as any).content.response.items[0];
+    expect(responseItem["@type"]).toBe("AttributeAlreadySharedAcceptResponseItem");
 });
 
 test("Remote ProposeAttributeRequest containing IQL Query without existing attribute response", async () => {
