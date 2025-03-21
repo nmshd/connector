@@ -1,9 +1,7 @@
-import { ILogger } from "@js-soft/logging-abstractions";
-import { ConnectorMode, ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
+import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import correlator from "correlation-id";
 import { EventSource } from "eventsource";
 import { Agent, fetch, ProxyAgent } from "undici";
-import { ConnectorRuntime } from "../../ConnectorRuntime";
 
 export interface SseModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     baseUrlOverride?: string;
@@ -11,10 +9,6 @@ export interface SseModuleConfiguration extends ConnectorRuntimeModuleConfigurat
 
 export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
     private eventSource: EventSource | undefined;
-
-    public constructor(runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) {
-        super(runtime, configuration, logger, connectorMode);
-    }
 
     public init(): void | Promise<void> {
         if (this.configuration.baseUrlOverride && this.connectorMode !== "debug") {
