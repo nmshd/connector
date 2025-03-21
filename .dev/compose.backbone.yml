@@ -85,6 +85,7 @@ services:
     hostname: azurite
     image: mcr.microsoft.com/azure-storage/azurite
     command: azurite -d /data/debug.log -l /data --blobHost "0.0.0.0" --queueHost "0.0.0.0"
+    pull_policy: always
 
   rabbitmq:
     container_name: bkb-rabbitmq
@@ -106,9 +107,6 @@ services:
   seed-client:
     container_name: seed-client
     image: ghcr.io/nmshd/backbone-admin-cli:${BACKBONE_VERSION}
-    depends_on:
-      consumer-api:
-        condition: service_healthy
     command: backbone client create --clientId test --clientSecret test --defaultTier Basic
     configs:
       - source: Config
