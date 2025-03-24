@@ -128,7 +128,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         if (compatibilityResult.value.isCompatible) return;
 
         throw new Error(
-            `The given backbone is not compatible with this Connector version. The version of the configured backbone is '${compatibilityResult.value.backboneVersion}' the supported min/max version is '${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}'.`
+            `The given Backbone is not compatible with this Connector version. The version of the configured Backbone is '${compatibilityResult.value.backboneVersion}' the supported min/max version is '${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}'.`
         );
     }
 

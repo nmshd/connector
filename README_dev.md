@@ -41,7 +41,7 @@ connector-1  | [2021-01-25T11:27:41.241] [INFO] Runtime - Started all modules.
 
 You can access the Swagger UI of the Connector under http://localhost:3000/docs.
 
-To use an local backbone, that can be started with `npm run start:backbone`, you can use the `.env.local` in the `.dev` folder
+To use an local Backbone, that can be started with `npm run start:backbone`, you can use the `.env.local` in the `.dev` folder
 
 ```shell
 docker compose -f .dev/compose.yml --env-file .env.local up --build connector-1
@@ -79,15 +79,15 @@ To use the npm version of the runtime again you need to run `npm run unlink-runt
 
 Set the following environment variables:
 
-- NMSHD_TEST_BASEURL (the backbone baseUrl to test against)
-- NMSHD_TEST_CLIENTID (the backbone clientId for the configured baseUrl)
-- NMSHD_TEST_CLIENTSECRET (the backbone clientSecret for the configured baseUrl)
+- NMSHD_TEST_BASEURL (the Backbone baseUrl to test against)
+- NMSHD_TEST_CLIENTID (the Backbone clientId for the configured baseUrl)
+- NMSHD_TEST_CLIENTSECRET (the Backbone clientSecret for the configured baseUrl)
 
 > We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
 
 ### Local Backbone
 
-To start a local backbone, execute the following command:
+To start a local Backbone, execute the following command:
 
 ```shell
 npm run start:backbone

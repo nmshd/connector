@@ -50,7 +50,7 @@ export class HealthChecker {
             await this.axiosInstance.get("/health");
             return true;
         } catch (e) {
-            this.logger.warn("An error occured during the backbone connection health check: ", e);
+            this.logger.warn("An error occured during the Backbone connection health check: ", e);
             return false;
         }
     }
