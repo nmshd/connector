@@ -105,7 +105,7 @@ export function genericErrorHandler(connectorMode: ConnectorMode, logger: ILogge
                 "error.connector.errorInErrorHandler",
                 `The error handler ran into an error, caused by '${error.message}', this should not happen`,
                 stackTraceFromError(error),
-                "Report this to a connector developer"
+                "Report this to a Connector developer"
             );
 
             logger.fatal(httpError);

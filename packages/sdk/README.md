@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/%40nmshd%2fconnector-sdk.svg)](https://www.npmjs.com/package/@nmshd/connector-sdk)
 
-The connector SDK is a TypeScript library that provides an easy way to interact with the Connector API.
+The Connector SDK is a TypeScript library that provides an easy way to interact with the Connector API.
 
 ## Documentation
 

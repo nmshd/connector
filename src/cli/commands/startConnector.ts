@@ -12,7 +12,7 @@ const startConnectorHandler = async ({ config }: ConfigFileOptions): Promise<voi
 
 export const startConnectorCommand: CommandModule<{}, ConfigFileOptions> = {
     command: "start",
-    describe: "start the connector",
+    describe: "start the Connector",
     handler: startConnectorHandler,
     builder: configOptionBuilder
 };

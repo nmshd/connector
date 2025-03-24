@@ -27,7 +27,7 @@ docker compose -f .dev/compose.yml --env-file [path_to_your_env_file] up --build
 
 > ⚠️ Replace `[path_to_your_env_file]` with e.g. `.dev/.env`, depending on where your env file is located.
 
-> ℹ️ You can also use the VS Code task `Run 1` or `Run 2` and configure the appropriate env file to start your connector instances.
+> ℹ️ You can also use the VS Code task `Run 1` or `Run 2` and configure the appropriate env file to start your Connector instances.
 
 After a few seconds you should see the following output:
 
@@ -115,9 +115,9 @@ to check if the prod image still works you can run.
 
 `docker logs -f connector`
 
-to see the logs of the connector.
+to see the logs of the Connector.
 
-Afterward you can use the connector-tui or an REST client to test the connector.
+Afterward you can use the connector-tui or an REST client to test the Connector.
 
 ### Run the tests
 
@@ -136,7 +136,7 @@ npm run test:local -- testSuiteName
 1. clone this repository `git clone https://github.com/nmshd/connector.git`
 2. change into the directory `cd connector`
 3. install the npm dependencies `npm i`
-4. build the connector `npm run build`
+4. build the Connector `npm run build`
 5. create a config file (for example `local.config.json`)
 
     ```
@@ -155,9 +155,9 @@ npm run test:local -- testSuiteName
     ```
 
 6. replace the placeholders in the config with real values
-7. start the connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/index.js start`
+7. start the Connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/index.js start`
 
-It's now possible to access the connector on port 8080. Validating this is possible by accessing `http://localhost:8080/docs/swagger` in the browser.
+It's now possible to access the Connector on port 8080. Validating this is possible by accessing `http://localhost:8080/docs/swagger` in the browser.
 
 # Connector SDK development
 

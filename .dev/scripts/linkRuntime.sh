@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Switch to connector root dir, regardless of where this script is executed
+# Switch to Connector root dir, regardless of where this script is executed
 # from.
 CONNECTORPATH="$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 cd "$CONNECTORPATH"

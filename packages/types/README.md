@@ -6,7 +6,7 @@
 >
 > This package is still in development and should not be used yet.
 
-This package provides TypeScript types for writing connector modules.
+This package provides TypeScript types for writing Connector modules.
 
 ## Documentation
 
