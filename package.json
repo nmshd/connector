@@ -1,7 +1,7 @@
 {
     "name": "@nmshd/connector",
     "private": true,
-    "description": "The Enmeshed Connector",
+    "description": "The enmeshed Connector",
     "homepage": "https://enmeshed.eu/integrate",
     "repository": "github:nmshd/connector",
     "license": "MIT",
