@@ -18,7 +18,7 @@ fi
 
 _copyRuntime() {
 	sleep 2
-	printf "Copying runtime ..."
+	printf "Copying Runtime ..."
 
 	find "$RUNTIME_PATH/packages/" -maxdepth 1 -mindepth 1 -type d | while read runtimePkgPath; do
 		pkgName="$(jq -r .name "$runtimePkgPath/package.json")"

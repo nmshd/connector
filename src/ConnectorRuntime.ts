@@ -374,7 +374,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
                 this.logger.error(e);
             }
         } else if (this.connectorMode === "debug") {
-            this.logger.warn("It seemed like the Connector runtime didn't do a proper startup. Closing infrastructure.");
+            this.logger.warn("It seemed like the Connector Runtime didn't do a proper startup. Closing infrastructure.");
 
             await this.stopInfrastructure();
         }

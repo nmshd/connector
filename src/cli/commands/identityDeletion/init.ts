@@ -17,7 +17,7 @@ export default class InitIdentityDeletion extends BaseCommand {
     protected async runInternal(): Promise<void> {
         await this.createRuntime();
         if (!this.cliRuntime) {
-            throw new Error("Failed to initialize runtime");
+            throw new Error("Failed to initialize Runtime");
         }
 
         const identityDeletionInitResult = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.initiateIdentityDeletionProcess();
