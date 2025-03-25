@@ -20,11 +20,11 @@ To get started developing in this repository, see the [developer's guide](README
 
 Please file any bugs or feature requests by creating an [issue](https://github.com/nmshd/feedback/issues).
 
-Share your feedback with the Enmeshed team by contributing to the [discussions](https://github.com/nmshd/feedback/discussions).
+Share your feedback with the enmeshed team by contributing to the [discussions](https://github.com/nmshd/feedback/discussions).
 
 ## Contribute
 
-Contribution to this project is highly apprecicated. Head over to our [contribution guide](https://github.com/nmshd/.github/blob/main/CONTRIBUTING.md) to learn more.
+Contribution to this project is highly appreciated. Head over to our [contribution guide](https://github.com/nmshd/.github/blob/main/CONTRIBUTING.md) to learn more.
 
 ## License
 

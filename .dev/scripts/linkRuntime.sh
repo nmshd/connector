@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Switch to connector root dir, regardless of where this script is executed
+# Switch to Connector root dir, regardless of where this script is executed
 # from.
 CONNECTORPATH="$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 cd "$CONNECTORPATH"
@@ -18,7 +18,7 @@ fi
 
 _copyRuntime() {
 	sleep 2
-	printf "Copying runtime ..."
+	printf "Copying Runtime ..."
 
 	find "$RUNTIME_PATH/packages/" -maxdepth 1 -mindepth 1 -type d | while read runtimePkgPath; do
 		pkgName="$(jq -r .name "$runtimePkgPath/package.json")"

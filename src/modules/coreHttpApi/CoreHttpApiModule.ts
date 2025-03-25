@@ -4,12 +4,7 @@ import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
 import yamlJs from "yamljs";
 
 export interface CoreHttpApiModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
-    docs: {
-        enabled: boolean;
-        rapidoc: {
-            persistAuth: boolean;
-        };
-    };
+    docs: { enabled: boolean; rapidoc: { persistAuth: boolean } };
 }
 
 export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleConfiguration> {
@@ -59,7 +54,7 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
             res.send(`
                 <!doctype html>
                     <head>
-                        <title>Enmeshed Connector API</title>
+                        <title>enmeshed Connector API</title>
                         <link rel="icon" href="/favicon.ico" />
                         <meta charset="utf-8">
                         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&amp;family=Roboto+Mono&amp;display=swap" rel="stylesheet">
@@ -107,7 +102,7 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
         const swaggerUiOptions: SwaggerUiOptions = {
             explorer: true,
             customfavIcon: "/favicon.ico",
-            customSiteTitle: "Enmeshed Connector API",
+            customSiteTitle: "enmeshed Connector API",
             customCss:
                 ".swagger-ui .topbar {background-color: #29235c;}" +
                 ".renderedMarkdown table th {border: 1px solid black; border-collapse: collapse}" +

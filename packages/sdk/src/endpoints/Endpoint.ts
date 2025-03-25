@@ -48,7 +48,7 @@ export abstract class Endpoint {
             const errorPayload = httpResponse.data.error;
             if (!errorPayload) {
                 throw new Error(
-                    `The http request to connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
+                    `The http request to Connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
                 );
             }
             return ConnectorHttpResponse.error({
@@ -75,7 +75,7 @@ export abstract class Endpoint {
 
             if (!errorPayload) {
                 throw new Error(
-                    `The http request to connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
+                    `The http request to Connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
                 );
             }
 
@@ -105,7 +105,7 @@ export abstract class Endpoint {
 
             if (!errorPayload) {
                 throw new Error(
-                    `The http request to connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
+                    `The http request to Connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
                 );
             }
 

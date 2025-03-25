@@ -50,11 +50,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
     private _dataViewExpander: DataViewExpander;
 
     public getServices(): RuntimeServices {
-        return {
-            transportServices: this._transportServices,
-            consumptionServices: this._consumptionServices,
-            dataViewExpander: this._dataViewExpander
-        };
+        return { transportServices: this._transportServices, consumptionServices: this._consumptionServices, dataViewExpander: this._dataViewExpander };
     }
 
     public readonly infrastructure = new ConnectorInfrastructureRegistry();
@@ -132,7 +128,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         if (compatibilityResult.value.isCompatible) return;
 
         throw new Error(
-            `The given backbone is not compatible with this connector version. The version of the configured backbone is '${compatibilityResult.value.backboneVersion}' the supported min/max version is '${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}'.`
+            `The given Backbone is not compatible with this Connector version. The version of the configured Backbone is '${compatibilityResult.value.backboneVersion}' the supported min/max version is '${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}'.`
         );
     }
 
@@ -205,11 +201,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
                       waitQueueTimeoutMS: 1000,
                       serverSelectionTimeoutMS: 1000
                   }),
-            axios.create({
-                baseURL: this.transport.config.baseUrl,
-                proxy: false,
-                httpsAgent: httpsProxy ? new HttpsProxyAgent(httpsProxy) : undefined
-            }),
+            axios.create({ baseURL: this.transport.config.baseUrl, proxy: false, httpsAgent: httpsProxy ? new HttpsProxyAgent(httpsProxy) : undefined }),
             this.accountController.authenticator,
             this.loggerFactory.getLogger("HealthChecker")
         );
@@ -259,12 +251,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         const identityInfoResult = await this._transportServices.account.getIdentityInfo();
         const identityInfo = identityInfoResult.isSuccess ? identityInfoResult.value : { error: identityInfoResult.error.message };
 
-        return {
-            version: buildInformation,
-            health: supportInformation.health,
-            configuration: this.sanitizeConfig(supportInformation.configuration),
-            identityInfo
-        };
+        return { version: buildInformation, health: supportInformation.health, configuration: this.sanitizeConfig(supportInformation.configuration), identityInfo };
     }
 
     public async getBackboneAuthenticationToken(): Promise<string> {
@@ -387,7 +374,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
                 this.logger.error(e);
             }
         } else if (this.connectorMode === "debug") {
-            this.logger.warn("It seemed like the connector runtime didn't do a proper startup. Closing infrastructure.");
+            this.logger.warn("It seemed like the Connector Runtime didn't do a proper startup. Closing infrastructure.");
 
             await this.stopInfrastructure();
         }

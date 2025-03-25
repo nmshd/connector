@@ -2223,7 +2223,7 @@ paths:
                   type: string
                   format: date-time
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
+                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
                   type: boolean
                 forIdentity:
                   $ref: "#/components/schemas/Address"
@@ -3667,7 +3667,7 @@ paths:
                   type: string
                   format: date-time
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
+                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
                   type: boolean
                 forIdentity:
                   $ref: "#/components/schemas/Address"
@@ -4266,7 +4266,7 @@ paths:
                   nullable: false
                   description: A timestamp that describes when this token expires. An expired token cannot be fetched from the platform anymore. However it will still be available for auditing purposes.
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
+                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
                   type: boolean
                   example: false
                 forIdentity:
@@ -4385,7 +4385,7 @@ paths:
                   nullable: false
                   description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
+                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
                   type: boolean
                 password:
                   type: string
@@ -5329,7 +5329,7 @@ components:
           type: boolean
           enum: [true]
           nullable: true
-          description: true if the password is a PIN, undefined otherwise. If it's a PIN, a numpad is displayed when entering the password in the app.
+          description: true if the password is a PIN, undefined otherwise. If it's a PIN, a numpad is displayed when entering the password in the App.
       required:
         - password
 
@@ -6076,7 +6076,7 @@ components:
           description: The maximum number identities that can allocate this template. Omitting this property leads to an infinite number of possible allocations.
         isOwn:
           type: boolean
-          description: Describes whether the template was created by the connector (true) or whether it was loaded from another identity (false).
+          description: Describes whether the template was created by the Connector (true) or whether it was loaded from another identity (false).
           nullable: false
         createdBy:
           allOf:

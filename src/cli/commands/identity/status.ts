@@ -18,7 +18,7 @@ export class IdentityStatus extends BaseCommand {
     protected async runInternal(): Promise<void> {
         await this.createRuntime();
         if (!this.cliRuntime) {
-            throw new Error("Failed to initialize runtime");
+            throw new Error("Failed to initialize Runtime");
         }
 
         try {

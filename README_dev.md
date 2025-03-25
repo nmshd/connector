@@ -27,7 +27,7 @@ docker compose -f .dev/compose.yml --env-file [path_to_your_env_file] up --build
 
 > ⚠️ Replace `[path_to_your_env_file]` with e.g. `.dev/.env`, depending on where your env file is located.
 
-> ℹ️ You can also use the VS Code task `Run 1` or `Run 2` and configure the appropriate env file to start your connector instances.
+> ℹ️ You can also use the VS Code task `Run 1` or `Run 2` and configure the appropriate env file to start your Connector instances.
 
 After a few seconds you should see the following output:
 
@@ -41,7 +41,7 @@ connector-1  | [2021-01-25T11:27:41.241] [INFO] Runtime - Started all modules.
 
 You can access the Swagger UI of the Connector under http://localhost:3000/docs.
 
-To use an local backbone, that can be started with `npm run start:backbone`, you can use the `.env.local` in the `.dev` folder
+To use an local Backbone, that can be started with `npm run start:backbone`, you can use the `.env.local` in the `.dev` folder
 
 ```shell
 docker compose -f .dev/compose.yml --env-file .env.local up --build connector-1
@@ -65,29 +65,29 @@ If you're running on Windows you have to execute the `Restart` task after you sa
 
 ### Local Runtime
 
-To use a local runtime you need to set the envvar $RUNTIME_PATH (e.g. inside a local `.env` file in the root folder of the project). The $RUNTIME_PATH needs to contain the path to the runtime mono-repository root folder, either relative or absolute.
+To use a local Runtime you need to set the envvar $RUNTIME_PATH (e.g. inside a local `.env` file in the root folder of the project). The $RUNTIME_PATH needs to contain the path to the Runtime mono-repository root folder, either relative or absolute.
 
 ```bash
 export RUNTIME_PATH=.../path/to/local/runtime
 ```
 
-Afterwards you can run `npm run link-runtime`. This will copy the build result and sources from you local runtime in you node_modules folder.
+Afterwards you can run `npm run link-runtime`. This will copy the build result and sources from you local Runtime in you node_modules folder.
 
-To use the npm version of the runtime again you need to run `npm run unlink-runtime` this will restore the version in the package.json
+To use the npm version of the Runtime again you need to run `npm run unlink-runtime` this will restore the version in the package.json
 
 ### Remote Backbone
 
 Set the following environment variables:
 
-- NMSHD_TEST_BASEURL (the backbone baseUrl to test against)
-- NMSHD_TEST_CLIENTID (the backbone clientId for the configured baseUrl)
-- NMSHD_TEST_CLIENTSECRET (the backbone clientSecret for the configured baseUrl)
+- NMSHD_TEST_BASEURL (the Backbone baseUrl to test against)
+- NMSHD_TEST_CLIENTID (the Backbone clientId for the configured baseUrl)
+- NMSHD_TEST_CLIENTSECRET (the Backbone clientSecret for the configured baseUrl)
 
 > We recommend to persist these variables for example in your `.bashrc` / `.zshrc` or in the Windows environment variables.
 
 ### Local Backbone
 
-To start a local backbone, execute the following command:
+To start a local Backbone, execute the following command:
 
 ```shell
 npm run start:backbone
@@ -115,9 +115,9 @@ to check if the prod image still works you can run.
 
 `docker logs -f connector`
 
-to see the logs of the connector.
+to see the logs of the Connector.
 
-Afterward you can use the connector-tui or an REST client to test the connector.
+Afterward you can use the connector-tui or an REST client to test the Connector.
 
 ### Run the tests
 
@@ -136,7 +136,7 @@ npm run test:local -- testSuiteName
 1. clone this repository `git clone https://github.com/nmshd/connector.git`
 2. change into the directory `cd connector`
 3. install the npm dependencies `npm i`
-4. build the connector `npm run build`
+4. build the Connector `npm run build`
 5. create a config file (for example `local.config.json`)
 
     ```
@@ -155,9 +155,9 @@ npm run test:local -- testSuiteName
     ```
 
 6. replace the placeholders in the config with real values
-7. start the connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/index.js start`
+7. start the Connector using `CUSTOM_CONFIG_LOCATION=./local.config.json node dist/index.js start`
 
-It's now possible to access the connector on port 8080. Validating this is possible by accessing `http://localhost:8080/docs/swagger` in the browser.
+It's now possible to access the Connector on port 8080. Validating this is possible by accessing `http://localhost:8080/docs/swagger` in the browser.
 
 # Connector SDK development
 
