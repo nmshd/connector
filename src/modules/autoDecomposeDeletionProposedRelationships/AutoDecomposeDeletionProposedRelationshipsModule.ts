@@ -1,3 +1,4 @@
+import { sleep } from "@js-soft/ts-utils";
 import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import { RelationshipChangedEvent, RelationshipStatus } from "@nmshd/runtime";
 
@@ -29,6 +30,9 @@ export class AutoDecomposeDeletionProposedRelationshipsModule extends ConnectorR
         if (event.data.status !== RelationshipStatus.DeletionProposed) return;
 
         this.logger.info("'DeletionProposed' Relationship detected.");
+
+        // wait for 500ms to ensure that no race conditions occur with other external events from the same sync run that triggered this event
+        await sleep(500);
 
         await this.decomposeRelationship(event.data.id);
     }
