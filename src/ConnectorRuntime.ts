@@ -265,7 +265,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             const infrastructureConfiguration = (this.runtimeConfig.infrastructure as any)[requiredInfrastructure];
             if (!infrastructureConfiguration?.enabled) {
                 this.logger.error(
-                    `Module on location '${connectorModuleConfiguration.location}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`
+                    `The Module on location '${connectorModuleConfiguration.location}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`
                 );
                 process.exit(1);
             }
