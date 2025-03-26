@@ -1,7 +1,7 @@
 import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, Errors, GET, Path, PathParam, POST, Return, ServiceContext } from "@nmshd/typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, GET, Path, PathParam, POST, Return, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
 
 @Path("/api/v2/Tokens")
@@ -52,7 +52,7 @@ export class TokensController extends BaseController {
 
     @GET
     @Path(":id")
-    // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
+    @Accept("application/json", "image/png")
     public async getToken(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         switch (accept) {
             case "image/png":
@@ -66,12 +66,9 @@ export class TokensController extends BaseController {
                     200
                 );
 
-            case "application/json":
+            default:
                 const result = await this.transportServices.tokens.getToken({ id });
                 return this.ok(result);
-
-            default:
-                throw new Errors.NotAcceptableError();
         }
     }
 }
