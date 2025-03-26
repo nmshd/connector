@@ -71,8 +71,8 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                 autoAcceptPendingRelationships: { enabled: false, location: "@nmshd/connector:AutoAcceptPendingRelationshipsModule" },
                 autoDecomposeDeletionProposedRelationships: { enabled: false, location: "@nmshd/connector:AutoDecomposeDeletionProposedRelationshipsModule" },
                 coreHttpApi: {
-                    location: "@nmshd/connector:CoreHttpApiModule",
                     enabled: true,
+                    location: "@nmshd/connector:CoreHttpApiModule",
 
                     requiredInfrastructure: ["httpServer"],
 
@@ -95,8 +95,8 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                     brokers: []
                 },
                 sync: {
-                    location: "@nmshd/connector:SyncModule",
                     enabled: false,
+                    location: "@nmshd/connector:SyncModule",
 
                     interval: 60
                 },
