@@ -32,7 +32,7 @@ export interface ConnectorConfig {
 
 interface ModuleConfiguration {
     enabled: boolean;
-    displayName: string;
+    displayName?: string;
     location: string;
     requiredInfrastructure?: string[];
     [key: string]: any;

@@ -1048,7 +1048,7 @@
                         "type": "array"
                     }
                 },
-                "required": ["enabled", "displayName", "location"],
+                "required": ["enabled", "location"],
                 "type": "object"
             },
             "type": "object"
