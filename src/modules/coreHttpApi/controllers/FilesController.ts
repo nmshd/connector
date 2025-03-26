@@ -81,8 +81,12 @@ export class FilesController extends BaseController {
 
     @GET
     @Path(":idOrReference")
-    // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
-    public async getFile(@PathParam("idOrReference") idOrReference: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+    @Accept("application/json", "image/png")
+    public async getFile(
+        @PathParam("idOrReference") idOrReference: string,
+        @ContextAccept accept: "application/json" | "image/png",
+        @ContextResponse response: express.Response
+    ): Promise<Envelope | void> {
         const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.fromTruncated(idOrReference).id.toString();
 
         switch (accept) {

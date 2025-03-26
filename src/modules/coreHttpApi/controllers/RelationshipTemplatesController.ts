@@ -42,8 +42,12 @@ export class RelationshipTemplatesController extends BaseController {
 
     @GET
     @Path(":id")
-    // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
-    public async getRelationshipTemplate(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+    @Accept("application/json", "image/png")
+    public async getRelationshipTemplate(
+        @PathParam("id") id: string,
+        @ContextAccept accept: "application/json" | "image/png",
+        @ContextResponse response: express.Response
+    ): Promise<Envelope | void> {
         switch (accept) {
             case "image/png":
                 const qrCodeResult = await this.transportServices.relationshipTemplates.createQRCodeForOwnTemplate({ templateId: id });
