@@ -24,15 +24,18 @@
         "build:ci": "tsc",
         "build:watch": "tsc --watch"
     },
-    "peerDependencies": {
-        "@nmshd/runtime": "^6.33.0"
-    },
     "devDependencies": {
         "@js-soft/logging-abstractions": "^1.0.1",
         "@types/express": "^5.0.1",
         "@types/luxon": "^3.4.2",
         "@types/node": "^22.13.13",
         "typescript": "^5.8.2"
+    },
+    "peerDependencies": {
+        "@js-soft/ts-utils": "^2.3.3",
+        "@nmshd/runtime": "^6.33.0",
+        "@nmshd/typescript-rest": "^3.1.1",
+        "express": "^4.21.2"
     },
     "publishConfig": {
         "access": "public",
