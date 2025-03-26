@@ -64,39 +64,13 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                 }
             },
             modules: {
-                notification: {
-                    enabled: true,
-                    displayName: "Notification Module",
-                    name: "NotificationModule",
-                    location: "@nmshd/runtime:NotificationModule"
-                },
-                decider: {
-                    enabled: true,
-                    displayName: "Decider Module",
-                    location: "@nmshd/runtime:DeciderModule"
-                },
-                request: {
-                    enabled: true,
-                    displayName: "Request Module",
-                    location: "@nmshd/runtime:RequestModule"
-                },
-                attributeListener: {
-                    enabled: true,
-                    displayName: "Attribute Listener",
-                    location: "@nmshd/runtime:AttributeListenerModule"
-                },
-                autoAcceptPendingRelationships: {
-                    displayName: "Auto Accept Pending Relationships",
-                    location: "@nmshd/connector:AutoAcceptPendingRelationshipsModule",
-                    enabled: false
-                },
-                autoDecomposeDeletionProposedRelationships: {
-                    displayName: "Auto Decompose DeletionProposed Relationships",
-                    location: "@nmshd/connector:AutoDecomposeDeletionProposedRelationshipsModule",
-                    enabled: false
-                },
+                notification: { enabled: true, location: "@nmshd/runtime:NotificationModule" },
+                decider: { enabled: true, location: "@nmshd/runtime:DeciderModule" },
+                request: { enabled: true, location: "@nmshd/runtime:RequestModule" },
+                attributeListener: { enabled: true, location: "@nmshd/runtime:AttributeListenerModule" },
+                autoAcceptPendingRelationships: { enabled: false, location: "@nmshd/connector:AutoAcceptPendingRelationshipsModule" },
+                autoDecomposeDeletionProposedRelationships: { enabled: false, location: "@nmshd/connector:AutoDecomposeDeletionProposedRelationshipsModule" },
                 coreHttpApi: {
-                    displayName: "Core HTTP API",
                     location: "@nmshd/connector:CoreHttpApiModule",
                     enabled: true,
 
@@ -110,7 +84,6 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                     }
                 },
                 webhooks: {
-                    displayName: "Webhooks",
                     enabled: false,
                     location: "@nmshd/connector:WebhooksModule",
                     targets: {},
@@ -118,22 +91,16 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                 },
                 messageBrokerPublisher: {
                     enabled: false,
-                    displayName: "Message Broker Publisher",
                     location: "@nmshd/connector:MessageBrokerPublisherModule",
                     brokers: []
                 },
                 sync: {
-                    displayName: "Sync",
                     location: "@nmshd/connector:SyncModule",
                     enabled: false,
 
                     interval: 60
                 },
-                sse: {
-                    enabled: false,
-                    displayName: "Server Sent Events",
-                    location: "@nmshd/connector:SseModule"
-                }
+                sse: { enabled: false, location: "@nmshd/connector:SseModule" }
             }
         });
 
