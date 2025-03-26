@@ -1,8 +1,7 @@
-import { Envelope } from "@nmshd/connector-types";
+import { BaseController, Envelope } from "@nmshd/connector-types";
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, DELETE, GET, Path, PathParam, POST, PUT, Return, ServiceContext } from "@nmshd/typescript-rest";
-import { BaseController } from "../common/BaseController";
 
 @Path("/api/v2/Relationships")
 export class RelationshipsController extends BaseController {

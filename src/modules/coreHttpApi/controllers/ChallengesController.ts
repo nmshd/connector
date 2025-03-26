@@ -1,8 +1,7 @@
-import { Envelope } from "@nmshd/connector-types";
+import { BaseController, Envelope } from "@nmshd/connector-types";
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Path, POST, Return } from "@nmshd/typescript-rest";
-import { BaseController } from "../common/BaseController";
 
 @Path("/api/v2/Challenges")
 export class ChallengesController extends BaseController {

@@ -1,7 +1,8 @@
 import { Result } from "@js-soft/ts-utils";
-import { Envelope } from "@nmshd/connector-types";
 import { Return } from "@nmshd/typescript-rest";
 import express from "express";
+import { Envelope } from "./common/Envelope";
+import { Mimetype } from "./common/Mimetype";
 
 export abstract class BaseController {
     protected created<T>(result: Result<T>): Return.NewResource<Envelope> {
@@ -58,13 +59,5 @@ export abstract class BaseController {
             .setHeader("content-type", mimetype.value)
             .setHeader("content-disposition", `attachment;filename=${encodeURIComponent(filename)}`)
             .send(buffer);
-    }
-}
-
-export class Mimetype {
-    public constructor(public value: string) {}
-
-    public static png(): Mimetype {
-        return new Mimetype("image/png");
     }
 }
