@@ -2,7 +2,7 @@ import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
 import { Reference } from "@nmshd/core-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, Errors, FileParam, FormParam, GET, POST, Path, PathParam, Return, ServiceContext } from "@nmshd/typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, FileParam, FormParam, GET, POST, Path, PathParam, Return, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
 
 @Path("/api/v2/Files")
@@ -81,7 +81,7 @@ export class FilesController extends BaseController {
 
     @GET
     @Path(":idOrReference")
-    // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
+    @Accept("application/json", "image/png")
     public async getFile(@PathParam("idOrReference") idOrReference: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.fromTruncated(idOrReference).id.toString();
 
@@ -97,12 +97,9 @@ export class FilesController extends BaseController {
                     200
                 );
 
-            case "application/json":
+            default:
                 const result = await this.transportServices.files.getFile({ id: fileId });
                 return this.ok(result);
-
-            default:
-                throw new Errors.NotAcceptableError();
         }
     }
 
