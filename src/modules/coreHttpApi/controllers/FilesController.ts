@@ -1,10 +1,9 @@
-import { Envelope } from "@nmshd/connector-types";
+import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
 import { Reference } from "@nmshd/core-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, ContextAccept, ContextResponse, Errors, FileParam, FormParam, GET, POST, Path, PathParam, Return, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
-import { BaseController, Mimetype } from "../common/BaseController";
 
 @Path("/api/v2/Files")
 export class FilesController extends BaseController {
