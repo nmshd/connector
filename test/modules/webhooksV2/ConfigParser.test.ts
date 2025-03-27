@@ -4,8 +4,6 @@ import { WebhooksModuleConfiguration } from "../../../src/modules/webhooks/Webho
 describe("ConfigParser", () => {
     test("parses webhooks with inline targets", () => {
         const config: WebhooksModuleConfiguration = {
-            name: "webhooksModule",
-            displayName: "A display name",
             enabled: true,
             location: "a/location",
 
@@ -32,8 +30,6 @@ describe("ConfigParser", () => {
 
     test("parses webhooks with references to predefined targets", () => {
         const config: WebhooksModuleConfiguration = {
-            name: "webhooksModule",
-            displayName: "A display name",
             enabled: true,
             location: "a/location",
 
@@ -63,8 +59,6 @@ describe("ConfigParser", () => {
 
     test("returns an error when a referenced target does not exist", () => {
         const config: WebhooksModuleConfiguration = {
-            name: "webhooksModule",
-            displayName: "A display name",
             enabled: true,
             location: "a/location",
 
@@ -84,8 +78,6 @@ describe("ConfigParser", () => {
 
     test("returns an error when an inline target has an invalid url", () => {
         const config: WebhooksModuleConfiguration = {
-            name: "webhooksModule",
-            displayName: "A display name",
             enabled: true,
             location: "a/location",
 
@@ -107,8 +99,6 @@ describe("ConfigParser", () => {
 
     test("returns an error when a named target has an invalid url", () => {
         const config: WebhooksModuleConfiguration = {
-            name: "webhooksModule",
-            displayName: "A display name",
             enabled: true,
             location: "a/location",
 

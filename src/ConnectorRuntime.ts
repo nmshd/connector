@@ -265,7 +265,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             const infrastructureConfiguration = (this.runtimeConfig.infrastructure as any)[requiredInfrastructure];
             if (!infrastructureConfiguration?.enabled) {
                 this.logger.error(
-                    `Module '${this.getModuleName(connectorModuleConfiguration)}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`
+                    `The module on location '${connectorModuleConfiguration.location}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`
                 );
                 process.exit(1);
             }
@@ -278,7 +278,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
         this.modules.add(module);
 
-        this.logger.info(`Module '${this.getModuleName(moduleConfiguration)}' was loaded successfully.`);
+        this.logger.info(`The module '${module.displayName}' was loaded successfully.`);
     }
 
     private async resolveModule(
@@ -290,14 +290,14 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
         const importedModule = await this.import(configuration.location);
         if (!importedModule) {
-            this.logger.error(`The Module '${this.getModuleName(configuration)}' could not be loaded: the location of the module (${configuration.location}) does not exist.`);
+            this.logger.error(`The module on location '${configuration.location}' could not be loaded: the location of the module does not exist.`);
             return;
         }
 
         const defaultExport = importedModule?.default;
         if (!defaultExport) {
             this.logger.error(
-                `The Module '${this.getModuleName(configuration)}' could not be loaded: the constructor could not be found. Remember to use the default export ('export default class MyModule...').`
+                `The module on location '${configuration.location}' could not be loaded: the constructor could not be found. Remember to use the default export ('export default class MyModule...').`
             );
             return;
         }
@@ -326,7 +326,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             case "SseModule":
                 return SseModule;
             default:
-                this.logger.error(`The internal Module '${moduleName}' could not be loaded because it is not registered as an internal module.`);
+                this.logger.error(`The internal module on location '${location}' could not be loaded because it is not registered as an internal module.`);
                 return undefined;
         }
     }

@@ -5,6 +5,10 @@ import { RelationshipChangedEvent, RelationshipStatus } from "@nmshd/runtime";
 export interface AutoDecomposeDeletionProposedRelationshipsModuleConfiguration extends ConnectorRuntimeModuleConfiguration {}
 
 export class AutoDecomposeDeletionProposedRelationshipsModule extends ConnectorRuntimeModule<AutoDecomposeDeletionProposedRelationshipsModuleConfiguration> {
+    public override get displayName(): string {
+        return this.configuration.displayName ?? "Auto Decompose DeletionProposed Relationships Module";
+    }
+
     public init(): void {
         // Nothing to do here
     }
