@@ -6,7 +6,7 @@ export interface AutoDecomposeDeletionProposedRelationshipsModuleConfiguration e
 
 export class AutoDecomposeDeletionProposedRelationshipsModule extends ConnectorRuntimeModule<AutoDecomposeDeletionProposedRelationshipsModuleConfiguration> {
     public override get displayName(): string {
-        return "Auto Decompose DeletionProposed Relationships Module";
+        return this.configuration.displayName ?? "Auto Decompose DeletionProposed Relationships Module";
     }
 
     public init(): void {
