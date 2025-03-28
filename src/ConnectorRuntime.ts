@@ -11,7 +11,6 @@ import { AccountController, TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import correlator from "correlation-id";
 import { HttpsProxyAgent } from "https-proxy-agent";
-import path from "path";
 import { checkServerIdentity, PeerCertificate } from "tls";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { HealthChecker } from "./HealthChecker";
@@ -35,9 +34,12 @@ interface SupportInformation {
 }
 
 export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeConfig> {
-    private static readonly MODULES_DIRECTORY = path.join(__dirname, "modules");
+    private _databaseConnection?: IDatabaseConnection;
+    public get databaseConnection(): IDatabaseConnection {
+        if (!this._databaseConnection) throw new Error("The database connection was not created.");
+        return this._databaseConnection;
+    }
 
-    private databaseConnection?: IDatabaseConnection;
     private accountController: AccountController;
 
     private _transportServices: TransportServices;
@@ -139,7 +141,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             const folder = this.runtimeConfig.database.folder;
             if (!folder) throw new Error("No folder provided for LokiJS database.");
 
-            this.databaseConnection = new LokiJsConnection(folder, undefined, { autoload: true, autosave: true, persistenceMethod: "fs" });
+            this._databaseConnection = new LokiJsConnection(folder, undefined, { autoload: true, autosave: true, persistenceMethod: "fs" });
             return this.databaseConnection;
         }
 
@@ -148,7 +150,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             process.exit(1);
         }
 
-        if (this.databaseConnection) {
+        if (this._databaseConnection) {
             throw new Error("The database connection was already created.");
         }
 
@@ -164,7 +166,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
         this.logger.debug("Finished initialization of Mongo DB connection.");
 
-        this.databaseConnection = mongodbConnection;
+        this._databaseConnection = mongodbConnection;
         return this.databaseConnection;
     }
 
@@ -380,7 +382,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         }
 
         try {
-            await this.databaseConnection?.close();
+            await this._databaseConnection?.close();
         } catch (e) {
             this.logger.error(e);
         }
