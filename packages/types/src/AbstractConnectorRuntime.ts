@@ -5,4 +5,5 @@ export abstract class AbstractConnectorRuntime<TConfig extends RuntimeConfig = R
     public abstract override getServices(): RuntimeServices;
     public abstract getBackboneAuthenticationToken(): Promise<string>;
     public abstract readonly infrastructure: IConnectorInfrastructureRegistry;
+    public override readonly runtimeConfig: TConfig;
 }
