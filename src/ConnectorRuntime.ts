@@ -11,7 +11,6 @@ import { AccountController, TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import correlator from "correlation-id";
 import { HttpsProxyAgent } from "https-proxy-agent";
-import path from "path";
 import { checkServerIdentity, PeerCertificate } from "tls";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { HealthChecker } from "./HealthChecker";
@@ -35,8 +34,6 @@ interface SupportInformation {
 }
 
 export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeConfig> {
-    private static readonly MODULES_DIRECTORY = path.join(__dirname, "modules");
-
     private databaseConnection?: IDatabaseConnection;
     private accountController: AccountController;
 
