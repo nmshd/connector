@@ -26,7 +26,7 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
             }
         })
         .file("file-from-env", { file: customConfigLocation ?? process.env.CUSTOM_CONFIG_LOCATION ?? "config.json" })
-        .file("bundled-config", { file: "bundled.config.json", dir: path.resolve(path.join(__dirname, "..")) })
+        .file("bundled-config", { file: path.resolve(path.join(__dirname, "..", "bundled.config.json")) })
         .defaults({
             debug: false,
             transportLibrary: {},
