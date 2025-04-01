@@ -58,4 +58,8 @@ export class FilesEndpoint extends Endpoint {
     public async createTokenQrCodeForFile(fileId: string, request?: CreateTokenQrCodeForFileRequest): Promise<ConnectorHttpResponse<ArrayBuffer>> {
         return await this.downloadQrCode("POST", `/api/v2/Files/${fileId}/Token`, request);
     }
+
+    public async deleteFile(fileId: string): Promise<ConnectorHttpResponse<void>> {
+        return await this.delete(`/api/v2/Files/${fileId}`, undefined, 204);
+    }
 }

@@ -2,7 +2,7 @@ import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
 import { Reference } from "@nmshd/core-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, FileParam, FormParam, GET, POST, Path, PathParam, Return, ServiceContext } from "@nmshd/typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, DELETE, FileParam, FormParam, GET, Path, PathParam, POST, Return, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
 
 @Path("/api/v2/Files")
@@ -138,5 +138,12 @@ export class FilesController extends BaseController {
                 });
                 return this.created(jsonResult);
         }
+    }
+
+    @DELETE
+    @Path("/:id")
+    public async deleteFile(@PathParam("id") fileId: string): Promise<void> {
+        const result = await this.transportServices.files.deleteFile({ fileId });
+        return this.noContent(result);
     }
 }

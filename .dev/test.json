@@ -1,35 +1,17 @@
 {
     "debug": true,
-    "transportLibrary": {
-        "debug": true
-    },
+    "transportLibrary": { "debug": true },
     "logging": {
         "appenders": {
-            "consoleAppender": {
-                "type": "stdout",
-                "layout": { "type": "pattern", "pattern": "%[[%d] [%p] %c - %m %x{correlationId}%]" }
-            },
-            "console": {
-                "type": "logLevelFilter",
-                "level": "WARN",
-                "appender": "consoleAppender"
-            }
+            "consoleAppender": { "type": "stdout", "layout": { "type": "pattern", "pattern": "%[[%d] [%p] %c - %m %x{correlationId}%]" } },
+            "console": { "type": "logLevelFilter", "level": "WARN", "appender": "consoleAppender" }
         },
 
-        "categories": {
-            "default": {
-                "appenders": ["console"],
-                "level": "TRACE"
-            }
-        }
+        "categories": { "default": { "appenders": ["console"], "level": "TRACE" } }
     },
     "infrastructure": { "httpServer": { "enabled": true } },
     "modules": {
         "coreHttpApi": { "docs": { "enabled": true } },
-        "webhooks": {
-            "enabled": false,
-            "webhooks": [{ "triggers": ["**"], "target": "test" }],
-            "targets": { "test": {} }
-        }
+        "webhooks": { "enabled": false, "webhooks": [{ "triggers": ["**"], "target": "test" }], "targets": { "test": {} } }
     }
 }

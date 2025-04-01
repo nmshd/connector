@@ -103,6 +103,7 @@ describe("File Upload", () => {
 
         expect(response).toBeAnError("must have required property 'content'", "error.runtime.validation.invalidPropertyValue");
     });
+
     test("can upload same file twice", async () => {
         const request = await makeUploadRequest({ file: await fs.promises.readFile(`${__dirname}/__assets__/test.txt`) });
 
@@ -340,3 +341,18 @@ describe("Password-protected tokens for files", () => {
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 });
+
+// describe("Delete file", () => {
+//     test("delete a file", async () => {
+//         const file = (await client1.files.uploadOwnFile(await makeUploadRequest())).result;
+
+//         const getFileResult = await client1.files.getFile(file.id);
+//         expect(getFileResult).toBeSuccessful(ValidationSchema.File);
+
+//         const deleteFileResult = await client1.files.deleteFile(file.id);
+//         expect(deleteFileResult).toBeSuccessfulVoidResult();
+
+//         const getFileAfterDeletionResult = await client1.files.getFile(file.id);
+//         expect(getFileAfterDeletionResult).toBeAnError("File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+//     });
+// });

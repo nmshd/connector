@@ -2265,6 +2265,36 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
+  /api/v2/Files/{id}:
+    delete:
+      operationId: deleteFile
+      description: Delete a File.
+      tags:
+        - Files
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the File to delete.
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileID"
+      responses:
+        204:
+          description: Success. Deleting a File.
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
   # ------------------- IdentityMetadata -------------------
 
   /api/v2/IdentityMetadata:
