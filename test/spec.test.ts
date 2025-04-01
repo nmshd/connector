@@ -60,6 +60,7 @@ describe("test openapi spec against routes", () => {
             "/api/v2/Challenges/Validate": { post: "200" },
             "/api/v2/Relationships/{param}": { delete: "204" },
             "/api/v2/Attributes/{param}": { delete: "204" },
+            "/api/v2/Files/{param}": { delete: "204" },
             "/api/v2/IdentityMetadata": { delete: "204" }
         };
         /* eslint-enable @typescript-eslint/naming-convention */
