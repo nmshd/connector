@@ -342,17 +342,17 @@ describe("Password-protected tokens for files", () => {
     });
 });
 
-// describe("Delete file", () => {
-//     test("delete a file", async () => {
-//         const file = (await client1.files.uploadOwnFile(await makeUploadRequest())).result;
+describe("Delete file", () => {
+    test("delete a file", async () => {
+        const file = (await client1.files.uploadOwnFile(await makeUploadRequest())).result;
 
-//         const getFileResult = await client1.files.getFile(file.id);
-//         expect(getFileResult).toBeSuccessful(ValidationSchema.File);
+        const getFileResult = await client1.files.getFile(file.id);
+        expect(getFileResult).toBeSuccessful(ValidationSchema.File);
 
-//         const deleteFileResult = await client1.files.deleteFile(file.id);
-//         expect(deleteFileResult).toBeSuccessfulVoidResult();
+        const deleteFileResult = await client1.files.deleteFile(file.id);
+        expect(deleteFileResult).toBeSuccessfulVoidResult();
 
-//         const getFileAfterDeletionResult = await client1.files.getFile(file.id);
-//         expect(getFileAfterDeletionResult).toBeAnError("File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
-//     });
-// });
+        const getFileAfterDeletionResult = await client1.files.getFile(file.id);
+        expect(getFileAfterDeletionResult).toBeAnError("File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+    });
+});
