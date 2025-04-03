@@ -34,12 +34,6 @@ interface SupportInformation {
 }
 
 export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeConfig> {
-    private _databaseConnection?: IDatabaseConnection;
-    public get databaseConnection(): IDatabaseConnection {
-        if (!this._databaseConnection) throw new Error("The database connection was not created.");
-        return this._databaseConnection;
-    }
-
     private accountController: AccountController;
 
     private _transportServices: TransportServices;
@@ -141,17 +135,12 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             const folder = this.runtimeConfig.database.folder;
             if (!folder) throw new Error("No folder provided for LokiJS database.");
 
-            this._databaseConnection = new LokiJsConnection(folder, undefined, { autoload: true, autosave: true, persistenceMethod: "fs" });
-            return this.databaseConnection;
+            return new LokiJsConnection(folder, undefined, { autoload: true, autosave: true, persistenceMethod: "fs" });
         }
 
         if (!this.runtimeConfig.database.connectionString) {
             this.logger.error(`No database connection string provided. See ${DocumentationLink.operate__configuration("database")} on how to configure the database connection.`);
             process.exit(1);
-        }
-
-        if (this._databaseConnection) {
-            throw new Error("The database connection was already created.");
         }
 
         const mongodbConnection = new MongoDbConnection(this.runtimeConfig.database.connectionString);
@@ -166,12 +155,11 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
         this.logger.debug("Finished initialization of Mongo DB connection.");
 
-        this._databaseConnection = mongodbConnection;
-        return this.databaseConnection;
+        return mongodbConnection;
     }
 
     protected async initAccount(): Promise<void> {
-        const db = await this.transport.createDatabase(`${this.runtimeConfig.database.dbNamePrefix}${this.runtimeConfig.database.dbName}`);
+        const db = await this.databaseConnection.getDatabase(`${this.runtimeConfig.database.dbNamePrefix}${this.runtimeConfig.database.dbName}`);
 
         this.accountController = await new AccountController(this.transport, db, this.transport.config).init().catch((e) => {
             if (e instanceof ApplicationError && e.code === "error.transport.general.platformClientInvalid") {
@@ -382,7 +370,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         }
 
         try {
-            await this._databaseConnection?.close();
+            await this.databaseConnection.close();
         } catch (e) {
             this.logger.error(e);
         }

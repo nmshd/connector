@@ -11,6 +11,6 @@ export abstract class AbstractConnectorRuntime<TConfig extends ConnectorRuntimeC
     public abstract getBackboneAuthenticationToken(): Promise<string>;
     public abstract readonly infrastructure: IConnectorInfrastructureRegistry;
 
-    public abstract get databaseConnection(): IDatabaseConnection;
+    public override databaseConnection: IDatabaseConnection;
     public override readonly runtimeConfig: TConfig;
 }
