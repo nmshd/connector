@@ -84,7 +84,7 @@
         "@js-soft/node-logger": "1.2.0",
         "@js-soft/ts-utils": "^2.3.3",
         "@nmshd/connector-types": "*",
-        "@nmshd/runtime": "6.34.2",
+        "@nmshd/runtime": "6.35.0",
         "@nmshd/typescript-ioc": "^3.2.4",
         "@nmshd/typescript-rest": "^3.1.2",
         "agentkeepalive": "4.6.0",
@@ -93,7 +93,7 @@
         "compression": "1.8.0",
         "correlation-id": "^5.2.0",
         "cors": "2.8.5",
-        "eventsource": "^3.0.5",
+        "eventsource": "^3.0.6",
         "express": "4.21.2",
         "helmet": "8.1.0",
         "json-stringify-safe": "5.0.1",
@@ -114,8 +114,8 @@
         "@js-soft/eslint-config-ts": "1.6.14",
         "@js-soft/license-check": "1.0.9",
         "@nmshd/connector-sdk": "*",
-        "@nmshd/content": "6.34.2",
-        "@nmshd/core-types": "6.34.2",
+        "@nmshd/content": "6.35.0",
+        "@nmshd/core-types": "6.35.0",
         "@nmshd/typescript-rest-swagger": "^1.4.1",
         "@types/amqplib": "^0.10.7",
         "@types/compression": "^1.7.5",
@@ -125,7 +125,7 @@
         "@types/jest-json-schema": "^6.1.4",
         "@types/json-stringify-safe": "^5.0.3",
         "@types/lodash": "^4.17.16",
-        "@types/luxon": "^3.6.0",
+        "@types/luxon": "^3.6.2",
         "@types/nconf": "^0.10.7",
         "@types/node": "^22.14.0",
         "@types/on-headers": "^1.0.3",
@@ -144,7 +144,7 @@
         "prettier": "^3.5.3",
         "ts-jest": "^29.3.1",
         "ts-node": "^10.9.2",
-        "typescript": "^5.8.2"
+        "typescript": "^5.8.3"
     },
     "engines": {
         "node": ">=22"
