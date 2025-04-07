@@ -30,14 +30,14 @@
         "build:schemas:watch": "npx nodemon -e ts -w 'src/types' --exec 'npm run build:schemas'"
     },
     "dependencies": {
-        "@nmshd/content": "6.34.2",
+        "@nmshd/content": "6.35.0",
         "axios": "^1.8.4",
         "form-data": "^4.0.2",
         "qs": "^6.14.0"
     },
     "devDependencies": {
         "@types/qs": "^6.9.18",
-        "ts-json-schema-generator": "^2.3.0"
+        "ts-json-schema-generator": "^2.4.0"
     },
     "publishConfig": {
         "access": "public",

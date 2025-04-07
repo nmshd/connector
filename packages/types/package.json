@@ -27,14 +27,14 @@
     "devDependencies": {
         "@js-soft/logging-abstractions": "^1.0.1",
         "@types/express": "^5.0.1",
-        "@types/luxon": "^3.6.0",
+        "@types/luxon": "^3.6.2",
         "@types/node": "^22.14.0",
-        "typescript": "^5.8.2"
+        "typescript": "^5.8.3"
     },
     "peerDependencies": {
         "@js-soft/docdb-access-abstractions": "^1.1.0",
         "@js-soft/ts-utils": "^2.3.3",
-        "@nmshd/runtime": "^6.34.2",
+        "@nmshd/runtime": "^6.35.0",
         "@nmshd/typescript-rest": "^3.1.2",
         "express": "^4.21.2"
     },
