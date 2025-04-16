@@ -42,7 +42,7 @@ export class FilesController extends BaseController {
     }
 
     @GET
-    @Path(":id/Download")
+    @Path("/:id/Download")
     public async downloadFile(@PathParam("id") id: string, @ContextResponse response: express.Response): Promise<void> {
         const result = await this.transportServices.files.downloadFile({ id });
 
@@ -80,7 +80,7 @@ export class FilesController extends BaseController {
     }
 
     @GET
-    @Path(":idOrReference")
+    @Path("/:idOrReference")
     @Accept("application/json", "image/png")
     public async getFile(@PathParam("idOrReference") idOrReference: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.fromTruncated(idOrReference).id.toString();
