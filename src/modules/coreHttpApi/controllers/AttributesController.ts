@@ -51,9 +51,9 @@ export class AttributesController extends BaseController {
     }
 
     @POST
-    @Path("/:attributeId/NotifyPeer")
+    @Path("/:id/NotifyPeer")
     @Accept("application/json")
-    public async notifyPeerAboutRepositoryAttributeSuccession(@PathParam("attributeId") attributeId: string, request: any): Promise<Return.NewResource<Envelope>> {
+    public async notifyPeerAboutRepositoryAttributeSuccession(@PathParam("id") attributeId: string, request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.consumptionServices.attributes.notifyPeerAboutRepositoryAttributeSuccession({ attributeId: attributeId, peer: request.peer });
         return this.created(result);
     }

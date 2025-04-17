@@ -10,7 +10,7 @@ export class IncomingRequestsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/CanAccept")
+    @Path("/:id/CanAccept")
     @Accept("application/json")
     public async canAccept(@PathParam("id") requestId: string, request: any): Promise<Envelope> {
         const result = await this.consumptionServices.incomingRequests.canAccept({ ...request, requestId });
@@ -18,7 +18,7 @@ export class IncomingRequestsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/Accept")
+    @Path("/:id/Accept")
     @Accept("application/json")
     public async accept(@PathParam("id") requestId: string, request: any): Promise<Envelope> {
         const result = await this.consumptionServices.incomingRequests.accept({ ...request, requestId });
@@ -26,7 +26,7 @@ export class IncomingRequestsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/CanReject")
+    @Path("/:id/CanReject")
     @Accept("application/json")
     public async canReject(@PathParam("id") requestId: string, request: any): Promise<Envelope> {
         const result = await this.consumptionServices.incomingRequests.canReject({ ...request, requestId });
@@ -34,7 +34,7 @@ export class IncomingRequestsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/Reject")
+    @Path("/:id/Reject")
     @Accept("application/json")
     public async reject(@PathParam("id") requestId: string, request: any): Promise<Envelope> {
         const result = await this.consumptionServices.incomingRequests.reject({ ...request, requestId });
@@ -42,7 +42,7 @@ export class IncomingRequestsController extends BaseController {
     }
 
     @GET
-    @Path(":id")
+    @Path("/:id")
     @Accept("application/json")
     public async getRequest(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.consumptionServices.incomingRequests.getRequest({ id });

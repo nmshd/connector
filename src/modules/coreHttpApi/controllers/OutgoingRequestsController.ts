@@ -25,7 +25,7 @@ export class OutgoingRequestsController extends BaseController {
     }
 
     @GET
-    @Path(":id")
+    @Path("/:id")
     @Accept("application/json")
     public async getRequest(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.consumptionServices.outgoingRequests.getRequest({ id });
