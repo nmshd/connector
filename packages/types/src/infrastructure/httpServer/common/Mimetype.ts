@@ -6,7 +6,7 @@ export class Mimetype {
     }
 
     public static jpeg(): Mimetype {
-        return new Mimetype("image/png");
+        return new Mimetype("image/jpeg");
     }
 
     public static json(): Mimetype {

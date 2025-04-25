@@ -29,6 +29,7 @@
         "@types/express": "^5.0.1",
         "@types/luxon": "^3.6.2",
         "@types/node": "^22.14.1",
+        "@types/qrcode": "^1.5.5",
         "typescript": "^5.8.3"
     },
     "peerDependencies": {
@@ -41,5 +42,8 @@
     "publishConfig": {
         "access": "public",
         "provenance": true
+    },
+    "dependencies": {
+        "qrcode": "^1.5.4"
     }
 }

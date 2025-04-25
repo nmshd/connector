@@ -1,4 +1,4 @@
-import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
+import { BaseController, Envelope, QRCode } from "@nmshd/connector-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, ContextAccept, ContextResponse, GET, Path, PathParam, POST, Return, ServiceContext } from "@nmshd/typescript-rest";
@@ -54,20 +54,12 @@ export class TokensController extends BaseController {
     @Path(":id")
     @Accept("application/json", "image/png")
     public async getToken(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+        const result = await this.transportServices.tokens.getToken({ id });
+
         switch (accept) {
             case "image/png":
-                const qrCodeResult = await this.transportServices.tokens.getQRCodeForToken({ id });
-                return this.file(
-                    qrCodeResult,
-                    (r) => r.value.qrCodeBytes,
-                    () => `${id}.png`,
-                    () => Mimetype.png(),
-                    response,
-                    200
-                );
-
+                return await this.qrCode(result, (r) => QRCode.for(r.value.truncatedReference), `${id}.png`, response, 200);
             default:
-                const result = await this.transportServices.tokens.getToken({ id });
                 return this.ok(result);
         }
     }
