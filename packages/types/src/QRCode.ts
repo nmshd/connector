@@ -7,8 +7,8 @@ export class QRCode {
         return this.base64;
     }
 
-    public static async from(content: string, prefix: string): Promise<QRCode> {
-        const dataUrl = await qrcodeLibrary.toDataURL(`nmshd://${prefix}#${content}`);
+    public static async for(truncatedReference: string): Promise<QRCode> {
+        const dataUrl = await qrcodeLibrary.toDataURL(`nmshd://tr#${truncatedReference}`);
         const base64 = dataUrl.split(",")[1];
 
         return new QRCode(base64);

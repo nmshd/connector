@@ -58,7 +58,7 @@ export class TokensController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.from(r.value.truncatedReference, "tr"), `${id}.png`, response, 200);
+                return await this.qrCode(result, (r) => QRCode.for(r.value.truncatedReference), `${id}.png`, response, 200);
             default:
                 return this.ok(result);
         }
