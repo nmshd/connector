@@ -1,4 +1,4 @@
-import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
+import { BaseController, Envelope, Mimetype, QRCode } from "@nmshd/connector-types";
 import { Reference } from "@nmshd/core-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
@@ -85,20 +85,12 @@ export class FilesController extends BaseController {
     public async getFile(@PathParam("idOrReference") idOrReference: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.fromTruncated(idOrReference).id.toString();
 
+        const result = await this.transportServices.files.getFile({ id: fileId });
+
         switch (accept) {
             case "image/png":
-                const qrCodeResult = await this.transportServices.files.createQRCodeForFile({ fileId });
-                return this.file(
-                    qrCodeResult,
-                    (r) => r.value.qrCodeBytes,
-                    () => `${fileId}.png`,
-                    () => Mimetype.png(),
-                    response,
-                    200
-                );
-
+                return await this.qrCode(result, (r) => QRCode.for(r.value.truncatedReference), `${fileId}.png`, response, 200);
             default:
-                const result = await this.transportServices.files.getFile({ id: fileId });
                 return this.ok(result);
         }
     }
@@ -112,31 +104,19 @@ export class FilesController extends BaseController {
         @ContextResponse response: express.Response,
         request: any
     ): Promise<Return.NewResource<Envelope> | void> {
+        const result = await this.transportServices.files.createTokenForFile({
+            fileId: id,
+            expiresAt: request.expiresAt,
+            ephemeral: request.ephemeral || accept === "image/png",
+            forIdentity: request.forIdentity,
+            passwordProtection: request.passwordProtection
+        });
+
         switch (accept) {
             case "image/png":
-                const qrCodeResult = await this.transportServices.files.createTokenQRCodeForFile({
-                    fileId: id,
-                    expiresAt: request.expiresAt,
-                    forIdentity: request.forIdentity,
-                    passwordProtection: request.passwordProtection
-                });
-                return this.file(
-                    qrCodeResult,
-                    (r) => r.value.qrCodeBytes,
-                    () => `${id}.png`,
-                    () => Mimetype.png(),
-                    response,
-                    201
-                );
+                return await this.qrCode(result, (r) => QRCode.for(r.value.truncatedReference), `${id}.png`, response, 201);
             default:
-                const jsonResult = await this.transportServices.files.createTokenForFile({
-                    fileId: id,
-                    expiresAt: request.expiresAt,
-                    ephemeral: request.ephemeral,
-                    forIdentity: request.forIdentity,
-                    passwordProtection: request.passwordProtection
-                });
-                return this.created(jsonResult);
+                return this.created(result);
         }
     }
 
