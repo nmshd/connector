@@ -89,7 +89,7 @@ export class FilesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return this.qrCode(result, (r) => QRCode.from(r.value.truncatedReference, "tr"), `${fileId}.png`, response, 200);
+                return await this.qrCode(result, (r) => QRCode.from(r.value.truncatedReference, "tr"), `${fileId}.png`, response, 200);
             default:
                 return this.ok(result);
         }
@@ -114,7 +114,7 @@ export class FilesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return this.qrCode(result, (r) => QRCode.from(r.value.truncatedReference, "tr"), `${id}.png`, response, 201);
+                return await this.qrCode(result, (r) => QRCode.from(r.value.truncatedReference, "tr"), `${id}.png`, response, 201);
             default:
                 return this.created(result);
         }
