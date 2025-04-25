@@ -1,6 +1,7 @@
 import { Result } from "@js-soft/ts-utils";
 import { Return } from "@nmshd/typescript-rest";
 import express from "express";
+import { QRCode } from "../../QRCode";
 import { Envelope } from "./common/Envelope";
 import { Mimetype } from "./common/Mimetype";
 
@@ -53,6 +54,27 @@ export abstract class BaseController {
         } else {
             buffer = Buffer.from(content, "base64");
         }
+
+        response
+            .status(status)
+            .setHeader("content-type", mimetype.value)
+            .setHeader("content-disposition", `attachment;filename=${encodeURIComponent(filename)}`)
+            .send(buffer);
+    }
+
+    protected async qrCode<T extends Result<any>>(
+        result: T,
+        qrPredicate: (result: T) => Promise<QRCode>,
+        filename: string,
+        response: express.Response,
+        status: number
+    ): Promise<void> {
+        this.guard(result);
+
+        const mimetype = Mimetype.png();
+
+        const qrCode = await qrPredicate(result);
+        const buffer = Buffer.from(qrCode.asBase64(), "base64");
 
         response
             .status(status)
