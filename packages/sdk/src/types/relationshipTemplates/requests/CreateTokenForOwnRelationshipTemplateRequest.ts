@@ -1,3 +1,5 @@
+import { PasswordLocationIndicator } from "@nmshd/core-types";
+
 export interface CreateTokenForOwnRelationshipTemplateRequest {
     expiresAt?: string;
     ephemeral?: boolean;
@@ -5,5 +7,6 @@ export interface CreateTokenForOwnRelationshipTemplateRequest {
     passwordProtection?: {
         password: string;
         passwordIsPin?: true;
+        passwordLocationIndicator?: PasswordLocationIndicator;
     };
 }
