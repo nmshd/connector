@@ -5387,7 +5387,6 @@ components:
           oneOf:
             - type: string
               enum:
-                - RecoveryKit
                 - Self
                 - Letter
                 - RegistrationLetter
