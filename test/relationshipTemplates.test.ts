@@ -317,7 +317,10 @@ describe("Serialization Errors", () => {
 
 describe("RelationshipTemplates Query", () => {
     test("query templates", async () => {
-        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address, { password: "password" });
+        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address, {
+            password: "password",
+            passwordLocationIndicator: "RegistrationLetter"
+        });
         const conditions = new QueryParamConditions(template, client1)
             .addBooleanSet("isOwn")
             .addDateSet("createdAt")
@@ -346,13 +349,27 @@ describe("RelationshipTemplates Query", () => {
                 expectedResult: true,
                 key: "passwordProtection.passwordIsPin",
                 value: "!"
+            })
+            .addSingleCondition({
+                expectedResult: true,
+                key: "passwordProtection.passwordLocationIndicator",
+                value: "RegistrationLetter"
+            })
+            .addSingleCondition({
+                expectedResult: false,
+                key: "passwordProtection.passwordLocationIndicator",
+                value: "differentLocationIndicator"
             });
 
         await conditions.executeTests((c, q) => c.relationshipTemplates.getRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
     });
 
     test("query own templates", async () => {
-        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address, { password: "1234", passwordIsPin: true });
+        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address, {
+            password: "1234",
+            passwordIsPin: true,
+            passwordLocationIndicator: 99
+        });
         const conditions = new QueryParamConditions(template, client1)
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
@@ -370,6 +387,17 @@ describe("RelationshipTemplates Query", () => {
                 expectedResult: false,
                 key: "passwordProtection.passwordIsPin",
                 value: "!"
+            })
+
+            .addSingleCondition({
+                expectedResult: true,
+                key: "passwordProtection.passwordLocationIndicator",
+                value: 99
+            })
+            .addSingleCondition({
+                expectedResult: false,
+                key: "passwordProtection.passwordLocationIndicator",
+                value: 50
             });
         await conditions.executeTests((c, q) => c.relationshipTemplates.getOwnRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
     });
