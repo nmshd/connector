@@ -15,6 +15,7 @@ import {
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
 import { AttributeValues, RelationshipAttributeJSON } from "@nmshd/content";
+import { PasswordLocationIndicator } from "@nmshd/core-types";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata } from "./Launcher";
@@ -139,7 +140,11 @@ export async function syncUntilHasMessageWithResponse(client: ConnectorClientWit
     ).data.message;
 }
 
-export async function uploadOwnToken(client: ConnectorClient, forIdentity?: string, passwordProtection?: { password: string; passwordIsPin?: true }): Promise<ConnectorToken> {
+export async function uploadOwnToken(
+    client: ConnectorClient,
+    forIdentity?: string,
+    passwordProtection?: { password: string; passwordIsPin?: true; passwordLocationIndicator?: PasswordLocationIndicator }
+): Promise<ConnectorToken> {
     const response = await client.tokens.createOwnToken({
         content: { aKey: "aValue" },
         expiresAt: DateTime.utc().plus({ days: 1 }).toString(),
@@ -182,7 +187,7 @@ export async function makeUploadRequest(values: Partial<UploadOwnFileRequest> = 
 export async function createTemplate(
     client: ConnectorClient,
     forIdentity?: string,
-    passwordProtection?: { password: string; passwordIsPin?: true }
+    passwordProtection?: { password: string; passwordIsPin?: true; passwordLocationIndicator?: PasswordLocationIndicator }
 ): Promise<ConnectorRelationshipTemplate> {
     const response = await client.relationshipTemplates.createOwnRelationshipTemplate({
         maxNumberOfAllocations: 1,
@@ -200,7 +205,11 @@ export async function createTemplate(
     return response.result;
 }
 
-export async function getTemplateToken(client: ConnectorClient, forIdentity?: string, passwordProtection?: { password: string; passwordIsPin?: true }): Promise<ConnectorToken> {
+export async function getTemplateToken(
+    client: ConnectorClient,
+    forIdentity?: string,
+    passwordProtection?: { password: string; passwordIsPin?: true; passwordLocationIndicator?: PasswordLocationIndicator }
+): Promise<ConnectorToken> {
     const template = await createTemplate(client, forIdentity, passwordProtection);
 
     const response = await client.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { forIdentity, passwordProtection });
