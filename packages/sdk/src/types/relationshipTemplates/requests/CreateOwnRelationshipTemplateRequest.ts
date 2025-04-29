@@ -7,6 +7,7 @@ export interface CreateOwnRelationshipTemplateRequest {
     passwordProtection?: {
         password: string;
         passwordIsPin?: true;
+        passwordLocationIndicator?: string | number;
     };
     content: RelationshipTemplateContentJSON | ArbitraryRelationshipTemplateContentJSON;
 }

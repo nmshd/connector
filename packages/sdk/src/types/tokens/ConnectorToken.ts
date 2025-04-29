@@ -9,6 +9,7 @@ export interface ConnectorToken {
     passwordProtection?: {
         password: string;
         passwordIsPin?: true;
+        passwordLocationIndicator?: string | number;
     };
     truncatedReference: string;
     isEphemeral: boolean;
