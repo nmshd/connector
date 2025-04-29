@@ -340,6 +340,29 @@ describe("Password-protected tokens for files", () => {
         const response = await client2.files.loadPeerFile({ reference: token.truncatedReference, password: "1234" });
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
+
+    test("send and receive an unprotected file via PIN-protected token with PasswordLocationIndicator that is a string", async () => {
+        const file = await uploadFile(client1);
+        const token = (await client1.files.createTokenForFile(file.id, { passwordProtection: { password: "1234", passwordIsPin: true, passwordLocationIndicator: "Self" } }))
+            .result;
+        expect(token.passwordProtection?.password).toBe("1234");
+        expect(token.passwordProtection?.passwordIsPin).toBe(true);
+        expect(token.passwordProtection?.passwordLocationIndicator).toBe("Self");
+
+        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference, password: "1234" });
+        expect(response).toBeSuccessful(ValidationSchema.File);
+    });
+
+    test("send and receive an unprotected file via PIN-protected token with PasswordLocationIndicator that is a number", async () => {
+        const file = await uploadFile(client1);
+        const token = (await client1.files.createTokenForFile(file.id, { passwordProtection: { password: "1234", passwordIsPin: true, passwordLocationIndicator: 51 } })).result;
+        expect(token.passwordProtection?.password).toBe("1234");
+        expect(token.passwordProtection?.passwordIsPin).toBe(true);
+        expect(token.passwordProtection?.passwordLocationIndicator).toBe(51);
+
+        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference, password: "1234" });
+        expect(response).toBeSuccessful(ValidationSchema.File);
+    });
 });
 
 describe("Delete file", () => {

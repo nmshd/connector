@@ -7,4 +7,5 @@ export interface GetPeerRelationshipTemplatesRequest {
     passwordProtection?: "" | "!";
     "passwordProtection.password"?: string | string[];
     "passwordProtection.passwordIsPin"?: "true" | "!";
+    "passwordProtection.passwordLocationIndicator"?: string | string[];
 }
