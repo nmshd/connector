@@ -1,5 +1,3 @@
-import { PasswordLocationIndicator } from "@nmshd/core-types";
-
 export interface CreateOwnTokenRequest {
     expiresAt: string;
     content: unknown;
@@ -8,6 +6,6 @@ export interface CreateOwnTokenRequest {
     passwordProtection?: {
         password: string;
         passwordIsPin?: true;
-        passwordLocationIndicator?: PasswordLocationIndicator;
+        passwordLocationIndicator?: string | number;
     };
 }

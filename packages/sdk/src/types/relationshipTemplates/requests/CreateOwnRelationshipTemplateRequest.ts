@@ -1,5 +1,4 @@
 import { ArbitraryRelationshipTemplateContentJSON, RelationshipTemplateContentJSON } from "@nmshd/content";
-import { PasswordLocationIndicator } from "@nmshd/core-types";
 
 export interface CreateOwnRelationshipTemplateRequest {
     maxNumberOfAllocations?: number;
@@ -8,7 +7,7 @@ export interface CreateOwnRelationshipTemplateRequest {
     passwordProtection?: {
         password: string;
         passwordIsPin?: true;
-        passwordLocationIndicator?: PasswordLocationIndicator;
+        passwordLocationIndicator?: string | number;
     };
     content: RelationshipTemplateContentJSON | ArbitraryRelationshipTemplateContentJSON;
 }

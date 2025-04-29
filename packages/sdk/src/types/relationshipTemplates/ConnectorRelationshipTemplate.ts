@@ -1,5 +1,4 @@
 import { ArbitraryRelationshipTemplateContentJSON, RelationshipTemplateContentJSON } from "@nmshd/content";
-import { PasswordLocationIndicator } from "@nmshd/core-types";
 
 export interface ConnectorRelationshipTemplate {
     id: string;
@@ -14,7 +13,7 @@ export interface ConnectorRelationshipTemplate {
     passwordProtection?: {
         password: string;
         passwordIsPin?: true;
-        passwordLocationIndicator?: PasswordLocationIndicator;
+        passwordLocationIndicator?: string | number;
     };
     truncatedReference: string;
 }

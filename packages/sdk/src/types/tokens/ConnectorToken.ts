@@ -1,5 +1,3 @@
-import { PasswordLocationIndicator } from "@nmshd/core-types";
-
 export interface ConnectorToken {
     id: string;
     createdBy: string;
@@ -11,7 +9,7 @@ export interface ConnectorToken {
     passwordProtection?: {
         password: string;
         passwordIsPin?: true;
-        passwordLocationIndicator?: PasswordLocationIndicator;
+        passwordLocationIndicator?: string | number;
     };
     truncatedReference: string;
     isEphemeral: boolean;
