@@ -3346,6 +3346,10 @@ paths:
           schema:
             $ref: "#/components/schemas/PartialBooleanFilter"
         - in: query
+          name: passwordProtection.passwordLocationIndicator
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
           name: isOwn
           schema:
             $ref: "#/components/schemas/BooleanFilter"
@@ -3486,6 +3490,10 @@ paths:
           name: passwordProtection.passwordIsPin
           schema:
             $ref: "#/components/schemas/PartialBooleanFilter"
+        - in: query
+          name: passwordProtection.passwordLocationIndicator
+          schema:
+            $ref: "#/components/schemas/TextFilter"
       responses:
         200:
           description: Success
@@ -3601,6 +3609,10 @@ paths:
           name: passwordProtection.passwordIsPin
           schema:
             $ref: "#/components/schemas/PartialBooleanFilter"
+        - in: query
+          name: passwordProtection.passwordLocationIndicator
+          schema:
+            $ref: "#/components/schemas/TextFilter"
       responses:
         200:
           description: Success
@@ -4371,6 +4383,10 @@ paths:
           name: passwordProtection.passwordIsPin
           schema:
             $ref: "#/components/schemas/PartialBooleanFilter"
+        - in: query
+          name: passwordProtection.passwordLocationIndicator
+          schema:
+            $ref: "#/components/schemas/TextFilter"
       responses:
         200:
           description: Success
@@ -4484,6 +4500,10 @@ paths:
           name: passwordProtection.passwordIsPin
           schema:
             $ref: "#/components/schemas/PartialBooleanFilter"
+        - in: query
+          name: passwordProtection.passwordLocationIndicator
+          schema:
+            $ref: "#/components/schemas/TextFilter"
       responses:
         200:
           description: Success
@@ -5360,6 +5380,25 @@ components:
           enum: [true]
           nullable: true
           description: true if the password is a PIN, undefined otherwise. If it's a PIN, a numpad is displayed when entering the password in the App.
+        passwordLocationIndicator:
+          type:
+            - string
+            - number
+          oneOf:
+            - type: string
+              enum:
+                - RecoveryKit
+                - Self
+                - Letter
+                - RegistrationLetter
+                - Email
+                - SMS
+                - Website
+            - type: number
+              minimum: 50
+              maximum: 99
+          nullable: true
+          description: An indicator that shows where the password is located. This is used to display a hint in the App when entering the password. The value is not validated and is only used for display purposes.
       required:
         - password
 
