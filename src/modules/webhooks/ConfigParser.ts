@@ -46,17 +46,21 @@ export class ConfigParser {
     private static createAuthenticationProvider(authenticationProviderConfig: Record<string, unknown> | undefined): Result<AuthenticationProvider | undefined> {
         if (!authenticationProviderConfig) return Result.ok(undefined);
         if (typeof authenticationProviderConfig !== "object") {
-            return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig("'authenticationProvider' is not an object."));
+            return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig("'authenticationProvider' must be an object."));
         }
 
         if (typeof authenticationProviderConfig.type !== "string") {
-            return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig("'authenticationProvider.type' is not a string."));
+            return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig("'authenticationProvider.type' must be a string."));
         }
 
         if (authenticationProviderConfig.type === "OAuth2") {
             const bearerTokenConfig = authenticationProviderConfig as { type: "BearerToken"; accessTokenUrl: string; clientId: string; clientSecret: string; scope?: string };
             if (!bearerTokenConfig.accessTokenUrl || !bearerTokenConfig.clientId || !bearerTokenConfig.clientSecret) {
-                return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig("'BearerToken' authentication provider is missing required properties."));
+                return Result.fail(
+                    WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig(
+                        "'BearerToken' authentication provider is missing required properties. The object must contain at least 'accessTokenUrl', 'clientId' and 'clientSecret'."
+                    )
+                );
             }
 
             return Result.ok(
