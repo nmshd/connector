@@ -1,4 +1,5 @@
 import { Result } from "@js-soft/ts-utils";
+import { AuthenticationProvider, OAuth2AuthenticationProvider } from "./authentication";
 import { ConfigModel, Target, Webhook, WebhookUrlTemplate } from "./ConfigModel";
 import { WebhooksModuleApplicationErrors } from "./WebhooksModuleApplicationErrors";
 import { WebhooksModuleConfiguration, WebhooksModuleConfigurationWebhook } from "./WebhooksModuleConfiguration";
@@ -23,7 +24,7 @@ export class ConfigParser {
 
         for (const targetName in configJson.targets) {
             const targetJson = configJson.targets[targetName];
-            const targetModelResult = ConfigParser.createTarget(targetJson.url, targetJson.headers);
+            const targetModelResult = ConfigParser.createTarget(targetJson.url, targetJson.headers, targetJson.authenticationProvider);
             if (targetModelResult.isError) return Result.fail(targetModelResult.error);
 
             targets[targetName] = targetModelResult.value;
@@ -32,13 +33,42 @@ export class ConfigParser {
         return Result.ok(targets);
     }
 
-    private static createTarget(url: string, headers: Record<string, string> | undefined): Result<Target> {
+    private static createTarget(url: string, headers: Record<string, string> | undefined, authenticationProviderConfig: Record<string, unknown> | undefined): Result<Target> {
         const urlTemplateResult = WebhookUrlTemplate.fromString(url);
         if (urlTemplateResult.isError) return Result.fail(urlTemplateResult.error);
 
-        const target = new Target(urlTemplateResult.value, headers ?? {});
+        const authenticationProvider = this.createAuthenticationProvider(authenticationProviderConfig);
+        const target = new Target(urlTemplateResult.value, headers ?? {}, authenticationProvider.value);
 
         return Result.ok(target);
+    }
+
+    private static createAuthenticationProvider(authenticationProviderConfig: Record<string, unknown> | undefined): Result<AuthenticationProvider | undefined> {
+        if (!authenticationProviderConfig) return Result.ok(undefined);
+
+        if (typeof authenticationProviderConfig.type !== "string") {
+            return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig());
+        }
+
+        if (authenticationProviderConfig.type === "OAuth2") {
+            const bearerTokenConfig = authenticationProviderConfig as {
+                type: "BearerToken";
+                accessTokenUrl: string;
+                clientId: string;
+                clientSecret: string;
+                scope?: string;
+            };
+
+            if (!bearerTokenConfig.accessTokenUrl || !bearerTokenConfig.clientId || !bearerTokenConfig.clientSecret) {
+                return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig());
+            }
+
+            return Result.ok(
+                new OAuth2AuthenticationProvider(bearerTokenConfig.accessTokenUrl, bearerTokenConfig.clientId, bearerTokenConfig.clientSecret, bearerTokenConfig.scope)
+            );
+        }
+
+        return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderType(authenticationProviderConfig.type));
     }
 
     private static parseWebhooks(configJson: WebhooksModuleConfiguration, namedTargets: Record<string, Target | undefined>): Result<Webhook[]> {
@@ -69,7 +99,7 @@ export class ConfigParser {
 
             target = namedTarget;
         } else {
-            const targetResult = ConfigParser.createTarget(webhookJson.target.url, webhookJson.target.headers);
+            const targetResult = ConfigParser.createTarget(webhookJson.target.url, webhookJson.target.headers, webhookJson.target.authenticationProvider);
             if (targetResult.isError) return Result.fail(targetResult.error);
 
             target = targetResult.value;

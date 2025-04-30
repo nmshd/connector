@@ -2,9 +2,8 @@ import { Event, DataEvent as tsUtilsDataEvent } from "@js-soft/ts-utils";
 import { ConnectorRuntimeModule } from "@nmshd/connector-types";
 import { DataEvent } from "@nmshd/runtime";
 import agentKeepAlive from "agentkeepalive";
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import correlator from "correlation-id";
-import { DateTime } from "luxon";
 import { ConfigModel, Webhook } from "./ConfigModel";
 import { ConfigParser } from "./ConfigParser";
 import { WebhooksModuleConfiguration } from "./WebhooksModuleConfiguration";
@@ -12,16 +11,9 @@ import { WebhooksModuleConfiguration } from "./WebhooksModuleConfiguration";
 export class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfiguration> {
     private axios: AxiosInstance;
     private configModel: ConfigModel;
-    private bearerToken: string;
-    private expirationDate: DateTime;
-    private tokenSetPromise: Promise<void>;
 
-    public async init(): Promise<void> {
+    public init(): void {
         this.configModel = ConfigParser.parse(this.configuration).value;
-
-        if (!this.configuration.clientId || !this.configuration.clientSecret || !this.configuration.tokenUrl) {
-            throw new Error("clientId, clientSecret and tokenUrl are required for OAuth authentication.");
-        }
 
         this.axios = axios.create({
             httpAgent: new agentKeepAlive(),
@@ -29,9 +21,6 @@ export class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfigu
             validateStatus: () => true,
             maxRedirects: 0
         });
-
-        this.tokenSetPromise = this.fetchToken();
-        await this.tokenSetPromise;
     }
 
     public start(): void {
@@ -42,56 +31,11 @@ export class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfigu
         }
     }
 
-    private async fetchToken() {
-        const response = await this.axios.post(
-            this.configuration.tokenUrl,
-            {
-                grant_type: "client_credentials"
-            },
-            {
-                headers: {
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                auth: {
-                    password: this.configuration.clientSecret,
-                    username: this.configuration.clientId
-                }
-            }
-        );
-
-        if (response.status !== 200) {
-            throw new Error(`Failed to fetch token: ${response.statusText}`);
-        }
-        this.expirationDate = DateTime.now().plus({ seconds: response.data.expires_in });
-        this.logger.info(`Token expires at ${this.expirationDate.toISO()}`);
-        this.bearerToken = response.data.access_token;
-    }
-
-    private checkTokenExpiration() {
-        if (DateTime.now() > this.expirationDate) {
-            this.tokenSetPromise = this.fetchToken();
-            return;
-        }
-
-        if (DateTime.now().minus({ hours: 1 }) > this.expirationDate) {
-            // eslint-disable-next-line no-void
-            void this.fetchToken();
-        }
-    }
-
     private async handleEvent(event: Event, webhook: Webhook) {
         await this.triggerWebhook(webhook, event.namespace, event instanceof DataEvent || event instanceof tsUtilsDataEvent ? event.data : undefined);
     }
 
     private async triggerWebhook(webhook: Webhook, trigger: string, data: unknown) {
-        this.checkTokenExpiration();
-        try {
-            await this.tokenSetPromise;
-        } catch (e) {
-            this.logger.error("Failed to fetch token", e);
-            return;
-        }
         const url = webhook.target.urlTemplate.fill({ trigger });
 
         const payload: WebhookPayload = {
@@ -102,18 +46,19 @@ export class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfigu
         try {
             this.logger.debug(`Sending request to webhook '${url}' for trigger '${trigger}'.`);
 
-            let headers = webhook.target.headers;
-
-            headers = {
-                ...headers,
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                Authorization: `Bearer ${this.bearerToken}`
-            };
+            const headers: Record<string, string> = { ...webhook.target.headers };
 
             const correlationId = correlator.getId();
-            if (correlationId) headers = { ...headers, "x-correlation-id": correlationId };
+            if (correlationId) headers["x-correlation-id"] = correlationId;
             this.logger.info(`Sending request to webhook ${JSON.stringify(payload)}`);
-            const response = await this.axios.post(url, payload, { headers });
+
+            const config: AxiosRequestConfig = { headers };
+
+            if (webhook.target.authenticationProvider) {
+                await webhook.target.authenticationProvider.authenticate(config);
+            }
+
+            const response = await this.axios.post(url, payload, config);
 
             if (response.status < 200 || response.status > 299) {
                 this.logger.warn(`Request to webhook '${url}' returned status ${response.status}. Expected value between 200 and 299.`);
