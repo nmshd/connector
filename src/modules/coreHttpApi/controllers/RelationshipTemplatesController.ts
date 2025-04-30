@@ -73,7 +73,7 @@ export class RelationshipTemplatesController extends BaseController {
     @POST
     @Path("/Own/:id/Token")
     @Accept("application/json", "image/png")
-    public async createTokenForOwnTemplate(
+    public async createTokenForOwnRelationshipTemplate(
         @PathParam("id") id: string,
         @ContextAccept accept: string,
         @ContextResponse response: express.Response,
