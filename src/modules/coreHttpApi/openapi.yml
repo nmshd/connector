@@ -3687,7 +3687,7 @@ paths:
 
   /api/v2/RelationshipTemplates/Own/{id}/Token:
     post:
-      operationId: createTokenForTemplate
+      operationId: createTokenForOwnRelationshipTemplate
       description: Creates a `Token` for the own `RelationshipTemplate` with the given `id`. If the accept header is set to `image/png` instead of `application/json`, a QR Code containing the reference to the token is shown.
       tags:
         - RelationshipTemplates
