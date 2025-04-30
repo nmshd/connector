@@ -79,7 +79,7 @@ export class RelationshipTemplatesController extends BaseController {
         @ContextResponse response: express.Response,
         request: any
     ): Promise<Return.NewResource<Envelope> | void> {
-        const result = await this.transportServices.relationshipTemplates.createTokenForOwnTemplate({
+        const result = await this.transportServices.relationshipTemplates.createTokenForOwnRelationshipTemplate({
             templateId: id,
             expiresAt: request.expiresAt,
             ephemeral: request.ephemeral || accept === "image/png",
