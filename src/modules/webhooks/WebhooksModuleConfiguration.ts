@@ -9,13 +9,19 @@ export interface WebhooksModuleConfiguration extends ConnectorRuntimeModuleConfi
 export interface WebhooksModuleConfigurationTarget {
     url: string;
     headers?: Record<string, string>;
-    authenticationProvider?: {
-        type: "OAuth2";
-        accessTokenUrl: string;
-        clientId: string;
-        clientSecret: string;
-        scope?: string;
-    };
+    authenticationProvider?:
+        | {
+              type: "OAuth2";
+              accessTokenUrl: string;
+              clientId: string;
+              clientSecret: string;
+              scope?: string;
+          }
+        | {
+              type: "ApiKey";
+              apiKey: string;
+              headerName?: string;
+          };
 }
 
 export interface WebhooksModuleConfigurationWebhook {

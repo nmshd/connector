@@ -1,5 +1,5 @@
 import { Result } from "@js-soft/ts-utils";
-import { AuthenticationProvider, OAuth2AuthenticationProvider } from "./authentication";
+import { ApiKeyAuthenticationProvider, AuthenticationProvider, OAuth2AuthenticationProvider } from "./authentication";
 import { ConfigModel, Target, Webhook, WebhookUrlTemplate } from "./ConfigModel";
 import { WebhooksModuleApplicationErrors } from "./WebhooksModuleApplicationErrors";
 import { WebhooksModuleConfiguration, WebhooksModuleConfigurationWebhook } from "./WebhooksModuleConfiguration";
@@ -68,7 +68,22 @@ export class ConfigParser {
             );
         }
 
-        return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig(`Invalid authentication provider type '${authenticationProviderConfig.type}'.`));
+        if (authenticationProviderConfig.type === "ApiKey") {
+            const apiKeyConfig = authenticationProviderConfig as { type: "ApiKey"; apiKey: string; headerName?: string };
+            if (!apiKeyConfig.apiKey) {
+                return Result.fail(
+                    WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig("'ApiKey' authentication provider is missing the required property 'apiKey'.")
+                );
+            }
+
+            return Result.ok(new ApiKeyAuthenticationProvider(apiKeyConfig.apiKey, apiKeyConfig.headerName));
+        }
+
+        return Result.fail(
+            WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig(
+                `The authentication provider type '${authenticationProviderConfig.type}' is invalid. Valid types are 'OAuth2' and 'ApiKey'`
+            )
+        );
     }
 
     private static parseWebhooks(configJson: WebhooksModuleConfiguration, namedTargets: Record<string, Target | undefined>): Result<Webhook[]> {
