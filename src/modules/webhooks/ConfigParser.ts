@@ -45,20 +45,14 @@ export class ConfigParser {
 
     private static createAuthenticationProvider(authenticationProviderConfig: Record<string, unknown> | undefined): Result<AuthenticationProvider | undefined> {
         if (!authenticationProviderConfig) return Result.ok(undefined);
+        if (typeof authenticationProviderConfig !== "object") return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig());
 
         if (typeof authenticationProviderConfig.type !== "string") {
             return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig());
         }
 
         if (authenticationProviderConfig.type === "OAuth2") {
-            const bearerTokenConfig = authenticationProviderConfig as {
-                type: "BearerToken";
-                accessTokenUrl: string;
-                clientId: string;
-                clientSecret: string;
-                scope?: string;
-            };
-
+            const bearerTokenConfig = authenticationProviderConfig as { type: "BearerToken"; accessTokenUrl: string; clientId: string; clientSecret: string; scope?: string };
             if (!bearerTokenConfig.accessTokenUrl || !bearerTokenConfig.clientId || !bearerTokenConfig.clientSecret) {
                 return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig());
             }
