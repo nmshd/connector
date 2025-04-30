@@ -4,6 +4,9 @@ export interface WebhooksModuleConfiguration extends ConnectorRuntimeModuleConfi
     targets?: Record<string, WebhooksModuleConfigurationTarget>;
     webhooks?: WebhooksModuleConfigurationWebhook[];
     skipTlsCheck?: boolean;
+    clientId: string;
+    clientSecret: string;
+    tokenUrl: string;
 }
 
 export interface WebhooksModuleConfigurationTarget {
