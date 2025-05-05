@@ -1,8 +1,8 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { DateTime } from "luxon";
-import { AuthenticationProvider } from "./AuthenticationProvider";
+import { TargetAuthenticator } from "./TargetAuthenticator";
 
-export class OAuth2AuthenticationProvider extends AuthenticationProvider {
+export class OAuth2TargetAuthenticator extends TargetAuthenticator {
     private readonly axios: AxiosInstance;
     private bearerToken: string;
     private expirationDate: DateTime;
