@@ -1,3 +1,3 @@
-export * from "./ApiKeyAuthenticationProvider";
-export * from "./AuthenticationProvider";
-export * from "./OAuth2AuthenticationProvider";
+export * from "./ApiKeyTargetAuthenticator";
+export * from "./OAuth2TargetAuthenticator";
+export * from "./TargetAuthenticator";

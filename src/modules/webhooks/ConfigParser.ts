@@ -1,5 +1,5 @@
 import { Result } from "@js-soft/ts-utils";
-import { ApiKeyAuthenticationProvider, AuthenticationProvider, OAuth2AuthenticationProvider } from "./authentication";
+import { ApiKeyTargetAuthenticator, OAuth2TargetAuthenticator, TargetAuthenticator } from "./authentication";
 import { ConfigModel, Target, Webhook, WebhookUrlTemplate } from "./ConfigModel";
 import { WebhooksModuleApplicationErrors } from "./WebhooksModuleApplicationErrors";
 import { WebhooksModuleConfiguration, WebhooksModuleConfigurationWebhook } from "./WebhooksModuleConfiguration";
@@ -24,7 +24,7 @@ export class ConfigParser {
 
         for (const targetName in configJson.targets) {
             const targetJson = configJson.targets[targetName];
-            const targetModelResult = ConfigParser.createTarget(targetJson.url, targetJson.headers, targetJson.authenticationProvider);
+            const targetModelResult = ConfigParser.createTarget(targetJson.url, targetJson.headers, targetJson.authentication);
             if (targetModelResult.isError) return Result.fail(targetModelResult.error);
 
             targets[targetName] = targetModelResult.value;
@@ -33,56 +33,50 @@ export class ConfigParser {
         return Result.ok(targets);
     }
 
-    private static createTarget(url: string, headers: Record<string, string> | undefined, authenticationProviderConfig: Record<string, unknown> | undefined): Result<Target> {
+    private static createTarget(url: string, headers: Record<string, string> | undefined, authenticationConfig: Record<string, unknown> | undefined): Result<Target> {
         const urlTemplateResult = WebhookUrlTemplate.fromString(url);
         if (urlTemplateResult.isError) return Result.fail(urlTemplateResult.error);
 
-        const authenticationProvider = this.createAuthenticationProvider(authenticationProviderConfig);
-        const target = new Target(urlTemplateResult.value, headers ?? {}, authenticationProvider.value);
+        const authenticator = this.createTargetAuthenticator(authenticationConfig);
+        const target = new Target(urlTemplateResult.value, headers ?? {}, authenticator.value);
 
         return Result.ok(target);
     }
 
-    private static createAuthenticationProvider(authenticationProviderConfig: Record<string, unknown> | undefined): Result<AuthenticationProvider | undefined> {
-        if (!authenticationProviderConfig) return Result.ok(undefined);
-        if (typeof authenticationProviderConfig !== "object") {
-            return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig("'authenticationProvider' must be an object."));
+    private static createTargetAuthenticator(authenticationConfig: Record<string, unknown> | undefined): Result<TargetAuthenticator | undefined> {
+        if (!authenticationConfig) return Result.ok(undefined);
+        if (typeof authenticationConfig !== "object") {
+            return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationConfig("'authentication' must be an object."));
         }
 
-        if (typeof authenticationProviderConfig.type !== "string") {
-            return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig("'authenticationProvider.type' must be a string."));
+        if (typeof authenticationConfig.type !== "string") {
+            return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationConfig("'authentication.type' must be a string."));
         }
 
-        if (authenticationProviderConfig.type === "OAuth2") {
-            const bearerTokenConfig = authenticationProviderConfig as { type: "BearerToken"; accessTokenUrl: string; clientId: string; clientSecret: string; scope?: string };
+        if (authenticationConfig.type === "OAuth2") {
+            const bearerTokenConfig = authenticationConfig as { type: "BearerToken"; accessTokenUrl: string; clientId: string; clientSecret: string; scope?: string };
             if (!bearerTokenConfig.accessTokenUrl || !bearerTokenConfig.clientId || !bearerTokenConfig.clientSecret) {
                 return Result.fail(
-                    WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig(
-                        "'BearerToken' authentication provider is missing required properties. The object must contain at least 'accessTokenUrl', 'clientId' and 'clientSecret'."
+                    WebhooksModuleApplicationErrors.invalidAuthenticationConfig(
+                        "'BearerToken' authentication is missing required properties. The object must contain at least 'accessTokenUrl', 'clientId' and 'clientSecret'."
                     )
                 );
             }
 
-            return Result.ok(
-                new OAuth2AuthenticationProvider(bearerTokenConfig.accessTokenUrl, bearerTokenConfig.clientId, bearerTokenConfig.clientSecret, bearerTokenConfig.scope)
-            );
+            return Result.ok(new OAuth2TargetAuthenticator(bearerTokenConfig.accessTokenUrl, bearerTokenConfig.clientId, bearerTokenConfig.clientSecret, bearerTokenConfig.scope));
         }
 
-        if (authenticationProviderConfig.type === "ApiKey") {
-            const apiKeyConfig = authenticationProviderConfig as { type: "ApiKey"; apiKey: string; headerName?: string };
+        if (authenticationConfig.type === "ApiKey") {
+            const apiKeyConfig = authenticationConfig as { type: "ApiKey"; apiKey: string; headerName?: string };
             if (!apiKeyConfig.apiKey) {
-                return Result.fail(
-                    WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig("'ApiKey' authentication provider is missing the required property 'apiKey'.")
-                );
+                return Result.fail(WebhooksModuleApplicationErrors.invalidAuthenticationConfig("'ApiKey' authentication is missing the required property 'apiKey'."));
             }
 
-            return Result.ok(new ApiKeyAuthenticationProvider(apiKeyConfig.apiKey, apiKeyConfig.headerName));
+            return Result.ok(new ApiKeyTargetAuthenticator(apiKeyConfig.apiKey, apiKeyConfig.headerName));
         }
 
         return Result.fail(
-            WebhooksModuleApplicationErrors.invalidAuthenticationProviderConfig(
-                `The authentication provider type '${authenticationProviderConfig.type}' is invalid. Valid types are 'OAuth2' and 'ApiKey'`
-            )
+            WebhooksModuleApplicationErrors.invalidAuthenticationConfig(`The authentication type '${authenticationConfig.type}' is invalid. Valid types are 'OAuth2' and 'ApiKey'`)
         );
     }
 
@@ -114,7 +108,7 @@ export class ConfigParser {
 
             target = namedTarget;
         } else {
-            const targetResult = ConfigParser.createTarget(webhookJson.target.url, webhookJson.target.headers, webhookJson.target.authenticationProvider);
+            const targetResult = ConfigParser.createTarget(webhookJson.target.url, webhookJson.target.headers, webhookJson.target.authentication);
             if (targetResult.isError) return Result.fail(targetResult.error);
 
             target = targetResult.value;

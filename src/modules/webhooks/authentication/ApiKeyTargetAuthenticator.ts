@@ -1,7 +1,7 @@
 import { AxiosRequestConfig } from "axios";
-import { AuthenticationProvider } from "./AuthenticationProvider";
+import { TargetAuthenticator } from "./TargetAuthenticator";
 
-export class ApiKeyAuthenticationProvider implements AuthenticationProvider {
+export class ApiKeyTargetAuthenticator implements TargetAuthenticator {
     public constructor(
         private readonly apiKey: string,
         private readonly headerName = "x-api-key"
