@@ -272,6 +272,45 @@ describe("Attributes Query", () => {
 
         await conditions.executeTests((c, q) => c.attributes.getValidAttributes(q), ValidationSchema.ConnectorAttributes);
     });
+
+    test("should query own shared identity attributes", async () => {
+        const attribute = await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
+            "@type": "GivenName",
+            value: "AGivenName"
+        });
+
+        const conditions = new QueryParamConditions(attribute, client1)
+            .addStringSet("content.@type")
+            .addStringArraySet("content.tags")
+            .addStringSet("content.key")
+            .addBooleanSet("content.isTechnical")
+            .addStringSet("content.confidentiality")
+            .addStringSet("content.value.@type")
+            .addStringSet("shareInfo.requestReference")
+            .addStringSet("shareInfo.sourceAttribute");
+
+        await conditions.executeTests((c, q) => c.attributes.getOwnSharedIdentityAttributes({ ...q, peer: client2Address }), ValidationSchema.ConnectorAttributes);
+    });
+
+    test("should query peer shared identity attributes", async () => {
+        const ownSharedAttribute = await executeFullCreateAndShareRepositoryAttributeFlow(client2, client1, {
+            "@type": "GivenName",
+            value: "AGivenName"
+        });
+
+        const peerSharedAttribute = (await client1.attributes.getAttribute(ownSharedAttribute.id)).result;
+
+        const conditions = new QueryParamConditions(peerSharedAttribute, client1)
+            .addStringSet("content.@type")
+            .addStringArraySet("content.tags")
+            .addStringSet("content.key")
+            .addBooleanSet("content.isTechnical")
+            .addStringSet("content.confidentiality")
+            .addStringSet("content.value.@type")
+            .addStringSet("shareInfo.requestReference");
+
+        await conditions.executeTests((c, q) => c.attributes.getPeerSharedIdentityAttributes({ ...q, peer: client2Address }), ValidationSchema.ConnectorAttributes);
+    });
 });
 
 describe("Execute AttributeQueries", () => {
