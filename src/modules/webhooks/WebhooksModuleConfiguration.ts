@@ -9,7 +9,7 @@ export interface WebhooksModuleConfiguration extends ConnectorRuntimeModuleConfi
 export interface WebhooksModuleConfigurationTarget {
     url: string;
     headers?: Record<string, string>;
-    authenticationProvider?:
+    authentication?:
         | {
               type: "OAuth2";
               accessTokenUrl: string;

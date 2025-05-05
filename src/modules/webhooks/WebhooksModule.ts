@@ -54,8 +54,8 @@ export class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfigu
 
             const config: AxiosRequestConfig = { headers };
 
-            if (webhook.target.authenticationProvider) {
-                await webhook.target.authenticationProvider.authenticate(config);
+            if (webhook.target.authenticator) {
+                await webhook.target.authenticator.authenticate(config);
             }
 
             const response = await this.axios.post(url, payload, config);
