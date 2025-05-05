@@ -1,5 +1,5 @@
 import { Result } from "@js-soft/ts-utils";
-import { AuthenticationProvider } from "./authentication";
+import { TargetAuthenticator } from "./authentication";
 import { WebhooksModuleApplicationErrors } from "./WebhooksModuleApplicationErrors";
 
 export class ConfigModel {
@@ -20,7 +20,7 @@ export class Target {
     public constructor(
         public readonly urlTemplate: WebhookUrlTemplate,
         public readonly headers: Record<string, string>,
-        public readonly authenticationProvider?: AuthenticationProvider
+        public readonly authenticator?: TargetAuthenticator
     ) {}
 }
 

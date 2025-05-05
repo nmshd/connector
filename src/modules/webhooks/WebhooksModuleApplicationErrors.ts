@@ -9,7 +9,7 @@ export class WebhooksModuleApplicationErrors {
         return new ApplicationError("error.runtime.modules.webhooks.invalidUrlFormat", `'${url}' is not a valid URL.`);
     }
 
-    public static invalidAuthenticationProviderConfig(message: string): ApplicationError {
-        return new ApplicationError("error.runtime.modules.webhooks.invalidAuthenticationProviderConfig", message);
+    public static invalidAuthenticationConfig(message: string): ApplicationError {
+        return new ApplicationError("error.runtime.modules.webhooks.invalidAuthenticationConfig", message);
     }
 }
