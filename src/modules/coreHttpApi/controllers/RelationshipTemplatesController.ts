@@ -41,7 +41,7 @@ export class RelationshipTemplatesController extends BaseController {
     }
 
     @GET
-    @Path(":id")
+    @Path("/:id")
     @Accept("application/json", "image/png")
     public async getRelationshipTemplate(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         const result = await this.transportServices.relationshipTemplates.getRelationshipTemplate({ id });

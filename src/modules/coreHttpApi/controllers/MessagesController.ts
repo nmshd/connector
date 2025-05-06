@@ -28,7 +28,7 @@ export class MessagesController extends BaseController {
     }
 
     @GET
-    @Path(":id")
+    @Path("/:id")
     @Accept("application/json")
     public async getMessage(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.messages.getMessage({ id });
@@ -36,7 +36,7 @@ export class MessagesController extends BaseController {
     }
 
     @GET
-    @Path(":id/Attachments/:attachmentId")
+    @Path("/:id/Attachments/:attachmentId")
     @Accept("application/json")
     public async getMessageAttachmentMetadata(@PathParam("id") id: string, @PathParam("attachmentId") attachmentId: string): Promise<Envelope> {
         const result = await this.transportServices.messages.getAttachmentMetadata({ id, attachmentId });
@@ -44,7 +44,7 @@ export class MessagesController extends BaseController {
     }
 
     @GET
-    @Path(":id/Attachments/:attachmentId/Download")
+    @Path("/:id/Attachments/:attachmentId/Download")
     @Accept("application/json")
     public async downloadMessageAttachment(
         @PathParam("id") id: string,

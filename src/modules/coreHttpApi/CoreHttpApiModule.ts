@@ -31,7 +31,7 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
     }
 
     private addDocumentation() {
-        this.runtime.infrastructure.httpServer.addEndpoint("get", "/api-docs*", false, (_req, res) => {
+        this.runtime.infrastructure.httpServer.addEndpoint("get", "/api-docs*splat", false, (_req, res) => {
             res.redirect(301, "/docs/swagger");
         });
 
