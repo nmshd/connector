@@ -1,4 +1,4 @@
-FROM node:23.11.0
+FROM node:23.11.0@sha256:ee8a0bc5bbaece0c538c76e7c20fde6d4db319bbd5d4e423940999f16da89aa1
 WORKDIR /usr/app
 
 # Webserver, Debugger
