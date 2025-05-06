@@ -33,6 +33,11 @@
             groupName: "minor-updates-github-tags-and-runners",
             matchDatasources: ["github-tags", "github-runners"],
             matchUpdateTypes: ["minor"]
+        },
+        {
+            groupName: "minor-updates-helm",
+            matchDatasources: ["helm"],
+            matchUpdateTypes: ["minor"]
         }
     ]
 }
