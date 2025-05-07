@@ -1,7 +1,7 @@
 import { BaseController, Envelope, QRCode } from "@nmshd/connector-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, GET, POST, Path, PathParam, Return, ServiceContext } from "@nmshd/typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
 
 @Path("/api/v2/RelationshipTemplates")
@@ -43,12 +43,17 @@ export class RelationshipTemplatesController extends BaseController {
     @GET
     @Path("/:id")
     @Accept("application/json", "image/png")
-    public async getRelationshipTemplate(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+    public async getRelationshipTemplate(
+        @PathParam("id") id: string,
+        @ContextAccept accept: string,
+        @ContextResponse response: express.Response,
+        @QueryParam("newQRCodeFormat") newQRCodeFormat?: boolean
+    ): Promise<Envelope | void> {
         const result = await this.transportServices.relationshipTemplates.getRelationshipTemplate({ id });
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(r.value.reference.truncated), `${id}.png`, response, 200);
+                return await this.qrCode(result, (r) => QRCode.for(newQRCodeFormat ? r.value.reference.truncated : r.value.reference.truncated), `${id}.png`, response, 200);
             default:
                 return this.ok(result);
         }
@@ -79,6 +84,9 @@ export class RelationshipTemplatesController extends BaseController {
         @ContextResponse response: express.Response,
         request: any
     ): Promise<Return.NewResource<Envelope> | void> {
+        const newQRCodeFormat = request["newQRCodeFormat"] === true;
+        delete request["newQRCodeFormat"];
+
         const result = await this.transportServices.relationshipTemplates.createTokenForOwnRelationshipTemplate({
             templateId: id,
             expiresAt: request.expiresAt,
@@ -89,7 +97,7 @@ export class RelationshipTemplatesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(r.value.reference.truncated), `${id}.png`, response, 201);
+                return await this.qrCode(result, (r) => QRCode.for(newQRCodeFormat ? r.value.reference.url : r.value.reference.truncated), `${id}.png`, response, 201);
             default:
                 return this.created(result);
         }
