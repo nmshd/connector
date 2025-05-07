@@ -1,5 +1,6 @@
 export interface ConnectorToken {
     id: string;
+    isOwn: boolean;
     createdBy: string;
     createdByDevice: string;
     content: unknown;
