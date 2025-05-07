@@ -48,7 +48,7 @@ export class RelationshipTemplatesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(r.value.truncatedReference), `${id}.png`, response, 200);
+                return await this.qrCode(result, (r) => QRCode.for(r.value.reference.truncated), `${id}.png`, response, 200);
             default:
                 return this.ok(result);
         }
@@ -89,7 +89,7 @@ export class RelationshipTemplatesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(r.value.truncatedReference), `${id}.png`, response, 201);
+                return await this.qrCode(result, (r) => QRCode.for(r.value.reference.truncated), `${id}.png`, response, 201);
             default:
                 return this.created(result);
         }
