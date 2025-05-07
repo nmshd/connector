@@ -24,7 +24,7 @@ describe("Relationships", () => {
     test("should create a relationship", async () => {
         const token = await getTemplateToken(client1);
 
-        const loadRelationshipResponse = await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.truncatedReference });
+        const loadRelationshipResponse = await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.reference.truncated });
         expect(loadRelationshipResponse).toBeSuccessful(ValidationSchema.RelationshipTemplate);
         const templateId = loadRelationshipResponse.result.id;
 
@@ -78,7 +78,7 @@ describe("Relationships", () => {
     test("reject relationship", async () => {
         const token = await getTemplateToken(client1);
 
-        const loadRelationshipResponse = await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.truncatedReference });
+        const loadRelationshipResponse = await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.reference.truncated });
         expect(loadRelationshipResponse).toBeSuccessful(ValidationSchema.RelationshipTemplate);
         const templateId = loadRelationshipResponse.result.id;
 
@@ -110,7 +110,7 @@ describe("Relationships", () => {
     test("revoke relationship", async () => {
         const token = await getTemplateToken(client1);
 
-        const loadRelationshipResponse = await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.truncatedReference });
+        const loadRelationshipResponse = await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.reference.truncated });
         expect(loadRelationshipResponse).toBeSuccessful(ValidationSchema.RelationshipTemplate);
         const templateId = loadRelationshipResponse.result.id;
 

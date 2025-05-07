@@ -25,7 +25,7 @@ test("load a token", async () => {
     const template = await uploadOwnToken(client1);
 
     const response = await client2.tokens.loadPeerToken({
-        reference: template.truncatedReference
+        reference: template.reference.truncated
     });
     expect(response).toBeSuccessful(ValidationSchema.Token);
 });
@@ -36,7 +36,7 @@ test("send and receive a personalized token", async () => {
     expect(template.forIdentity).toBe(client2address);
 
     const response = await client2.tokens.loadPeerToken({
-        reference: template.truncatedReference
+        reference: template.reference.truncated
     });
     expect(response).toBeSuccessful(ValidationSchema.Token);
     expect(response.result.forIdentity).toBe(client2address);
@@ -48,7 +48,7 @@ test("send and receive a password-protected token", async () => {
     expect(token.passwordProtection?.passwordIsPin).toBeUndefined();
 
     const response = await client2.tokens.loadPeerToken({
-        reference: token.truncatedReference,
+        reference: token.reference.truncated,
         password: "password"
     });
     expect(response).toBeSuccessful(ValidationSchema.Token);
@@ -62,7 +62,7 @@ test("send and receive a PIN-protected token", async () => {
     expect(token.passwordProtection?.passwordIsPin).toBe(true);
 
     const response = await client2.tokens.loadPeerToken({
-        reference: token.truncatedReference,
+        reference: token.reference.truncated,
         password: "1234"
     });
     expect(response).toBeSuccessful(ValidationSchema.Token);
@@ -76,7 +76,7 @@ test("send and receive a password-protected token with PasswordLocationIndicator
     expect(token.passwordProtection?.passwordLocationIndicator).toBe("Email");
 
     const response = await client2.tokens.loadPeerToken({
-        reference: token.truncatedReference,
+        reference: token.reference.truncated,
         password: "password"
     });
     expect(response).toBeSuccessful(ValidationSchema.Token);
@@ -90,7 +90,7 @@ test("send and receive a password-protected token with PasswordLocationIndicator
     expect(token.passwordProtection?.passwordLocationIndicator).toBe(99);
 
     const response = await client2.tokens.loadPeerToken({
-        reference: token.truncatedReference,
+        reference: token.reference.truncated,
         password: "password"
     });
     expect(response).toBeSuccessful(ValidationSchema.Token);

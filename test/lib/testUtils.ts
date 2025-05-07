@@ -231,7 +231,7 @@ export async function exchangeTemplate(clientCreator: ConnectorClient, clientRec
     const templateToken = await getTemplateToken(clientCreator, forIdentity);
 
     const response = await clientRecpipient.relationshipTemplates.loadPeerRelationshipTemplate({
-        reference: templateToken.truncatedReference
+        reference: templateToken.reference.truncated
     });
     expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
 
@@ -241,7 +241,7 @@ export async function exchangeTemplate(clientCreator: ConnectorClient, clientRec
 export async function exchangeFile(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient): Promise<ConnectorFile> {
     const fileToken = await getFileToken(clientCreator);
 
-    const response = await clientRecpipient.files.loadPeerFile({ reference: fileToken.truncatedReference });
+    const response = await clientRecpipient.files.loadPeerFile({ reference: fileToken.reference.truncated });
     expect(response).toBeSuccessful(ValidationSchema.File);
 
     return response.result;
@@ -250,7 +250,7 @@ export async function exchangeFile(clientCreator: ConnectorClient, clientRecpipi
 export async function exchangeToken(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient, forIdentity?: string): Promise<ConnectorToken> {
     const token = await uploadOwnToken(clientCreator, forIdentity);
 
-    const response = await clientRecpipient.tokens.loadPeerToken({ reference: token.truncatedReference });
+    const response = await clientRecpipient.tokens.loadPeerToken({ reference: token.reference.truncated });
     expect(response).toBeSuccessful(ValidationSchema.Token);
 
     return response.result;
