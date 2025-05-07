@@ -78,7 +78,7 @@
         ]
     },
     "dependencies": {
-        "@google-cloud/pubsub": "^4.11.0",
+        "@google-cloud/pubsub": "^5.0.0",
         "@js-soft/docdb-access-loki": "^1.2.0",
         "@js-soft/docdb-access-mongo": "1.2.0",
         "@js-soft/node-logger": "1.2.0",
@@ -98,7 +98,7 @@
         "helmet": "8.1.0",
         "json-stringify-safe": "5.0.1",
         "jsonschema": "1.5.0",
-        "mqtt": "^5.12.0",
+        "mqtt": "^5.12.1",
         "nconf": "0.13.0",
         "on-headers": "1.0.2",
         "rapidoc": "9.3.8",
