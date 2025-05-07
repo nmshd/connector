@@ -12,5 +12,9 @@ export interface ConnectorToken {
         passwordLocationIndicator?: string | number;
     };
     truncatedReference: string;
+    reference: {
+        truncated: string;
+        url: string;
+    };
     isEphemeral: boolean;
 }
