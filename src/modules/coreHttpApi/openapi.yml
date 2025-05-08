@@ -2129,6 +2129,13 @@ paths:
             oneOf:
               - $ref: "#/components/schemas/FileID"
               - $ref: "#/components/schemas/FileReferenceTruncated"
+        - in: query
+          name: newQRCodeFormat
+          description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
+          required: false
+          schema:
+            type: boolean
+            default: false
 
       responses:
         200:
@@ -2233,6 +2240,10 @@ paths:
                   $ref: "#/components/schemas/PasswordProtection"
                   nullable: true
                   description: The password that will be required to load this Token and information about the password.
+                newQRCodeFormat:
+                  type: boolean
+                  description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
+                  nullable: true
       responses:
         201:
           description: Success
@@ -3653,6 +3664,13 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipTemplateID"
+        - in: query
+          name: newQRCodeFormat
+          description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
+          required: false
+          schema:
+            type: boolean
+            default: false
       responses:
         200:
           description: Success
@@ -3719,6 +3737,10 @@ paths:
                   $ref: "#/components/schemas/PasswordProtection"
                   nullable: true
                   description: The password that will be required to load this Token and information about the password. If passwordProtection is set for the RelationshipTemplate, the same passwordProtection must also be given here.
+                newQRCodeFormat:
+                  type: boolean
+                  description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
+                  nullable: true
       responses:
         201:
           description: Success
@@ -4544,6 +4566,13 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/TokenID"
+        - in: query
+          name: newQRCodeFormat
+          description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
+          required: false
+          schema:
+            type: boolean
+            default: false
       responses:
         200:
           description: Success
@@ -5345,6 +5374,10 @@ components:
           format: byte
           nullable: false
           description: The base64 encoded truncated reference of the File, which actually consists of all information to get and decrypt it.
+        reference:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/ObjectReference"
       required:
         - id
         - title
@@ -6183,6 +6216,10 @@ components:
           format: byte
           nullable: false
           description: The base64 encoded truncated reference of the RelationshipTemplate, which actually consists of all information to get and decrypt it.
+        reference:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/ObjectReference"
       required:
         - id
         - isOwn
@@ -6330,6 +6367,10 @@ components:
           format: byte
           nullable: false
           description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
+        reference:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/ObjectReference"
       required:
         - id
         - createdBy
@@ -6381,6 +6422,19 @@ components:
       required:
         - reference
         - value
+
+    ObjectReference:
+      type: object
+      properties:
+        truncated:
+          type: string
+          description: The base64 encoded truncated reference of this Object, which actually consists of all information to get and decrypt it.
+        url:
+          type: string
+          description: The modern URL form of this reference, consisting of all information to get and decrypt it. Additionally this URL is valid for browsers and therefore it's possible to show a help page when the app ist not installed.
+      required:
+        - truncated
+        - url
 
     # ------------------- General -------------------
 
