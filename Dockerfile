@@ -1,4 +1,4 @@
-FROM node:24.0.0-slim@sha256:7b0f9cbb3f88da0e67873be5efcf38ce79ea25cfbb4986fad55a446af484e7c9 AS builder
+FROM node:24.0.0@sha256:0625f79a0c9f5005e31dba1761260b9f66ea8a3293e5f645eb4550a4c7dcdbb9 AS builder
 
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
