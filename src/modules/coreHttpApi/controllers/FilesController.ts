@@ -130,7 +130,7 @@ export class FilesController extends BaseController {
         const result = await this.transportServices.files.createTokenForFile({
             fileId: id,
             expiresAt: request.expiresAt,
-            ephemeral: request.ephemeral || accept === "image/png",
+            ephemeral: accept === "image/png" || request.ephemeral,
             forIdentity: request.forIdentity,
             passwordProtection: request.passwordProtection
         });

@@ -90,7 +90,7 @@ export class RelationshipTemplatesController extends BaseController {
         const result = await this.transportServices.relationshipTemplates.createTokenForOwnRelationshipTemplate({
             templateId: id,
             expiresAt: request.expiresAt,
-            ephemeral: request.ephemeral || accept === "image/png",
+            ephemeral: accept === "image/png" || request.ephemeral,
             forIdentity: request.forIdentity,
             passwordProtection: request.passwordProtection
         });
