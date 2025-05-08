@@ -16,4 +16,8 @@ export interface ConnectorRelationshipTemplate {
         passwordLocationIndicator?: string | number;
     };
     truncatedReference: string;
+    reference: {
+        truncated: string;
+        url: string;
+    };
 }

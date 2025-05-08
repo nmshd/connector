@@ -220,7 +220,7 @@ describe("Load peer file with token reference", () => {
         expect(file).toBeDefined();
 
         const token = (await client1.files.createTokenForFile(file.id)).result;
-        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference });
+        const response = await client2.files.loadPeerFile({ reference: token.reference.truncated });
 
         expect(response).toBeSuccessful(ValidationSchema.File);
         expect(response.result).toMatchObject({ ...file, isOwn: false });
@@ -247,7 +247,7 @@ describe("Load peer file with token reference", () => {
         const token = (await client1.files.createTokenForFile(file.id, { forIdentity: client2address })).result;
         expect(token.forIdentity).toBe(client2address);
 
-        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference });
+        const response = await client2.files.loadPeerFile({ reference: token.reference.truncated });
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
@@ -297,7 +297,7 @@ describe("Load peer file with reference", () => {
     test("peer file can be loaded", async () => {
         expect(file).toBeDefined();
 
-        const response = await client2.files.loadPeerFile({ reference: file.truncatedReference });
+        const response = await client2.files.loadPeerFile({ reference: file.reference.truncated });
 
         expect(response).toBeSuccessful(ValidationSchema.File);
         expect(response.result).toMatchObject({ ...file, isOwn: false });
@@ -327,7 +327,7 @@ describe("Password-protected tokens for files", () => {
         expect(token.passwordProtection?.password).toBe("password");
         expect(token.passwordProtection?.passwordIsPin).toBeUndefined();
 
-        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference, password: "password" });
+        const response = await client2.files.loadPeerFile({ reference: token.reference.truncated, password: "password" });
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
@@ -337,7 +337,7 @@ describe("Password-protected tokens for files", () => {
         expect(token.passwordProtection?.password).toBe("1234");
         expect(token.passwordProtection?.passwordIsPin).toBe(true);
 
-        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference, password: "1234" });
+        const response = await client2.files.loadPeerFile({ reference: token.reference.truncated, password: "1234" });
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
@@ -349,7 +349,7 @@ describe("Password-protected tokens for files", () => {
         expect(token.passwordProtection?.passwordIsPin).toBe(true);
         expect(token.passwordProtection?.passwordLocationIndicator).toBe("Self");
 
-        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference, password: "1234" });
+        const response = await client2.files.loadPeerFile({ reference: token.reference.truncated, password: "1234" });
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
@@ -360,7 +360,7 @@ describe("Password-protected tokens for files", () => {
         expect(token.passwordProtection?.passwordIsPin).toBe(true);
         expect(token.passwordProtection?.passwordLocationIndicator).toBe(51);
 
-        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference, password: "1234" });
+        const response = await client2.files.loadPeerFile({ reference: token.reference.truncated, password: "1234" });
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 });

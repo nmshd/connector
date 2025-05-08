@@ -47,7 +47,7 @@ async function establishOrReturnRelationship(connector1: ConnectorClient, connec
         })
     ).result;
 
-    await connector2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: template.truncatedReference });
+    await connector2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: template.reference.truncated });
 
     const relationship = (
         await connector2.relationships.createRelationship({

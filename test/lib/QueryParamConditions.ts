@@ -23,9 +23,7 @@ export class QueryParamConditions {
     }
 
     public addDateSet(key: string, positiveValue?: string): this {
-        if (!positiveValue) {
-            positiveValue = this.getValueByKey(key);
-        }
+        positiveValue ??= this.getValueByKey(key);
 
         if (!positiveValue) {
             return this;
@@ -55,9 +53,7 @@ export class QueryParamConditions {
     }
 
     public addBooleanSet(key: string, positiveValue?: boolean): this {
-        if (positiveValue === undefined) {
-            positiveValue = this.getValueByKey(key) as boolean | undefined;
-        }
+        positiveValue ??= this.getValueByKey(key) as boolean | undefined;
 
         if (positiveValue === undefined) {
             return this;
@@ -79,9 +75,7 @@ export class QueryParamConditions {
     }
 
     public addNumberSet(key: string, positiveValue?: number): this {
-        if (!positiveValue) {
-            positiveValue = this.getValueByKey(key);
-        }
+        positiveValue ??= this.getValueByKey(key);
 
         if (!positiveValue) {
             return this;
@@ -109,9 +103,7 @@ export class QueryParamConditions {
     }
 
     public addStringSet(key: string, positiveValue?: string): this {
-        if (!positiveValue) {
-            positiveValue = this.getValueByKey(key);
-        }
+        positiveValue ??= this.getValueByKey(key);
 
         if (!positiveValue) {
             return this;

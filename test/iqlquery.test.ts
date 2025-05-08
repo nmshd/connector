@@ -50,7 +50,7 @@ beforeAll(async () => {
 
     /* Initialize relationship. */
     const token = await getTemplateToken(client1);
-    const templateId = (await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.truncatedReference })).result.id;
+    const templateId = (await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.reference.truncated })).result.id;
     const relationshipId = (await client2.relationships.createRelationship({ templateId, creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} } })).result
         .id;
     for (const c of [client1, client2]) {
