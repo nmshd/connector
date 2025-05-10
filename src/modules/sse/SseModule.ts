@@ -45,7 +45,7 @@ export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
                 const response = await fetch(url, {
                     ...options,
                     dispatcher: proxy ? new ProxyAgent({ ...baseOptions, uri: proxy }) : new Agent(baseOptions),
-                    headers: { ...options?.headers, authorization: `Bearer ${token}` }
+                    headers: { ...options.headers, authorization: `Bearer ${token}` }
                 });
 
                 this.logger.info(`Connected to SSE endpoint: ${sseUrl}`);
