@@ -93,7 +93,7 @@
         "compression": "1.8.0",
         "correlation-id": "^5.2.0",
         "cors": "2.8.5",
-        "eventsource": "^3.0.6",
+        "eventsource": "^3.0.7",
         "express": "^5.1.0",
         "helmet": "8.1.0",
         "json-stringify-safe": "5.0.1",
