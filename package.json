@@ -98,7 +98,7 @@
         "helmet": "8.1.0",
         "json-stringify-safe": "5.0.1",
         "jsonschema": "1.5.0",
-        "mqtt": "^5.12.1",
+        "mqtt": "^5.13.0",
         "nconf": "0.13.0",
         "on-headers": "1.0.2",
         "rapidoc": "9.3.8",
