@@ -1,4 +1,4 @@
-import { BaseController, Envelope, Mimetype, QRCode } from "@nmshd/connector-types";
+import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
 import { Reference } from "@nmshd/core-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
@@ -89,7 +89,7 @@ export class FilesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(r.value.reference.url), `${fileId}.png`, response, 200);
+                return await this.qrCode(result, `${fileId}.png`, response, 200);
             default:
                 return this.ok(result);
         }
@@ -114,7 +114,7 @@ export class FilesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(r.value.reference.url), `${id}.png`, response, 201);
+                return await this.qrCode(result, `${id}.png`, response, 201);
             default:
                 return this.created(result);
         }
