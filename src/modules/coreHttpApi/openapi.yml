@@ -5427,9 +5427,6 @@ components:
       properties:
         "@type":
           type: string
-        title:
-          type: string
-          description: Will be rendered as title of the request.
         description:
           type: string
           description: Will be rendered as description of the request.
