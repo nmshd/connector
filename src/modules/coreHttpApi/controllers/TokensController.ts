@@ -1,7 +1,7 @@
 import { BaseController, Envelope, QRCode } from "@nmshd/connector-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, GET, Path, PathParam, POST, QueryParam, Return, ServiceContext } from "@nmshd/typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, GET, Path, PathParam, POST, Return, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
 
 @Path("/api/v2/Tokens")
@@ -53,17 +53,12 @@ export class TokensController extends BaseController {
     @GET
     @Path("/:id")
     @Accept("application/json", "image/png")
-    public async getToken(
-        @PathParam("id") id: string,
-        @ContextAccept accept: string,
-        @ContextResponse response: express.Response,
-        @QueryParam("newQRCodeFormat") newQRCodeFormat?: boolean
-    ): Promise<Envelope | void> {
+    public async getToken(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
         const result = await this.transportServices.tokens.getToken({ id });
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(newQRCodeFormat ? r.value.reference.url : r.value.reference.truncated), `${id}.png`, response, 200);
+                return await this.qrCode(result, (r) => QRCode.for(r.value.reference.url), `${id}.png`, response, 200);
             default:
                 return this.ok(result);
         }
