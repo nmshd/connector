@@ -279,10 +279,6 @@ paths:
                       $ref: "#/components/schemas/AttributeValue"
                     tags:
                       $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
       responses:
         200:
           description: Success
@@ -330,10 +326,6 @@ paths:
                       $ref: "#/components/schemas/AttributeValue"
                     tags:
                       $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
       responses:
         201:
           description: Success
@@ -385,16 +377,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: content.validFrom
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
-        - name: content.validTo
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
         - name: content.key
           in: query
           required: false
@@ -482,16 +464,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: content.validFrom
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
-        - name: content.validTo
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
         - name: content.value.@type
           in: query
           required: false
@@ -565,16 +537,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: content.validFrom
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
-        - name: content.validTo
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
         - name: content.key
           in: query
           required: false
@@ -686,16 +648,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: content.validFrom
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
-        - name: content.validTo
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
         - name: content.key
           in: query
           required: false
@@ -900,10 +852,6 @@ paths:
                       $ref: "#/components/schemas/AttributeValue"
                     tags:
                       $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
 
       responses:
         201:
@@ -1371,10 +1319,6 @@ paths:
                       items:
                         type: string
                       type: array
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
                     valueType:
                       description: The valueType of the attribute.
                       type: string
@@ -1429,10 +1373,6 @@ paths:
                     owner:
                       description: The owner of the relationship attribute.
                       type: string
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
                     attributeCreationHints:
                       description: This describes how to create an attribute if it does not exist.
                       type: object
@@ -1544,10 +1484,6 @@ paths:
                       type: array
                       items:
                         $ref: "#/components/schemas/Address"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
                   required:
                     - key
                     - owner
@@ -4978,10 +4914,6 @@ components:
           description: The address of the identity that owns the attribute.
         tags:
           $ref: "#/components/schemas/IdentityAttributeContent_tags"
-        validFrom:
-          $ref: "#/components/schemas/AttributeContent_validFrom"
-        validTo:
-          $ref: "#/components/schemas/AttributeContent_validTo"
         value:
           "$ref": "#/components/schemas/AttributeValue"
 
@@ -5006,10 +4938,6 @@ components:
           allOf:
             - $ref: "#/components/schemas/Address"
           description: The address of the identity that owns the attribute.
-        validFrom:
-          $ref: "#/components/schemas/AttributeContent_validFrom"
-        validTo:
-          $ref: "#/components/schemas/AttributeContent_validTo"
         value:
           "$ref": "#/components/schemas/AttributeValue"
       required:
@@ -5018,16 +4946,6 @@ components:
         - key
         - owner
         - value
-
-    AttributeContent_validFrom:
-      type: string
-      format: date-time
-      description: The date and time when the attribute becomes valid.
-
-    AttributeContent_validTo:
-      type: string
-      format: date-time
-      description: The date and time when the attribute expires.
 
     IdentityAttributeContent_tags:
       type: array

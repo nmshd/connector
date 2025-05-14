@@ -229,8 +229,6 @@ describe("Attributes Query", () => {
             .addStringSet("content.@type")
             .addStringArraySet("content.tags")
             .addStringSet("content.owner")
-            .addDateSet("content.validFrom")
-            .addDateSet("content.validTo")
             .addStringSet("content.key")
             .addBooleanSet("content.isTechnical")
             .addStringSet("content.confidentiality")
