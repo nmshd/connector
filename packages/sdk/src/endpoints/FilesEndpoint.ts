@@ -47,12 +47,8 @@ export class FilesEndpoint extends Endpoint {
         return await this.download(`/api/v2/Files/${fileId}/Download`);
     }
 
-    public async getQrCodeForFile(
-        fileId: string,
-        /** @deprecated this option is available to provide a grace period for all apps to support the new QR code format and will be removed in the future */
-        oldQRCodeFormat?: boolean
-    ): Promise<ConnectorHttpResponse<ArrayBuffer>> {
-        return await this.downloadQrCode("GET", `/api/v2/Files/${fileId}`, { oldQRCodeFormat: oldQRCodeFormat ? "true" : undefined });
+    public async getQrCodeForFile(fileId: string): Promise<ConnectorHttpResponse<ArrayBuffer>> {
+        return await this.downloadQrCode("GET", `/api/v2/Files/${fileId}`);
     }
 
     public async createTokenForFile(fileId: string, request?: CreateTokenForFileRequest): Promise<ConnectorHttpResponse<ConnectorToken>> {
