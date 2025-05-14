@@ -57,13 +57,13 @@ export class TokensController extends BaseController {
         @PathParam("id") id: string,
         @ContextAccept accept: string,
         @ContextResponse response: express.Response,
-        @QueryParam("newQRCodeFormat") newQRCodeFormat?: boolean
+        @QueryParam("oldQRCodeFormat") oldQRCodeFormat?: boolean
     ): Promise<Envelope | void> {
         const result = await this.transportServices.tokens.getToken({ id });
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(newQRCodeFormat ? r.value.reference.url : r.value.reference.truncated), `${id}.png`, response, 200);
+                return await this.qrCode(result, (r) => QRCode.for(oldQRCodeFormat ? r.value.reference.truncated : r.value.reference.url), `${id}.png`, response, 200);
             default:
                 return this.ok(result);
         }

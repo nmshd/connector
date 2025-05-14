@@ -101,7 +101,7 @@ export class FilesController extends BaseController {
         @PathParam("idOrReference") idOrReference: string,
         @ContextAccept accept: string,
         @ContextResponse response: express.Response,
-        @QueryParam("newQRCodeFormat") newQRCodeFormat?: boolean
+        @QueryParam("oldQRCodeFormat") oldQRCodeFormat?: boolean
     ): Promise<Envelope | void> {
         const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.fromTruncated(idOrReference).id.toString();
 
@@ -109,7 +109,7 @@ export class FilesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(newQRCodeFormat ? r.value.reference.url : r.value.reference.truncated), `${fileId}.png`, response, 200);
+                return await this.qrCode(result, (r) => QRCode.for(oldQRCodeFormat ? r.value.reference.truncated : r.value.reference.url), `${fileId}.png`, response, 200);
             default:
                 return this.ok(result);
         }
@@ -124,8 +124,8 @@ export class FilesController extends BaseController {
         @ContextResponse response: express.Response,
         request: any
     ): Promise<Return.NewResource<Envelope> | void> {
-        const newQRCodeFormat = request["newQRCodeFormat"] === true;
-        delete request["newQRCodeFormat"];
+        const oldQRCodeFormat = request["oldQRCodeFormat"] === true;
+        delete request["oldQRCodeFormat"];
 
         const result = await this.transportServices.files.createTokenForFile({
             fileId: id,
@@ -137,7 +137,7 @@ export class FilesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(newQRCodeFormat ? r.value.reference.url : r.value.reference.truncated), `${id}.png`, response, 201);
+                return await this.qrCode(result, (r) => QRCode.for(oldQRCodeFormat ? r.value.reference.truncated : r.value.reference.url), `${id}.png`, response, 201);
             default:
                 return this.created(result);
         }
