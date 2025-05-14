@@ -1,4 +1,4 @@
-import { BaseController, Envelope, QRCode } from "@nmshd/connector-types";
+import { BaseController, Envelope } from "@nmshd/connector-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, ContextAccept, ContextResponse, GET, POST, Path, PathParam, Return, ServiceContext } from "@nmshd/typescript-rest";
@@ -48,7 +48,7 @@ export class RelationshipTemplatesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(r.value.reference.url), `${id}.png`, response, 200);
+                return await this.qrCode(result, `${id}.png`, response, 200);
             default:
                 return this.ok(result);
         }
@@ -89,7 +89,7 @@ export class RelationshipTemplatesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(r.value.reference.url), `${id}.png`, response, 201);
+                return await this.qrCode(result, `${id}.png`, response, 201);
             default:
                 return this.created(result);
         }
