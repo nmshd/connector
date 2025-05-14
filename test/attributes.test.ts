@@ -104,11 +104,6 @@ describe("Attributes", () => {
         expect(getAttributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
     });
 
-    test("should get the created attribute in the list of valid attributes", async () => {
-        const getAttributesResponse = await client1.attributes.getValidAttributes({});
-        expect(getAttributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
-    });
-
     test("should succeed a Repository Attribute", async () => {
         const newRepositoryAttribute: CreateRepositoryAttributeRequest = {
             content: {
@@ -240,35 +235,6 @@ describe("Attributes Query", () => {
             .addStringSet("shareInfo.sourceAttribute");
 
         await conditions.executeTests((c, q) => c.attributes.getAttributes(q), ValidationSchema.ConnectorAttributes);
-    });
-
-    test("should query valid attributes", async () => {
-        const attribute = (
-            await client1.attributes.createRepositoryAttribute({
-                content: {
-                    value: {
-                        "@type": "GivenName",
-                        value: "AGivenName"
-                    }
-                }
-            })
-        ).result;
-
-        const conditions = new QueryParamConditions(attribute, client1)
-            .addStringSet("content.@type")
-            .addStringArraySet("content.tags")
-            .addStringSet("content.owner")
-            .addStringSet("content.key")
-            .addBooleanSet("content.isTechnical")
-            .addStringSet("content.confidentiality")
-            .addStringSet("content.value.@type")
-            .addStringSet("succeeds")
-            .addStringSet("succeededBy")
-            .addStringSet("shareInfo.requestReference")
-            .addStringSet("shareInfo.peer")
-            .addStringSet("shareInfo.sourceAttribute");
-
-        await conditions.executeTests((c, q) => c.attributes.getValidAttributes(q), ValidationSchema.ConnectorAttributes);
     });
 
     test("should query own shared identity attributes", async () => {
