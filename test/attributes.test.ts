@@ -47,7 +47,7 @@ describe("Attributes", () => {
                     "@type": "GivenName",
                     value: "AGivenName"
                 },
-                tags: ["content:edu.de"]
+                tags: ["x:content.edu.de"]
             }
         });
 
@@ -61,7 +61,7 @@ describe("Attributes", () => {
                     "@type": "GivenName",
                     value: "AGivenName"
                 },
-                tags: ["content:edu.de"]
+                tags: ["x:content.edu.de"]
             }
         });
 
@@ -91,7 +91,7 @@ describe("Attributes", () => {
                         "@type": "GivenName",
                         value: "AGivenName"
                     },
-                    tags: ["content:edu.de"]
+                    tags: ["x:content.edu.de"]
                 }
             })
         ).result.id;
@@ -116,7 +116,7 @@ describe("Attributes", () => {
                     "@type": "GivenName",
                     value: "AGivenName"
                 },
-                tags: ["content:edu.de"]
+                tags: ["x:content.edu.de"]
             }
         };
         const createAttributeResponse = await client1.attributes.createRepositoryAttribute(newRepositoryAttribute);
@@ -129,7 +129,7 @@ describe("Attributes", () => {
                     "@type": "GivenName",
                     value: "ANewGivenName"
                 },
-                tags: ["content:edu.de"]
+                tags: ["x:content.edu.de"]
             }
         });
 
@@ -219,7 +219,7 @@ describe("Attributes Query", () => {
                         "@type": "GivenName",
                         value: "AGivenName"
                     },
-                    tags: ["content:edu.de"]
+                    tags: ["x:content.edu.de"]
                 }
             })
         ).result;

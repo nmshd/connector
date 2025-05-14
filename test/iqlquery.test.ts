@@ -39,7 +39,7 @@ beforeAll(async () => {
                 "@type": "GivenName",
                 value: "ASecondGivenName"
             },
-            tags: ["language:de", "content:edu.de.higher"]
+            tags: ["language:de", "x:content.edu.de.higher"]
         }
     ];
     attributeIds = [];
