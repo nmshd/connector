@@ -1,7 +1,5 @@
 export interface RelationshipAttributeQuery {
     "@type"?: "RelationshipAttributeQuery";
-    validFrom?: string;
-    validTo?: string;
     key: string;
     owner: string;
     attributeCreationHints: RelationshipAttributeCreationHints;

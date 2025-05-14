@@ -1,11 +1,8 @@
 export interface GetOwnSharedIdentityAttributesRequest {
     peer: string;
-    onlyValid?: boolean;
     createdAt?: string;
     "content.@type"?: string | string[];
     "content.tags"?: string | string[];
-    "content.validFrom"?: string | string[];
-    "content.validTo"?: string | string[];
     "content.key"?: string | string[];
     "content.isTechnical"?: string | string[];
     "content.confidentiality"?: string | string[];
