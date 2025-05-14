@@ -11,7 +11,6 @@ export interface ConnectorFile {
     mimetype: string;
     title: string;
     description?: string;
-    truncatedReference: string;
     reference: {
         truncated: string;
         url: string;

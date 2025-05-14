@@ -1923,7 +1923,7 @@ paths:
   /api/v2/Files/Peer:
     post:
       operationId: loadPeerFile
-      description: Loads a file of another identity. After it is loaded once, you can retrieve it without the need for the truncatedReference by calling one of the GET-routes.
+      description: Loads a file of another identity. After it is loaded once, you can retrieve it without the need for the reference.truncated by calling one of the GET-routes.
       tags:
         - Files
       requestBody:
@@ -2149,7 +2149,7 @@ paths:
                   type: string
                   format: date-time
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
+                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference.truncated of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
                   type: boolean
                 forIdentity:
                   $ref: "#/components/schemas/Address"
@@ -3635,7 +3635,7 @@ paths:
                   type: string
                   format: date-time
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
+                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference.truncated of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
                   type: boolean
                 forIdentity:
                   $ref: "#/components/schemas/Address"
@@ -4234,7 +4234,7 @@ paths:
                   nullable: false
                   description: A timestamp that describes when this token expires. An expired token cannot be fetched from the platform anymore. However it will still be available for auditing purposes.
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
+                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference.truncated of the token. Defaults to false.
                   type: boolean
                   example: false
                 forIdentity:
@@ -4357,7 +4357,7 @@ paths:
                   nullable: false
                   description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
+                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference.truncated of the token. Defaults to false.
                   type: boolean
                 password:
                   type: string
@@ -5248,11 +5248,6 @@ components:
         isOwn:
           type: boolean
           nullable: false
-        truncatedReference:
-          type: string
-          format: byte
-          nullable: false
-          description: The base64 encoded truncated reference of the File, which actually consists of all information to get and decrypt it.
         reference:
           type: object
           allOf:
@@ -5268,7 +5263,7 @@ components:
         - expiresAt
         - mimetype
         - isOwn
-        - truncatedReference
+        - reference
 
     FileReferenceTruncated:
       type: object
@@ -6087,11 +6082,6 @@ components:
             - $ref: "#/components/schemas/RelationshipTemplateContent"
             - $ref: "#/components/schemas/ArbitraryRelationshipTemplateContent"
           nullable: false
-        truncatedReference:
-          type: string
-          format: byte
-          nullable: false
-          description: The base64 encoded truncated reference of the RelationshipTemplate, which actually consists of all information to get and decrypt it.
         reference:
           type: object
           allOf:
@@ -6104,7 +6094,7 @@ components:
         - createdAt
         - expiresAt
         - content
-        - truncatedReference
+        - reference
 
     RelationshipAuditLogEntry:
       type: object
@@ -6238,11 +6228,6 @@ components:
           $ref: "#/components/schemas/PasswordProtection"
           nullable: true
           description: The password that is required to load this Token and information about the password.
-        truncatedReference:
-          type: string
-          format: byte
-          nullable: false
-          description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
         reference:
           type: object
           allOf:
@@ -6254,7 +6239,7 @@ components:
         - content
         - createdAt
         - expiresAt
-        - truncatedReference
+        - reference
 
     TokenContent:
       type: object

@@ -15,7 +15,6 @@ export interface ConnectorRelationshipTemplate {
         passwordIsPin?: true;
         passwordLocationIndicator?: string | number;
     };
-    truncatedReference: string;
     reference: {
         truncated: string;
         url: string;
