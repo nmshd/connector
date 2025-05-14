@@ -11,8 +11,8 @@ export class TokensEndpoint extends Endpoint {
         return await this.get(`/api/v2/Tokens/${tokenId}`);
     }
 
-    public async getQrCodeForToken(tokenId: string, newQRCodeFormat?: boolean): Promise<ConnectorHttpResponse<ArrayBuffer>> {
-        return await this.downloadQrCode("GET", `/api/v2/Tokens/${tokenId}`, { newQRCodeFormat: newQRCodeFormat ? "true" : undefined });
+    public async getQrCodeForToken(tokenId: string, oldQRCodeFormat?: boolean): Promise<ConnectorHttpResponse<ArrayBuffer>> {
+        return await this.downloadQrCode("GET", `/api/v2/Tokens/${tokenId}`, { oldQRCodeFormat: oldQRCodeFormat ? "true" : undefined });
     }
 
     public async getOwnTokens(request?: GetOwnTokensRequest): Promise<ConnectorHttpResponse<ConnectorTokens>> {
