@@ -2753,7 +2753,7 @@ paths:
         - Relationships
       parameters:
         - in: query
-          name: template.id
+          name: templateId
           schema:
             $ref: "#/components/schemas/IdFilter"
         - in: query
@@ -5930,9 +5930,9 @@ components:
             - $ref: "#/components/schemas/RelationshipID"
           nullable: false
           description: The ID of the relationship.
-        template:
+        templateId:
           allOf:
-            - $ref: "#/components/schemas/RelationshipTemplate"
+            - $ref: "#/components/schemas/RelationshipTemplateID"
           nullable: false
         status:
           $ref: "#/components/schemas/RelationshipStatus"
@@ -5983,7 +5983,7 @@ components:
           description: The audit log of the relationship.
       required:
         - id
-        - template
+        - templateId
         - status
         - peer
         - peerIdentity
