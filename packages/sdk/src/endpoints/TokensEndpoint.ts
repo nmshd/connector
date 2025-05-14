@@ -13,7 +13,7 @@ export class TokensEndpoint extends Endpoint {
 
     public async getQrCodeForToken(
         tokenId: string,
-        /** @deprecated this will be removed in the future */
+        /** @deprecated this option is available to provide a grace period for all apps to support the new QR code format and will be removed in the future */
         oldQRCodeFormat?: boolean
     ): Promise<ConnectorHttpResponse<ArrayBuffer>> {
         return await this.downloadQrCode("GET", `/api/v2/Tokens/${tokenId}`, { oldQRCodeFormat: oldQRCodeFormat ? "true" : undefined });

@@ -6,6 +6,6 @@ export interface CreateTokenQrCodeForOwnRelationshipTemplateRequest {
         passwordIsPin?: true;
         passwordLocationIndicator?: string | number;
     };
-    /** @deprecated this will be removed in the future */
+    /** @deprecated this option is available to provide a grace period for all apps to support the new QR code format and will be removed in the future */
     oldQRCodeFormat?: boolean;
 }
