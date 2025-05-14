@@ -9,7 +9,7 @@ export interface ConnectorFile {
     createdByDevice: string;
     expiresAt: string;
     mimetype: string;
-    title: string;
+    title?: string;
     description?: string;
     reference: {
         truncated: string;

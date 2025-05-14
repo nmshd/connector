@@ -16,7 +16,7 @@ export class FilesController extends BaseController {
     @Accept("application/json")
     public async uploadOwnFile(
         @FormParam("expiresAt") expiresAt: string,
-        @FormParam("title") title: string,
+        @FormParam("title") title?: string,
         @FileParam("file") file?: Express.Multer.File,
         @FormParam("description") description?: string,
         @FormParam("tags") tags?: string[]
