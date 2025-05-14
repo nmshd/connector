@@ -35,7 +35,11 @@ export class RelationshipTemplatesEndpoint extends Endpoint {
         return await this.post("/api/v2/RelationshipTemplates/Own", request);
     }
 
-    public async getQrCodeForOwnRelationshipTemplate(id: string, oldQRCodeFormat?: boolean): Promise<ConnectorHttpResponse<ArrayBuffer>> {
+    public async getQrCodeForOwnRelationshipTemplate(
+        id: string,
+        /** @deprecated this will be removed in the future */
+        oldQRCodeFormat?: boolean
+    ): Promise<ConnectorHttpResponse<ArrayBuffer>> {
         return await this.downloadQrCode("GET", `/api/v2/RelationshipTemplates/${id}`, { oldQRCodeFormat: oldQRCodeFormat ? "true" : undefined });
     }
 

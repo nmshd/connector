@@ -2131,7 +2131,7 @@ paths:
               - $ref: "#/components/schemas/FileReferenceTruncated"
         - in: query
           name: oldQRCodeFormat
-          description: If set to true, the QRCode will contain the old url format. This is only relevant if the accept header is set to `image/png`.
+          description: If set to true, the QRCode will contain the old url format. This is only relevant if the accept header is set to `image/png`. This option is deprecated and will be removed in the future.
           required: false
           schema:
             type: boolean
@@ -2242,7 +2242,7 @@ paths:
                   description: The password that will be required to load this Token and information about the password.
                 oldQRCodeFormat:
                   type: boolean
-                  description: If set to true, the QRCode will contain the old url format. This is only relevant if the accept header is set to `image/png`.
+                  description: If set to true, the QRCode will contain the old url format. This is only relevant if the accept header is set to `image/png`. This option is deprecated and will be removed in the future.
                   nullable: true
       responses:
         201:
@@ -3666,7 +3666,7 @@ paths:
             $ref: "#/components/schemas/RelationshipTemplateID"
         - in: query
           name: oldQRCodeFormat
-          description: If set to true, the QRCode will contain the old url format. This is only relevant if the accept header is set to `image/png`.
+          description: If set to true, the QRCode will contain the old url format. This is only relevant if the accept header is set to `image/png`. This option is deprecated and will be removed in the future.
           required: false
           schema:
             type: boolean
@@ -3739,7 +3739,7 @@ paths:
                   description: The password that will be required to load this Token and information about the password. If passwordProtection is set for the RelationshipTemplate, the same passwordProtection must also be given here.
                 oldQRCodeFormat:
                   type: boolean
-                  description: If set to true, the QRCode will contain the old url format. This is only relevant if the accept header is set to `image/png`.
+                  description: If set to true, the QRCode will contain the old url format. This is only relevant if the accept header is set to `image/png`. This option is deprecated and will be removed in the future.
                   nullable: true
       responses:
         201:
@@ -4568,7 +4568,7 @@ paths:
             $ref: "#/components/schemas/TokenID"
         - in: query
           name: oldQRCodeFormat
-          description: If set to true, the QRCode will contain the old url format. This is only relevant if the accept header is set to `image/png`.
+          description: If set to true, the QRCode will contain the old url format. This is only relevant if the accept header is set to `image/png`. This option is deprecated and will be removed in the future.
           required: false
           schema:
             type: boolean
