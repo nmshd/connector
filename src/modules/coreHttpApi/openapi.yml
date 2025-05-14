@@ -582,11 +582,6 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/Address"
-        - name: onlyValid
-          in: query
-          required: false
-          schema:
-            type: boolean
         - name: hideTechnical
           in: query
           required: false
@@ -688,11 +683,6 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/Address"
-        - name: onlyValid
-          in: query
-          required: false
-          schema:
-            type: boolean
         - name: hideTechnical
           in: query
           required: false
