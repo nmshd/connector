@@ -255,6 +255,47 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  # ------------------- Announcements -------------------
+
+  /api/v2/Announcements:
+    get:
+      operationId: getAnnouncements
+      description: Query Announcements
+      tags:
+        - Announcements
+      parameters:
+        - name: language
+          description: The 2-letter ISO639 code of the language to get the Announcements in. If an Announcement does not exist in this language, they are returned in English instead.
+          in: query
+          required: true
+          type: string
+          example: "de"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Attribute"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
   # ------------------- Attributes -------------------
 
   /api/v2/Attributes/CanCreate:
@@ -4894,6 +4935,14 @@ components:
       minLength: 35
       example: did:e:<base-url>:dids:<22-characters>
 
+    AnnouncementID:
+      type: string
+      format: AnnouncementID
+      minLength: 20
+      maxLength: 20
+      example: ANC_________________
+      description: The ID of an announcement.
+
     AttributeID:
       type: string
       format: AttributeID
@@ -5071,6 +5120,34 @@ components:
         - protected
         - private
       type: string
+
+    Announcement:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/AnnouncementID"
+          nullable: false
+          description: The ID of the announcement.
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time when the announcement was created.
+          example: 2026-05-25T11:05:02.924Z
+        expiresAt:
+          type: string
+          format: date-time
+          description: A timestamp that describes when this announcement will expire. "Expired" means that they are no longer relevant.
+          example: 2026-05-25T11:05:02.924Z
+          nullable: true
+        severity:
+          type: string
+          enum: [Low, Medium, High]
+        title:
+          type: string
+        body:
+          type: string
 
     Attribute:
       type: object
