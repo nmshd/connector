@@ -14,6 +14,7 @@ import {
     RelationshipTemplatesEndpoint,
     TokensEndpoint
 } from "./endpoints";
+import { AnnouncementsEndpoint } from "./endpoints/AnnouncementsEndpoint";
 
 export class ConnectorClient {
     #correlationId: string | null = null;
@@ -24,6 +25,7 @@ export class ConnectorClient {
     }
 
     public readonly account: AccountEndpoint;
+    public readonly announcements: AnnouncementsEndpoint;
     public readonly attributes: AttributesEndpoint;
     public readonly challenges: ChallengesEndpoint;
     public readonly files: FilesEndpoint;
@@ -59,6 +61,7 @@ export class ConnectorClient {
         });
 
         this.account = new AccountEndpoint(axiosInstance);
+        this.announcements = new AnnouncementsEndpoint(axiosInstance);
         this.attributes = new AttributesEndpoint(axiosInstance);
         this.challenges = new ChallengesEndpoint(axiosInstance);
         this.files = new FilesEndpoint(axiosInstance);
