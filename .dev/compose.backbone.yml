@@ -12,8 +12,6 @@ services:
         condition: service_started
       rabbitmq:
         condition: service_started
-      seed-database:
-        condition: service_completed_successfully
       azure-storage-emulator:
         condition: service_started
       database-migrator:
@@ -54,13 +52,13 @@ services:
   database-migrator:
     container_name: database-migrator-test
     image: ghcr.io/nmshd/backbone-database-migrator:6.43.0
-    depends_on:
-      seed-database:
-        condition: service_completed_successfully
     environment:
       Infrastructure__SqlDatabase__Provider: Postgres
       Infrastructure__SqlDatabase__ConnectionString: "Server=postgres;Database=enmeshed;User Id=postgres;Password=Passw0rd;Port=5432"
       ASPNETCORE_ENVIRONMENT: Development
+    depends_on:
+      database:
+        condition: service_healthy
     configs:
       - source: Config
         target: app/appsettings.override.json
@@ -93,16 +91,6 @@ services:
     image: rabbitmq:4.1.0-alpine@sha256:a9d1c4f50eb1be66f33271d9eca0dd73858db32cfa25ad2c78bf094f24ee0a7a
 
   ### seeds ###
-
-  seed-database:
-    container_name: seed-database
-    image: postgres@sha256:864831322bf2520e7d03d899b01b542de6de9ece6fe29c89f19dc5e1d5568ccf
-    environment:
-      - PGPASSWORD=Passw0rd
-    command: /bin/bash -c 'env && apt update -y && apt install -y wget && wget https://raw.githubusercontent.com/nmshd/backbone/6.43.0/scripts/sql/postgres/setup.sql -O /setup-postgres.sql && psql -h postgres -U postgres -d enmeshed -f /setup-postgres.sql'
-    depends_on:
-      database:
-        condition: service_healthy
 
   seed-client:
     container_name: seed-client
