@@ -269,7 +269,7 @@ paths:
           in: query
           required: true
           type: string
-          example: "de"
+          example: "en"
       responses:
         200:
           description: Success
@@ -281,7 +281,7 @@ paths:
                   result:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Attribute"
+                      $ref: "#/components/schemas/Announcement"
                 required:
                   - result
           headers:
