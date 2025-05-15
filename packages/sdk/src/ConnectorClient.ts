@@ -2,6 +2,7 @@ import axios from "axios";
 import { ConnectorConfig } from "./ConnectorConfig";
 import {
     AccountEndpoint,
+    AnnouncementsEndpoint,
     AttributesEndpoint,
     ChallengesEndpoint,
     FilesEndpoint,
@@ -14,7 +15,6 @@ import {
     RelationshipTemplatesEndpoint,
     TokensEndpoint
 } from "./endpoints";
-import { AnnouncementsEndpoint } from "./endpoints/AnnouncementsEndpoint";
 
 export class ConnectorClient {
     #correlationId: string | null = null;
