@@ -11,6 +11,8 @@ expect.extend(
 
 export enum ValidationSchema {
     Error = "ConnectorError",
+    ConnectorAnnouncement = "ConnectorAnnouncement",
+    ConnectorAnnouncements = "ConnectorAnnouncements",
     File = "ConnectorFile",
     Files = "ConnectorFiles",
     IdentityMetadata = "ConnectorIdentityMetadata",
