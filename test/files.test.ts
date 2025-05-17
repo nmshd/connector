@@ -119,9 +119,9 @@ describe("File Upload", () => {
     });
 
     test("can upload file with tags", async () => {
-        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ tags: ["tag1", "tag2"] }));
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ tags: ["x:tag1", "x:tag2"] }));
         expect(response).toBeSuccessful(ValidationSchema.File);
-        expect(response.result.tags).toStrictEqual(["tag1", "tag2"]);
+        expect(response.result.tags).toStrictEqual(["x:tag1", "x:tag2"]);
     });
 
     test("cannot upload a file with expiry date in the past", async () => {
