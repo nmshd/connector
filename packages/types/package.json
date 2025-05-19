@@ -26,7 +26,7 @@
     },
     "devDependencies": {
         "@js-soft/logging-abstractions": "^1.0.1",
-        "@types/express": "^5.0.1",
+        "@types/express": "^5.0.2",
         "@types/luxon": "^3.6.2",
         "@types/node": "^22.15.18",
         "@types/qrcode": "^1.5.5",
