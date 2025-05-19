@@ -265,7 +265,7 @@ paths:
         - Announcements
       parameters:
         - name: language
-          description: The 2-letter ISO639 code of the language to get the Announcements in. If an Announcement does not exist in this language, they are returned in English instead.
+          description: The 2-letter ISO639 code of the language to get the Announcements in. If an Announcement does not exist in this language, it is returned in English instead.
           in: query
           required: true
           type: string
@@ -5138,7 +5138,7 @@ components:
         expiresAt:
           type: string
           format: date-time
-          description: A timestamp that describes when this announcement will expire. "Expired" means that they are no longer relevant.
+          description: A timestamp that describes when this announcement will expire. "Expired" means that it is no longer relevant.
           example: 2026-05-25T11:05:02.924Z
           nullable: true
         severity:
