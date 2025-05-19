@@ -47,9 +47,7 @@ export abstract class BaseCommand {
         } catch (error: any) {
             this.log.log("Error creating identity: ", error);
         } finally {
-            if (this.#cliRuntime) {
-                await this.#cliRuntime.stop();
-            }
+            await this.#cliRuntime?.stop();
         }
     }
 
