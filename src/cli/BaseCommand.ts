@@ -43,7 +43,7 @@ export abstract class BaseCommand {
                 }
             };
 
-            return await this.runInternal(this.#connectorConfig);
+            return await this.runInternal();
         } catch (error: any) {
             this.log.log("Error creating identity: ", error);
         } finally {
@@ -61,5 +61,5 @@ export abstract class BaseCommand {
         await this.#cliRuntime.start();
     }
 
-    protected abstract runInternal(connectorConfig: ConnectorRuntimeConfig): Promise<void>;
+    protected abstract runInternal(): Promise<void>;
 }
