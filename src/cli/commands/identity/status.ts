@@ -17,9 +17,6 @@ export const yargsIdentityStatusCommand: CommandModule<{}, ConfigFileOptions> = 
 export class IdentityStatus extends BaseCommand {
     protected async runInternal(): Promise<void> {
         await this.createRuntime();
-        if (!this.cliRuntime) {
-            throw new Error("Failed to initialize Runtime");
-        }
 
         try {
             const identityInfoResult = await this.cliRuntime.getServices().transportServices.account.getIdentityInfo();
@@ -38,6 +35,7 @@ export class IdentityStatus extends BaseCommand {
             this.log.log(message);
         } catch (e: any) {
             this.log.error(e);
+            process.exit(1);
         }
     }
 }

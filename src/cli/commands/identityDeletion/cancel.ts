@@ -15,16 +15,14 @@ export const yargsIdentityDeletionCancelCommand: CommandModule<{}, ConfigFileOpt
 export default class CancelIdentityDeletion extends BaseCommand {
     protected async runInternal(): Promise<void> {
         await this.createRuntime();
-        if (!this.cliRuntime) {
-            throw new Error("Failed to initialize Runtime");
+
+        const result = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.cancelIdentityDeletionProcess();
+        if (result.isError) {
+            const error = result.error;
+            this.log.log(`Cancelling the identity deletion failed with the code '${error.code}' and the message '${error.message}'.`);
+            process.exit(1);
         }
 
-        const identityDeletionCancellationResult = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.cancelIdentityDeletionProcess();
-
-        if (identityDeletionCancellationResult.isSuccess) {
-            this.log.log("Identity deletion cancelled");
-            return;
-        }
-        this.log.log(identityDeletionCancellationResult.error.toString());
+        this.log.log("Identity deletion cancelled");
     }
 }
