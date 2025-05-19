@@ -29,21 +29,21 @@ export abstract class BaseCommand {
 
     protected log = console;
 
-    public async run(configPath: string | undefined): Promise<any> {
-        try {
-            this.#connectorConfig = createConnectorConfig(configPath);
-            this.#connectorConfig.infrastructure.httpServer.enabled = false;
-            this.#connectorConfig.modules.coreHttpApi.enabled = false;
-            this.#connectorConfig.logging = {
-                appenders: {
-                    console: { type: "console" }
-                },
-                categories: {
-                    default: { appenders: ["console"], level: "OFF" }
-                }
-            };
+    public async run(configPath: string | undefined): Promise<void> {
+        this.#connectorConfig = createConnectorConfig(configPath);
+        this.#connectorConfig.infrastructure.httpServer.enabled = false;
+        this.#connectorConfig.modules.coreHttpApi.enabled = false;
+        this.#connectorConfig.logging = {
+            appenders: {
+                console: { type: "console" }
+            },
+            categories: {
+                default: { appenders: ["console"], level: "OFF" }
+            }
+        };
 
-            return await this.runInternal();
+        try {
+            await this.runInternal();
         } catch (error: any) {
             this.log.log("Error creating identity: ", error);
         } finally {
