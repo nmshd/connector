@@ -6,9 +6,8 @@ import { ValidationSchema } from "./lib/validation";
 const launcher = new Launcher();
 let client: ConnectorClientWithMetadata;
 
-beforeAll(async () => {
-    [client] = await launcher.launch(1);
-}, getTimeout(30000));
+beforeAll(async () => ([client] = await launcher.launch(1)), getTimeout(30000));
+
 afterAll(() => launcher.stop());
 
 describe("Announcements", () => {
