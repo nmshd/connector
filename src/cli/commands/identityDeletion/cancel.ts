@@ -17,11 +17,7 @@ export default class CancelIdentityDeletion extends BaseCommand {
         await this.createRuntime();
 
         const result = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.cancelIdentityDeletionProcess();
-        if (result.isError) {
-            const error = result.error;
-            this.log.log(`Cancelling the identity deletion failed with the code '${error.code}' and the message '${error.message}'.`);
-            process.exit(1);
-        }
+        if (result.isError) throw result.error;
 
         this.log.log("Identity deletion cancelled");
     }

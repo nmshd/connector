@@ -18,24 +18,20 @@ export class IdentityStatus extends BaseCommand {
     protected async runInternal(): Promise<void> {
         await this.createRuntime();
 
-        try {
-            const identityInfoResult = await this.cliRuntime.getServices().transportServices.account.getIdentityInfo();
-            const identityDeletionProcessResult = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.getActiveIdentityDeletionProcess();
+        const identityInfoResult = await this.cliRuntime.getServices().transportServices.account.getIdentityInfo();
+        const identityDeletionProcessResult = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.getActiveIdentityDeletionProcess();
 
-            const identityInfo = identityInfoResult.value;
-            let message = `Identity Address: ${identityInfo.address}`;
+        const identityInfo = identityInfoResult.value;
+        let message = `Identity Address: ${identityInfo.address}`;
 
-            if (identityDeletionProcessResult.isSuccess) {
-                const identityDeletionProcess = identityDeletionProcessResult.value;
-                message += `\nIdentity deletion status: ${identityDeletionProcess.status}`;
-                if (identityDeletionProcess.gracePeriodEndsAt && identityDeletionProcess.status === IdentityDeletionProcessStatus.Approved) {
-                    message += `\nEnd of grace period: ${DateTime.fromISO(identityDeletionProcess.gracePeriodEndsAt).toLocaleString()}`;
-                }
+        if (identityDeletionProcessResult.isSuccess) {
+            const identityDeletionProcess = identityDeletionProcessResult.value;
+            message += `\nIdentity deletion status: ${identityDeletionProcess.status}`;
+            if (identityDeletionProcess.gracePeriodEndsAt && identityDeletionProcess.status === IdentityDeletionProcessStatus.Approved) {
+                message += `\nEnd of grace period: ${DateTime.fromISO(identityDeletionProcess.gracePeriodEndsAt).toLocaleString()}`;
             }
-            this.log.log(message);
-        } catch (e: any) {
-            this.log.error(e);
-            process.exit(1);
         }
+
+        this.log.log(message);
     }
 }

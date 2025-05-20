@@ -18,11 +18,7 @@ export default class InitIdentityDeletion extends BaseCommand {
         await this.createRuntime();
 
         const result = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.initiateIdentityDeletionProcess();
-        if (result.isError) {
-            const error = result.error;
-            this.log.log(`Initiating the identity deletion failed with the code '${error.code}' and the message '${error.message}'.`);
-            process.exit(1);
-        }
+        if (result.isError) throw result.error;
 
         this.log.log("Identity deletion initiated");
     }

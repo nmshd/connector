@@ -1,3 +1,4 @@
+import { ApplicationError } from "@js-soft/ts-utils";
 import yargs from "yargs";
 import { ConnectorRuntime } from "../ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "../ConnectorRuntimeConfig";
@@ -44,10 +45,18 @@ export abstract class BaseCommand {
 
         try {
             await this.runInternal();
-        } catch (error: any) {
-            this.log.log("Error creating identity: ", error);
-        } finally {
+
             await this.#cliRuntime?.stop();
+        } catch (error: any) {
+            await this.#cliRuntime?.stop();
+
+            if (error instanceof ApplicationError) {
+                this.log.log(`This command failed with the code '${error.code}' and the message '${error.message}'.`);
+            } else {
+                this.log.log(error.message);
+            }
+
+            process.exit(1);
         }
     }
 
