@@ -19,11 +19,10 @@ export class IdentityStatus extends BaseCommand {
         await this.createRuntime();
 
         const identityInfoResult = await this.cliRuntime.getServices().transportServices.account.getIdentityInfo();
-        const identityDeletionProcessResult = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.getActiveIdentityDeletionProcess();
-
         const identityInfo = identityInfoResult.value;
         let message = `Identity Address: ${identityInfo.address}`;
 
+        const identityDeletionProcessResult = await this.cliRuntime.getServices().transportServices.identityDeletionProcesses.getActiveIdentityDeletionProcess();
         if (identityDeletionProcessResult.isSuccess) {
             const identityDeletionProcess = identityDeletionProcessResult.value;
             message += `\nIdentity deletion status: ${identityDeletionProcess.status}`;
