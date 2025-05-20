@@ -58,6 +58,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: azure/setup-helm@v4
-        with:
-          version: v3.17.3
       - run: helm lint ./helmChart

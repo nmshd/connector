@@ -2,7 +2,7 @@ name: Publish
 
 on:
   push:
-    tags: "*"
+    tags: ["*"]
 
 jobs:
   run-checks:
@@ -89,9 +89,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: azure/setup-helm@v4
-        with:
-          version: v3.17.3
-      - run: echo "$PASSWORD" | helm registry login -u $USER --password-stdin https://ghcr.io
+      - run: echo "$PASSWORD" | helm registry login -u $USER --password-stdin ghcr.io
         env:
           USER: ${{ github.actor }}
           PASSWORD: ${{ secrets.GITHUB_TOKEN }}
