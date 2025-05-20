@@ -1,5 +1,5 @@
 export interface GetRelationshipsRequest {
-    templateId?: string | string[];
+    "template.id"?: string | string[];
     peer?: string | string[];
     status?: string | string[];
 }
