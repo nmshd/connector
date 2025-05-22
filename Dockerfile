@@ -16,7 +16,7 @@ COPY packages/types/src packages/types/src
 RUN npm run build:ci --ws
 RUN .ci/writeBuildInformation.sh
 
-FROM node:24.0.2-slim@sha256:e35e2147b987b1d1d00cbe53a00075439bd953f38e485c33b5d770650d7c2060
+FROM node:24.0.2-slim@sha256:952e289d462be9b5b9e375718f08ed8445082d22d088a0be74ae0251d4fd91d7
 
 ARG VERSION
 
