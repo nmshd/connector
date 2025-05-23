@@ -5718,7 +5718,7 @@ components:
             - content
         wasAutomaticallyDecided:
           type: boolean
-          enum: true
+          const: true
           description: Indicates whether the Request was decided automatically by the Decider Module.
       required:
         - id
