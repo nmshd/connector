@@ -5493,6 +5493,10 @@ components:
           required:
             - createdAt
             - content
+        wasAutomaticallyDecided:
+          type: boolean
+          const: true
+          description: Indicates whether the Request was decided automatically by the Decider Module.
       required:
         - id
         - isOwn
