@@ -5716,6 +5716,7 @@ components:
           required:
             - createdAt
             - content
+        wasAutomaticallyDecided:
       required:
         - id
         - isOwn
