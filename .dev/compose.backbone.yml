@@ -68,7 +68,7 @@ services:
   database:
     container_name: bkb-postgres
     hostname: postgres
-    image: postgres@sha256:2718f685e30caf572c7854b7d43cb029bdcfb474d0646286e0501fa95f189ed1
+    image: postgres@sha256:ea51edb26055e9dea6d90e6c82066985a71f3544fa85ff2883f6ca668187aa09
     environment:
       - POSTGRES_PASSWORD=Passw0rd
       - POSTGRES_DB=enmeshed
