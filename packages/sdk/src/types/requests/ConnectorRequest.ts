@@ -19,6 +19,7 @@ export interface ConnectorRequest {
             reference: string;
         };
     };
+    wasAutomaticallyDecided?: true;
 }
 
 export enum ConnectorRequestStatus {
