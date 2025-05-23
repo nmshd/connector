@@ -14,6 +14,10 @@ export class IncomingRequestsController extends BaseController {
     @Path("/:id/CanAccept")
     @Accept("application/json")
     public async canAccept(@PathParam("id") requestId: string, request: any): Promise<Envelope> {
+        if (request?.decidedByAutomation === true) {
+            throw new ApplicationError("error.connector.incomingRequests.decidedByAutomation", "Decided by automation is not allowed for this endpoint.");
+        }
+
         const result = await this.consumptionServices.incomingRequests.canAccept({ ...request, requestId });
         return this.ok(result);
     }
@@ -34,6 +38,10 @@ export class IncomingRequestsController extends BaseController {
     @Path("/:id/CanReject")
     @Accept("application/json")
     public async canReject(@PathParam("id") requestId: string, request: any): Promise<Envelope> {
+        if (request?.decidedByAutomation === true) {
+            throw new ApplicationError("error.connector.incomingRequests.decidedByAutomation", "Decided by automation is not allowed for this endpoint.");
+        }
+
         const result = await this.consumptionServices.incomingRequests.canReject({ ...request, requestId });
         return this.ok(result);
     }
