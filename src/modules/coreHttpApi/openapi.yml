@@ -3840,6 +3840,10 @@ paths:
           schema:
             $ref: "#/components/schemas/TextFilter"
         - in: query
+          name: wasAutomaticallyDecided
+          schema:
+            $ref: "#/components/schemas/PartialBooleanFilter"
+        - in: query
           name: content.expiresAt
           schema:
             $ref: "#/components/schemas/DateFilter"
