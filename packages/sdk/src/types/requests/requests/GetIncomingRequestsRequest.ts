@@ -3,6 +3,7 @@ export interface GetIncomingRequestsRequest {
     peer?: string | string[];
     createdAt?: string | string[];
     status?: string | string[];
+    wasAutomaticallyDecided?: "true" | "!";
     content?: {
         expiresAt?: string | string[];
         items?: {
