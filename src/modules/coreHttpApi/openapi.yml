@@ -5717,6 +5717,9 @@ components:
             - createdAt
             - content
         wasAutomaticallyDecided:
+          type: boolean
+          enum: true
+          description: Indicates whether the Request was decided automatically by the Decider Module.
       required:
         - id
         - isOwn
