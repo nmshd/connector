@@ -38,7 +38,7 @@ export class ConnectorClient {
     public readonly relationshipTemplates: RelationshipTemplatesEndpoint;
     public readonly tokens: TokensEndpoint;
 
-    private constructor(config: ConnectorConfig) {
+    protected constructor(config: ConnectorConfig) {
         const axiosInstance = axios.create({
             baseURL: config.baseUrl,
             headers: {
