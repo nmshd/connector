@@ -107,7 +107,7 @@
         "swagger-ui-express": "5.0.1",
         "undici": "^7.10.0",
         "yamljs": "0.3.0",
-        "yargs": "^17.7.2"
+        "yargs": "^18.0.0"
     },
     "devDependencies": {
         "@apidevtools/swagger-parser": "^10.1.1",
