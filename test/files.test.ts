@@ -223,10 +223,7 @@ describe("Load peer file with token reference", () => {
         const response = await client2.files.loadPeerFile({ reference: token.reference.truncated });
 
         expect(response).toBeSuccessful(ValidationSchema.File);
-
-        const fileMatcher = { ...file, isOwn: false };
-        delete fileMatcher.ownershipToken; // ownershipToken is not returned for peer files
-        expect(response.result).toMatchObject(fileMatcher);
+        expect(response.result).toStrictEqualExcluding({ ...file, isOwn: false, ownershipToken: undefined }, "ownershipToken");
     });
 
     test("after peer file is loaded the file can be accessed under /Files/{id}", async () => {
@@ -234,10 +231,7 @@ describe("Load peer file with token reference", () => {
 
         const response = await client2.files.getFile(file.id);
         expect(response).toBeSuccessful(ValidationSchema.File);
-
-        const fileMatcher = { ...file, isOwn: false };
-        delete fileMatcher.ownershipToken; // ownershipToken is not returned for peer files
-        expect(response.result).toMatchObject(fileMatcher);
+        expect(response.result).toStrictEqualExcluding({ ...file, isOwn: false, ownershipToken: undefined }, "ownershipToken");
     });
 
     test("after peer file is loaded it can be accessed under /Files", async () => {
@@ -306,10 +300,7 @@ describe("Load peer file with reference", () => {
         const response = await client2.files.loadPeerFile({ reference: file.reference.truncated });
 
         expect(response).toBeSuccessful(ValidationSchema.File);
-
-        const fileMatcher = { ...file, isOwn: false };
-        delete fileMatcher.ownershipToken; // ownershipToken is not returned for peer files
-        expect(response.result).toMatchObject(fileMatcher);
+        expect(response.result).toStrictEqualExcluding({ ...file, isOwn: false, ownershipToken: undefined }, "ownershipToken");
     });
 
     test("after peer file is loaded the file can be accessed under /Files/{id}", async () => {
@@ -317,10 +308,7 @@ describe("Load peer file with reference", () => {
 
         const response = await client2.files.getFile(file.id);
         expect(response).toBeSuccessful(ValidationSchema.File);
-
-        const fileMatcher = { ...file, isOwn: false };
-        delete fileMatcher.ownershipToken; // ownershipToken is not returned for peer files
-        expect(response.result).toMatchObject(fileMatcher);
+        expect(response.result).toStrictEqualExcluding({ ...file, isOwn: false, ownershipToken: undefined }, "ownershipToken");
     });
 
     test("after peer file is loaded it can be accessed under /Files", async () => {
