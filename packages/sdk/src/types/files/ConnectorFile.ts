@@ -16,4 +16,6 @@ export interface ConnectorFile {
         truncated: string;
         url: string;
     };
+    ownershipToken?: string;
+    ownershipIsLocked?: true;
 }
