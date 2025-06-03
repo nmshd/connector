@@ -11,6 +11,7 @@ import {
     FileParam,
     FormParam,
     GET,
+    PATCH,
     Path,
     PathParam,
     POST,
@@ -148,5 +149,12 @@ export class FilesController extends BaseController {
     public async deleteFile(@PathParam("id") fileId: string): Promise<void> {
         const result = await this.transportServices.files.deleteFile({ fileId });
         return this.noContent(result);
+    }
+
+    @PATCH
+    @Path("/:id/RegenerateOwnershipToken")
+    public async regenerateOwnershipToken(@PathParam("id") id: string): Promise<Envelope> {
+        const result = await this.transportServices.files.regenerateFileOwnershipToken({ id });
+        return this.ok(result);
     }
 }
