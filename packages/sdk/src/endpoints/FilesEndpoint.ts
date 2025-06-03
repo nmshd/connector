@@ -62,4 +62,8 @@ export class FilesEndpoint extends Endpoint {
     public async deleteFile(fileId: string): Promise<ConnectorHttpResponse<void>> {
         return await this.delete(`/api/v2/Files/${fileId}`, undefined, 204);
     }
+
+    public async regenerateFileOwnershipToken(fileId: string): Promise<ConnectorHttpResponse<ConnectorFile>> {
+        return await this.patch(`/api/v2/Files/${fileId}/RegenerateOwnershipToken`, undefined);
+    }
 }

@@ -1,6 +1,6 @@
 services:
   consumer-api:
-    image: ghcr.io/nmshd/backbone-consumer-api:6.44.1@sha256:0e6fe39377b6b0c6b953bb7f5e9c47f4359f59757c41a0324a3681d45922735c
+    image: ghcr.io/nmshd/backbone-consumer-api:6.46.0@sha256:03f23928d0825ae33b10f3d9e4d0b10557f4d949793f45a799c6995db9dcdb77
     container_name: consumer-api
     hostname: consumer-api
     environment:
@@ -23,7 +23,7 @@ services:
         target: app/appsettings.override.json
 
   event-handler-service:
-    image: ghcr.io/nmshd/backbone-event-handler:6.44.1@sha256:c75a2f36f6987a4d9815f21abec650e68ac949b82aecf814ecc6883924d7db58
+    image: ghcr.io/nmshd/backbone-event-handler:6.46.0@sha256:83e133490d7af3c19c90b8cb2d31d97768c4105d1e22deafcba7e1dc8bc0261e
     container_name: event-handler-service
     depends_on:
       database:
@@ -37,7 +37,7 @@ services:
         target: app/appsettings.override.json
 
   sse-server:
-    image: ghcr.io/nmshd/backbone-sse-server:6.44.1@sha256:2a67dc8d0fc3c382d58466c2065f1dc7747f0e2fec106554a05202621375b27c
+    image: ghcr.io/nmshd/backbone-sse-server:6.46.0@sha256:ff8cb2b5a77873c60cc9c4ea05385bfa9cf6bcad5634c6b604b3deaf44c1b491
     container_name: sse-server
     hostname: sse-server
     ports:
@@ -51,7 +51,7 @@ services:
 
   database-migrator:
     container_name: database-migrator-test
-    image: ghcr.io/nmshd/backbone-database-migrator:6.44.1@sha256:acbecbc10991234a198ede1caad174f871b143323c3f8c63dba7609702227de9
+    image: ghcr.io/nmshd/backbone-database-migrator:6.46.0@sha256:fe700a14e794f32d2069029f566ff36983fe86507cb3a3ab39cbc4c73d3da443
     environment:
       Infrastructure__SqlDatabase__Provider: Postgres
       Infrastructure__SqlDatabase__ConnectionString: "Server=postgres;Database=enmeshed;User Id=postgres;Password=Passw0rd;Port=5432"
@@ -88,13 +88,13 @@ services:
   rabbitmq:
     container_name: bkb-rabbitmq
     hostname: rabbitmq
-    image: rabbitmq:4.1.0-alpine@sha256:a9d1c4f50eb1be66f33271d9eca0dd73858db32cfa25ad2c78bf094f24ee0a7a
+    image: rabbitmq:4.1.0-alpine@sha256:8a73e9185f8420247c5b3c19231df18dfac28a8d5706203e13b291934044966d
 
   ### seeds ###
 
   seed-client:
     container_name: seed-client
-    image: ghcr.io/nmshd/backbone-admin-cli:6.44.1@sha256:217da0eafcdb36147553235e30d5c344b54be92ada72afa3aab2e64de925f59b
+    image: ghcr.io/nmshd/backbone-admin-cli:6.46.0@sha256:0ab25f65494a3359c0ddd9bcaa54c1e5cd5aa63e0d2c9c211c40183a526a457d
     depends_on:
       consumer-api:
         condition: service_healthy

@@ -2139,6 +2139,46 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
+  /api/v2/Files/{id}/RegenerateOwnershipToken:
+    patch:
+      operationId: regenerateOwnershipToken
+      description: Regenerates the ownership token for the file with the given `id`. This will invalidate the previous ownership token.
+      tags:
+        - Files
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the File to regenerate the ownership token for.
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileID"
+      responses:
+        200:
+          description: Success. The ownership token has been regenerated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/FileMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
   /api/v2/Files/{id}:
     delete:
       operationId: deleteFile
@@ -5240,6 +5280,15 @@ components:
           type: object
           allOf:
             - $ref: "#/components/schemas/ObjectReference"
+        ownershipToken:
+          type: string
+          nullable: true
+          description: The ownership token of the file. This is used to transfer the ownership of this file. This will always be undefined if the file is not owned by the current identity.
+        ownershipIsLocked:
+          type: boolean
+          enum: [true]
+          nullable: true
+          description: true if the ownership of the file is locked, undefined otherwise. If the ownership is locked, the ownership token cannot be used to transfer the ownership of this file and would have to be regenerated for this purpose. This will always be undefined if the file is not owned by the current identity.
       required:
         - id
         - filename
