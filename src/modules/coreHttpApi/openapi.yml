@@ -5502,12 +5502,12 @@ components:
         ownershipToken:
           type: string
           nullable: true
-          description: The ownership token of the file. This is used to transfer the ownership of this file.
+          description: The ownership token of the file. This is used to transfer the ownership of this file. This will always be undefined if the file is not owned by the current identity.
         ownershipIsLocked:
           type: boolean
           enum: [true]
           nullable: true
-          description: true if the ownership of the file is locked, undefined otherwise. If the ownership is locked, the ownership token cannot be used to transfer the ownership of this file and would have to be regenerated for this purpose.
+          description: true if the ownership of the file is locked, undefined otherwise. If the ownership is locked, the ownership token cannot be used to transfer the ownership of this file and would have to be regenerated for this purpose. This will always be undefined if the file is not owned by the current identity.
       required:
         - id
         - title
