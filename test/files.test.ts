@@ -245,7 +245,6 @@ describe("Load peer file with token reference", () => {
 
         const response = await client2.files.getFiles({ createdAt: file.createdAt });
         expect(response).toBeSuccessful(ValidationSchema.Files);
-
         expect(response.result).toContainEqual({ ...file, isOwn: false, ownershipToken: undefined });
     });
 

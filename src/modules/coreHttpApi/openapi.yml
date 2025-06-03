@@ -2320,7 +2320,7 @@ paths:
   /api/v2/Files/{id}/RegenerateOwnershipToken:
     patch:
       operationId: regenerateOwnershipToken
-      description: Regenerates the ownership token for the file with the given `id`. This will invalidate all previous ownership tokens.
+      description: Regenerates the ownership token for the file with the given `id`. This will invalidate the previous ownership token.
       tags:
         - Files
       parameters:
@@ -5507,7 +5507,7 @@ components:
           type: boolean
           enum: [true]
           nullable: true
-          description: true if the ownership of the file is locked, undefined otherwise. If the ownership is locked, the ownership token cannot be used to transfer the ownership of this file.
+          description: true if the ownership of the file is locked, undefined otherwise. If the ownership is locked, the ownership token cannot be used to transfer the ownership of this file and would have to be regenerated for this purpose.
       required:
         - id
         - title
