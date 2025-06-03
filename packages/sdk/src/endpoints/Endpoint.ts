@@ -26,6 +26,11 @@ export abstract class Endpoint {
         return this.makeResult(response);
     }
 
+    protected async patch<T>(path: string, data?: unknown): Promise<ConnectorHttpResponse<T>> {
+        const response = await this.httpClient.patch(path, data);
+        return this.makeResult(response);
+    }
+
     protected async delete<T>(path: string, params?: unknown, expectedStatus?: number): Promise<ConnectorHttpResponse<T>> {
         const response = await this.httpClient.delete(path, { params });
         return this.makeResult(response, expectedStatus);

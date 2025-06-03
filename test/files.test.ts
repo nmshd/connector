@@ -223,7 +223,7 @@ describe("Load peer file with token reference", () => {
         const response = await client2.files.loadPeerFile({ reference: token.reference.truncated });
 
         expect(response).toBeSuccessful(ValidationSchema.File);
-        expect(response.result).toMatchObject({ ...file, isOwn: false });
+        expect(response.result).toStrictEqualExcluding({ ...file, isOwn: false, ownershipToken: undefined }, "ownershipToken");
     });
 
     test("after peer file is loaded the file can be accessed under /Files/{id}", async () => {
@@ -231,7 +231,7 @@ describe("Load peer file with token reference", () => {
 
         const response = await client2.files.getFile(file.id);
         expect(response).toBeSuccessful(ValidationSchema.File);
-        expect(response.result).toMatchObject({ ...file, isOwn: false });
+        expect(response.result).toStrictEqualExcluding({ ...file, isOwn: false, ownershipToken: undefined }, "ownershipToken");
     });
 
     test("after peer file is loaded it can be accessed under /Files", async () => {
@@ -239,7 +239,7 @@ describe("Load peer file with token reference", () => {
 
         const response = await client2.files.getFiles({ createdAt: file.createdAt });
         expect(response).toBeSuccessful(ValidationSchema.Files);
-        expect(response.result).toContainEqual({ ...file, isOwn: false });
+        expect(response.result).toContainEqual({ ...file, isOwn: false, ownershipToken: undefined });
     });
 
     test("token can be personalized", async () => {
@@ -300,7 +300,7 @@ describe("Load peer file with reference", () => {
         const response = await client2.files.loadPeerFile({ reference: file.reference.truncated });
 
         expect(response).toBeSuccessful(ValidationSchema.File);
-        expect(response.result).toMatchObject({ ...file, isOwn: false });
+        expect(response.result).toStrictEqualExcluding({ ...file, isOwn: false, ownershipToken: undefined }, "ownershipToken");
     });
 
     test("after peer file is loaded the file can be accessed under /Files/{id}", async () => {
@@ -308,7 +308,7 @@ describe("Load peer file with reference", () => {
 
         const response = await client2.files.getFile(file.id);
         expect(response).toBeSuccessful(ValidationSchema.File);
-        expect(response.result).toMatchObject({ ...file, isOwn: false });
+        expect(response.result).toStrictEqualExcluding({ ...file, isOwn: false, ownershipToken: undefined }, "ownershipToken");
     });
 
     test("after peer file is loaded it can be accessed under /Files", async () => {
@@ -316,7 +316,7 @@ describe("Load peer file with reference", () => {
 
         const response = await client2.files.getFiles({ createdAt: file.createdAt });
         expect(response).toBeSuccessful(ValidationSchema.Files);
-        expect(response.result).toContainEqual({ ...file, isOwn: false });
+        expect(response.result).toContainEqual({ ...file, isOwn: false, ownershipToken: undefined });
     });
 });
 
@@ -377,5 +377,25 @@ describe("Delete file", () => {
 
         const getFileAfterDeletionResult = await client1.files.getFile(file.id);
         expect(getFileAfterDeletionResult).toBeAnError("File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+    });
+});
+
+describe("File ownership", () => {
+    test("ownership token is returned when uploading a file", async () => {
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest());
+
+        expect(response).toBeSuccessful(ValidationSchema.File);
+        expect(response.result.ownershipToken).toBeDefined();
+    });
+
+    test("ownership token can be regenerated", async () => {
+        const file = await uploadFile(client1);
+        const initialOwnershipToken = file.ownershipToken;
+
+        const regenerateResponse = await client1.files.regenerateFileOwnershipToken(file.id);
+
+        expect(regenerateResponse).toBeSuccessful(ValidationSchema.File);
+        expect(regenerateResponse.result.ownershipToken).toBeDefined();
+        expect(regenerateResponse.result.ownershipToken).not.toBe(initialOwnershipToken);
     });
 });
