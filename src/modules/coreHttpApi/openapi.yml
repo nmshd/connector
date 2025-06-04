@@ -5495,7 +5495,7 @@ components:
           type: string
           format: byte
           nullable: false
-          description: The base64 encoded truncated reference reference of the File, which actually consists of all information to get and decrypt it.
+          description: The base64 encoded truncated reference of the File, which actually consists of all information to get and decrypt it.
         reference:
           type: object
           allOf:
