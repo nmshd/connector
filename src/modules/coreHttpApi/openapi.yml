@@ -5538,7 +5538,7 @@ components:
         reference:
           type: string
           nullable: false
-          description: The url truncated reference of the File.
+          description: The url reference of the File.
       required:
         - reference
 
