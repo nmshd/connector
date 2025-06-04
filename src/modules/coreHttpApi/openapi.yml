@@ -2051,7 +2051,7 @@ paths:
                   type: string
                   format: byte
                   nullable: false
-                  description: The base64 encoded truncated reference of the File, alternatively of a Token for the File. It consists of all information to get and decrypt it.
+                  description: The base64 encoded truncated reference or url reference of the File, alternatively of a Token for the File. It consists of all information to get and decrypt it.
                 password:
                   type: string
                   nullable: true
@@ -2170,6 +2170,7 @@ paths:
             oneOf:
               - $ref: "#/components/schemas/FileID"
               - $ref: "#/components/schemas/FileReferenceTruncated"
+              - $ref: "#/components/schemas/FileReferenceUrl"
         - in: query
           name: newQRCodeFormat
           description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
@@ -3629,7 +3630,7 @@ paths:
                   type: string
                   format: byte
                   nullable: false
-                  description: The base64 encoded truncated reference of the RelationshipTemplate, alternatively of a Token for the RelationshipTemplate. It consists of all information to get and decrypt it.
+                  description: The base64 encoded truncated reference or url reference of the RelationshipTemplate, alternatively of a Token for the RelationshipTemplate. It consists of all information to get and decrypt it.
                 password:
                   type: string
                   nullable: true
@@ -4536,7 +4537,7 @@ paths:
                   type: string
                   format: byte
                   nullable: false
-                  description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
+                  description: The base64 encoded truncated reference or url reference of the Token, which actually consists of all information to get and decrypt it.
                 ephemeral:
                   description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to false.
                   type: boolean
@@ -5494,7 +5495,7 @@ components:
           type: string
           format: byte
           nullable: false
-          description: The base64 encoded truncated reference of the File, which actually consists of all information to get and decrypt it.
+          description: The base64 encoded truncated reference or url reference of the File, which actually consists of all information to get and decrypt it.
         reference:
           type: object
           allOf:
@@ -5528,6 +5529,16 @@ components:
           type: string
           nullable: false
           description: The base64 encoded truncated reference of the File.
+      required:
+        - reference
+
+    FileReferenceUrl:
+      type: object
+      properties:
+        reference:
+          type: string
+          nullable: false
+          description: The url truncated reference of the File.
       required:
         - reference
 
