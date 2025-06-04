@@ -1884,7 +1884,7 @@ paths:
                   type: string
                   format: byte
                   nullable: false
-                  description: The base64 encoded truncated reference of the File, alternatively of a Token for the File. It consists of all information to get and decrypt it.
+                  description: The base64 encoded truncated reference or url reference of the File, alternatively of a Token for the File. It consists of all information to get and decrypt it.
                 password:
                   type: string
                   nullable: true
@@ -2003,6 +2003,7 @@ paths:
             oneOf:
               - $ref: "#/components/schemas/FileID"
               - $ref: "#/components/schemas/FileReferenceTruncated"
+              - $ref: "#/components/schemas/FileReferenceUrl"
 
       responses:
         200:
@@ -2097,7 +2098,7 @@ paths:
                   type: string
                   format: date-time
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
+                  description: If set to true the token will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
                   type: boolean
                 forIdentity:
                   $ref: "#/components/schemas/Address"
@@ -3451,7 +3452,7 @@ paths:
                   type: string
                   format: byte
                   nullable: false
-                  description: The base64 encoded truncated reference of the RelationshipTemplate, alternatively of a Token for the RelationshipTemplate. It consists of all information to get and decrypt it.
+                  description: The base64 encoded truncated reference or url reference of the RelationshipTemplate, alternatively of a Token for the RelationshipTemplate. It consists of all information to get and decrypt it.
                 password:
                   type: string
                   nullable: true
@@ -3623,7 +3624,7 @@ paths:
                   type: string
                   format: date-time
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
+                  description: If set to true the token will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
                   type: boolean
                 forIdentity:
                   $ref: "#/components/schemas/Address"
@@ -4226,7 +4227,7 @@ paths:
                   nullable: false
                   description: A timestamp that describes when this token expires. An expired token cannot be fetched from the platform anymore. However it will still be available for auditing purposes.
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to false.
+                  description: If set to true the token will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to false.
                   type: boolean
                   example: false
                 forIdentity:
@@ -4347,9 +4348,9 @@ paths:
                   type: string
                   format: byte
                   nullable: false
-                  description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
+                  description: The base64 encoded truncated reference or url reference of the Token, which actually consists of all information to get and decrypt it.
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to false.
+                  description: If set to true the token will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to false.
                   type: boolean
                 password:
                   type: string
@@ -5308,6 +5309,16 @@ components:
           type: string
           nullable: false
           description: The base64 encoded truncated reference of the File.
+      required:
+        - reference
+
+    FileReferenceUrl:
+      type: object
+      properties:
+        reference:
+          type: string
+          nullable: false
+          description: The url reference of the File.
       required:
         - reference
 
