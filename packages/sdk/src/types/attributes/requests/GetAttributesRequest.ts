@@ -4,8 +4,6 @@ export interface GetAttributesRequest {
         "@type"?: string;
         tags?: string[];
         owner?: string;
-        validFrom?: string;
-        validTo?: string;
         key?: string;
         isTechnical?: string;
         confidentiality?: "public" | "private" | "protected";
