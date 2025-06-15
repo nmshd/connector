@@ -89,7 +89,7 @@
         "@nmshd/typescript-rest": "^3.1.5",
         "agentkeepalive": "4.6.0",
         "amqplib": "^0.10.8",
-        "axios": "^1.9.0",
+        "axios": "^1.10.0",
         "compression": "1.8.0",
         "correlation-id": "^5.2.0",
         "cors": "2.8.5",
