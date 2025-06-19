@@ -19,7 +19,6 @@ export * from "./requests/GetOwnRepositoryAttributesRequest";
 export * from "./requests/GetOwnSharedIdentityAttributesRequest";
 export * from "./requests/GetPeerSharedIdentityAttributesRequest";
 export * from "./requests/GetSharedVersionsOfAttributeRequest";
-export * from "./requests/GetValidAttributesRequest";
 export * from "./requests/NotifyPeerAboutRepositoryAttributeSuccessionRequest";
 export * from "./requests/NotifyPeerAboutRepositoryAttributeSuccessionResponse";
 export * from "./requests/SucceedAttributeRequest";
