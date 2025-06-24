@@ -6,6 +6,7 @@ import compression from "compression";
 import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
+import { ConfigParams, auth, requiresAuth } from "express-openid-connect";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
 import { buildInformation } from "../../buildInformation";
@@ -34,7 +35,10 @@ export interface ControllerConfig {
     baseDirectory: string;
 }
 
+export type OauthParams = ConfigParams;
+
 export interface HttpServerConfiguration extends InfrastructureConfiguration {
+    oauth?: OauthParams;
     port?: number;
     apiKey: string;
     cors?: CorsOptions;
@@ -89,7 +93,9 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.useUnsecuredCustomEndpoints();
 
         this.useHealthEndpoint();
-        this.useApiKey();
+        this.initAuthentication();
+        this.useAuthentication();
+        this.useUserDataEndpoint();
 
         this.useVersionEndpoint();
         this.useResponsesEndpoint();
@@ -186,16 +192,31 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.app.use(genericErrorHandler(this.connectorMode, this.logger));
     }
 
-    private useApiKey() {
-        if (!this.configuration.apiKey) {
+    private initAuthentication() {
+        if (!this.configuration.apiKey && !this.configuration.oauth) {
             switch (this.connectorMode) {
                 case "debug":
-                    return;
+                    break;
                 case "production":
-                    throw new Error("No API key set in configuration. This is required in production mode.");
+                    throw new Error(`No API key and OAuth config set in configuration. At least one is required in production mode.`);
             }
         }
 
+        this.initOauth();
+        this.initApiKey();
+    }
+
+    private initOauth() {
+        if (!this.configuration.oauth) {
+            return;
+        }
+        this.app.use(auth(this.configuration.oauth));
+    }
+
+    private initApiKey() {
+        if (!this.configuration.apiKey) {
+            return;
+        }
         const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
         if (!this.configuration.apiKey.match(apiKeyPolicy)) {
             this.logger.warn(
@@ -203,9 +224,19 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             );
             this.logger.warn("The API key will be used as is, but it is recommended to change it as it will not be supported in future versions.");
         }
+    }
 
+    private useAuthentication() {
         this.app.use(async (req, res, next) => {
             const apiKeyFromHeader = req.headers["x-api-key"];
+
+            if (!apiKeyFromHeader) {
+                if (this.configuration.oauth) {
+                    await requiresAuth()(req, res, next);
+                    return;
+                }
+            }
+
             if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
                 await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
                 res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
@@ -213,6 +244,22 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             }
 
             next();
+        });
+    }
+
+    private useUserDataEndpoint() {
+        if (this.connectorMode !== "debug") {
+            return;
+        }
+        this.app.get("/oauth/userData", async (req, res) => {
+            if (!req.oidc.user) {
+                res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
+                return;
+            }
+
+            const userData = req.oidc.user;
+            const userInfo = await req.oidc.fetchUserInfo();
+            res.status(200).json({ userData, userInfo });
         });
     }
 
@@ -269,7 +316,6 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         for (const controller of this.controllers) {
             Server.loadControllers(this.app, controller.globs, controller.baseDirectory);
         }
-
         Server.ignoreNextMiddlewares(true);
     }
 
