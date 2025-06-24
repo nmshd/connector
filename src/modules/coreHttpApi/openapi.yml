@@ -2592,6 +2592,10 @@ paths:
         - Messages
       parameters:
         - in: query
+          name: isOwn
+          schema:
+            $ref: "#/components/schemas/PartialBooleanFilter"
+        - in: query
           name: createdBy
           schema:
             $ref: "#/components/schemas/IdFilter"
