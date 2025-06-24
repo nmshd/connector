@@ -1,4 +1,5 @@
 export interface GetMessagesRequest {
+    isOwn?: string;
     createdBy?: string | string[];
     createdByDevice?: string | string[];
     createdAt?: string | string[];
