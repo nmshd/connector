@@ -1872,6 +1872,14 @@ paths:
           name: isOwn
           schema:
             $ref: "#/components/schemas/BooleanFilter"
+        - in: query
+          name: ownershipToken
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: ownershipIsLocked
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
       responses:
         200:
           description: Success
@@ -2008,6 +2016,14 @@ paths:
           name: title
           schema:
             $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: ownershipToken
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: ownershipIsLocked
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
       responses:
         200:
           description: Success

@@ -8,4 +8,6 @@ export interface GetOwnFilesRequest {
     mimetype?: string | string[];
     title?: string | string[];
     tags?: string | string[];
+    ownershipToken?: string | string[];
+    ownershipIsLocked?: string;
 }
