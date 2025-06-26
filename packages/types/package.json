@@ -28,14 +28,14 @@
         "@js-soft/logging-abstractions": "^1.0.1",
         "@types/express": "^5.0.3",
         "@types/luxon": "^3.6.2",
-        "@types/node": "^22.15.32",
+        "@types/node": "^22.15.33",
         "@types/qrcode": "^1.5.5",
         "typescript": "^5.8.3"
     },
     "peerDependencies": {
         "@js-soft/docdb-access-abstractions": "^1.1.0",
         "@js-soft/ts-utils": "^2.3.3",
-        "@nmshd/runtime": "^6.55.0",
+        "@nmshd/runtime": "^6.58.0",
         "@nmshd/typescript-rest": "^3.1.5",
         "express": "^5.1.0"
     },
