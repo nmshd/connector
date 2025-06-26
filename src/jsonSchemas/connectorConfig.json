@@ -1100,6 +1100,7 @@
                     "type": "number"
                 }
             },
+            "required": ["platformClientId", "platformClientSecret", "baseUrl"],
             "type": "object"
         }
     },
