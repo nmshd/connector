@@ -44,6 +44,7 @@ interface InfrastructureConfiguration {
         port?: string | number;
         apiKey: string;
         cors?: any;
+        helmetOptions?: any;
     };
 }
 

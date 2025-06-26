@@ -49,6 +49,9 @@
         "debug": {
             "type": "boolean"
         },
+        "enforceCertificatePinning": {
+            "type": "boolean"
+        },
         "infrastructure": {
             "additionalProperties": false,
             "properties": {
@@ -62,6 +65,7 @@
                         "enabled": {
                             "type": "boolean"
                         },
+                        "helmetOptions": {},
                         "port": {
                             "type": ["string", "number"]
                         }
@@ -1062,9 +1066,6 @@
             },
             "type": "object"
         },
-        "enforceCertificatePinning": {
-            "type": "boolean"
-        },
         "transportLibrary": {
             "additionalProperties": false,
             "properties": {
@@ -1099,7 +1100,6 @@
                     "type": "number"
                 }
             },
-            "required": ["baseUrl", "platformClientId", "platformClientSecret"],
             "type": "object"
         }
     },
