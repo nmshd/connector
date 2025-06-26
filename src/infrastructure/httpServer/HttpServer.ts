@@ -8,6 +8,7 @@ import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
+import { buildInformation } from "../../buildInformation";
 import { RequestTracker } from "./RequestTracker";
 import { csrfErrorHandler } from "./middlewares/csrfErrorHandler";
 import { RouteNotFoundError, genericErrorHandler } from "./middlewares/genericErrorHandler";
@@ -225,7 +226,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
     private useVersionEndpoint() {
         this.app.get("/Monitoring/Version", (_req: any, res: any) => {
-            throw new Error("This endpoint is deprecated. Please use /Monitoring/BuildInformation instead.");
+            res.status(200).json(buildInformation);
         });
     }
 
