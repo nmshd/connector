@@ -51,13 +51,13 @@ interface InfrastructureConfiguration {
 // ================================ Transport Library ================================
 
 interface IConfigOverwrite {
-    platformClientId?: string;
-    platformClientSecret?: string;
+    platformClientId: string;
+    platformClientSecret: string;
     platformTimeout?: number;
     platformMaxRedirects?: number;
     platformMaxContentLength?: number;
     platformAdditionalHeaders?: object;
-    baseUrl?: string;
+    baseUrl: string;
     addressGenerationHostnameOverride?: string;
     datawalletEnabled?: boolean;
     debug?: boolean;
