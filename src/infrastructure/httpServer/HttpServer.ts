@@ -214,9 +214,8 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private initApiKey() {
-        if (!this.configuration.apiKey) {
-            return;
-        }
+        if (!this.configuration.apiKey) return;
+
         const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
         if (!this.configuration.apiKey.match(apiKeyPolicy)) {
             this.logger.warn(
