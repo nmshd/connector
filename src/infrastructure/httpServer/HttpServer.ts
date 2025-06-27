@@ -209,7 +209,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private initOauth() {
         if (!this.configuration.oauth) return;
 
-        this.app.use(auth(this.configuration.oauth));
+        this.app.use(auth({ ...this.configuration.oauth, authRequired: false }));
     }
 
     private initApiKey() {
@@ -228,11 +228,9 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.app.use(async (req, res, next) => {
             const apiKeyFromHeader = req.headers["x-api-key"];
 
-            if (!apiKeyFromHeader) {
-                if (this.configuration.oauth) {
-                    await requiresAuth()(req, res, next);
-                    return;
-                }
+            if (!apiKeyFromHeader && this.configuration.oauth) {
+                await requiresAuth()(req, res, next);
+                return;
             }
 
             if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
