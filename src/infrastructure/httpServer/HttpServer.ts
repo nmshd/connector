@@ -208,7 +208,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
     private initOauth() {
         if (!this.configuration.oauth) return;
-        // asaaaasaa
+
         this.app.use(auth({ ...this.configuration.oauth, authRequired: false }));
     }
 
