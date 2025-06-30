@@ -225,33 +225,32 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useAuthentication() {
+        if (!this.configuration.apiKey && !this.configuration.oauth) return;
+
+        const unauthorized = async (_: express.Request, res: express.Response) => {
+            await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
+            res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
+        };
+
         this.app.use(async (req, res, next) => {
             const apiKeyFromHeader = req.headers["x-api-key"];
-
-            if (!apiKeyFromHeader && this.configuration.oauth) {
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
-                if (!req.oidc) {
-                    next(new Error("req.oidc is not found, did you include the auth middleware?"));
-                    return;
-                }
-
-                if (!req.oidc.isAuthenticated()) {
-                    await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
-                    res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
-                    return;
-                }
+            if (this.configuration.apiKey && apiKeyFromHeader) {
+                if (apiKeyFromHeader !== this.configuration.apiKey) return await unauthorized(req, res);
 
                 next();
                 return;
             }
 
-            if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
-                await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
-                res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
+            if (this.configuration.oauth) {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
+                if (!req.oidc) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
+                if (!req.oidc.isAuthenticated()) return await unauthorized(req, res);
+
+                next();
                 return;
             }
 
-            next();
+            await unauthorized(req, res);
         });
     }
 
