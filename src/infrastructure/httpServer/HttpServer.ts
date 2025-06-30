@@ -196,7 +196,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         if (!this.configuration.apiKey && !this.configuration.oauth) {
             switch (this.connectorMode) {
                 case "debug":
-                    break;
+                    return;
                 case "production":
                     throw new Error(`No API key and OAuth config set in configuration. At least one is required in production mode.`);
             }
