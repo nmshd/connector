@@ -6,7 +6,7 @@ import compression from "compression";
 import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
-import { ConfigParams, auth, requiresAuth } from "express-openid-connect";
+import { ConfigParams, auth } from "express-openid-connect";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
 import { buildInformation } from "../../buildInformation";
@@ -208,7 +208,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
     private initOauth() {
         if (!this.configuration.oauth) return;
-
+        // asaaaasaa
         this.app.use(auth({ ...this.configuration.oauth, authRequired: false }));
     }
 
@@ -229,7 +229,18 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             const apiKeyFromHeader = req.headers["x-api-key"];
 
             if (!apiKeyFromHeader && this.configuration.oauth) {
-                await requiresAuth()(req, res, next);
+                if (!req.oidc) {
+                    next(new Error("req.oidc is not found, did you include the auth middleware?"));
+                    return;
+                }
+
+                if (!req.oidc.isAuthenticated()) {
+                    await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
+                    res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
+                    return;
+                }
+
+                next();
                 return;
             }
 
