@@ -229,6 +229,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             const apiKeyFromHeader = req.headers["x-api-key"];
 
             if (!apiKeyFromHeader && this.configuration.oauth) {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
                 if (!req.oidc) {
                     next(new Error("req.oidc is not found, did you include the auth middleware?"));
                     return;
