@@ -262,28 +262,13 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             if (this.configuration.oauth) {
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
                 if (!req.oidc) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
-                if (!req.oidc.isAuthenticated()) return await unauthorized(req, res);
+                if (!req.oidc.isAuthenticated()) return await res.oidc.login();
 
                 next();
                 return;
             }
 
             await unauthorized(req, res);
-        });
-    }
-
-    private useUserDataEndpoint() {
-        if (this.connectorMode !== "debug") return;
-
-        this.app.get("/oauth/userData", async (req, res) => {
-            if (!req.oidc.user) {
-                res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
-                return;
-            }
-
-            const userData = req.oidc.user;
-            const userInfo = await req.oidc.fetchUserInfo();
-            res.status(200).json({ userData, userInfo });
         });
     }
 
