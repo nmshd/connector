@@ -7,7 +7,7 @@ import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
 import { AuthOptions, auth as bearerAuth } from "express-oauth2-jwt-bearer";
-import { ConfigParams, auth } from "express-openid-connect";
+import { ConfigParams as OauthParams, auth } from "express-openid-connect";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
 import { buildInformation } from "../../buildInformation";
@@ -35,8 +35,6 @@ export interface ControllerConfig {
     globs: string[];
     baseDirectory: string;
 }
-
-export type OauthParams = ConfigParams;
 
 export interface HttpServerConfiguration extends InfrastructureConfiguration {
     oauth?: OauthParams;

@@ -40,8 +40,8 @@ interface ModuleConfiguration {
 
 interface InfrastructureConfiguration {
     httpServer: {
-        oauth?: any; // OauthParams | undefined;
-        oauthBearer?: any; // OauthParams | undefined;
+        oauth?: any;
+        oauthBearer?: any;
         enabled: boolean;
         port?: string | number;
         apiKey: string;
