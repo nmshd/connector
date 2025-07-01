@@ -93,7 +93,6 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.useHealthEndpoint();
         this.initAuthentication();
         this.useAuthentication();
-        this.useUserDataEndpoint();
 
         this.useVersionEndpoint();
         this.useResponsesEndpoint();
@@ -249,21 +248,6 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             }
 
             await unauthorized(req, res);
-        });
-    }
-
-    private useUserDataEndpoint() {
-        if (this.connectorMode !== "debug") return;
-
-        this.app.get("/oauth/userData", async (req, res) => {
-            if (!req.oidc.user) {
-                res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
-                return;
-            }
-
-            const userData = req.oidc.user;
-            const userInfo = await req.oidc.fetchUserInfo();
-            res.status(200).json({ userData, userInfo });
         });
     }
 
