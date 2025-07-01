@@ -6,6 +6,8 @@ import compression from "compression";
 import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
+
+import { AuthOptions, auth as bearerAuth } from "express-oauth2-jwt-bearer";
 import { ConfigParams as OauthParams, auth } from "express-openid-connect";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
@@ -37,6 +39,7 @@ export interface ControllerConfig {
 
 export interface HttpServerConfiguration extends InfrastructureConfiguration {
     oauth?: OauthParams;
+    oauthBearer?: AuthOptions;
     port?: number;
     apiKey: string;
     cors?: CorsOptions;
@@ -190,7 +193,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private initAuthentication() {
-        if (!this.configuration.apiKey && !this.configuration.oauth) {
+        if (!this.configuration.apiKey && !this.configuration.oauth && !this.configuration.oauthBearer) {
             switch (this.connectorMode) {
                 case "debug":
                     return;
@@ -201,12 +204,23 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
         this.initOauth();
         this.initApiKey();
+        this.initOauthBearer();
     }
 
     private initOauth() {
         if (!this.configuration.oauth) return;
 
         this.app.use(auth({ ...this.configuration.oauth, authRequired: false }));
+    }
+    private initOauthBearer() {
+        if (!this.configuration.oauthBearer) return;
+
+        this.app.use(
+            bearerAuth({
+                ...this.configuration.oauthBearer,
+                authRequired: false
+            })
+        );
     }
 
     private initApiKey() {
@@ -222,7 +236,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useAuthentication() {
-        if (!this.configuration.apiKey && !this.configuration.oauth) return;
+        if (!this.configuration.apiKey && !this.configuration.oauth && !this.configuration.oauthBearer) return;
 
         const unauthorized = async (_: express.Request, res: express.Response) => {
             await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
@@ -233,6 +247,13 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             const apiKeyFromHeader = req.headers["x-api-key"];
             if (this.configuration.apiKey && apiKeyFromHeader) {
                 if (apiKeyFromHeader !== this.configuration.apiKey) return await unauthorized(req, res);
+
+                next();
+                return;
+            }
+
+            if (this.configuration.oauthBearer && req.headers["authorization"]) {
+                if (!req.auth) return await unauthorized(req, res);
 
                 next();
                 return;

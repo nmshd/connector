@@ -67,6 +67,7 @@
                         },
                         "helmetOptions": {},
                         "oauth": {},
+                        "oauthBearer": {},
                         "port": {
                             "type": ["string", "number"]
                         }
