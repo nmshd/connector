@@ -66,6 +66,7 @@
                             "type": "boolean"
                         },
                         "helmetOptions": {},
+                        "oauth": {},
                         "port": {
                             "type": ["string", "number"]
                         }

@@ -7,7 +7,7 @@ export function requestLogger(logger: ILogger) {
         res.on("finish", function () {
             const diff = process.hrtime(startAt)[1];
             const time = Math.round(diff / 1_000_000);
-            logger.info(`${req.method} ${req.path} ${res.statusCode} -- ${time}ms`);
+            logger.info(`${req.method} ${req.baseUrl}${req.path} ${res.statusCode} -- ${time}ms`);
         });
         next();
     };
