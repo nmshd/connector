@@ -255,9 +255,8 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useUserDataEndpoint() {
-        if (this.connectorMode !== "debug") {
-            return;
-        }
+        if (this.connectorMode !== "debug") return;
+
         this.app.get("/oauth/userData", async (req, res) => {
             if (!req.oidc.user) {
                 res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
