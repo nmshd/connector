@@ -126,7 +126,7 @@
         "@types/jest": "^30.0.0",
         "@types/jest-json-schema": "^6.1.4",
         "@types/json-stringify-safe": "^5.0.3",
-        "@types/lodash": "^4.17.19",
+        "@types/lodash": "^4.17.20",
         "@types/luxon": "^3.6.2",
         "@types/nconf": "^0.10.7",
         "@types/node": "^22.15.33",
