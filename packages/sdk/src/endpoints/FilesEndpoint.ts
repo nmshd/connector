@@ -1,8 +1,6 @@
+import { FileDTO, TokenDTO } from "@nmshd/runtime-types";
 import {
-    ConnectorFile,
-    ConnectorFiles,
     ConnectorHttpResponse,
-    ConnectorToken,
     CreateTokenForFileRequest,
     CreateTokenQrCodeForFileRequest,
     GetAllFilesRequest,
@@ -14,11 +12,11 @@ import {
 import { Endpoint } from "./Endpoint";
 
 export class FilesEndpoint extends Endpoint {
-    public async getFiles(request?: GetAllFilesRequest): Promise<ConnectorHttpResponse<ConnectorFiles>> {
+    public async getFiles(request?: GetAllFilesRequest): Promise<ConnectorHttpResponse<FileDTO[]>> {
         return await this.get("/api/v2/Files", request);
     }
 
-    public async uploadOwnFile(request: UploadOwnFileRequest): Promise<ConnectorHttpResponse<ConnectorFile>> {
+    public async uploadOwnFile(request: UploadOwnFileRequest): Promise<ConnectorHttpResponse<FileDTO>> {
         const response = await this.postMultipart(
             "/api/v2/Files/Own",
             { title: request.title, description: request.description, expiresAt: request.expiresAt, file: request.file, tags: request.tags },
@@ -27,19 +25,19 @@ export class FilesEndpoint extends Endpoint {
         return this.makeResult(response);
     }
 
-    public async getOwnFiles(request?: GetOwnFilesRequest): Promise<ConnectorHttpResponse<ConnectorFiles>> {
+    public async getOwnFiles(request?: GetOwnFilesRequest): Promise<ConnectorHttpResponse<FileDTO[]>> {
         return await this.get("/api/v2/Files/Own", request);
     }
 
-    public async loadPeerFile(request: LoadPeerFileRequest): Promise<ConnectorHttpResponse<ConnectorFile>> {
+    public async loadPeerFile(request: LoadPeerFileRequest): Promise<ConnectorHttpResponse<FileDTO>> {
         return await this.post("/api/v2/Files/Peer", request);
     }
 
-    public async getPeerFiles(request?: GetPeerFilesRequest): Promise<ConnectorHttpResponse<ConnectorFiles>> {
+    public async getPeerFiles(request?: GetPeerFilesRequest): Promise<ConnectorHttpResponse<FileDTO[]>> {
         return await this.get("/api/v2/Files/Peer", request);
     }
 
-    public async getFile(fileIdOrReference: string): Promise<ConnectorHttpResponse<ConnectorFile>> {
+    public async getFile(fileIdOrReference: string): Promise<ConnectorHttpResponse<FileDTO>> {
         return await this.get(`/api/v2/Files/${fileIdOrReference}`);
     }
 
@@ -51,7 +49,7 @@ export class FilesEndpoint extends Endpoint {
         return await this.downloadQrCode("GET", `/api/v2/Files/${fileId}`, { newQRCodeFormat: newQRCodeFormat ? "true" : undefined });
     }
 
-    public async createTokenForFile(fileId: string, request?: CreateTokenForFileRequest): Promise<ConnectorHttpResponse<ConnectorToken>> {
+    public async createTokenForFile(fileId: string, request?: CreateTokenForFileRequest): Promise<ConnectorHttpResponse<TokenDTO>> {
         return await this.post(`/api/v2/Files/${fileId}/Token`, request, undefined);
     }
 
@@ -63,7 +61,7 @@ export class FilesEndpoint extends Endpoint {
         return await this.delete(`/api/v2/Files/${fileId}`, undefined, 204);
     }
 
-    public async regenerateFileOwnershipToken(fileId: string): Promise<ConnectorHttpResponse<ConnectorFile>> {
+    public async regenerateFileOwnershipToken(fileId: string): Promise<ConnectorHttpResponse<FileDTO>> {
         return await this.patch(`/api/v2/Files/${fileId}/RegenerateOwnershipToken`, undefined);
     }
 }

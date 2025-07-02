@@ -1,10 +1,9 @@
+import { LocalRequestDTO } from "@nmshd/runtime-types";
 import {
     AcceptIncomingRequestRequest,
     CanAcceptIncomingRequestRequest,
     CanRejectIncomingRequestRequest,
     ConnectorHttpResponse,
-    ConnectorRequest,
-    ConnectorRequests,
     ConnectorRequestValidationResult,
     GetIncomingRequestsRequest,
     RejectIncomingRequestRequest
@@ -16,7 +15,7 @@ export class IncomingRequestsEndpoint extends Endpoint {
         return await this.put(`/api/v2/Requests/Incoming/${requestId}/CanAccept`, request);
     }
 
-    public async accept(requestId: string, request: AcceptIncomingRequestRequest): Promise<ConnectorHttpResponse<ConnectorRequest>> {
+    public async accept(requestId: string, request: AcceptIncomingRequestRequest): Promise<ConnectorHttpResponse<LocalRequestDTO>> {
         return await this.put(`/api/v2/Requests/Incoming/${requestId}/Accept`, request);
     }
 
@@ -24,15 +23,15 @@ export class IncomingRequestsEndpoint extends Endpoint {
         return await this.put(`/api/v2/Requests/Incoming/${requestId}/CanReject`, request);
     }
 
-    public async reject(requestId: string, request: RejectIncomingRequestRequest): Promise<ConnectorHttpResponse<ConnectorRequest>> {
+    public async reject(requestId: string, request: RejectIncomingRequestRequest): Promise<ConnectorHttpResponse<LocalRequestDTO>> {
         return await this.put(`/api/v2/Requests/Incoming/${requestId}/Reject`, request);
     }
 
-    public async getRequest(requestId: string): Promise<ConnectorHttpResponse<ConnectorRequest>> {
+    public async getRequest(requestId: string): Promise<ConnectorHttpResponse<LocalRequestDTO>> {
         return await this.get(`/api/v2/Requests/Incoming/${requestId}`);
     }
 
-    public async getRequests(request: GetIncomingRequestsRequest): Promise<ConnectorHttpResponse<ConnectorRequests>> {
+    public async getRequests(request: GetIncomingRequestsRequest): Promise<ConnectorHttpResponse<LocalRequestDTO[]>> {
         return await this.get("/api/v2/Requests/Incoming", request);
     }
 }

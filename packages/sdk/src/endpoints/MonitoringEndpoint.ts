@@ -1,8 +1,9 @@
-import { ConnectorHealth, ConnectorRequestCount, ConnectorSupportInformation, ConnectorVersionInfo } from "../types/monitoring";
+import { RuntimeHealth } from "@nmshd/runtime-types";
+import { ConnectorRequestCount, ConnectorSupportInformation, ConnectorVersionInfo } from "../types/monitoring";
 import { Endpoint } from "./Endpoint";
 
 export class MonitoringEndpoint extends Endpoint {
-    public async getHealth(): Promise<ConnectorHealth> {
+    public async getHealth(): Promise<RuntimeHealth> {
         return await this.getPlain("/health", (status) => status === 200 || status === 500);
     }
 

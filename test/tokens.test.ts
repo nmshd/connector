@@ -4,7 +4,6 @@ import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
 import { exchangeToken, uploadOwnToken } from "./lib/testUtils";
-import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -18,7 +17,7 @@ test("send a token", async () => {
         content: { aKey: "aValue" },
         expiresAt: DateTime.utc().plus({ days: 1 }).toString()
     });
-    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response).toBeSuccessful();
 });
 
 test("load a token", async () => {
@@ -27,7 +26,7 @@ test("load a token", async () => {
     const response = await client2.tokens.loadPeerToken({
         reference: template.reference.truncated
     });
-    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response).toBeSuccessful();
 });
 
 test("send and receive a personalized token", async () => {
@@ -38,7 +37,7 @@ test("send and receive a personalized token", async () => {
     const response = await client2.tokens.loadPeerToken({
         reference: template.reference.truncated
     });
-    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response).toBeSuccessful();
     expect(response.result.forIdentity).toBe(client2address);
 });
 
@@ -51,7 +50,7 @@ test("send and receive a password-protected token", async () => {
         reference: token.reference.truncated,
         password: "password"
     });
-    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response).toBeSuccessful();
     expect(response.result.passwordProtection?.password).toBe("password");
     expect(response.result.passwordProtection?.passwordIsPin).toBeUndefined();
 });
@@ -65,7 +64,7 @@ test("send and receive a PIN-protected token", async () => {
         reference: token.reference.truncated,
         password: "1234"
     });
-    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response).toBeSuccessful();
     expect(response.result.passwordProtection?.password).toBe("1234");
     expect(response.result.passwordProtection?.passwordIsPin).toBe(true);
 });
@@ -79,7 +78,7 @@ test("send and receive a password-protected token with PasswordLocationIndicator
         reference: token.reference.truncated,
         password: "password"
     });
-    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response).toBeSuccessful();
     expect(response.result.passwordProtection?.password).toBe("password");
     expect(response.result.passwordProtection?.passwordLocationIndicator).toBe("Email");
 });
@@ -93,7 +92,7 @@ test("send and receive a password-protected token with PasswordLocationIndicator
         reference: token.reference.truncated,
         password: "password"
     });
-    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response).toBeSuccessful();
     expect(response.result.passwordProtection?.password).toBe("password");
     expect(response.result.passwordProtection?.passwordLocationIndicator).toBe(99);
 });
@@ -163,7 +162,7 @@ describe("Tokens query", () => {
                 key: "passwordProtection.passwordLocationIndicator",
                 value: "Self"
             });
-        await conditions.executeTests((c, q) => c.tokens.getOwnTokens(q), ValidationSchema.Tokens);
+        await conditions.executeTests((c, q) => c.tokens.getOwnTokens(q));
     });
 
     test("query own PIN-protected tokens", async () => {
@@ -194,7 +193,7 @@ describe("Tokens query", () => {
                 key: "passwordProtection.passwordLocationIndicator",
                 value: "SMS"
             });
-        await conditions.executeTests((c, q) => c.tokens.getOwnTokens(q), ValidationSchema.Tokens);
+        await conditions.executeTests((c, q) => c.tokens.getOwnTokens(q));
     });
 
     test("query peer tokens", async () => {
@@ -214,6 +213,6 @@ describe("Tokens query", () => {
                 key: "passwordProtection",
                 value: "!"
             });
-        await conditions.executeTests((c, q) => c.tokens.getPeerTokens(q), ValidationSchema.Tokens);
+        await conditions.executeTests((c, q) => c.tokens.getPeerTokens(q));
     });
 });

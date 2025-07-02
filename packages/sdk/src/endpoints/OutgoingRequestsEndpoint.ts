@@ -1,12 +1,5 @@
-import {
-    CanCreateOutgoingRequestRequest,
-    ConnectorHttpResponse,
-    ConnectorRequest,
-    ConnectorRequests,
-    ConnectorRequestValidationResult,
-    CreateOutgoingRequestRequest,
-    GetOutgoingRequestsRequest
-} from "../types";
+import { LocalRequestDTO } from "@nmshd/runtime-types";
+import { CanCreateOutgoingRequestRequest, ConnectorHttpResponse, ConnectorRequestValidationResult, CreateOutgoingRequestRequest, GetOutgoingRequestsRequest } from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class OutgoingRequestsEndpoint extends Endpoint {
@@ -14,15 +7,15 @@ export class OutgoingRequestsEndpoint extends Endpoint {
         return await this.post("/api/v2/Requests/Outgoing/Validate", request);
     }
 
-    public async createRequest(request: CreateOutgoingRequestRequest): Promise<ConnectorHttpResponse<ConnectorRequest>> {
+    public async createRequest(request: CreateOutgoingRequestRequest): Promise<ConnectorHttpResponse<LocalRequestDTO>> {
         return await this.post("/api/v2/Requests/Outgoing", request);
     }
 
-    public async getRequest(requestId: string): Promise<ConnectorHttpResponse<ConnectorRequest>> {
+    public async getRequest(requestId: string): Promise<ConnectorHttpResponse<LocalRequestDTO>> {
         return await this.get(`/api/v2/Requests/Outgoing/${requestId}`);
     }
 
-    public async getRequests(request: GetOutgoingRequestsRequest): Promise<ConnectorHttpResponse<ConnectorRequests>> {
+    public async getRequests(request: GetOutgoingRequestsRequest): Promise<ConnectorHttpResponse<LocalRequestDTO[]>> {
         return await this.get("/api/v2/Requests/Outgoing", request);
     }
 }
