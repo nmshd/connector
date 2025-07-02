@@ -1,5 +1,5 @@
-import { RelationshipAttributeQuery } from "../RelationshipAttributeQuery";
+import { RelationshipAttributeQueryJSON } from "@nmshd/content";
 
 export interface ExecuteRelationshipAttributeQueryRequest {
-    query: RelationshipAttributeQuery;
+    query: RelationshipAttributeQueryJSON;
 }
