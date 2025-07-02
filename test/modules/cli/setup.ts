@@ -6,8 +6,7 @@ export function setupEnvironment(): void {
     process.env.database = JSON.stringify({
         driver: "lokijs",
         folder: "./",
-        dbName: `default${process.pid}`,
-        dbNamePrefix: "test-"
+        dbName: `default${process.pid}`
     });
     process.env.CUSTOM_CONFIG_LOCATION = ".dev/test.json";
     process.env.API_KEY = "test";
