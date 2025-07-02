@@ -41,15 +41,13 @@ export class ConnectorClient {
     protected constructor(config: ConnectorConfig) {
         const axiosInstance = axios.create({
             baseURL: config.baseUrl,
-            headers: {
-                "X-API-KEY": "apiKey" in config ? config.apiKey : undefined,
-                authorization: "accessToken" in config ? `Bearer ${config.accessToken}` : undefined
-            },
             httpAgent: config.httpAgent,
             httpsAgent: config.httpsAgent,
             validateStatus: (_) => true,
             paramsSerializer: { dots: true, indexes: null }
         });
+
+        axiosInstance.interceptors.request.use(async (requestConfig) => await config.authenticator.authenticate(requestConfig));
 
         axiosInstance.interceptors.request.use((config) => {
             const correlationId = this.#correlationId;
