@@ -19,7 +19,7 @@ export function setupEnvironment(): void {
 
 export async function resetDB(): Promise<void> {
     try {
-        await rm(join(__dirname, `../../../test-default${process.pid}.db`));
+        await rm(join(__dirname, `../../../default${process.pid}.db`));
     } catch (_e) {
         // ignore
     }
