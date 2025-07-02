@@ -13,24 +13,18 @@
                         "dbName": {
                             "type": "string"
                         },
-                        "dbNamePrefix": {
-                            "type": "string"
-                        },
                         "driver": {
                             "const": "mongodb",
                             "type": "string"
                         }
                     },
-                    "required": ["connectionString", "dbName", "dbNamePrefix", "driver"],
+                    "required": ["connectionString", "dbName", "driver"],
                     "type": "object"
                 },
                 {
                     "additionalProperties": false,
                     "properties": {
                         "dbName": {
-                            "type": "string"
-                        },
-                        "dbNamePrefix": {
                             "type": "string"
                         },
                         "driver": {
@@ -41,7 +35,7 @@
                             "type": "string"
                         }
                     },
-                    "required": ["dbName", "dbNamePrefix", "driver", "folder"],
+                    "required": ["dbName", "driver", "folder"],
                     "type": "object"
                 }
             ]
