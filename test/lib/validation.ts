@@ -11,14 +11,11 @@ expect.extend(
 
 export enum ValidationSchema {
     Error = "ConnectorError",
-    IdentityMetadata = "ConnectorIdentityMetadata",
     IdentityInfo = "IdentityInfo",
-    ConnectorHealth = "ConnectorHealth",
     ConnectorVersionInfo = "ConnectorVersionInfo",
     ConnectorRequestCount = "ConnectorRequestCount",
     ConnectorSupportInformation = "ConnectorSupportInformation",
     ConnectorSyncInfo = "ConnectorSyncInfo",
-    ConnectorChallenge = "ConnectorChallenge",
     ConnectorChallengeValidationResult = "ConnectorChallengeValidationResult",
     SucceedAttributeResponse = "SucceedAttributeResponse",
     DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse = "DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse",

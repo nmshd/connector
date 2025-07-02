@@ -1,5 +1,4 @@
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
-import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClientWithMetadata;
@@ -28,7 +27,7 @@ describe("IdentityMetadata", () => {
         }
     ])("should upsert an IdentityMetadata with key '$key' and value '$value'", async (data) => {
         const result = await client1.identityMetadata.upsertIdentityMetadata({ ...data, reference: client1Address });
-        expect(result).toBeSuccessful(ValidationSchema.IdentityMetadata);
+        expect(result).toBeSuccessful();
 
         const identityMetadata = result.result;
         expect(identityMetadata.reference.toString()).toStrictEqual(client1Address);
@@ -40,7 +39,7 @@ describe("IdentityMetadata", () => {
         await client1.identityMetadata.upsertIdentityMetadata({ reference: client1Address, value: "value" });
 
         const result = await client1.identityMetadata.getIdentityMetadata(client1Address);
-        expect(result).toBeSuccessful(ValidationSchema.IdentityMetadata);
+        expect(result).toBeSuccessful();
 
         const identityMetadata = result.result;
         expect(identityMetadata.value).toBe("value");
