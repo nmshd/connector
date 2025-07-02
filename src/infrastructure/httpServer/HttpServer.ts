@@ -6,9 +6,8 @@ import compression from "compression";
 import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
-
-import { AuthOptions, auth as bearerAuth } from "express-oauth2-jwt-bearer";
-import { ConfigParams as OauthParams, auth } from "express-openid-connect";
+import { AuthOptions as BearerAuthOptions, auth as bearerAuth } from "express-oauth2-jwt-bearer";
+import { ConfigParams as OauthParams, auth as openidAuth } from "express-openid-connect";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
 import { buildInformation } from "../../buildInformation";
@@ -39,7 +38,7 @@ export interface ControllerConfig {
 
 export interface HttpServerConfiguration extends InfrastructureConfiguration {
     oauth?: OauthParams;
-    oauthBearer?: AuthOptions;
+    oauthBearer?: BearerAuthOptions;
     port?: number;
     apiKey: string;
     cors?: CorsOptions;
@@ -210,8 +209,9 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private initOauth() {
         if (!this.configuration.oauth) return;
 
-        this.app.use(auth({ ...this.configuration.oauth, authRequired: false }));
+        this.app.use(openidAuth({ ...this.configuration.oauth, authRequired: false }));
     }
+
     private initOauthBearer() {
         if (!this.configuration.oauthBearer) return;
 
