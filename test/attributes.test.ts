@@ -1,6 +1,7 @@
 import { DataEvent } from "@js-soft/ts-utils";
-import { ConnectorAttribute, ConnectorAttributeDeletionStatus, ConnectorHttpResponse, CreateRepositoryAttributeRequest, SucceedAttributeRequest } from "@nmshd/connector-sdk";
+import { ConnectorHttpResponse, CreateRepositoryAttributeRequest, SucceedAttributeRequest } from "@nmshd/connector-sdk";
 import { GivenNameJSON, RelationshipAttributeConfidentiality } from "@nmshd/content";
+import { LocalAttributeDeletionStatus, LocalAttributeDTO } from "@nmshd/runtime-types";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
@@ -65,7 +66,7 @@ describe("Attributes", () => {
             }
         });
 
-        expect(createAttributeResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+        expect(createAttributeResponse).toBeSuccessful();
     });
 
     test("should not set isDefault creating new RepositoryAttributes", async () => {
@@ -96,17 +97,17 @@ describe("Attributes", () => {
             })
         ).result.id;
         const getAttributeResponse = await client1.attributes.getAttribute(attributeId);
-        expect(getAttributeResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+        expect(getAttributeResponse).toBeSuccessful();
     });
 
     test("should get the created attribute in the list of attributes", async () => {
         const getAttributesResponse = await client1.attributes.getAttributes({});
-        expect(getAttributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+        expect(getAttributesResponse).toBeSuccessful();
     });
 
     test("should get the created attribute in the list of valid attributes", async () => {
         const getAttributesResponse = await client1.attributes.getValidAttributes({});
-        expect(getAttributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+        expect(getAttributesResponse).toBeSuccessful();
     });
 
     test("should succeed a Repository Attribute", async () => {
@@ -241,7 +242,7 @@ describe("Attributes Query", () => {
             .addStringSet("shareInfo.peer")
             .addStringSet("shareInfo.sourceAttribute");
 
-        await conditions.executeTests((c, q) => c.attributes.getAttributes(q), ValidationSchema.ConnectorAttributes);
+        await conditions.executeTests((c, q) => c.attributes.getAttributes(q));
     });
 
     test("should query valid attributes", async () => {
@@ -270,7 +271,7 @@ describe("Attributes Query", () => {
             .addStringSet("shareInfo.peer")
             .addStringSet("shareInfo.sourceAttribute");
 
-        await conditions.executeTests((c, q) => c.attributes.getValidAttributes(q), ValidationSchema.ConnectorAttributes);
+        await conditions.executeTests((c, q) => c.attributes.getValidAttributes(q));
     });
 
     test("should query own shared identity attributes", async () => {
@@ -289,7 +290,7 @@ describe("Attributes Query", () => {
             .addStringSet("shareInfo.requestReference")
             .addStringSet("shareInfo.sourceAttribute");
 
-        await conditions.executeTests((c, q) => c.attributes.getOwnSharedIdentityAttributes({ ...q, peer: client2Address }), ValidationSchema.ConnectorAttributes);
+        await conditions.executeTests((c, q) => c.attributes.getOwnSharedIdentityAttributes({ ...q, peer: client2Address }));
     });
 
     test("should query peer shared identity attributes", async () => {
@@ -309,7 +310,7 @@ describe("Attributes Query", () => {
             .addStringSet("content.value.@type")
             .addStringSet("shareInfo.requestReference");
 
-        await conditions.executeTests((c, q) => c.attributes.getPeerSharedIdentityAttributes({ ...q, peer: client2Address }), ValidationSchema.ConnectorAttributes);
+        await conditions.executeTests((c, q) => c.attributes.getPeerSharedIdentityAttributes({ ...q, peer: client2Address }));
     });
 });
 
@@ -325,7 +326,7 @@ describe("Execute AttributeQueries", () => {
         });
 
         const executeIdentityAttributeQueryResponse = await client1.attributes.executeIdentityAttributeQuery({ query: { valueType: "GivenName" } });
-        expect(executeIdentityAttributeQueryResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+        expect(executeIdentityAttributeQueryResponse).toBeSuccessful();
         const attributes = executeIdentityAttributeQueryResponse.result;
 
         expect(attributes).toContainEqual(attribute);
@@ -349,12 +350,12 @@ describe("Execute AttributeQueries", () => {
                 attributeCreationHints: {
                     valueType: "ProprietaryString",
                     title: "text",
-                    confidentiality: "public"
+                    confidentiality: RelationshipAttributeConfidentiality.Public
                 }
             }
         });
 
-        expect(executeRelationshipAttributeQueryResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+        expect(executeRelationshipAttributeQueryResponse).toBeSuccessful();
 
         expect((executeRelationshipAttributeQueryResponse.result.content.value as GivenNameJSON).value).toBe("AGivenName");
     });
@@ -380,7 +381,7 @@ describe("Read Attribute and versions", () => {
                     }
                 }
             });
-            expect(newAtt).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+            expect(newAtt).toBeSuccessful();
         }
 
         await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
@@ -397,7 +398,7 @@ describe("Read Attribute and versions", () => {
         expect(attributesResponse.result).toHaveLength(0);
 
         const numberOfAttributes = 5;
-        let newAttributeResponse: ConnectorHttpResponse<ConnectorAttribute>;
+        let newAttributeResponse: ConnectorHttpResponse<LocalAttributeDTO>;
         for (let i = 0; i < numberOfAttributes; i++) {
             newAttributeResponse = await client1.attributes.createRepositoryAttribute({
                 content: {
@@ -407,7 +408,7 @@ describe("Read Attribute and versions", () => {
                     }
                 }
             });
-            expect(newAttributeResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+            expect(newAttributeResponse).toBeSuccessful();
         }
 
         await client1.attributes.succeedAttribute(newAttributeResponse!.result.id, {
@@ -558,14 +559,14 @@ describe("Delete attributes", () => {
         const deleteResponse = await client1.attributes.deleteOwnSharedAttributeAndNotifyPeer(ownSharedIdentityAttribute.id);
         expect(deleteResponse.isSuccess).toBe(true);
         await syncUntilHasMessageWithNotification(client2, deleteResponse.result.notificationId);
-        await client2._eventBus!.waitForEvent<DataEvent<ConnectorAttribute>>("consumption.ownSharedAttributeDeletedByOwner", (event: any) => {
+        await client2._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.ownSharedAttributeDeletedByOwner", (event: any) => {
             return event.data.id === ownSharedIdentityAttribute.id;
         });
 
         const client1DeletedAttribute = await client1.attributes.getAttribute(ownSharedIdentityAttribute.id);
         expect(client1DeletedAttribute.isSuccess).toBe(false);
         const client2DeletedAttribute = await client2.attributes.getAttribute(ownSharedIdentityAttribute.id);
-        expect(client2DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(ConnectorAttributeDeletionStatus.DeletedByOwner);
+        expect(client2DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(LocalAttributeDeletionStatus.DeletedByOwner);
         const client1RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
         expect(client1RepositoryAttribute.isSuccess).toBe(true);
     });
@@ -580,14 +581,14 @@ describe("Delete attributes", () => {
         const deleteResponse = await client2.attributes.deletePeerSharedAttributeAndNotifyOwner(ownSharedIdentityAttribute.id);
         expect(deleteResponse.isSuccess).toBe(true);
         await syncUntilHasMessageWithNotification(client1, deleteResponse.result.notificationId);
-        await client1._eventBus!.waitForEvent<DataEvent<ConnectorAttribute>>("consumption.peerSharedAttributeDeletedByPeer", (event: any) => {
+        await client1._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.peerSharedAttributeDeletedByPeer", (event: any) => {
             return event.data.id === ownSharedIdentityAttribute.id;
         });
 
         const client2DeletedAttribute = await client2.attributes.getAttribute(ownSharedIdentityAttribute.id);
         expect(client2DeletedAttribute.isSuccess).toBe(false);
         const client1DeletedAttribute = await client1.attributes.getAttribute(ownSharedIdentityAttribute.id);
-        expect(client1DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(ConnectorAttributeDeletionStatus.DeletedByPeer);
+        expect(client1DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(LocalAttributeDeletionStatus.DeletedByPeer);
         const client2RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
         expect(client2RepositoryAttribute.isSuccess).toBe(true);
     });
@@ -683,6 +684,6 @@ describe("Delete attributes", () => {
 describe("Attributes Tag Collection", () => {
     test("should get all valid tags", async () => {
         const response = await client1.attributes.getAttributeTagCollection();
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorAttributeTagCollection);
+        expect(response).toBeSuccessful();
     });
 });
