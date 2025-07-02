@@ -37,8 +37,8 @@ export interface ControllerConfig {
 }
 
 export interface HttpServerConfiguration extends InfrastructureConfiguration {
-    oauth?: OauthParams;
-    oauthBearer?: BearerAuthOptions;
+    oidc?: OauthParams;
+    jwtBearer?: BearerAuthOptions;
     port?: number;
     apiKey: string;
     cors?: CorsOptions;
@@ -192,7 +192,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private initAuthentication() {
-        if (!this.configuration.apiKey && !this.configuration.oauth && !this.configuration.oauthBearer) {
+        if (!this.configuration.apiKey && !this.configuration.oidc && !this.configuration.jwtBearer) {
             switch (this.connectorMode) {
                 case "debug":
                     return;
@@ -201,23 +201,23 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             }
         }
 
-        this.initOauth();
         this.initApiKey();
-        this.initOauthBearer();
+        this.initOIDC();
+        this.initJWTBearer();
     }
 
-    private initOauth() {
-        if (!this.configuration.oauth) return;
+    private initOIDC() {
+        if (!this.configuration.oidc) return;
 
-        this.app.use(openidAuth({ ...this.configuration.oauth, authRequired: false }));
+        this.app.use(openidAuth({ ...this.configuration.oidc, authRequired: false }));
     }
 
-    private initOauthBearer() {
-        if (!this.configuration.oauthBearer) return;
+    private initJWTBearer() {
+        if (!this.configuration.jwtBearer) return;
 
         this.app.use(
             bearerAuth({
-                ...this.configuration.oauthBearer,
+                ...this.configuration.jwtBearer,
                 authRequired: false
             })
         );
@@ -236,7 +236,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useAuthentication() {
-        if (!this.configuration.apiKey && !this.configuration.oauth && !this.configuration.oauthBearer) return;
+        if (!this.configuration.apiKey && !this.configuration.oidc && !this.configuration.jwtBearer) return;
 
         const unauthorized = async (_: express.Request, res: express.Response) => {
             await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
@@ -252,14 +252,14 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 return;
             }
 
-            if (this.configuration.oauthBearer && req.headers["authorization"]) {
+            if (this.configuration.jwtBearer && req.headers["authorization"]) {
                 if (!req.auth) return await unauthorized(req, res);
 
                 next();
                 return;
             }
 
-            if (this.configuration.oauth) {
+            if (this.configuration.oidc) {
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
                 if (!req.oidc) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
                 if (!req.oidc.isAuthenticated()) return await res.oidc.login();

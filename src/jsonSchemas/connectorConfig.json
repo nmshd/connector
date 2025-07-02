@@ -66,8 +66,8 @@
                             "type": "boolean"
                         },
                         "helmetOptions": {},
-                        "oauth": {},
-                        "oauthBearer": {},
+                        "oidc": {},
+                        "jwtBearer": {},
                         "port": {
                             "type": ["string", "number"]
                         }
