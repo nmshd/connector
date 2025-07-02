@@ -1,9 +1,3 @@
-export * from "./ConnectorAttribute";
-export * from "./ConnectorAttributes";
-export * from "./ConnectorAttributeTagCollection";
-export * from "./IdentityAttributeQuery";
-export * from "./IQLQuery";
-export * from "./RelationshipAttributeQuery";
 export * from "./requests/CanCreateRepositoryAttributeRequest";
 export * from "./requests/CanCreateRepositoryAttributeResponse";
 export * from "./requests/CreateRepositoryAttributeRequest";
@@ -23,4 +17,3 @@ export * from "./requests/NotifyPeerAboutRepositoryAttributeSuccessionRequest";
 export * from "./requests/NotifyPeerAboutRepositoryAttributeSuccessionResponse";
 export * from "./requests/SucceedAttributeRequest";
 export * from "./requests/SucceedAttributeResponse";
-export * from "./ThirdPartyRelationshipAttributeQuery";

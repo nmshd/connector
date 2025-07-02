@@ -1,5 +1,5 @@
-import { ConnectorClient, ExecuteIQLQueryRequest, IQLQuery } from "@nmshd/connector-sdk";
-import { IdentityAttributeJSON, ProposeAttributeRequestItemJSON, ReadAttributeRequestItemJSON } from "@nmshd/content";
+import { ConnectorClient, ExecuteIQLQueryRequest } from "@nmshd/connector-sdk";
+import { IdentityAttributeJSON, IQLQueryJSON, ProposeAttributeRequestItemJSON, ReadAttributeRequestItemJSON } from "@nmshd/content";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { getTimeout } from "./lib/setTimeout";
@@ -114,7 +114,7 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
 
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
-    const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItemJSON).query as IQLQuery).queryString;
+    const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItemJSON).query as IQLQueryJSON).queryString;
     const matchedAttributes = (await client1.attributes.executeIQLQuery({ query: { queryString: iqlQueryString } })).result;
 
     /* Reply to the response with the first matched attribute. Wait on C2 for
@@ -173,7 +173,7 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
 
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
-    const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItemJSON).query as IQLQuery).queryString;
+    const iqlQueryString = ((incomingRequest.content.items[0] as ReadAttributeRequestItemJSON).query as IQLQueryJSON).queryString;
     const matchedAttributes = (await client1.attributes.executeIQLQuery({ query: { queryString: iqlQueryString } })).result;
 
     /* Reply to the response with the first matched attribute. Wait on C2 for
@@ -226,7 +226,7 @@ test("Remote ProposeAttributeRequest containing IQL Query without existing attri
     /* Extract and execute IQL query on C1. */
     const incomingRequest = (await client1.incomingRequests.getRequest(requestId)).result;
     const incomingRequestItem = incomingRequest.content.items[0] as ProposeAttributeRequestItemJSON;
-    const iqlQueryString = (incomingRequestItem.query as IQLQuery).queryString;
+    const iqlQueryString = (incomingRequestItem.query as IQLQueryJSON).queryString;
     const matchedAttributes = (await client1.attributes.executeIQLQuery({ query: { queryString: iqlQueryString } })).result;
 
     expect(matchedAttributes).toHaveLength(0);

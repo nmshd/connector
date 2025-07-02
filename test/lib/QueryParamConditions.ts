@@ -163,7 +163,7 @@ export class QueryParamConditions {
         return value;
     }
 
-    public async executeTests(queryFunction: QueryFunction, schema: ValidationSchema): Promise<void> {
+    public async executeTests(queryFunction: QueryFunction, schema?: ValidationSchema): Promise<void> {
         if (this._conditions.length < 1) {
             throw new Error("The conditions list may not be empty.");
         }

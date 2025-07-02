@@ -1,5 +1,3 @@
-export * from "./ConnectorRelationshipTemplate";
-export * from "./ConnectorRelationshipTemplates";
 export * from "./requests/CreateOwnRelationshipTemplateRequest";
 export * from "./requests/CreateTokenForOwnRelationshipTemplateRequest";
 export * from "./requests/CreateTokenQrCodeForOwnRelationshipTemplateRequest";

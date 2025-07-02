@@ -12,7 +12,7 @@ afterAll(() => launcher.stop());
 describe("Monitoring Endpoints", () => {
     test("check Health", async () => {
         const health = await client.monitoring.getHealth();
-        validateSchema(ValidationSchema.ConnectorHealth, health);
+        expect(health.isHealthy).toBe(true);
     });
 
     test("check Version", async () => {

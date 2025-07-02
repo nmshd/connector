@@ -2,7 +2,6 @@ import { ConnectorClient } from "@nmshd/connector-sdk";
 import { Launcher } from "./lib/Launcher";
 import { getTimeout } from "./lib/setTimeout";
 import { establishRelationship, getRelationship } from "./lib/testUtils";
-import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -25,7 +24,7 @@ describe("Create challenge", () => {
         const response = await client1.challenges.createChallenge({
             challengeType: "Identity"
         });
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorChallenge);
+        expect(response).toBeSuccessful();
 
         expect(response.result.type).toBe("Identity");
     });
@@ -34,7 +33,7 @@ describe("Create challenge", () => {
         const response = await client1.challenges.createChallenge({
             challengeType: "Device"
         });
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorChallenge);
+        expect(response).toBeSuccessful();
 
         expect(response.result.type).toBe("Device");
     });
@@ -44,7 +43,7 @@ describe("Create challenge", () => {
             challengeType: "Relationship",
             relationship: relationshipId
         });
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorChallenge);
+        expect(response).toBeSuccessful();
 
         expect(response.result.type).toBe("Relationship");
     });
@@ -56,28 +55,28 @@ describe("Validate Challenge", () => {
             challengeType: "Relationship",
             relationship: relationshipId
         });
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorChallenge);
+        expect(response).toBeSuccessful();
         expect(response.result.type).toBe("Relationship");
 
         const validationResult = await client2.challenges.validateChallenge({
             challengeString: response.result.challengeString,
             signature: response.result.signature
         });
-        expect(validationResult).toBeSuccessful(ValidationSchema.ConnectorChallengeValidationResult);
+        expect(validationResult).toBeSuccessful();
         expect(validationResult.result.isValid).toBe(true);
         expect(validationResult.result.correspondingRelationship?.peer).toBe(client1Address);
     });
 
     test("should validate a Identity challenge", async () => {
         const response = await client1.challenges.createChallenge({ challengeType: "Identity" });
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorChallenge);
+        expect(response).toBeSuccessful();
         expect(response.result.type).toBe("Identity");
 
         const validationResult = await client2.challenges.validateChallenge({
             challengeString: response.result.challengeString,
             signature: response.result.signature
         });
-        expect(validationResult).toBeSuccessful(ValidationSchema.ConnectorChallengeValidationResult);
+        expect(validationResult).toBeSuccessful();
         expect(validationResult.result.isValid).toBe(true);
         expect(validationResult.result.correspondingRelationship?.peer).toBe(client1Address);
     });
@@ -87,25 +86,25 @@ describe("Validate Challenge", () => {
             challengeType: "Relationship",
             relationship: relationshipId
         });
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorChallenge);
+        expect(response).toBeSuccessful();
 
         const response2 = await client1.challenges.createChallenge({
             challengeType: "Relationship",
             relationship: relationshipId
         });
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorChallenge);
+        expect(response).toBeSuccessful();
 
         const validationResult = await client2.challenges.validateChallenge({
             challengeString: response.result.challengeString,
             signature: response2.result.signature
         });
-        expect(validationResult).toBeSuccessful(ValidationSchema.ConnectorChallengeValidationResult);
+        expect(validationResult).toBeSuccessful();
         expect(validationResult.result.isValid).toBe(false);
     });
 
     test("should validate a Device challenge", async () => {
         const response = await client1.challenges.createChallenge({ challengeType: "Device" });
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorChallenge);
+        expect(response).toBeSuccessful();
         expect(response.result.type).toBe("Device");
 
         const validationResult = await client2.challenges.validateChallenge({

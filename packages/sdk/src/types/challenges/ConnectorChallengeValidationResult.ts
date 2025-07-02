@@ -1,6 +1,6 @@
-import { ConnectorRelationship } from "../relationships/ConnectorRelationship";
+import { RelationshipDTO } from "@nmshd/runtime-types";
 
 export interface ConnectorChallengeValidationResult {
     isValid: boolean;
-    correspondingRelationship?: ConnectorRelationship;
+    correspondingRelationship?: RelationshipDTO;
 }
