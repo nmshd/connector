@@ -1,5 +1,3 @@
-export * from "./ConnectorFile";
-export * from "./ConnectorFiles";
 export * from "./requests/CreateTokenForFileRequest";
 export * from "./requests/CreateTokenQrCodeForFileRequest";
 export * from "./requests/GetAllFilesRequest";

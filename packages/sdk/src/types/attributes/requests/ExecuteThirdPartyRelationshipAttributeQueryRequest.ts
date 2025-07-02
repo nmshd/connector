@@ -1,5 +1,5 @@
-import { ThirdPartyRelationshipAttributeQuery } from "../ThirdPartyRelationshipAttributeQuery";
+import { ThirdPartyRelationshipAttributeQueryJSON } from "@nmshd/content";
 
 export interface ExecuteThirdPartyRelationshipAttributeQueryRequest {
-    query: ThirdPartyRelationshipAttributeQuery;
+    query: ThirdPartyRelationshipAttributeQueryJSON;
 }

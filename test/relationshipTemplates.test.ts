@@ -1,10 +1,10 @@
-import { ConnectorClient, ConnectorRelationshipTemplate } from "@nmshd/connector-sdk";
+import { ConnectorClient } from "@nmshd/connector-sdk";
+import { RelationshipTemplateDTO } from "@nmshd/runtime-types";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
 import { createTemplate, exchangeTemplate, getTemplateToken } from "./lib/testUtils";
-import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -14,8 +14,8 @@ beforeAll(async () => ([client1, client2] = await launcher.launch(2)), getTimeou
 afterAll(() => launcher.stop());
 
 describe("Template Tests", () => {
-    let template: ConnectorRelationshipTemplate;
-    let templateWithUndefinedMaxNumberOfAllocations: ConnectorRelationshipTemplate;
+    let template: RelationshipTemplateDTO;
+    let templateWithUndefinedMaxNumberOfAllocations: RelationshipTemplateDTO;
 
     test("create a template", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
@@ -27,7 +27,7 @@ describe("Template Tests", () => {
             }
         });
 
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
 
         template = response.result;
     });
@@ -43,14 +43,14 @@ describe("Template Tests", () => {
 
         templateWithUndefinedMaxNumberOfAllocations = response.result;
 
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(templateWithUndefinedMaxNumberOfAllocations.maxNumberOfAllocations).toBeUndefined();
     });
 
     test("read a template with undefined maxNumberOfAllocations", async () => {
         const response = await client1.relationshipTemplates.getRelationshipTemplate(templateWithUndefinedMaxNumberOfAllocations.id);
 
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.maxNumberOfAllocations).toBeUndefined();
     });
 
@@ -58,7 +58,7 @@ describe("Template Tests", () => {
         expect(template).toBeDefined();
 
         const response = await client1.relationshipTemplates.getOwnRelationshipTemplates();
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplates);
+        expect(response).toBeSuccessful();
         expect(response.result).toContainEqual(template);
     });
 
@@ -66,7 +66,7 @@ describe("Template Tests", () => {
         expect(template).toBeDefined();
 
         const response = await client1.relationshipTemplates.getRelationshipTemplate(template.id);
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
     });
 
     test("expect a validation error for sending maxNumberOfAllocations 0", async () => {
@@ -91,7 +91,7 @@ describe("Template Tests", () => {
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: template.reference.truncated
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.forIdentity).toBe(client2address);
     });
 
@@ -102,7 +102,7 @@ describe("Template Tests", () => {
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: templateToken.reference.truncated
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.forIdentity).toBe(client2address);
     });
 
@@ -114,7 +114,7 @@ describe("Template Tests", () => {
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: token.reference.truncated
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.forIdentity).toBe(client2address);
     });
 
@@ -127,7 +127,7 @@ describe("Template Tests", () => {
             reference: template.reference.truncated,
             password: "password"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.passwordProtection?.password).toBe("password");
         expect(response.result.passwordProtection?.passwordIsPin).toBeUndefined();
     });
@@ -141,7 +141,7 @@ describe("Template Tests", () => {
             reference: template.reference.truncated,
             password: "1234"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.passwordProtection?.password).toBe("1234");
         expect(response.result.passwordProtection?.passwordIsPin).toBe(true);
     });
@@ -155,7 +155,7 @@ describe("Template Tests", () => {
             reference: template.reference.truncated,
             password: "password"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.passwordProtection?.password).toBe("password");
         expect(response.result.passwordProtection?.passwordIsPin).toBeUndefined();
         expect(response.result.passwordProtection?.passwordLocationIndicator).toBe("Website");
@@ -170,7 +170,7 @@ describe("Template Tests", () => {
             reference: template.reference.truncated,
             password: "password"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.passwordProtection?.password).toBe("password");
         expect(response.result.passwordProtection?.passwordIsPin).toBeUndefined();
         expect(response.result.passwordProtection?.passwordLocationIndicator).toBe(50);
@@ -185,7 +185,7 @@ describe("Template Tests", () => {
             reference: templateToken.reference.truncated,
             password: "password"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.passwordProtection?.password).toBe("password");
         expect(response.result.passwordProtection?.passwordIsPin).toBeUndefined();
     });
@@ -199,7 +199,7 @@ describe("Template Tests", () => {
             reference: templateToken.reference.truncated,
             password: "1234"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.passwordProtection?.password).toBe("1234");
         expect(response.result.passwordProtection?.passwordIsPin).toBe(true);
     });
@@ -213,7 +213,7 @@ describe("Template Tests", () => {
             reference: templateToken.reference.truncated,
             password: "password"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.passwordProtection?.password).toBe("password");
         expect(response.result.passwordProtection?.passwordLocationIndicator).toBe("Website");
     });
@@ -227,7 +227,7 @@ describe("Template Tests", () => {
             reference: templateToken.reference.truncated,
             password: "password"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.passwordProtection?.password).toBe("password");
         expect(response.result.passwordProtection?.passwordLocationIndicator).toBe(50);
     });
@@ -242,7 +242,7 @@ describe("Template Tests", () => {
             reference: token.reference.truncated,
             password: "password"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
     });
 
     test("send and receive an unprotected template via PIN-protected token", async () => {
@@ -256,7 +256,7 @@ describe("Template Tests", () => {
             reference: token.reference.truncated,
             password: "1234"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
     });
 
     test("send and receive an unprotected template via password-protected token with PasswordLocationIndicator that is a string", async () => {
@@ -273,7 +273,7 @@ describe("Template Tests", () => {
             reference: token.reference.truncated,
             password: "password"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
     });
 
     test("send and receive an unprotected template via password-protected token with PasswordLocationIndicator that is a number", async () => {
@@ -290,7 +290,7 @@ describe("Template Tests", () => {
             reference: token.reference.truncated,
             password: "password"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
     });
 });
 
@@ -361,7 +361,7 @@ describe("RelationshipTemplates Query", () => {
                 value: "differentLocationIndicator"
             });
 
-        await conditions.executeTests((c, q) => c.relationshipTemplates.getRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
+        await conditions.executeTests((c, q) => c.relationshipTemplates.getRelationshipTemplates(q));
     });
 
     test("query own templates", async () => {
@@ -399,7 +399,7 @@ describe("RelationshipTemplates Query", () => {
                 key: "passwordProtection.passwordLocationIndicator",
                 value: 50
             });
-        await conditions.executeTests((c, q) => c.relationshipTemplates.getOwnRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
+        await conditions.executeTests((c, q) => c.relationshipTemplates.getOwnRelationshipTemplates(q));
     });
 
     test("query peer templates", async () => {
@@ -422,6 +422,6 @@ describe("RelationshipTemplates Query", () => {
                 value: "!"
             });
 
-        await conditions.executeTests((c, q) => c.relationshipTemplates.getPeerRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
+        await conditions.executeTests((c, q) => c.relationshipTemplates.getPeerRelationshipTemplates(q));
     });
 });

@@ -1,5 +1,5 @@
-import { IdentityAttributeQuery } from "../IdentityAttributeQuery";
+import { IdentityAttributeQueryJSON } from "@nmshd/content";
 
 export interface ExecuteIdentityAttributeQueryRequest {
-    query: IdentityAttributeQuery;
+    query: Omit<IdentityAttributeQueryJSON, "@type"> & { "@type"?: string };
 }

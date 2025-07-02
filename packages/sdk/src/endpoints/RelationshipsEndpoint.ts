@@ -1,13 +1,5 @@
-import {
-    CanCreateRelationshipRequest,
-    CanCreateRelationshipResponse,
-    ConnectorAttributes,
-    ConnectorHttpResponse,
-    ConnectorRelationship,
-    ConnectorRelationships,
-    CreateRelationshipRequest,
-    GetRelationshipsRequest
-} from "../types";
+import { LocalAttributeDTO, RelationshipDTO } from "@nmshd/runtime-types";
+import { CanCreateRelationshipRequest, CanCreateRelationshipResponse, ConnectorHttpResponse, CreateRelationshipRequest, GetRelationshipsRequest } from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class RelationshipsEndpoint extends Endpoint {
@@ -15,35 +7,35 @@ export class RelationshipsEndpoint extends Endpoint {
         return await this.put("/api/v2/Relationships/CanCreate", request);
     }
 
-    public async createRelationship(request: CreateRelationshipRequest): Promise<ConnectorHttpResponse<ConnectorRelationship>> {
+    public async createRelationship(request: CreateRelationshipRequest): Promise<ConnectorHttpResponse<RelationshipDTO>> {
         return await this.post("/api/v2/Relationships", request);
     }
 
-    public async getRelationships(request?: GetRelationshipsRequest): Promise<ConnectorHttpResponse<ConnectorRelationships>> {
+    public async getRelationships(request?: GetRelationshipsRequest): Promise<ConnectorHttpResponse<RelationshipDTO[]>> {
         return await this.get("/api/v2/Relationships", request);
     }
 
-    public async getRelationship(relationshipId: string): Promise<ConnectorHttpResponse<ConnectorRelationship>> {
+    public async getRelationship(relationshipId: string): Promise<ConnectorHttpResponse<RelationshipDTO>> {
         return await this.get(`/api/v2/Relationships/${relationshipId}`);
     }
 
-    public async acceptRelationship(relationshipId: string): Promise<ConnectorHttpResponse<ConnectorRelationship>> {
+    public async acceptRelationship(relationshipId: string): Promise<ConnectorHttpResponse<RelationshipDTO>> {
         return await this.put(`/api/v2/Relationships/${relationshipId}/Accept`);
     }
 
-    public async rejectRelationship(relationshipId: string): Promise<ConnectorHttpResponse<ConnectorRelationship>> {
+    public async rejectRelationship(relationshipId: string): Promise<ConnectorHttpResponse<RelationshipDTO>> {
         return await this.put(`/api/v2/Relationships/${relationshipId}/Reject`);
     }
 
-    public async revokeRelationship(relationshipId: string): Promise<ConnectorHttpResponse<ConnectorRelationship>> {
+    public async revokeRelationship(relationshipId: string): Promise<ConnectorHttpResponse<RelationshipDTO>> {
         return await this.put(`/api/v2/Relationships/${relationshipId}/Revoke`);
     }
 
-    public async getAttributesForRelationship(relationshipId: string): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
+    public async getAttributesForRelationship(relationshipId: string): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
         return await this.get(`/api/v2/Relationships/${relationshipId}/Attributes`);
     }
 
-    public async terminateRelationship(relationshipId: string): Promise<ConnectorHttpResponse<ConnectorRelationship>> {
+    public async terminateRelationship(relationshipId: string): Promise<ConnectorHttpResponse<RelationshipDTO>> {
         return await this.put(`/api/v2/Relationships/${relationshipId}/Terminate`);
     }
 
@@ -51,19 +43,19 @@ export class RelationshipsEndpoint extends Endpoint {
         return await this.delete(`/api/v2/Relationships/${relationshipId}`, undefined, 204);
     }
 
-    public async requestRelationshipReactivation(relationshipId: string): Promise<ConnectorHttpResponse<ConnectorRelationship>> {
+    public async requestRelationshipReactivation(relationshipId: string): Promise<ConnectorHttpResponse<RelationshipDTO>> {
         return await this.put(`/api/v2/Relationships/${relationshipId}/Reactivate`);
     }
 
-    public async acceptRelationshipReactivation(relationshipId: string): Promise<ConnectorHttpResponse<ConnectorRelationship>> {
+    public async acceptRelationshipReactivation(relationshipId: string): Promise<ConnectorHttpResponse<RelationshipDTO>> {
         return await this.put(`/api/v2/Relationships/${relationshipId}/Reactivate/Accept`);
     }
 
-    public async rejectRelationshipReactivation(relationshipId: string): Promise<ConnectorHttpResponse<ConnectorRelationship>> {
+    public async rejectRelationshipReactivation(relationshipId: string): Promise<ConnectorHttpResponse<RelationshipDTO>> {
         return await this.put(`/api/v2/Relationships/${relationshipId}/Reactivate/Reject`);
     }
 
-    public async revokeRelationshipReactivation(relationshipId: string): Promise<ConnectorHttpResponse<ConnectorRelationship>> {
+    public async revokeRelationshipReactivation(relationshipId: string): Promise<ConnectorHttpResponse<RelationshipDTO>> {
         return await this.put(`/api/v2/Relationships/${relationshipId}/Reactivate/Revoke`);
     }
 }
