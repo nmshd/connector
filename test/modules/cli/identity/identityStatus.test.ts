@@ -3,14 +3,15 @@ import { identityDeletionInitHandler, identityStatusHandler } from "../../../../
 import { resetDB, setupEnvironment } from "../setup";
 
 describe("Identity status", () => {
+    const randomAccountName = Math.random().toString(36).substring(2, 15);
     const identityStatusPattern = /Identity Address: did:e:((([A-Za-z0-9]+(-[A-Za-z0-9]+)*)\.)+[a-z]{2,}|localhost):dids:[0-9a-f]{22}/;
 
     beforeAll(() => {
-        setupEnvironment();
+        setupEnvironment(randomAccountName);
     });
 
     afterAll(async () => {
-        await resetDB();
+        await resetDB(randomAccountName);
     });
 
     afterEach(() => {
