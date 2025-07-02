@@ -1,6 +1,7 @@
 import { DataEvent } from "@js-soft/ts-utils";
-import { ConnectorAttribute, ConnectorAttributeDeletionStatus, ConnectorHttpResponse, CreateRepositoryAttributeRequest, SucceedAttributeRequest } from "@nmshd/connector-sdk";
+import { ConnectorHttpResponse, CreateRepositoryAttributeRequest, SucceedAttributeRequest } from "@nmshd/connector-sdk";
 import { GivenNameJSON, RelationshipAttributeConfidentiality } from "@nmshd/content";
+import { LocalAttributeDeletionStatus, LocalAttributeDTO } from "@nmshd/runtime-types";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
@@ -349,7 +350,7 @@ describe("Execute AttributeQueries", () => {
                 attributeCreationHints: {
                     valueType: "ProprietaryString",
                     title: "text",
-                    confidentiality: "public"
+                    confidentiality: RelationshipAttributeConfidentiality.Public
                 }
             }
         });
@@ -397,7 +398,7 @@ describe("Read Attribute and versions", () => {
         expect(attributesResponse.result).toHaveLength(0);
 
         const numberOfAttributes = 5;
-        let newAttributeResponse: ConnectorHttpResponse<ConnectorAttribute>;
+        let newAttributeResponse: ConnectorHttpResponse<LocalAttributeDTO>;
         for (let i = 0; i < numberOfAttributes; i++) {
             newAttributeResponse = await client1.attributes.createRepositoryAttribute({
                 content: {
@@ -558,14 +559,14 @@ describe("Delete attributes", () => {
         const deleteResponse = await client1.attributes.deleteOwnSharedAttributeAndNotifyPeer(ownSharedIdentityAttribute.id);
         expect(deleteResponse.isSuccess).toBe(true);
         await syncUntilHasMessageWithNotification(client2, deleteResponse.result.notificationId);
-        await client2._eventBus!.waitForEvent<DataEvent<ConnectorAttribute>>("consumption.ownSharedAttributeDeletedByOwner", (event: any) => {
+        await client2._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.ownSharedAttributeDeletedByOwner", (event: any) => {
             return event.data.id === ownSharedIdentityAttribute.id;
         });
 
         const client1DeletedAttribute = await client1.attributes.getAttribute(ownSharedIdentityAttribute.id);
         expect(client1DeletedAttribute.isSuccess).toBe(false);
         const client2DeletedAttribute = await client2.attributes.getAttribute(ownSharedIdentityAttribute.id);
-        expect(client2DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(ConnectorAttributeDeletionStatus.DeletedByOwner);
+        expect(client2DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(LocalAttributeDeletionStatus.DeletedByOwner);
         const client1RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
         expect(client1RepositoryAttribute.isSuccess).toBe(true);
     });
@@ -580,14 +581,14 @@ describe("Delete attributes", () => {
         const deleteResponse = await client2.attributes.deletePeerSharedAttributeAndNotifyOwner(ownSharedIdentityAttribute.id);
         expect(deleteResponse.isSuccess).toBe(true);
         await syncUntilHasMessageWithNotification(client1, deleteResponse.result.notificationId);
-        await client1._eventBus!.waitForEvent<DataEvent<ConnectorAttribute>>("consumption.peerSharedAttributeDeletedByPeer", (event: any) => {
+        await client1._eventBus!.waitForEvent<DataEvent<LocalAttributeDTO>>("consumption.peerSharedAttributeDeletedByPeer", (event: any) => {
             return event.data.id === ownSharedIdentityAttribute.id;
         });
 
         const client2DeletedAttribute = await client2.attributes.getAttribute(ownSharedIdentityAttribute.id);
         expect(client2DeletedAttribute.isSuccess).toBe(false);
         const client1DeletedAttribute = await client1.attributes.getAttribute(ownSharedIdentityAttribute.id);
-        expect(client1DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(ConnectorAttributeDeletionStatus.DeletedByPeer);
+        expect(client1DeletedAttribute.result.deletionInfo?.deletionStatus).toBe(LocalAttributeDeletionStatus.DeletedByPeer);
         const client2RepositoryAttribute = await client1.attributes.getAttribute(repositoryAttributeId);
         expect(client2RepositoryAttribute.isSuccess).toBe(true);
     });

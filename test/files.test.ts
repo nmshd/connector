@@ -1,4 +1,5 @@
-import { ConnectorClient, ConnectorFile } from "@nmshd/connector-sdk";
+import { ConnectorClient } from "@nmshd/connector-sdk";
+import { FileDTO } from "@nmshd/runtime-types";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
@@ -15,7 +16,7 @@ beforeAll(async () => ([client1, client2] = await launcher.launch(2)), getTimeou
 afterAll(() => launcher.stop());
 
 describe("File Upload", () => {
-    let file: ConnectorFile;
+    let file: FileDTO;
 
     test("can upload file", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest());
@@ -203,7 +204,7 @@ describe("Files query", () => {
 });
 
 describe("Load peer file with token reference", () => {
-    let file: ConnectorFile;
+    let file: FileDTO;
 
     beforeAll(async () => {
         file = await uploadFile(client1);
@@ -281,7 +282,7 @@ describe("Load peer file with token reference", () => {
 });
 
 describe("Load peer file with reference", () => {
-    let file: ConnectorFile;
+    let file: FileDTO;
 
     beforeAll(async () => {
         file = await uploadFile(client1);

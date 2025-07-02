@@ -1,5 +1,6 @@
-import { ConnectorClient, ConnectorRelationshipAuditLogEntryReason, ConnectorRelationshipStatus } from "@nmshd/connector-sdk";
+import { ConnectorClient } from "@nmshd/connector-sdk";
 import { RelationshipAttributeConfidentiality } from "@nmshd/content";
+import { RelationshipAuditLogEntryReason, RelationshipStatus } from "@nmshd/runtime-types";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
@@ -148,43 +149,23 @@ describe("Relationships", () => {
 
         await syncUntilHasRelationship(client2, relationship.id);
 
-        await expectRelationshipToHaveStatusAndReason(client1, relationship.id, ConnectorRelationshipStatus.Terminated);
-        await expectRelationshipToHaveStatusAndReason(client2, relationship.id, ConnectorRelationshipStatus.Terminated);
+        await expectRelationshipToHaveStatusAndReason(client1, relationship.id, RelationshipStatus.Terminated);
+        await expectRelationshipToHaveStatusAndReason(client2, relationship.id, RelationshipStatus.Terminated);
 
         const reactivateResponse = await client1.relationships.requestRelationshipReactivation(relationship.id);
         expect(reactivateResponse).toBeSuccessful(ValidationSchema.Relationship);
         await syncUntilHasRelationship(client2, relationship.id);
 
-        await expectRelationshipToHaveStatusAndReason(
-            client1,
-            relationship.id,
-            ConnectorRelationshipStatus.Terminated,
-            ConnectorRelationshipAuditLogEntryReason.ReactivationRequested
-        );
-        await expectRelationshipToHaveStatusAndReason(
-            client2,
-            relationship.id,
-            ConnectorRelationshipStatus.Terminated,
-            ConnectorRelationshipAuditLogEntryReason.ReactivationRequested
-        );
+        await expectRelationshipToHaveStatusAndReason(client1, relationship.id, RelationshipStatus.Terminated, RelationshipAuditLogEntryReason.ReactivationRequested);
+        await expectRelationshipToHaveStatusAndReason(client2, relationship.id, RelationshipStatus.Terminated, RelationshipAuditLogEntryReason.ReactivationRequested);
 
         const rejectReactivationResponse = await client2.relationships.rejectRelationshipReactivation(relationship.id);
         expect(rejectReactivationResponse).toBeSuccessful(ValidationSchema.Relationship);
 
         await syncUntilHasRelationship(client1, relationship.id);
 
-        await expectRelationshipToHaveStatusAndReason(
-            client1,
-            relationship.id,
-            ConnectorRelationshipStatus.Terminated,
-            ConnectorRelationshipAuditLogEntryReason.RejectionOfReactivation
-        );
-        await expectRelationshipToHaveStatusAndReason(
-            client2,
-            relationship.id,
-            ConnectorRelationshipStatus.Terminated,
-            ConnectorRelationshipAuditLogEntryReason.RejectionOfReactivation
-        );
+        await expectRelationshipToHaveStatusAndReason(client1, relationship.id, RelationshipStatus.Terminated, RelationshipAuditLogEntryReason.RejectionOfReactivation);
+        await expectRelationshipToHaveStatusAndReason(client2, relationship.id, RelationshipStatus.Terminated, RelationshipAuditLogEntryReason.RejectionOfReactivation);
 
         await client1.relationships.requestRelationshipReactivation(relationship.id);
         await syncUntilHasRelationship(client2, relationship.id);
@@ -192,18 +173,8 @@ describe("Relationships", () => {
         expect(revokeReactivationResponse).toBeSuccessful(ValidationSchema.Relationship);
         await syncUntilHasRelationship(client2, relationship.id);
 
-        await expectRelationshipToHaveStatusAndReason(
-            client1,
-            relationship.id,
-            ConnectorRelationshipStatus.Terminated,
-            ConnectorRelationshipAuditLogEntryReason.RevocationOfReactivation
-        );
-        await expectRelationshipToHaveStatusAndReason(
-            client2,
-            relationship.id,
-            ConnectorRelationshipStatus.Terminated,
-            ConnectorRelationshipAuditLogEntryReason.RevocationOfReactivation
-        );
+        await expectRelationshipToHaveStatusAndReason(client1, relationship.id, RelationshipStatus.Terminated, RelationshipAuditLogEntryReason.RevocationOfReactivation);
+        await expectRelationshipToHaveStatusAndReason(client2, relationship.id, RelationshipStatus.Terminated, RelationshipAuditLogEntryReason.RevocationOfReactivation);
 
         await client1.relationships.requestRelationshipReactivation(relationship.id);
         await syncUntilHasRelationship(client2, relationship.id);
@@ -211,18 +182,8 @@ describe("Relationships", () => {
         expect(acceptReactivationResponse).toBeSuccessful(ValidationSchema.Relationship);
         await syncUntilHasRelationship(client1, relationship.id);
 
-        await expectRelationshipToHaveStatusAndReason(
-            client1,
-            relationship.id,
-            ConnectorRelationshipStatus.Active,
-            ConnectorRelationshipAuditLogEntryReason.AcceptanceOfReactivation
-        );
-        await expectRelationshipToHaveStatusAndReason(
-            client2,
-            relationship.id,
-            ConnectorRelationshipStatus.Active,
-            ConnectorRelationshipAuditLogEntryReason.AcceptanceOfReactivation
-        );
+        await expectRelationshipToHaveStatusAndReason(client1, relationship.id, RelationshipStatus.Active, RelationshipAuditLogEntryReason.AcceptanceOfReactivation);
+        await expectRelationshipToHaveStatusAndReason(client2, relationship.id, RelationshipStatus.Active, RelationshipAuditLogEntryReason.AcceptanceOfReactivation);
     });
 
     test("terminate relationship and decompose it", async () => {
@@ -285,12 +246,7 @@ describe("Relationships", () => {
     });
 });
 
-async function expectRelationshipToHaveStatusAndReason(
-    client: ConnectorClient,
-    relationshipId: string,
-    status?: ConnectorRelationshipStatus,
-    reason?: ConnectorRelationshipAuditLogEntryReason
-) {
+async function expectRelationshipToHaveStatusAndReason(client: ConnectorClient, relationshipId: string, status?: RelationshipStatus, reason?: RelationshipAuditLogEntryReason) {
     const response = await client.relationships.getRelationship(relationshipId);
     expect(response).toBeSuccessful(ValidationSchema.Relationship);
     if (status) expect(response.result.status).toBe(status);

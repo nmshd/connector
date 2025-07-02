@@ -1,4 +1,5 @@
-import { ConnectorClient, ConnectorRelationshipTemplate } from "@nmshd/connector-sdk";
+import { ConnectorClient } from "@nmshd/connector-sdk";
+import { RelationshipTemplateDTO } from "@nmshd/runtime-types";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
@@ -14,8 +15,8 @@ beforeAll(async () => ([client1, client2] = await launcher.launch(2)), getTimeou
 afterAll(() => launcher.stop());
 
 describe("Template Tests", () => {
-    let template: ConnectorRelationshipTemplate;
-    let templateWithUndefinedMaxNumberOfAllocations: ConnectorRelationshipTemplate;
+    let template: RelationshipTemplateDTO;
+    let templateWithUndefinedMaxNumberOfAllocations: RelationshipTemplateDTO;
 
     test("create a template", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({

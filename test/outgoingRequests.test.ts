@@ -1,5 +1,6 @@
-import { ConnectorClient, ConnectorRequestStatus } from "@nmshd/connector-sdk";
+import { ConnectorClient } from "@nmshd/connector-sdk";
 import { ReadAttributeRequestItemJSON } from "@nmshd/content";
+import { LocalRequestStatus } from "@nmshd/runtime-types";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
@@ -30,7 +31,7 @@ describe("Outgoing Requests", () => {
         expect(response).toBeSuccessful(ValidationSchema.ConnectorRequest);
 
         const sConsumptionRequest = (await client2.outgoingRequests.getRequest(response.result.id)).result;
-        expect(sConsumptionRequest.status).toBe(ConnectorRequestStatus.Draft);
+        expect(sConsumptionRequest.status).toBe(LocalRequestStatus.Draft);
         expect(sConsumptionRequest.content.items).toHaveLength(1);
         expect(sConsumptionRequest.content.items[0]["@type"]).toBe("ReadAttributeRequestItem");
         expect((sConsumptionRequest.content.items[0] as ReadAttributeRequestItemJSON).mustBeAccepted).toBe(false);

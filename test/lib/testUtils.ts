@@ -1,28 +1,16 @@
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { DataEvent, EventBus, SubscriptionTarget, sleep } from "@js-soft/ts-utils";
-import {
-    ConnectorAttribute,
-    ConnectorClient,
-    ConnectorFile,
-    ConnectorMessage,
-    ConnectorRelationship,
-    ConnectorRelationshipTemplate,
-    ConnectorRequest,
-    ConnectorRequestStatus,
-    ConnectorToken,
-    CreateOutgoingRequestRequest,
-    CreateRepositoryAttributeRequest,
-    UploadOwnFileRequest
-} from "@nmshd/connector-sdk";
+import { ConnectorClient, CreateOutgoingRequestRequest, CreateRepositoryAttributeRequest, UploadOwnFileRequest } from "@nmshd/connector-sdk";
 import { AttributeValues, RelationshipAttributeJSON } from "@nmshd/content";
 import { PasswordLocationIndicator } from "@nmshd/core-types";
+import { FileDTO, LocalAttributeDTO, LocalRequestDTO, LocalRequestStatus, MessageDTO, RelationshipDTO, RelationshipTemplateDTO, TokenDTO } from "@nmshd/runtime-types";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata } from "./Launcher";
 import { ValidationSchema } from "./validation";
 
 export interface MessageProcessedEventData {
-    message: ConnectorMessage;
+    message: MessageDTO;
     result: "ManualRequestDecisionRequired" | "NoRequest" | "Error";
 }
 
@@ -56,14 +44,14 @@ export async function syncUntil(client: ConnectorClientWithMetadata, until: (cli
     }
 }
 
-export async function syncUntilHasRelationship(client: ConnectorClientWithMetadata, relationshipId: string): Promise<ConnectorRelationship> {
+export async function syncUntilHasRelationship(client: ConnectorClientWithMetadata, relationshipId: string): Promise<RelationshipDTO> {
     await syncUntil(
         client,
         (client) =>
             client._eventBus!.publishedEvents.filter(
                 (e) =>
                     ["transport.relationshipChanged", "transport.relationshipReactivationCompleted", "transport.relationshipReactivationRequested"].includes(e.namespace) &&
-                    (e as DataEvent<ConnectorRelationship>).data.id === relationshipId
+                    (e as DataEvent<RelationshipDTO>).data.id === relationshipId
             ).length >= 1
     );
     return (
@@ -71,33 +59,33 @@ export async function syncUntilHasRelationship(client: ConnectorClientWithMetada
             ._eventBus!.publishedEvents.filter(
                 (e) =>
                     ["transport.relationshipChanged", "transport.relationshipReactivationCompleted", "transport.relationshipReactivationRequested"].includes(e.namespace) &&
-                    (e as DataEvent<ConnectorRelationship>).data.id === relationshipId
+                    (e as DataEvent<RelationshipDTO>).data.id === relationshipId
             )
-            .at(-1) as DataEvent<ConnectorRelationship>
+            .at(-1) as DataEvent<RelationshipDTO>
     ).data;
 }
 
-export async function syncUntilHasMessages(client: ConnectorClientWithMetadata, expectedNumberOfMessages = 1): Promise<ConnectorMessage[]> {
+export async function syncUntilHasMessages(client: ConnectorClientWithMetadata, expectedNumberOfMessages = 1): Promise<MessageDTO[]> {
     await syncUntil(client, (client) => client._eventBus!.publishedEvents.filter((e) => e.namespace === "transport.messageReceived").length >= expectedNumberOfMessages);
-    return client._eventBus!.publishedEvents.filter((e) => e.namespace === "transport.messageReceived").map((e) => (e as DataEvent<ConnectorMessage>).data);
+    return client._eventBus!.publishedEvents.filter((e) => e.namespace === "transport.messageReceived").map((e) => (e as DataEvent<MessageDTO>).data);
 }
 
-export async function syncUntilHasRequest(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorRequest> {
+export async function syncUntilHasRequest(client: ConnectorClientWithMetadata, requestId: string): Promise<LocalRequestDTO> {
     await syncUntil(
         client,
         (client) =>
-            client._eventBus!.publishedEvents.filter((e) => e.namespace === "consumption.incomingRequestReceived" && (e as DataEvent<ConnectorRequest>).data.id === requestId)
+            client._eventBus!.publishedEvents.filter((e) => e.namespace === "consumption.incomingRequestReceived" && (e as DataEvent<LocalRequestDTO>).data.id === requestId)
                 .length === 1
     );
 
     return (
         client._eventBus!.publishedEvents.filter(
-            (e) => e.namespace === "consumption.incomingRequestReceived" && (e as DataEvent<ConnectorRequest>).data.id === requestId
-        )[0] as DataEvent<ConnectorRequest>
+            (e) => e.namespace === "consumption.incomingRequestReceived" && (e as DataEvent<LocalRequestDTO>).data.id === requestId
+        )[0] as DataEvent<LocalRequestDTO>
     ).data;
 }
 
-export async function syncUntilHasMessageWithNotification(client: ConnectorClientWithMetadata, notificationId: string): Promise<ConnectorMessage> {
+export async function syncUntilHasMessageWithNotification(client: ConnectorClientWithMetadata, notificationId: string): Promise<MessageDTO> {
     const isNotification = (content: any) => {
         if (!content) return false;
 
@@ -119,7 +107,7 @@ export async function syncUntilHasMessageWithNotification(client: ConnectorClien
     ).data.message;
 }
 
-export async function syncUntilHasMessageWithResponse(client: ConnectorClientWithMetadata, requestId: string): Promise<ConnectorMessage> {
+export async function syncUntilHasMessageWithResponse(client: ConnectorClientWithMetadata, requestId: string): Promise<MessageDTO> {
     const isResponse = (content: any) => {
         if (!content) return false;
 
@@ -144,7 +132,7 @@ export async function uploadOwnToken(
     client: ConnectorClient,
     forIdentity?: string,
     passwordProtection?: { password: string; passwordIsPin?: true; passwordLocationIndicator?: PasswordLocationIndicator }
-): Promise<ConnectorToken> {
+): Promise<TokenDTO> {
     const response = await client.tokens.createOwnToken({
         content: { aKey: "aValue" },
         expiresAt: DateTime.utc().plus({ days: 1 }).toString(),
@@ -157,7 +145,7 @@ export async function uploadOwnToken(
     return response.result;
 }
 
-export async function uploadPeerToken(client: ConnectorClient, reference: string): Promise<ConnectorToken> {
+export async function uploadPeerToken(client: ConnectorClient, reference: string): Promise<TokenDTO> {
     const response = await client.tokens.loadPeerToken({ reference });
 
     expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
@@ -165,7 +153,7 @@ export async function uploadPeerToken(client: ConnectorClient, reference: string
     return response.result;
 }
 
-export async function uploadFile(client: ConnectorClient): Promise<ConnectorFile> {
+export async function uploadFile(client: ConnectorClient): Promise<FileDTO> {
     const response = await client.files.uploadOwnFile(await makeUploadRequest());
 
     expect(response).toBeSuccessful(ValidationSchema.File);
@@ -188,7 +176,7 @@ export async function createTemplate(
     client: ConnectorClient,
     forIdentity?: string,
     passwordProtection?: { password: string; passwordIsPin?: true; passwordLocationIndicator?: PasswordLocationIndicator }
-): Promise<ConnectorRelationshipTemplate> {
+): Promise<RelationshipTemplateDTO> {
     const response = await client.relationshipTemplates.createOwnRelationshipTemplate({
         maxNumberOfAllocations: 1,
         expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
@@ -209,7 +197,7 @@ export async function getTemplateToken(
     client: ConnectorClient,
     forIdentity?: string,
     passwordProtection?: { password: string; passwordIsPin?: true; passwordLocationIndicator?: PasswordLocationIndicator }
-): Promise<ConnectorToken> {
+): Promise<TokenDTO> {
     const template = await createTemplate(client, forIdentity, passwordProtection);
 
     const response = await client.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { forIdentity, passwordProtection });
@@ -218,7 +206,7 @@ export async function getTemplateToken(
     return response.result;
 }
 
-export async function getFileToken(client: ConnectorClient): Promise<ConnectorToken> {
+export async function getFileToken(client: ConnectorClient): Promise<TokenDTO> {
     const file = await uploadFile(client);
 
     const response = await client.files.createTokenForFile(file.id);
@@ -227,7 +215,7 @@ export async function getFileToken(client: ConnectorClient): Promise<ConnectorTo
     return response.result;
 }
 
-export async function exchangeTemplate(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient, forIdentity?: string): Promise<ConnectorRelationshipTemplate> {
+export async function exchangeTemplate(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient, forIdentity?: string): Promise<RelationshipTemplateDTO> {
     const templateToken = await getTemplateToken(clientCreator, forIdentity);
 
     const response = await clientRecpipient.relationshipTemplates.loadPeerRelationshipTemplate({
@@ -238,7 +226,7 @@ export async function exchangeTemplate(clientCreator: ConnectorClient, clientRec
     return response.result;
 }
 
-export async function exchangeFile(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient): Promise<ConnectorFile> {
+export async function exchangeFile(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient): Promise<FileDTO> {
     const fileToken = await getFileToken(clientCreator);
 
     const response = await clientRecpipient.files.loadPeerFile({ reference: fileToken.reference.truncated });
@@ -247,7 +235,7 @@ export async function exchangeFile(clientCreator: ConnectorClient, clientRecpipi
     return response.result;
 }
 
-export async function exchangeToken(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient, forIdentity?: string): Promise<ConnectorToken> {
+export async function exchangeToken(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient, forIdentity?: string): Promise<TokenDTO> {
     const token = await uploadOwnToken(clientCreator, forIdentity);
 
     const response = await clientRecpipient.tokens.loadPeerToken({ reference: token.reference.truncated });
@@ -256,7 +244,7 @@ export async function exchangeToken(clientCreator: ConnectorClient, clientRecpip
     return response.result;
 }
 
-export async function sendMessage(client: ConnectorClient, recipient: string): Promise<ConnectorMessage> {
+export async function sendMessage(client: ConnectorClient, recipient: string): Promise<MessageDTO> {
     const response = await client.messages.sendMessage({
         recipients: [recipient],
         content: {
@@ -272,7 +260,7 @@ export async function sendMessage(client: ConnectorClient, recipient: string): P
     return response.result;
 }
 
-export async function exchangeMessage(sender: ConnectorClient, recipient: ConnectorClient): Promise<ConnectorMessage> {
+export async function exchangeMessage(sender: ConnectorClient, recipient: ConnectorClient): Promise<MessageDTO> {
     const recipientAddress = (await getRelationship(sender)).peer;
     const messageId = (await sendMessage(sender, recipientAddress)).id;
     const messages = await syncUntilHasMessages(recipient);
@@ -284,14 +272,14 @@ export async function exchangeMessage(sender: ConnectorClient, recipient: Connec
     return message;
 }
 
-export async function getMessageInMessages(client: ConnectorClient, messageId: string): Promise<ConnectorMessage> {
+export async function getMessageInMessages(client: ConnectorClient, messageId: string): Promise<MessageDTO> {
     const response = await client.messages.getMessages();
     expect(response).toBeSuccessful(ValidationSchema.Messages);
 
     return response.result.find((m) => m.id === messageId)!;
 }
 
-export async function getRelationship(client: ConnectorClient): Promise<ConnectorRelationship> {
+export async function getRelationship(client: ConnectorClient): Promise<RelationshipDTO> {
     const response = await client.relationships.getRelationships();
 
     expect(response).toBeSuccessful(ValidationSchema.Relationships);
@@ -317,7 +305,7 @@ export async function establishRelationship(client1: ConnectorClient, client2: C
     await syncUntilHasRelationship(client2, acceptResponse.result.id);
 }
 
-export async function createRepositoryAttribute(client: ConnectorClient, request: CreateRepositoryAttributeRequest): Promise<ConnectorAttribute> {
+export async function createRepositoryAttribute(client: ConnectorClient, request: CreateRepositoryAttributeRequest): Promise<LocalAttributeDTO> {
     const response = await client.attributes.createRepositoryAttribute(request);
     expect(response).toBeSuccessful(ValidationSchema.ConnectorAttribute);
     return response.result;
@@ -333,7 +321,7 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
     sender: ConnectorClientWithMetadata,
     recipient: ConnectorClientWithMetadata,
     attributeContent: Omit<RelationshipAttributeJSON, "owner" | "@type">
-): Promise<ConnectorAttribute> {
+): Promise<LocalAttributeDTO> {
     const senderIdentityInfoResult = await sender.account.getIdentityInfo();
     expect(senderIdentityInfoResult.isSuccess).toBe(true);
     const senderAddress = senderIdentityInfoResult.result.address;
@@ -363,7 +351,7 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
 
     await syncUntilHasRequest(recipient, requestId);
     let recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
-    while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {
+    while (recipientRequest.status !== LocalRequestStatus.ManualDecisionRequired) {
         await sleep(500);
         recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
     }
@@ -373,7 +361,7 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
     const responseMessage = await syncUntilHasMessageWithResponse(sender, requestId);
     const sharedAttributeId = (responseMessage.content as any).response.items[0].attributeId;
     const senderRequest = (await sender.outgoingRequests.getRequest(requestId)).result;
-    while (senderRequest.status !== ConnectorRequestStatus.Completed) {
+    while (senderRequest.status !== LocalRequestStatus.Completed) {
         await sleep(500);
     }
 
@@ -392,17 +380,17 @@ export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipient: ConnectorClient,
     attributeValue: AttributeValues.Identity.Json
-): Promise<ConnectorAttribute>;
+): Promise<LocalAttributeDTO>;
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipient: ConnectorClient[],
     attributeValue: AttributeValues.Identity.Json
-): Promise<ConnectorAttribute[]>;
+): Promise<LocalAttributeDTO[]>;
 export async function executeFullCreateAndShareRepositoryAttributeFlow(
     sender: ConnectorClient,
     recipients: ConnectorClient | ConnectorClient[],
     attributeValue: AttributeValues.Identity.Json
-): Promise<ConnectorAttribute | ConnectorAttribute[]> {
+): Promise<LocalAttributeDTO | LocalAttributeDTO[]> {
     const createAttributeRequestResult = await sender.attributes.createRepositoryAttribute({ content: { value: attributeValue } });
     const attribute = createAttributeRequestResult.result;
 
@@ -410,7 +398,7 @@ export async function executeFullCreateAndShareRepositoryAttributeFlow(
         recipients = [recipients];
     }
 
-    const results: ConnectorAttribute[] = [];
+    const results: LocalAttributeDTO[] = [];
 
     for (const recipient of recipients) {
         const recipientIdentityInfoResult = await recipient.account.getIdentityInfo();
@@ -442,7 +430,7 @@ export async function executeFullCreateAndShareRepositoryAttributeFlow(
         await syncUntilHasRequest(recipient, requestId);
 
         let recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
-        while (recipientRequest.status !== ConnectorRequestStatus.ManualDecisionRequired) {
+        while (recipientRequest.status !== LocalRequestStatus.ManualDecisionRequired) {
             await sleep(500);
             recipientRequest = (await recipient.incomingRequests.getRequest(requestId)).result;
         }
