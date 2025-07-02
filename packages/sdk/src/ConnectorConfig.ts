@@ -1,9 +1,8 @@
 import http from "http";
 import https from "https";
 
-export interface ConnectorConfig {
+export type ConnectorConfig = {
     baseUrl: string;
-    apiKey: string;
     httpAgent?: http.Agent;
     httpsAgent?: https.Agent;
-}
+} & ({ apiKey: string } | { accessToken: string });

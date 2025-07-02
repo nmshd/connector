@@ -42,7 +42,8 @@ export class ConnectorClient {
         const axiosInstance = axios.create({
             baseURL: config.baseUrl,
             headers: {
-                "X-API-KEY": config.apiKey
+                "X-API-KEY": "apiKey" in config ? config.apiKey : undefined,
+                authorization: "accessToken" in config ? `Bearer ${config.accessToken}` : undefined
             },
             httpAgent: config.httpAgent,
             httpsAgent: config.httpsAgent,
