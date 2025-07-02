@@ -32,8 +32,7 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
             transportLibrary: {},
             database: {
                 driver: "mongodb",
-                dbName: "default",
-                dbNamePrefix: "acc-"
+                dbName: "default"
             },
             logging: {
                 appenders: {
