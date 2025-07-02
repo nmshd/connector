@@ -6,7 +6,6 @@ import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
 import { establishRelationship } from "./lib/testUtils";
-import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -28,7 +27,7 @@ describe("Outgoing Requests", () => {
             peer: (await client1.account.getIdentityInfo()).result.address
         });
 
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorRequest);
+        expect(response).toBeSuccessful();
 
         const sConsumptionRequest = (await client2.outgoingRequests.getRequest(response.result.id)).result;
         expect(sConsumptionRequest.status).toBe(LocalRequestStatus.Draft);
@@ -62,6 +61,6 @@ describe("Outgoing Requests", () => {
             .addStringSet("response.content.items.@type")
             .addStringSet("response.content.items.items.@type");
 
-        await conditions.executeTests((c, q) => c.outgoingRequests.getRequests(q), ValidationSchema.ConnectorRequests);
+        await conditions.executeTests((c, q) => c.outgoingRequests.getRequests(q));
     });
 });

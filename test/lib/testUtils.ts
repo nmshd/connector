@@ -140,7 +140,7 @@ export async function uploadOwnToken(
         passwordProtection
     });
 
-    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response).toBeSuccessful();
 
     return response.result;
 }
@@ -148,7 +148,7 @@ export async function uploadOwnToken(
 export async function uploadPeerToken(client: ConnectorClient, reference: string): Promise<TokenDTO> {
     const response = await client.tokens.loadPeerToken({ reference });
 
-    expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+    expect(response).toBeSuccessful();
 
     return response.result;
 }
@@ -156,7 +156,7 @@ export async function uploadPeerToken(client: ConnectorClient, reference: string
 export async function uploadFile(client: ConnectorClient): Promise<FileDTO> {
     const response = await client.files.uploadOwnFile(await makeUploadRequest());
 
-    expect(response).toBeSuccessful(ValidationSchema.File);
+    expect(response).toBeSuccessful();
 
     return response.result;
 }
@@ -188,7 +188,7 @@ export async function createTemplate(
         passwordProtection
     });
 
-    expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+    expect(response).toBeSuccessful();
 
     return response.result;
 }
@@ -201,7 +201,7 @@ export async function getTemplateToken(
     const template = await createTemplate(client, forIdentity, passwordProtection);
 
     const response = await client.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { forIdentity, passwordProtection });
-    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response).toBeSuccessful();
 
     return response.result;
 }
@@ -210,7 +210,7 @@ export async function getFileToken(client: ConnectorClient): Promise<TokenDTO> {
     const file = await uploadFile(client);
 
     const response = await client.files.createTokenForFile(file.id);
-    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response).toBeSuccessful();
 
     return response.result;
 }
@@ -221,7 +221,7 @@ export async function exchangeTemplate(clientCreator: ConnectorClient, clientRec
     const response = await clientRecpipient.relationshipTemplates.loadPeerRelationshipTemplate({
         reference: templateToken.reference.truncated
     });
-    expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+    expect(response).toBeSuccessful();
 
     return response.result;
 }
@@ -230,7 +230,7 @@ export async function exchangeFile(clientCreator: ConnectorClient, clientRecpipi
     const fileToken = await getFileToken(clientCreator);
 
     const response = await clientRecpipient.files.loadPeerFile({ reference: fileToken.reference.truncated });
-    expect(response).toBeSuccessful(ValidationSchema.File);
+    expect(response).toBeSuccessful();
 
     return response.result;
 }
@@ -239,7 +239,7 @@ export async function exchangeToken(clientCreator: ConnectorClient, clientRecpip
     const token = await uploadOwnToken(clientCreator, forIdentity);
 
     const response = await clientRecpipient.tokens.loadPeerToken({ reference: token.reference.truncated });
-    expect(response).toBeSuccessful(ValidationSchema.Token);
+    expect(response).toBeSuccessful();
 
     return response.result;
 }
@@ -255,7 +255,7 @@ export async function sendMessage(client: ConnectorClient, recipient: string): P
             to: [recipient]
         }
     });
-    expect(response).toBeSuccessful(ValidationSchema.Message);
+    expect(response).toBeSuccessful();
 
     return response.result;
 }
@@ -274,7 +274,7 @@ export async function exchangeMessage(sender: ConnectorClient, recipient: Connec
 
 export async function getMessageInMessages(client: ConnectorClient, messageId: string): Promise<MessageDTO> {
     const response = await client.messages.getMessages();
-    expect(response).toBeSuccessful(ValidationSchema.Messages);
+    expect(response).toBeSuccessful();
 
     return response.result.find((m) => m.id === messageId)!;
 }
@@ -282,7 +282,7 @@ export async function getMessageInMessages(client: ConnectorClient, messageId: s
 export async function getRelationship(client: ConnectorClient): Promise<RelationshipDTO> {
     const response = await client.relationships.getRelationships();
 
-    expect(response).toBeSuccessful(ValidationSchema.Relationships);
+    expect(response).toBeSuccessful();
     expect(response.result).toHaveLength(1);
 
     return response.result[0];
@@ -295,19 +295,19 @@ export async function establishRelationship(client1: ConnectorClient, client2: C
         templateId: template.id,
         creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} }
     });
-    expect(createRelationshipResponse).toBeSuccessful(ValidationSchema.Relationship);
+    expect(createRelationshipResponse).toBeSuccessful();
 
     const relationship = await syncUntilHasRelationship(client1, createRelationshipResponse.result.id);
 
     const acceptResponse = await client1.relationships.acceptRelationship(relationship.id);
-    expect(acceptResponse).toBeSuccessful(ValidationSchema.Relationship);
+    expect(acceptResponse).toBeSuccessful();
 
     await syncUntilHasRelationship(client2, acceptResponse.result.id);
 }
 
 export async function createRepositoryAttribute(client: ConnectorClient, request: CreateRepositoryAttributeRequest): Promise<LocalAttributeDTO> {
     const response = await client.attributes.createRepositoryAttribute(request);
-    expect(response).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+    expect(response).toBeSuccessful();
     return response.result;
 }
 
@@ -519,7 +519,7 @@ export async function waitForEvent<TEvent>(
 
 export async function deleteAllAttributes(client: ConnectorClient, clientAddress: string): Promise<void> {
     const attributesResponse = await client.attributes.getAttributes({});
-    expect(attributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+    expect(attributesResponse).toBeSuccessful();
 
     for (const attribute of attributesResponse.result) {
         if (!attribute.shareInfo) {

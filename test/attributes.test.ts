@@ -66,7 +66,7 @@ describe("Attributes", () => {
             }
         });
 
-        expect(createAttributeResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+        expect(createAttributeResponse).toBeSuccessful();
     });
 
     test("should not set isDefault creating new RepositoryAttributes", async () => {
@@ -97,17 +97,17 @@ describe("Attributes", () => {
             })
         ).result.id;
         const getAttributeResponse = await client1.attributes.getAttribute(attributeId);
-        expect(getAttributeResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+        expect(getAttributeResponse).toBeSuccessful();
     });
 
     test("should get the created attribute in the list of attributes", async () => {
         const getAttributesResponse = await client1.attributes.getAttributes({});
-        expect(getAttributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+        expect(getAttributesResponse).toBeSuccessful();
     });
 
     test("should get the created attribute in the list of valid attributes", async () => {
         const getAttributesResponse = await client1.attributes.getValidAttributes({});
-        expect(getAttributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+        expect(getAttributesResponse).toBeSuccessful();
     });
 
     test("should succeed a Repository Attribute", async () => {
@@ -242,7 +242,7 @@ describe("Attributes Query", () => {
             .addStringSet("shareInfo.peer")
             .addStringSet("shareInfo.sourceAttribute");
 
-        await conditions.executeTests((c, q) => c.attributes.getAttributes(q), ValidationSchema.ConnectorAttributes);
+        await conditions.executeTests((c, q) => c.attributes.getAttributes(q));
     });
 
     test("should query valid attributes", async () => {
@@ -271,7 +271,7 @@ describe("Attributes Query", () => {
             .addStringSet("shareInfo.peer")
             .addStringSet("shareInfo.sourceAttribute");
 
-        await conditions.executeTests((c, q) => c.attributes.getValidAttributes(q), ValidationSchema.ConnectorAttributes);
+        await conditions.executeTests((c, q) => c.attributes.getValidAttributes(q));
     });
 
     test("should query own shared identity attributes", async () => {
@@ -290,7 +290,7 @@ describe("Attributes Query", () => {
             .addStringSet("shareInfo.requestReference")
             .addStringSet("shareInfo.sourceAttribute");
 
-        await conditions.executeTests((c, q) => c.attributes.getOwnSharedIdentityAttributes({ ...q, peer: client2Address }), ValidationSchema.ConnectorAttributes);
+        await conditions.executeTests((c, q) => c.attributes.getOwnSharedIdentityAttributes({ ...q, peer: client2Address }));
     });
 
     test("should query peer shared identity attributes", async () => {
@@ -310,7 +310,7 @@ describe("Attributes Query", () => {
             .addStringSet("content.value.@type")
             .addStringSet("shareInfo.requestReference");
 
-        await conditions.executeTests((c, q) => c.attributes.getPeerSharedIdentityAttributes({ ...q, peer: client2Address }), ValidationSchema.ConnectorAttributes);
+        await conditions.executeTests((c, q) => c.attributes.getPeerSharedIdentityAttributes({ ...q, peer: client2Address }));
     });
 });
 
@@ -326,7 +326,7 @@ describe("Execute AttributeQueries", () => {
         });
 
         const executeIdentityAttributeQueryResponse = await client1.attributes.executeIdentityAttributeQuery({ query: { valueType: "GivenName" } });
-        expect(executeIdentityAttributeQueryResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+        expect(executeIdentityAttributeQueryResponse).toBeSuccessful();
         const attributes = executeIdentityAttributeQueryResponse.result;
 
         expect(attributes).toContainEqual(attribute);
@@ -355,7 +355,7 @@ describe("Execute AttributeQueries", () => {
             }
         });
 
-        expect(executeRelationshipAttributeQueryResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+        expect(executeRelationshipAttributeQueryResponse).toBeSuccessful();
 
         expect((executeRelationshipAttributeQueryResponse.result.content.value as GivenNameJSON).value).toBe("AGivenName");
     });
@@ -381,7 +381,7 @@ describe("Read Attribute and versions", () => {
                     }
                 }
             });
-            expect(newAtt).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+            expect(newAtt).toBeSuccessful();
         }
 
         await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
@@ -408,7 +408,7 @@ describe("Read Attribute and versions", () => {
                     }
                 }
             });
-            expect(newAttributeResponse).toBeSuccessful(ValidationSchema.ConnectorAttribute);
+            expect(newAttributeResponse).toBeSuccessful();
         }
 
         await client1.attributes.succeedAttribute(newAttributeResponse!.result.id, {
@@ -684,6 +684,6 @@ describe("Delete attributes", () => {
 describe("Attributes Tag Collection", () => {
     test("should get all valid tags", async () => {
         const response = await client1.attributes.getAttributeTagCollection();
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorAttributeTagCollection);
+        expect(response).toBeSuccessful();
     });
 });
