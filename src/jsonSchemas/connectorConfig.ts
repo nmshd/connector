@@ -40,13 +40,15 @@ interface ModuleConfiguration {
 
 interface InfrastructureConfiguration {
     httpServer: {
-        oidc?: any;
-        jwtBearer?: any;
         enabled: boolean;
         port?: string | number;
-        apiKey: string;
         cors?: any;
         helmetOptions?: any;
+        authentication: {
+            apiKeys?: string[];
+            oidc?: any;
+            jwtBearer?: any;
+        };
     };
 }
 

@@ -37,12 +37,14 @@ export interface ControllerConfig {
 }
 
 export interface HttpServerConfiguration extends InfrastructureConfiguration {
-    oidc?: OauthParams;
-    jwtBearer?: BearerAuthOptions;
     port?: number;
-    apiKey: string;
     cors?: CorsOptions;
     helmetOptions?: HelmetOptions;
+    authentication: {
+        apiKeys?: string[];
+        oidc?: OauthParams;
+        jwtBearer?: BearerAuthOptions;
+    };
 }
 
 export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration> implements IHttpServer {
@@ -192,7 +194,10 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private initAuthentication() {
-        if (!this.configuration.apiKey && !this.configuration.oidc && !this.configuration.jwtBearer) {
+        const apiKeyAuthenticationDisabled = this.configuration.authentication.apiKeys?.length === 0;
+        const oidcAuthenticationDisabled = !this.configuration.authentication.oidc;
+        const jwtBearerAuthenticationDisabled = !this.configuration.authentication.jwtBearer;
+        if (apiKeyAuthenticationDisabled && oidcAuthenticationDisabled && jwtBearerAuthenticationDisabled) {
             switch (this.connectorMode) {
                 case "debug":
                     return;
@@ -206,37 +211,40 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.initJWTBearer();
     }
 
-    private initOIDC() {
-        if (!this.configuration.oidc) return;
+    private initApiKey() {
+        if (this.configuration.authentication.apiKeys?.length === 0) return;
 
-        this.app.use(openidAuth({ ...this.configuration.oidc, authRequired: false }));
+        const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
+
+        const notMatchingApiKeys = this.configuration.authentication.apiKeys!.filter((apiKey) => !apiKey.match(apiKeyPolicy));
+        if (notMatchingApiKeys.length === 0) return;
+
+        this.logger.error(
+            `${notMatchingApiKeys.length} API keys do not meet the requirements. They must be at least 30 characters long and contain at least 2 digits, 2 uppercase letters, 2 lowercase letters and 1 special character (!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~).`
+        );
+        process.exit(1);
+    }
+
+    private initOIDC() {
+        if (!this.configuration.authentication.oidc) return;
+
+        this.app.use(openidAuth({ ...this.configuration.authentication.oidc, authRequired: false }));
     }
 
     private initJWTBearer() {
-        if (!this.configuration.jwtBearer) return;
+        if (!this.configuration.authentication.jwtBearer) return;
 
         this.app.use(
             bearerAuth({
-                ...this.configuration.jwtBearer,
+                ...this.configuration.authentication.jwtBearer,
                 authRequired: false
             })
         );
     }
 
-    private initApiKey() {
-        if (!this.configuration.apiKey) return;
-
-        const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
-        if (!this.configuration.apiKey.match(apiKeyPolicy)) {
-            this.logger.warn(
-                "The configured API key does not meet the requirements. It must be at least 30 characters long and contain at least 2 digits, 2 uppercase letters, 2 lowercase letters and 1 special character (!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~])."
-            );
-            this.logger.warn("The API key will be used as is, but it is recommended to change it as it will not be supported in future versions.");
-        }
-    }
-
     private useAuthentication() {
-        if (!this.configuration.apiKey && !this.configuration.oidc && !this.configuration.jwtBearer) return;
+        const apiKeyAuthenticationEnabled = this.configuration.authentication.apiKeys?.length !== 0;
+        if (!apiKeyAuthenticationEnabled && !this.configuration.authentication.oidc && !this.configuration.authentication.jwtBearer) return;
 
         const unauthorized = async (_: express.Request, res: express.Response) => {
             await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
@@ -244,22 +252,23 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         };
 
         this.app.use(async (req, res, next) => {
-            const apiKeyFromHeader = req.headers["x-api-key"];
-            if (this.configuration.apiKey && apiKeyFromHeader) {
-                if (apiKeyFromHeader !== this.configuration.apiKey) return await unauthorized(req, res);
+            const xApiKeyHeaderValue = req.headers["x-api-key"];
+            const apiKeyFromHeader = Array.isArray(xApiKeyHeaderValue) ? xApiKeyHeaderValue[0] : xApiKeyHeaderValue;
+            if (apiKeyAuthenticationEnabled && apiKeyFromHeader) {
+                if (!this.configuration.authentication.apiKeys!.includes(apiKeyFromHeader)) return await unauthorized(req, res);
 
                 next();
                 return;
             }
 
-            if (this.configuration.jwtBearer && req.headers["authorization"]) {
+            if (this.configuration.authentication.jwtBearer && req.headers["authorization"]) {
                 if (!req.auth) return await unauthorized(req, res);
 
                 next();
                 return;
             }
 
-            if (this.configuration.oidc) {
+            if (this.configuration.authentication.oidc) {
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
                 if (!req.oidc) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
                 if (!req.oidc.isAuthenticated()) return await res.oidc.login();

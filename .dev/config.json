@@ -5,7 +5,9 @@
     },
     "infrastructure": {
         "httpServer": {
-            "apiKey": "This_is_a_test_APIKEY_with_30_chars+"
+            "authentication": {
+                "apiKeys": ["This_is_a_test_APIKEY_with_30_chars+"]
+            }
         }
     },
     "modules": {

@@ -19,8 +19,9 @@ You can find a more detailed documentation [in the enmeshed docs](https://enmesh
             platformClientId: "<client-id>"
             platformClientSecret: "<client-secret>"
         infrastructure:
-            httpServer:
-                apiKey: "<api-key>"
+            authentication:
+                httpServer:
+                    apiKeys: ["<api-key>"]
     ```
 
 ### Install the chart
@@ -44,7 +45,8 @@ config:
         platformClientSecret: "<client-secret>"
     infrastructure:
         httpServer:
-            apiKey: "<api-key>"
+            authentication:
+                apiKeys: ["<api-key>"]
 
 pod:
     ferretdb:

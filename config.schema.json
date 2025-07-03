@@ -47,17 +47,27 @@
                             "type": "boolean",
                             "default": true
                         },
+                        "authentication": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "apiKeys": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                },
+                                "jwtBearer": {},
+                                "oidc": {}
+                            },
+                            "type": "object"
+                        },
                         "cors": {
                             "$ref": "#/definitions/CorsOptions",
                             "default": {
                                 "origin": false
                             }
-                        },
-                        "apiKey": {
-                            "type": "string"
                         }
                     },
-                    "required": ["apiKey"],
                     "type": "object"
                 }
             },

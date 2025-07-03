@@ -52,21 +52,30 @@
                 "httpServer": {
                     "additionalProperties": false,
                     "properties": {
-                        "apiKey": {
-                            "type": "string"
+                        "authentication": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "apiKeys": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                },
+                                "jwtBearer": {},
+                                "oidc": {}
+                            },
+                            "type": "object"
                         },
                         "cors": {},
                         "enabled": {
                             "type": "boolean"
                         },
                         "helmetOptions": {},
-                        "oidc": {},
-                        "jwtBearer": {},
                         "port": {
                             "type": ["string", "number"]
                         }
                     },
-                    "required": ["enabled", "apiKey"],
+                    "required": ["enabled", "authentication"],
                     "type": "object"
                 }
             },
