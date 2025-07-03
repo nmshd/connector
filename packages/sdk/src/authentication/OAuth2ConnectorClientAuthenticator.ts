@@ -42,7 +42,12 @@ export class OAuth2ConnectorClientAuthenticator implements IConnectorClientAuthe
             }
         );
 
-        if (!response.data?.access_token) throw new Error("Failed to retrieve access token");
+        if (!response.data?.access_token) {
+            const errorFromData = response.data?.error;
+            if (errorFromData) throw new Error(`Failed to retrieve access token. Error: ${JSON.stringify(errorFromData)}`);
+
+            throw new Error(`Failed to retrieve access token.`);
+        }
 
         this.#token = response.data.access_token;
         this.#expiresAt = CoreDate.utc().add({ seconds: response.data.expires_in });
