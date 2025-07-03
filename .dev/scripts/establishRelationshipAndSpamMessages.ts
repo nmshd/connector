@@ -1,5 +1,6 @@
 import { sleep } from "@js-soft/ts-utils";
-import { ConnectorClient, ConnectorRelationshipStatus } from "@nmshd/connector-sdk";
+import { ConnectorClient } from "@nmshd/connector-sdk";
+import { RelationshipStatus } from "@nmshd/runtime-types";
 
 async function run() {
     const connector1 = ConnectorClient.create({
@@ -29,7 +30,7 @@ async function establishOrReturnRelationship(connector1: ConnectorClient, connec
     const relationships = (await connector1.relationships.getRelationships()).result;
 
     if (relationships.length > 0) {
-        if (relationships[0].status === ConnectorRelationshipStatus.Pending) {
+        if (relationships[0].status === RelationshipStatus.Pending) {
             await connector1.relationships.acceptRelationship(relationships[0].id);
         }
 
