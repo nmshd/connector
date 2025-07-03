@@ -223,17 +223,9 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         }
 
         const httpServer = config.infrastructure.httpServer as any;
-        if (httpServer?.apiKey) {
-            httpServer.apiKey = "***";
-        }
-
-        if (httpServer?.oidc) {
-            httpServer.oidc = "***";
-        }
-
-        if (httpServer?.jwtBearer) {
-            httpServer.jwtBearer = "***";
-        }
+        if (httpServer?.apiKey) httpServer.apiKey = "***";
+        if (httpServer?.oidc) httpServer.oidc = "***";
+        if (httpServer?.jwtBearer) httpServer.jwtBearer = "***";
 
         const transport = config.transportLibrary;
         if (transport.platformClientSecret) {
