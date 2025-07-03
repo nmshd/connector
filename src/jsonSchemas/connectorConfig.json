@@ -1074,6 +1074,9 @@
                 "addressGenerationHostnameOverride": {
                     "type": "string"
                 },
+                "allowIdentityCreation": {
+                    "type": "boolean"
+                },
                 "baseUrl": {
                     "type": "string"
                 },
