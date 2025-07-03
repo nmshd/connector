@@ -1,4 +1,4 @@
-import { AccountController } from "@nmshd/transport";
+import { CoreError } from "@nmshd/core-types";
 import { CommandModule } from "yargs";
 import { BaseCommand, ConfigFileOptions, configOptionBuilder } from "../../BaseCommand";
 
@@ -14,21 +14,17 @@ export const yargsIdentityInitCommand: CommandModule<{}, ConfigFileOptions> = {
 
 export default class IdentityInit extends BaseCommand {
     protected async runInternal(): Promise<void> {
-        await this.createTransport();
-        if (!this.transport || !this.connectorConfig) {
-            throw new Error("Transport or connectorConfig not initialized");
+        try {
+            await this.createRuntime(false);
+            this.log.log("Identity already exists not creating a new one.");
+        } catch (error: unknown) {
+            if (error instanceof CoreError && error.code === "error.transport.general.noIdentityFound") {
+                await this.createRuntime(true);
+                const address = (await this.cliRuntime.getServices().transportServices.account.getIdentityInfo()).value.address;
+                this.log.log(`Identity with address (${address}) created successfully.`);
+            } else {
+                throw error;
+            }
         }
-        const db = await this.transport.createDatabase(`${this.connectorConfig.database.dbNamePrefix}${this.connectorConfig.database.dbName}`);
-        const identityCollection = await db.getMap("AccountInfo");
-        const identity = await identityCollection.get("identity");
-        if (identity) {
-            this.log.log(`Identity already created!`);
-            return;
-        }
-        const accountController = new AccountController(this.transport, db, this.transport.config);
-        await accountController.init();
-
-        this.log.log(`Identity with address ${accountController.identity.address} created successfully!`);
-        await accountController.close();
     }
 }

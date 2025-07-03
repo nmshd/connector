@@ -1,4 +1,5 @@
 import { ApplicationError } from "@js-soft/ts-utils";
+import _ from "lodash";
 import yargs from "yargs";
 import { ConnectorRuntime } from "../ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "../ConnectorRuntimeConfig";
@@ -60,11 +61,11 @@ export abstract class BaseCommand {
         }
     }
 
-    protected async createRuntime(): Promise<void> {
+    protected async createRuntime(allowIdentityCreation = false): Promise<void> {
         if (this.#cliRuntime) return;
         if (!this.#connectorConfig) throw new Error("Connector config not initialized");
 
-        this.#cliRuntime = await ConnectorRuntime.create(this.#connectorConfig);
+        this.#cliRuntime = await ConnectorRuntime.create(_.merge(this.#connectorConfig, { transportLibrary: { allowIdentityCreation } }));
         await this.#cliRuntime.start();
     }
 
