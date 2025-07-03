@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ApiKeyAuthenticator } from "./authentication";
-import { ConnectorConfig } from "./ConnectorConfig";
+import { ConnectorClientConfig } from "./ConnectorClientConfig";
 import {
     AccountEndpoint,
     AnnouncementsEndpoint,
@@ -39,7 +39,7 @@ export class ConnectorClient {
     public readonly relationshipTemplates: RelationshipTemplatesEndpoint;
     public readonly tokens: TokensEndpoint;
 
-    protected constructor(config: ConnectorConfig) {
+    protected constructor(config: ConnectorClientConfig) {
         const axiosInstance = axios.create({
             baseURL: config.baseUrl,
             httpAgent: config.httpAgent,
@@ -78,7 +78,7 @@ export class ConnectorClient {
         this.tokens = new TokensEndpoint(axiosInstance);
     }
 
-    public static create(config: ConnectorConfig): ConnectorClient {
+    public static create(config: ConnectorClientConfig): ConnectorClient {
         return new ConnectorClient(config);
     }
 }
