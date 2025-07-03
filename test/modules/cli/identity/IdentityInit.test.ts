@@ -2,7 +2,7 @@ import { identityInitHandler } from "../../../../dist/cli/commands";
 import { resetDB, setupEnvironment } from "../setup";
 
 describe("identity init", () => {
-    const identityCreatedPattern = /Identity with address did:e:((([A-Za-z0-9]+(-[A-Za-z0-9]+)*)\.)+[a-z]{2,}|localhost):dids:[0-9a-f]{22} created successfully!/;
+    const identityCreatedPattern = /Identity with address did:e:((([A-Za-z0-9]+(-[A-Za-z0-9]+)*)\.)+[a-z]{2,}|localhost):dids:[0-9a-f]{22} created successfully\./;
 
     beforeAll(() => {
         setupEnvironment();
