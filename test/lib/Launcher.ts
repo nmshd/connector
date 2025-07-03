@@ -1,4 +1,4 @@
-import { ConnectorClient } from "@nmshd/connector-sdk";
+import { ApiKeyAuthenticator, ConnectorClient } from "@nmshd/connector-sdk";
 import { Random, RandomCharacterRange } from "@nmshd/core-types";
 import { ChildProcess, spawn } from "child_process";
 import express from "express";
@@ -52,9 +52,9 @@ export class Launcher {
 
             const connectorClient = ConnectorClient.create({
                 baseUrl: `http://localhost:${port}`,
-                apiKey: this.apiKey,
                 httpAgent: debugging ? new http.Agent({ keepAlive: false }) : undefined,
-                httpsAgent: debugging ? new https.Agent({ keepAlive: false }) : undefined
+                httpsAgent: debugging ? new https.Agent({ keepAlive: false }) : undefined,
+                authenticator: new ApiKeyAuthenticator(this.apiKey)
             }) as ConnectorClientWithMetadata;
             connectorClient["_metadata"] = { accountName: `acc-${accountName}` };
 
