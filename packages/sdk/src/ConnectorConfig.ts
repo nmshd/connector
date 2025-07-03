@@ -10,7 +10,7 @@ export type ConnectorConfig = {
     | { authenticator: IConnectorClientAuthenticator }
     | {
           /**
-           * @deprecated Instead, set the `authenticator` property to `new ApiKeyAuthenticator(<api_key>`
+           * @deprecated Instead, set the `authenticator` property to `new ApiKeyAuthenticator(<api_key>)`
            */
           apiKey: string;
       }
