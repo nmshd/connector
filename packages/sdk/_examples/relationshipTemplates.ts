@@ -1,14 +1,14 @@
 import fs from "fs";
-import { ConnectorClient } from "../src";
+import { ApiKeyAuthenticator, ConnectorClient } from "../src";
 
 async function run() {
     const client = ConnectorClient.create({
         baseUrl: process.env.BASE_URL!,
-        apiKey: process.env.API_KEY!
+        authenticator: new ApiKeyAuthenticator(process.env.API_KEY!)
     });
 
     const createdTemplate = await client.relationshipTemplates.createOwnRelationshipTemplate({
-        content: { A: "A" },
+        content: { "@type": "ArbitraryRelationshipTemplateContent", value: { A: "A" } },
         expiresAt: "2023",
         maxNumberOfAllocations: 5
     });
