@@ -88,7 +88,7 @@ services:
   rabbitmq:
     container_name: bkb-rabbitmq
     hostname: rabbitmq
-    image: rabbitmq:4.1.1-alpine@sha256:4429c0d2f4d358d056750139914cbcb98df67863646d0713742640c5f4e98bfa
+    image: rabbitmq:4.1.1-alpine@sha256:4c24d9b6bca5e9ba60ebb639ceae600074ccb2381460ba8dd1dfe903281d00f2
 
   ### seeds ###
 
