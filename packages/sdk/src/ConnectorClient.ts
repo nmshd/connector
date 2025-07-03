@@ -1,5 +1,6 @@
 import axios from "axios";
-import { ConnectorConfig } from "./ConnectorConfig";
+import { ApiKeyAuthenticator } from "./authentication";
+import { ConnectorClientConfig } from "./ConnectorClientConfig";
 import {
     AccountEndpoint,
     AnnouncementsEndpoint,
@@ -38,17 +39,19 @@ export class ConnectorClient {
     public readonly relationshipTemplates: RelationshipTemplatesEndpoint;
     public readonly tokens: TokensEndpoint;
 
-    protected constructor(config: ConnectorConfig) {
+    protected constructor(config: ConnectorClientConfig) {
         const axiosInstance = axios.create({
             baseURL: config.baseUrl,
-            headers: {
-                "X-API-KEY": config.apiKey
-            },
             httpAgent: config.httpAgent,
             httpsAgent: config.httpsAgent,
             validateStatus: (_) => true,
             paramsSerializer: { dots: true, indexes: null }
         });
+
+        const authenticator = "authenticator" in config ? config.authenticator : "apiKey" in config ? new ApiKeyAuthenticator(config.apiKey) : null;
+
+        if (!authenticator) throw new Error("No authenticator provided. Please provide an authenticator or an API key.");
+        axiosInstance.interceptors.request.use(async (requestConfig) => await authenticator.authenticate(requestConfig));
 
         axiosInstance.interceptors.request.use((config) => {
             const correlationId = this.#correlationId;
@@ -75,7 +78,7 @@ export class ConnectorClient {
         this.tokens = new TokensEndpoint(axiosInstance);
     }
 
-    public static create(config: ConnectorConfig): ConnectorClient {
+    public static create(config: ConnectorClientConfig): ConnectorClient {
         return new ConnectorClient(config);
     }
 }
