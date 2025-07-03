@@ -227,6 +227,10 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             httpServer.apiKey = "***";
         }
 
+        if (httpServer?.oidc) {
+            httpServer.oidc = "***";
+        }
+
         const transport = config.transportLibrary;
         if (transport.platformClientSecret) {
             transport.platformClientSecret = "***";
