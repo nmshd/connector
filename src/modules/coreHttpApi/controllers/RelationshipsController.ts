@@ -1,8 +1,7 @@
+import { BaseController, Envelope } from "@nmshd/connector-types";
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, DELETE, GET, Path, PathParam, POST, PUT, Return, ServiceContext } from "@nmshd/typescript-rest";
-import { Envelope } from "../../../infrastructure";
-import { BaseController } from "../common/BaseController";
 
 @Path("/api/v2/Relationships")
 export class RelationshipsController extends BaseController {
@@ -26,7 +25,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/Accept")
+    @Path("/:id/Accept")
     @Accept("application/json")
     public async acceptRelationship(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.acceptRelationship({
@@ -36,7 +35,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/Reject")
+    @Path("/:id/Reject")
     @Accept("application/json")
     public async rejectRelationship(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.rejectRelationship({
@@ -46,7 +45,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/Revoke")
+    @Path("/:id/Revoke")
     @Accept("application/json")
     public async revokeRelationship(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.revokeRelationship({
@@ -65,7 +64,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @GET
-    @Path(":id")
+    @Path("/:id")
     @Accept("application/json")
     public async getRelationship(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.getRelationship({ id });
@@ -73,7 +72,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @GET
-    @Path(":id/Attributes")
+    @Path("/:id/Attributes")
     @Accept("application/json")
     public async getAttributesForRelationship(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.getAttributesForRelationship({ id });
@@ -81,7 +80,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/Terminate")
+    @Path("/:id/Terminate")
     @Accept("application/json")
     public async terminateRelationship(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.terminateRelationship({ relationshipId: id });
@@ -89,7 +88,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @DELETE
-    @Path(":id")
+    @Path("/:id")
     @Accept("application/json")
     public async decomposeRelationship(@PathParam("id") id: string): Promise<void> {
         const result = await this.transportServices.relationships.decomposeRelationship({ relationshipId: id });
@@ -97,7 +96,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/Reactivate")
+    @Path("/:id/Reactivate")
     @Accept("application/json")
     public async requestRelationshipReactivation(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.requestRelationshipReactivation({ relationshipId: id });
@@ -105,7 +104,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/Reactivate/Accept")
+    @Path("/:id/Reactivate/Accept")
     @Accept("application/json")
     public async acceptRelationshipReactivation(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.acceptRelationshipReactivation({ relationshipId: id });
@@ -113,7 +112,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/Reactivate/Reject")
+    @Path("/:id/Reactivate/Reject")
     @Accept("application/json")
     public async rejectRelationshipReactivation(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.rejectRelationshipReactivation({ relationshipId: id });
@@ -121,7 +120,7 @@ export class RelationshipsController extends BaseController {
     }
 
     @PUT
-    @Path(":id/Reactivate/Revoke")
+    @Path("/:id/Reactivate/Revoke")
     @Accept("application/json")
     public async revokeRelationshipReactivation(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.relationships.revokeRelationshipReactivation({ relationshipId: id });

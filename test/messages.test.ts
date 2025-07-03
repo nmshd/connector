@@ -3,7 +3,6 @@ import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
 import { establishRelationship, exchangeMessage, getRelationship, syncUntilHasMessages, uploadFile } from "./lib/testUtils";
-import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -44,7 +43,7 @@ describe("Messaging", () => {
             },
             attachments: [fileId]
         });
-        expect(response).toBeSuccessful(ValidationSchema.Message);
+        expect(response).toBeSuccessful();
 
         messageId = response.result.id;
     });
@@ -70,7 +69,7 @@ describe("Messaging", () => {
         expect(messageId).toBeDefined();
 
         const response = await client2.messages.getMessages();
-        expect(response).toBeSuccessful(ValidationSchema.Messages);
+        expect(response).toBeSuccessful();
         expect(response.result).toHaveLength(1);
 
         const message = response.result[0];
@@ -88,7 +87,7 @@ describe("Messaging", () => {
         expect(messageId).toBeDefined();
 
         const response = await client2.messages.getMessage(messageId);
-        expect(response).toBeSuccessful(ValidationSchema.MessageWithAttachments);
+        expect(response).toBeSuccessful();
     });
 });
 
@@ -128,18 +127,18 @@ describe("Message query", () => {
             .addDateSet("createdAt")
             .addStringSet("createdBy")
             .addStringSet("recipients.address", message.recipients[0].address)
+            .addStringSet("recipients.relationshipId", message.recipients[0].relationshipId)
             .addStringSet("content.@type")
             .addStringSet("content.subject")
             .addStringSet("content.body")
             .addStringSet("createdByDevice")
             .addStringArraySet("attachments")
-            .addStringArraySet("relationshipIds")
             .addSingleCondition({
                 key: "participant",
                 value: [message.createdBy, "id111111111111111111111111111111111"],
                 expectedResult: true
             });
 
-        await conditions.executeTests((c, q) => c.messages.getMessages(q), ValidationSchema.Messages);
+        await conditions.executeTests((c, q) => c.messages.getMessages(q));
     });
 });

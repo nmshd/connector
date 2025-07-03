@@ -1,17 +1,16 @@
 import { sleep } from "@js-soft/ts-utils";
+import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration } from "@nmshd/connector-types";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
 import compression from "compression";
 import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
 import express, { Application, RequestHandler } from "express";
+import { ConfigParams as OauthParams, auth } from "express-openid-connect";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
 import { buildInformation } from "../../buildInformation";
-import { ConnectorInfrastructure, InfrastructureConfiguration } from "../ConnectorInfastructure";
-import { HttpMethod } from "./HttpMethod";
 import { RequestTracker } from "./RequestTracker";
-import { Envelope, HttpErrors } from "./common";
 import { csrfErrorHandler } from "./middlewares/csrfErrorHandler";
 import { RouteNotFoundError, genericErrorHandler } from "./middlewares/genericErrorHandler";
 import { requestLogger } from "./middlewares/requestLogger";
@@ -37,13 +36,14 @@ export interface ControllerConfig {
 }
 
 export interface HttpServerConfiguration extends InfrastructureConfiguration {
+    oauth?: OauthParams;
     port?: number;
     apiKey: string;
     cors?: CorsOptions;
     helmetOptions?: HelmetOptions;
 }
 
-export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration> {
+export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration> implements IHttpServer {
     private app: Application;
     private readonly customEndpoints: CustomEndpoint[] = [];
     private readonly controllers: ControllerConfig[] = [];
@@ -91,7 +91,8 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.useUnsecuredCustomEndpoints();
 
         this.useHealthEndpoint();
-        this.useApiKey();
+        this.initAuthentication();
+        this.useAuthentication();
 
         this.useVersionEndpoint();
         this.useResponsesEndpoint();
@@ -150,20 +151,19 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useCustomEndpoint(endpoint: CustomEndpoint) {
-        switch (endpoint.httpMethod) {
-            case HttpMethod.Get:
-                this.app.get(endpoint.route, endpoint.handler);
-                break;
-            case HttpMethod.Post:
-                this.app.post(endpoint.route, endpoint.handler);
-                break;
-            case HttpMethod.Put:
-                this.app.put(endpoint.route, endpoint.handler);
-                break;
-            case HttpMethod.Delete:
-                this.app.delete(endpoint.route, endpoint.handler);
-                break;
-        }
+        const handlerWithAsyncErrorHandling: RequestHandler = async (req, res, next) => {
+            try {
+                await endpoint.handler(req, res, next);
+            } catch (e) {
+                next(e);
+            }
+        };
+
+        const method = this.app[endpoint.httpMethod];
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if the method is defined as it's possible to pass an invalid method when not using TypeScript
+        if (!method) throw new Error(`Invalid HTTP method: ${endpoint.httpMethod}`);
+
+        method.bind(this.app)(endpoint.route, handlerWithAsyncErrorHandling);
     }
 
     private useUnsecuredCustomMiddlewares() {
@@ -186,18 +186,31 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
     private useErrorHandlers() {
         this.app.use(csrfErrorHandler);
-        this.app.use(genericErrorHandler(this.connectorMode));
+        this.app.use(genericErrorHandler(this.connectorMode, this.logger));
     }
 
-    private useApiKey() {
-        if (!this.configuration.apiKey) {
+    private initAuthentication() {
+        if (!this.configuration.apiKey && !this.configuration.oauth) {
             switch (this.connectorMode) {
                 case "debug":
                     return;
                 case "production":
-                    throw new Error("No API key set in configuration. This is required in production mode.");
+                    throw new Error(`No API key and OAuth config set in configuration. At least one is required in production mode.`);
             }
         }
+
+        this.initOauth();
+        this.initApiKey();
+    }
+
+    private initOauth() {
+        if (!this.configuration.oauth) return;
+
+        this.app.use(auth({ ...this.configuration.oauth, authRequired: false }));
+    }
+
+    private initApiKey() {
+        if (!this.configuration.apiKey) return;
 
         const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
         if (!this.configuration.apiKey.match(apiKeyPolicy)) {
@@ -206,23 +219,43 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             );
             this.logger.warn("The API key will be used as is, but it is recommended to change it as it will not be supported in future versions.");
         }
+    }
+
+    private useAuthentication() {
+        if (!this.configuration.apiKey && !this.configuration.oauth) return;
+
+        const unauthorized = async (_: express.Request, res: express.Response) => {
+            await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
+            res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
+        };
 
         this.app.use(async (req, res, next) => {
             const apiKeyFromHeader = req.headers["x-api-key"];
-            if (!apiKeyFromHeader || apiKeyFromHeader !== this.configuration.apiKey) {
-                await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
-                res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
+            if (this.configuration.apiKey && apiKeyFromHeader) {
+                if (apiKeyFromHeader !== this.configuration.apiKey) return await unauthorized(req, res);
+
+                next();
                 return;
             }
 
-            next();
+            if (this.configuration.oauth) {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
+                if (!req.oidc) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
+                if (!req.oidc.isAuthenticated()) return await res.oidc.login();
+
+                next();
+                return;
+            }
+
+            await unauthorized(req, res);
         });
     }
 
     private useHealthEndpoint() {
         this.app.get("/health", async (_req: any, res: any) => {
             const health = await this.runtime.getHealth();
-            res.status(200).json(health);
+            const httpStatus = health.isHealthy ? 200 : 500;
+            res.status(httpStatus).json(health);
         });
     }
 
@@ -271,7 +304,6 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         for (const controller of this.controllers) {
             Server.loadControllers(this.app, controller.globs, controller.baseDirectory);
         }
-
         Server.ignoreNextMiddlewares(true);
     }
 

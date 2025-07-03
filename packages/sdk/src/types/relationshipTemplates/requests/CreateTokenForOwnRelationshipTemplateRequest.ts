@@ -5,5 +5,6 @@ export interface CreateTokenForOwnRelationshipTemplateRequest {
     passwordProtection?: {
         password: string;
         passwordIsPin?: true;
+        passwordLocationIndicator?: string | number;
     };
 }

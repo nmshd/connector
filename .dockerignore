@@ -1,4 +1,5 @@
-packages
+packages/*
+!packages/types
 .vscode
 examples
 test
@@ -7,4 +8,3 @@ logs
 dist
 node_modules
 scripts
-config/test.json

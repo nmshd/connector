@@ -19,7 +19,6 @@
         "strictPropertyInitialization": false,
         "downlevelIteration": true,
         "lib": ["es2021", "dom"],
-        "typeRoots": ["../node_modules/@types"],
         "baseUrl": "../"
     },
     "files": ["../node_modules/jest-expect-message/types/index.d.ts"],

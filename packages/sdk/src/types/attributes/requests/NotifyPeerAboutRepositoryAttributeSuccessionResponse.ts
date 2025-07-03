@@ -1,7 +1,7 @@
-import { ConnectorAttribute } from "../ConnectorAttribute";
+import { LocalAttributeDTO } from "@nmshd/runtime-types";
 
 export interface NotifyPeerAboutRepositoryAttributeSuccessionResponse {
-    predecessor: ConnectorAttribute;
-    successor: ConnectorAttribute;
+    predecessor: LocalAttributeDTO;
+    successor: LocalAttributeDTO;
     notificationId: string;
 }

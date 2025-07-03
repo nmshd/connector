@@ -1,8 +1,7 @@
+import { BaseController, Envelope } from "@nmshd/connector-types";
 import { ConsumptionServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, GET, Path, PathParam, POST, Return, ServiceContext } from "@nmshd/typescript-rest";
-import { Envelope } from "../../../infrastructure";
-import { BaseController } from "../common/BaseController";
 
 @Path("/api/v2/Requests/Outgoing")
 export class OutgoingRequestsController extends BaseController {
@@ -26,7 +25,7 @@ export class OutgoingRequestsController extends BaseController {
     }
 
     @GET
-    @Path(":id")
+    @Path("/:id")
     @Accept("application/json")
     public async getRequest(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.consumptionServices.outgoingRequests.getRequest({ id });

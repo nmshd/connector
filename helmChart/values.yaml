@@ -43,8 +43,6 @@ pod:
     # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources
     resources: {}
 
-    containerPort: 80
-
   # configuration for the FerretDB (https://docs.ferretdb.io) sidecar
   ferretdb:
     enabled: false

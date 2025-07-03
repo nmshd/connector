@@ -1,10 +1,10 @@
-import { ConnectorClient, ConnectorRelationshipTemplate } from "@nmshd/connector-sdk";
+import { ConnectorClient } from "@nmshd/connector-sdk";
+import { RelationshipTemplateDTO } from "@nmshd/runtime-types";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
 import { createTemplate, exchangeTemplate, getTemplateToken } from "./lib/testUtils";
-import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -14,8 +14,8 @@ beforeAll(async () => ([client1, client2] = await launcher.launch(2)), getTimeou
 afterAll(() => launcher.stop());
 
 describe("Template Tests", () => {
-    let template: ConnectorRelationshipTemplate;
-    let templateWithUndefinedMaxNumberOfAllocations: ConnectorRelationshipTemplate;
+    let template: RelationshipTemplateDTO;
+    let templateWithUndefinedMaxNumberOfAllocations: RelationshipTemplateDTO;
 
     test("create a template", async () => {
         const response = await client1.relationshipTemplates.createOwnRelationshipTemplate({
@@ -27,7 +27,7 @@ describe("Template Tests", () => {
             }
         });
 
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
 
         template = response.result;
     });
@@ -43,14 +43,14 @@ describe("Template Tests", () => {
 
         templateWithUndefinedMaxNumberOfAllocations = response.result;
 
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(templateWithUndefinedMaxNumberOfAllocations.maxNumberOfAllocations).toBeUndefined();
     });
 
     test("read a template with undefined maxNumberOfAllocations", async () => {
         const response = await client1.relationshipTemplates.getRelationshipTemplate(templateWithUndefinedMaxNumberOfAllocations.id);
 
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.maxNumberOfAllocations).toBeUndefined();
     });
 
@@ -58,7 +58,7 @@ describe("Template Tests", () => {
         expect(template).toBeDefined();
 
         const response = await client1.relationshipTemplates.getOwnRelationshipTemplates();
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplates);
+        expect(response).toBeSuccessful();
         expect(response.result).toContainEqual(template);
     });
 
@@ -66,7 +66,7 @@ describe("Template Tests", () => {
         expect(template).toBeDefined();
 
         const response = await client1.relationshipTemplates.getRelationshipTemplate(template.id);
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
     });
 
     test("expect a validation error for sending maxNumberOfAllocations 0", async () => {
@@ -89,9 +89,9 @@ describe("Template Tests", () => {
         expect(template.forIdentity).toBe(client2address);
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
-            reference: template.truncatedReference
+            reference: template.reference.truncated
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.forIdentity).toBe(client2address);
     });
 
@@ -100,9 +100,9 @@ describe("Template Tests", () => {
         const templateToken = await getTemplateToken(client1, client2address);
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
-            reference: templateToken.truncatedReference
+            reference: templateToken.reference.truncated
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.forIdentity).toBe(client2address);
     });
 
@@ -112,9 +112,9 @@ describe("Template Tests", () => {
         const token = (await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { forIdentity: client2address })).result;
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
-            reference: token.truncatedReference
+            reference: token.reference.truncated
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.forIdentity).toBe(client2address);
     });
 
@@ -124,10 +124,10 @@ describe("Template Tests", () => {
         expect(template.passwordProtection?.passwordIsPin).toBeUndefined();
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
-            reference: template.truncatedReference,
+            reference: template.reference.truncated,
             password: "password"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.passwordProtection?.password).toBe("password");
         expect(response.result.passwordProtection?.passwordIsPin).toBeUndefined();
     });
@@ -138,12 +138,42 @@ describe("Template Tests", () => {
         expect(template.passwordProtection?.passwordIsPin).toBe(true);
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
-            reference: template.truncatedReference,
+            reference: template.reference.truncated,
             password: "1234"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.passwordProtection?.password).toBe("1234");
         expect(response.result.passwordProtection?.passwordIsPin).toBe(true);
+    });
+
+    test("send and receive a password-protected template with PasswordLocationIndicator that is a string", async () => {
+        const template = await createTemplate(client1, undefined, { password: "password", passwordLocationIndicator: "Website" });
+        expect(template.passwordProtection?.password).toBe("password");
+        expect(template.passwordProtection?.passwordLocationIndicator).toBe("Website");
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: template.reference.truncated,
+            password: "password"
+        });
+        expect(response).toBeSuccessful();
+        expect(response.result.passwordProtection?.password).toBe("password");
+        expect(response.result.passwordProtection?.passwordIsPin).toBeUndefined();
+        expect(response.result.passwordProtection?.passwordLocationIndicator).toBe("Website");
+    });
+
+    test("send and receive a password-protected template with PasswordLocationIndicator that is a number", async () => {
+        const template = await createTemplate(client1, undefined, { password: "password", passwordLocationIndicator: 50 });
+        expect(template.passwordProtection?.password).toBe("password");
+        expect(template.passwordProtection?.passwordLocationIndicator).toBe(50);
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: template.reference.truncated,
+            password: "password"
+        });
+        expect(response).toBeSuccessful();
+        expect(response.result.passwordProtection?.password).toBe("password");
+        expect(response.result.passwordProtection?.passwordIsPin).toBeUndefined();
+        expect(response.result.passwordProtection?.passwordLocationIndicator).toBe(50);
     });
 
     test("send and receive a password-protected template via token", async () => {
@@ -152,10 +182,10 @@ describe("Template Tests", () => {
         expect(templateToken.passwordProtection?.passwordIsPin).toBeUndefined();
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
-            reference: templateToken.truncatedReference,
+            reference: templateToken.reference.truncated,
             password: "password"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.passwordProtection?.password).toBe("password");
         expect(response.result.passwordProtection?.passwordIsPin).toBeUndefined();
     });
@@ -166,12 +196,40 @@ describe("Template Tests", () => {
         expect(templateToken.passwordProtection?.passwordIsPin).toBe(true);
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
-            reference: templateToken.truncatedReference,
+            reference: templateToken.reference.truncated,
             password: "1234"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
         expect(response.result.passwordProtection?.password).toBe("1234");
         expect(response.result.passwordProtection?.passwordIsPin).toBe(true);
+    });
+
+    test("send and receive a password-protected template via token with PasswordLocationIndicator that is a string", async () => {
+        const templateToken = await getTemplateToken(client1, undefined, { password: "password", passwordLocationIndicator: "Website" });
+        expect(templateToken.passwordProtection?.password).toBe("password");
+        expect(templateToken.passwordProtection?.passwordLocationIndicator).toBe("Website");
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: templateToken.reference.truncated,
+            password: "password"
+        });
+        expect(response).toBeSuccessful();
+        expect(response.result.passwordProtection?.password).toBe("password");
+        expect(response.result.passwordProtection?.passwordLocationIndicator).toBe("Website");
+    });
+
+    test("send and receive a password-protected template via token with PasswordLocationIndicator that is a number", async () => {
+        const templateToken = await getTemplateToken(client1, undefined, { password: "password", passwordLocationIndicator: 50 });
+        expect(templateToken.passwordProtection?.password).toBe("password");
+        expect(templateToken.passwordProtection?.passwordLocationIndicator).toBe(50);
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: templateToken.reference.truncated,
+            password: "password"
+        });
+        expect(response).toBeSuccessful();
+        expect(response.result.passwordProtection?.password).toBe("password");
+        expect(response.result.passwordProtection?.passwordLocationIndicator).toBe(50);
     });
 
     test("send and receive an unprotected template via password-protected token", async () => {
@@ -181,10 +239,10 @@ describe("Template Tests", () => {
         expect(token.passwordProtection?.passwordIsPin).toBeUndefined();
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
-            reference: token.truncatedReference,
+            reference: token.reference.truncated,
             password: "password"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
     });
 
     test("send and receive an unprotected template via PIN-protected token", async () => {
@@ -195,10 +253,44 @@ describe("Template Tests", () => {
         expect(token.passwordProtection?.passwordIsPin).toBe(true);
 
         const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
-            reference: token.truncatedReference,
+            reference: token.reference.truncated,
             password: "1234"
         });
-        expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
+        expect(response).toBeSuccessful();
+    });
+
+    test("send and receive an unprotected template via password-protected token with PasswordLocationIndicator that is a string", async () => {
+        const template = await createTemplate(client1);
+        const token = (
+            await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, {
+                passwordProtection: { password: "password", passwordLocationIndicator: "Website" }
+            })
+        ).result;
+        expect(token.passwordProtection?.password).toBe("password");
+        expect(token.passwordProtection?.passwordLocationIndicator).toBe("Website");
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: token.reference.truncated,
+            password: "password"
+        });
+        expect(response).toBeSuccessful();
+    });
+
+    test("send and receive an unprotected template via password-protected token with PasswordLocationIndicator that is a number", async () => {
+        const template = await createTemplate(client1);
+        const token = (
+            await client1.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, {
+                passwordProtection: { password: "password", passwordLocationIndicator: 50 }
+            })
+        ).result;
+        expect(token.passwordProtection?.password).toBe("password");
+        expect(token.passwordProtection?.passwordLocationIndicator).toBe(50);
+
+        const response = await client2.relationshipTemplates.loadPeerRelationshipTemplate({
+            reference: token.reference.truncated,
+            password: "password"
+        });
+        expect(response).toBeSuccessful();
     });
 });
 
@@ -225,7 +317,10 @@ describe("Serialization Errors", () => {
 
 describe("RelationshipTemplates Query", () => {
     test("query templates", async () => {
-        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address, { password: "password" });
+        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address, {
+            password: "password",
+            passwordLocationIndicator: "RegistrationLetter"
+        });
         const conditions = new QueryParamConditions(template, client1)
             .addBooleanSet("isOwn")
             .addDateSet("createdAt")
@@ -254,13 +349,27 @@ describe("RelationshipTemplates Query", () => {
                 expectedResult: true,
                 key: "passwordProtection.passwordIsPin",
                 value: "!"
+            })
+            .addSingleCondition({
+                expectedResult: true,
+                key: "passwordProtection.passwordLocationIndicator",
+                value: "RegistrationLetter"
+            })
+            .addSingleCondition({
+                expectedResult: false,
+                key: "passwordProtection.passwordLocationIndicator",
+                value: "differentLocationIndicator"
             });
 
-        await conditions.executeTests((c, q) => c.relationshipTemplates.getRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
+        await conditions.executeTests((c, q) => c.relationshipTemplates.getRelationshipTemplates(q));
     });
 
     test("query own templates", async () => {
-        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address, { password: "1234", passwordIsPin: true });
+        const template = await createTemplate(client1, (await client1.account.getIdentityInfo()).result.address, {
+            password: "1234",
+            passwordIsPin: true,
+            passwordLocationIndicator: 99
+        });
         const conditions = new QueryParamConditions(template, client1)
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
@@ -278,8 +387,19 @@ describe("RelationshipTemplates Query", () => {
                 expectedResult: false,
                 key: "passwordProtection.passwordIsPin",
                 value: "!"
+            })
+
+            .addSingleCondition({
+                expectedResult: true,
+                key: "passwordProtection.passwordLocationIndicator",
+                value: 99
+            })
+            .addSingleCondition({
+                expectedResult: false,
+                key: "passwordProtection.passwordLocationIndicator",
+                value: 50
             });
-        await conditions.executeTests((c, q) => c.relationshipTemplates.getOwnRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
+        await conditions.executeTests((c, q) => c.relationshipTemplates.getOwnRelationshipTemplates(q));
     });
 
     test("query peer templates", async () => {
@@ -302,6 +422,6 @@ describe("RelationshipTemplates Query", () => {
                 value: "!"
             });
 
-        await conditions.executeTests((c, q) => c.relationshipTemplates.getPeerRelationshipTemplates(q), ValidationSchema.RelationshipTemplates);
+        await conditions.executeTests((c, q) => c.relationshipTemplates.getPeerRelationshipTemplates(q));
     });
 });

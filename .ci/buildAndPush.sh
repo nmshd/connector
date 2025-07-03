@@ -35,6 +35,8 @@ else # other error
     echo $OUTPUT
 fi
 
+jq --indent 4 -M ".dependencies.\"@nmshd/connector-types\" = \"$VERSION\"" package.json >package.out.json && mv package.out.json package.json
+
 docker buildx build --push --provenance=true --sbom=true \
     --platform linux/amd64,linux/arm64 \
     $TAGS \

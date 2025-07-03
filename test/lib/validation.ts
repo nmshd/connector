@@ -11,32 +11,12 @@ expect.extend(
 
 export enum ValidationSchema {
     Error = "ConnectorError",
-    File = "ConnectorFile",
-    Files = "ConnectorFiles",
-    IdentityMetadata = "ConnectorIdentityMetadata",
-    Message = "ConnectorMessage",
-    Messages = "ConnectorMessages",
-    MessageWithAttachments = "ConnectorMessageWithAttachments",
-    MessagesWithAttachments = "ConnectorMessagesWithAttachments",
-    Relationship = "ConnectorRelationship",
-    Relationships = "ConnectorRelationships",
-    RelationshipTemplate = "ConnectorRelationshipTemplate",
-    RelationshipTemplates = "ConnectorRelationshipTemplates",
-    Token = "ConnectorToken",
-    Tokens = "ConnectorTokens",
     IdentityInfo = "IdentityInfo",
-    ConnectorHealth = "ConnectorHealth",
     ConnectorVersionInfo = "ConnectorVersionInfo",
     ConnectorRequestCount = "ConnectorRequestCount",
     ConnectorSupportInformation = "ConnectorSupportInformation",
     ConnectorSyncInfo = "ConnectorSyncInfo",
-    ConnectorChallenge = "ConnectorChallenge",
     ConnectorChallengeValidationResult = "ConnectorChallengeValidationResult",
-    ConnectorRequest = "ConnectorRequest",
-    ConnectorRequests = "ConnectorRequests",
-    ConnectorAttribute = "ConnectorAttribute",
-    ConnectorAttributes = "ConnectorAttributes",
-    ConnectorAttributeTagCollection = "ConnectorAttributeTagCollection",
     SucceedAttributeResponse = "SucceedAttributeResponse",
     DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse = "DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse",
     DeleteOwnSharedAttributeAndNotifyPeerResponse = "DeleteOwnSharedAttributeAndNotifyPeerResponse",
@@ -55,7 +35,7 @@ const ajvInstance = new ajv({ schemas: [schemaDefinition], allowUnionTypes: true
 type ExtendedError = ErrorObject<string, Record<string, any>, unknown> & { value: any };
 
 expect.extend({
-    toBeSuccessful(actual: ConnectorHttpResponse<unknown>, schemaName: ValidationSchema) {
+    toBeSuccessful(actual: ConnectorHttpResponse<unknown>, schemaName?: ValidationSchema) {
         if (!(actual instanceof ConnectorHttpResponse)) {
             return { pass: false, message: () => "expected an instance of Result." };
         }
@@ -64,6 +44,8 @@ expect.extend({
             const message = `expected a successful result; got an error result with the error message '${actual.error.message}'.`;
             return { pass: false, message: () => message };
         }
+
+        if (!schemaName) return { pass: true, message: () => "" };
 
         const expectedSchema = {
             $ref: `https://enmeshed.eu/schemas/connector-api#/definitions/${schemaName}`
@@ -140,7 +122,7 @@ expect.extend({
 declare global {
     namespace jest {
         interface Matchers<R> {
-            toBeSuccessful(schema: ValidationSchema): R;
+            toBeSuccessful(schema?: ValidationSchema): R;
             toBeSuccessfulVoidResult(): R;
             toBeAnError(expectedMessage: string | RegExp, expectedCode: string | RegExp): R;
         }

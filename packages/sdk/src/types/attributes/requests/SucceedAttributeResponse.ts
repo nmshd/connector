@@ -1,6 +1,6 @@
-import { ConnectorAttribute } from "../ConnectorAttribute";
+import { LocalAttributeDTO } from "@nmshd/runtime-types";
 
 export interface SucceedAttributeResponse {
-    predecessor: ConnectorAttribute;
-    successor: ConnectorAttribute;
+    predecessor: LocalAttributeDTO;
+    successor: LocalAttributeDTO;
 }

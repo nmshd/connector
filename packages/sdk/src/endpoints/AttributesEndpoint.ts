@@ -1,7 +1,7 @@
+import { AttributeTagCollectionDTO, LocalAttributeDTO } from "@nmshd/runtime-types";
 import {
-    ConnectorAttribute,
-    ConnectorAttributeTagCollection,
-    ConnectorAttributes,
+    CanCreateRepositoryAttributeRequest,
+    CanCreateRepositoryAttributeResponse,
     ConnectorHttpResponse,
     CreateRepositoryAttributeRequest,
     DeleteOwnSharedAttributeAndNotifyPeerResponse,
@@ -25,7 +25,11 @@ import {
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
-    public async createRepositoryAttribute(request: CreateRepositoryAttributeRequest): Promise<ConnectorHttpResponse<ConnectorAttribute>> {
+    public async canCreateRepositoryAttribute(request: CanCreateRepositoryAttributeRequest): Promise<ConnectorHttpResponse<CanCreateRepositoryAttributeResponse>> {
+        return await this.put("/api/v2/Attributes/CanCreate", request);
+    }
+
+    public async createRepositoryAttribute(request: CreateRepositoryAttributeRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO>> {
         return await this.post("/api/v2/Attributes", request);
     }
 
@@ -40,39 +44,39 @@ export class AttributesEndpoint extends Endpoint {
         return await this.post(`/api/v2/Attributes/${attributeId}/NotifyPeer`, request);
     }
 
-    public async getAttributes(request: GetAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
+    public async getAttributes(request: GetAttributesRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
         return await this.get("/api/v2/Attributes", request);
     }
 
-    public async getAttribute(attributeId: string): Promise<ConnectorHttpResponse<ConnectorAttribute>> {
+    public async getAttribute(attributeId: string): Promise<ConnectorHttpResponse<LocalAttributeDTO>> {
         return await this.get(`/api/v2/Attributes/${attributeId}`);
     }
 
-    public async getValidAttributes(request: GetValidAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
+    public async getValidAttributes(request: GetValidAttributesRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
         return await this.get("/api/v2/Attributes/Valid", request);
     }
 
-    public async getAttributeTagCollection(): Promise<ConnectorHttpResponse<ConnectorAttributeTagCollection>> {
+    public async getAttributeTagCollection(): Promise<ConnectorHttpResponse<AttributeTagCollectionDTO>> {
         return await this.get("/api/v2/Attributes/TagCollection");
     }
 
-    public async getOwnRepositoryAttributes(request?: GetOwnRepositoryAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
+    public async getOwnRepositoryAttributes(request?: GetOwnRepositoryAttributesRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
         return await this.get("/api/v2/Attributes/Own/Repository", request);
     }
 
-    public async getOwnSharedIdentityAttributes(request?: GetOwnSharedIdentityAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
+    public async getOwnSharedIdentityAttributes(request: GetOwnSharedIdentityAttributesRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
         return await this.get("/api/v2/Attributes/Own/Shared/Identity", request);
     }
 
-    public async getPeerSharedIdentityAttributes(request?: GetPeerSharedIdentityAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
+    public async getPeerSharedIdentityAttributes(request: GetPeerSharedIdentityAttributesRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
         return await this.get("/api/v2/Attributes/Peer/Shared/Identity", request);
     }
 
-    public async getVersionsOfAttribute(attributeId: string): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
+    public async getVersionsOfAttribute(attributeId: string): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
         return await this.get(`/api/v2/Attributes/${attributeId}/Versions`);
     }
 
-    public async getSharedVersionsOfAttribute(attributeId: string, request: GetSharedVersionsOfAttributeRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
+    public async getSharedVersionsOfAttribute(attributeId: string, request: GetSharedVersionsOfAttributeRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
         return await this.get(`/api/v2/Attributes/${attributeId}/Versions/Shared`, request);
     }
 
@@ -94,19 +98,19 @@ export class AttributesEndpoint extends Endpoint {
         return await this.delete(`/api/v2/Attributes/ThirdParty/${attributeId}`);
     }
 
-    public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
+    public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
         return await this.post("/api/v2/Attributes/ExecuteIdentityAttributeQuery", request, 200);
     }
 
-    public async executeRelationshipAttributeQuery(request: ExecuteRelationshipAttributeQueryRequest): Promise<ConnectorHttpResponse<ConnectorAttribute>> {
+    public async executeRelationshipAttributeQuery(request: ExecuteRelationshipAttributeQueryRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO>> {
         return await this.post("/api/v2/Attributes/ExecuteRelationshipAttributeQuery", request, 200);
     }
 
-    public async executeThirdPartyRelationshipAttributeQuery(request: ExecuteThirdPartyRelationshipAttributeQueryRequest): Promise<ConnectorHttpResponse<ConnectorAttribute[]>> {
+    public async executeThirdPartyRelationshipAttributeQuery(request: ExecuteThirdPartyRelationshipAttributeQueryRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
         return await this.post("/api/v2/Attributes/ExecuteThirdPartyRelationshipAttributeQuery", request, 200);
     }
 
-    public async executeIQLQuery(request: ExecuteIQLQueryRequest): Promise<ConnectorHttpResponse<ConnectorAttribute[]>> {
+    public async executeIQLQuery(request: ExecuteIQLQueryRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
         return await this.post("/api/v2/Attributes/ExecuteIQLQuery", request, 200);
     }
 }

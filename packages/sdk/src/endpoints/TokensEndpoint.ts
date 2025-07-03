@@ -1,5 +1,6 @@
+import { TokenDTO } from "@nmshd/runtime-types";
 import { AxiosInstance } from "axios";
-import { ConnectorHttpResponse, ConnectorToken, ConnectorTokens, CreateOwnTokenRequest, GetOwnTokensRequest, GetPeerTokensRequest, LoadPeerTokenRequest } from "../types";
+import { ConnectorHttpResponse, CreateOwnTokenRequest, GetOwnTokensRequest, GetPeerTokensRequest, LoadPeerTokenRequest } from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class TokensEndpoint extends Endpoint {
@@ -7,27 +8,27 @@ export class TokensEndpoint extends Endpoint {
         super(httpClient);
     }
 
-    public async getToken(tokenId: string): Promise<ConnectorHttpResponse<ConnectorToken>> {
+    public async getToken(tokenId: string): Promise<ConnectorHttpResponse<TokenDTO>> {
         return await this.get(`/api/v2/Tokens/${tokenId}`);
     }
 
-    public async getQrCodeForToken(tokenId: string): Promise<ConnectorHttpResponse<ArrayBuffer>> {
-        return await this.downloadQrCode("GET", `/api/v2/Tokens/${tokenId}`);
+    public async getQrCodeForToken(tokenId: string, newQRCodeFormat?: boolean): Promise<ConnectorHttpResponse<ArrayBuffer>> {
+        return await this.downloadQrCode("GET", `/api/v2/Tokens/${tokenId}`, { newQRCodeFormat: newQRCodeFormat ? "true" : undefined });
     }
 
-    public async getOwnTokens(request?: GetOwnTokensRequest): Promise<ConnectorHttpResponse<ConnectorTokens>> {
+    public async getOwnTokens(request?: GetOwnTokensRequest): Promise<ConnectorHttpResponse<TokenDTO[]>> {
         return await this.get("/api/v2/Tokens/Own", request);
     }
 
-    public async createOwnToken(request: CreateOwnTokenRequest): Promise<ConnectorHttpResponse<ConnectorToken>> {
+    public async createOwnToken(request: CreateOwnTokenRequest): Promise<ConnectorHttpResponse<TokenDTO>> {
         return await this.post("/api/v2/Tokens/Own", request);
     }
 
-    public async getPeerTokens(request?: GetPeerTokensRequest): Promise<ConnectorHttpResponse<ConnectorTokens>> {
+    public async getPeerTokens(request?: GetPeerTokensRequest): Promise<ConnectorHttpResponse<TokenDTO[]>> {
         return await this.get("/api/v2/Tokens/Peer", request);
     }
 
-    public async loadPeerToken(request: LoadPeerTokenRequest): Promise<ConnectorHttpResponse<ConnectorToken>> {
+    public async loadPeerToken(request: LoadPeerTokenRequest): Promise<ConnectorHttpResponse<TokenDTO>> {
         return await this.post("/api/v2/Tokens/Peer", request);
     }
 }

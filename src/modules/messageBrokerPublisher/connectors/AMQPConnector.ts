@@ -9,7 +9,7 @@ export interface AMQPConnectorConfiguration {
 }
 
 export class AMQPConnector extends MessageBrokerConnector<AMQPConnectorConfiguration> {
-    private connection?: amqp.Connection;
+    private connection?: amqp.ChannelModel;
     private channel?: amqp.Channel;
 
     public constructor(configuration: AMQPConnectorConfiguration, logger: ILogger) {

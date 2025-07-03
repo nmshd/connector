@@ -1,8 +1,9 @@
-import { ConnectorChallenge, ConnectorChallengeValidationResult, ConnectorHttpResponse, CreateChallengeRequest, ValidateChallengeRequest } from "../types";
+import { ChallengeDTO } from "@nmshd/runtime-types";
+import { ConnectorChallengeValidationResult, ConnectorHttpResponse, CreateChallengeRequest, ValidateChallengeRequest } from "../types";
 import { Endpoint } from "./Endpoint";
 
 export class ChallengesEndpoint extends Endpoint {
-    public async createChallenge(request: CreateChallengeRequest): Promise<ConnectorHttpResponse<ConnectorChallenge>> {
+    public async createChallenge(request: CreateChallengeRequest): Promise<ConnectorHttpResponse<ChallengeDTO>> {
         return await this.post("/api/v2/Challenges", request);
     }
 

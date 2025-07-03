@@ -32,7 +32,7 @@ export interface ConnectorConfig {
 
 interface ModuleConfiguration {
     enabled: boolean;
-    displayName: string;
+    displayName?: string;
     location: string;
     requiredInfrastructure?: string[];
     [key: string]: any;
@@ -40,23 +40,25 @@ interface ModuleConfiguration {
 
 interface InfrastructureConfiguration {
     httpServer: {
+        oauth?: any;
         enabled: boolean;
         port?: string | number;
         apiKey: string;
         cors?: any;
+        helmetOptions?: any;
     };
 }
 
 // ================================ Transport Library ================================
 
 interface IConfigOverwrite {
-    platformClientId?: string;
-    platformClientSecret?: string;
+    platformClientId: string;
+    platformClientSecret: string;
     platformTimeout?: number;
     platformMaxRedirects?: number;
     platformMaxContentLength?: number;
     platformAdditionalHeaders?: object;
-    baseUrl?: string;
+    baseUrl: string;
     addressGenerationHostnameOverride?: string;
     datawalletEnabled?: boolean;
     debug?: boolean;

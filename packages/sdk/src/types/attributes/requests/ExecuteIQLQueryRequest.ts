@@ -1,5 +1,5 @@
-import { IQLQuery } from "../IQLQuery";
+import { IQLQueryJSON } from "@nmshd/content";
 
 export interface ExecuteIQLQueryRequest {
-    query: Omit<IQLQuery, "@type"> & { "@type"?: string };
+    query: Omit<IQLQueryJSON, "@type"> & { "@type"?: string };
 }

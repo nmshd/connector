@@ -1,9 +1,14 @@
+import { sleep } from "@js-soft/ts-utils";
+import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import { RelationshipChangedEvent, RelationshipStatus } from "@nmshd/runtime";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
 
 export interface AutoDecomposeDeletionProposedRelationshipsModuleConfiguration extends ConnectorRuntimeModuleConfiguration {}
 
-export default class AutoDecomposeDeletionProposedRelationshipsModule extends ConnectorRuntimeModule<AutoDecomposeDeletionProposedRelationshipsModuleConfiguration> {
+export class AutoDecomposeDeletionProposedRelationshipsModule extends ConnectorRuntimeModule<AutoDecomposeDeletionProposedRelationshipsModuleConfiguration> {
+    public override get displayName(): string {
+        return this.configuration.displayName ?? "Auto Decompose DeletionProposed Relationships Module";
+    }
+
     public init(): void {
         // Nothing to do here
     }
@@ -30,6 +35,9 @@ export default class AutoDecomposeDeletionProposedRelationshipsModule extends Co
 
         this.logger.info("'DeletionProposed' Relationship detected.");
 
+        // wait for 500ms to ensure that no race conditions occur with other external events from the same sync run that triggered this event
+        await sleep(500);
+
         await this.decomposeRelationship(event.data.id);
     }
 
@@ -41,9 +49,5 @@ export default class AutoDecomposeDeletionProposedRelationshipsModule extends Co
         } else {
             this.logger.error("Error while decomposing 'DeletionProposed' Relationship:", result.error);
         }
-    }
-
-    public stop(): void {
-        this.unsubscribeFromAllEvents();
     }
 }

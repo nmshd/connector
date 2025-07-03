@@ -6,6 +6,9 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
-cd packages/sdk
-npm version $VERSION
-npx enhanced-publish --if-possible --use-preid-as-tag
+for dir in ./packages/*; do
+    cd $dir
+    npm version $VERSION --no-git-tag-version
+    npx enhanced-publish --if-possible --use-preid-as-tag
+    cd ../../
+done

@@ -60,7 +60,7 @@ services:
   mongo:
     container_name: mongo
     hostname: mongo
-    image: mongo
+    image: mongo@sha256:5941949d3887e40be5175787aade07dc052f2cddb8ce21b740c3948eba6a3ed0
     ports:
       - "27017:27017"
     volumes:
@@ -70,7 +70,7 @@ services:
 
   mongo-express:
     container_name: mongo-express
-    image: mongo-express
+    image: mongo-express@sha256:1b23d7976f0210dbec74045c209e52fbb26d29b2e873d6c6fa3d3f0ae32c2a64
     ports:
       - "3003:8081"
     environment:

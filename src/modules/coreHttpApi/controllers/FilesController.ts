@@ -1,10 +1,25 @@
+import { BaseController, Envelope, Mimetype, QRCode } from "@nmshd/connector-types";
+import { Reference } from "@nmshd/core-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
-import { Reference } from "@nmshd/transport";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, Errors, FileParam, FormParam, GET, POST, Path, PathParam, Return, ServiceContext } from "@nmshd/typescript-rest";
+import {
+    Accept,
+    Context,
+    ContextAccept,
+    ContextResponse,
+    DELETE,
+    FileParam,
+    FormParam,
+    GET,
+    PATCH,
+    Path,
+    PathParam,
+    POST,
+    QueryParam,
+    Return,
+    ServiceContext
+} from "@nmshd/typescript-rest";
 import express from "express";
-import { Envelope } from "../../../infrastructure";
-import { BaseController, Mimetype } from "../common/BaseController";
 
 @Path("/api/v2/Files")
 export class FilesController extends BaseController {
@@ -19,7 +34,8 @@ export class FilesController extends BaseController {
         @FormParam("expiresAt") expiresAt: string,
         @FormParam("title") title: string,
         @FileParam("file") file?: Express.Multer.File,
-        @FormParam("description") description?: string
+        @FormParam("description") description?: string,
+        @FormParam("tags") tags?: string[]
     ): Promise<Return.NewResource<Envelope>> {
         const result = await this.transportServices.files.uploadOwnFile({
             content: file?.buffer,
@@ -27,7 +43,8 @@ export class FilesController extends BaseController {
             filename: file?.originalname !== undefined ? Buffer.from(file.originalname, "latin1").toString("utf8") : undefined,
             mimetype: file?.mimetype,
             title,
-            description
+            description,
+            tags
         } as any);
         return this.created(result);
     }
@@ -41,7 +58,7 @@ export class FilesController extends BaseController {
     }
 
     @GET
-    @Path(":id/Download")
+    @Path("/:id/Download")
     public async downloadFile(@PathParam("id") id: string, @ContextResponse response: express.Response): Promise<void> {
         const result = await this.transportServices.files.downloadFile({ id });
 
@@ -58,9 +75,7 @@ export class FilesController extends BaseController {
     @GET
     @Accept("application/json")
     public async getFiles(@Context context: ServiceContext): Promise<Envelope> {
-        const result = await this.transportServices.files.getFiles({
-            query: context.request.query
-        });
+        const result = await this.transportServices.files.getFiles({ query: context.request.query });
         return this.ok(result);
     }
 
@@ -68,10 +83,7 @@ export class FilesController extends BaseController {
     @Path("/Own")
     @Accept("application/json")
     public async getOwnFiles(@Context context: ServiceContext): Promise<Envelope> {
-        const result = await this.transportServices.files.getFiles({
-            query: context.request.query,
-            ownerRestriction: OwnerRestriction.Own
-        });
+        const result = await this.transportServices.files.getFiles({ query: context.request.query, ownerRestriction: OwnerRestriction.Own });
         return this.ok(result);
     }
 
@@ -79,37 +91,28 @@ export class FilesController extends BaseController {
     @Path("/Peer")
     @Accept("application/json")
     public async getPeerFiles(@Context context: ServiceContext): Promise<Envelope> {
-        const result = await this.transportServices.files.getFiles({
-            query: context.request.query,
-            ownerRestriction: OwnerRestriction.Peer
-        });
+        const result = await this.transportServices.files.getFiles({ query: context.request.query, ownerRestriction: OwnerRestriction.Peer });
         return this.ok(result);
     }
 
     @GET
-    @Path(":idOrReference")
-    // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
-    public async getFile(@PathParam("idOrReference") idOrReference: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+    @Path("/:idOrReference")
+    @Accept("application/json", "image/png")
+    public async getFile(
+        @PathParam("idOrReference") idOrReference: string,
+        @ContextAccept accept: string,
+        @ContextResponse response: express.Response,
+        @QueryParam("newQRCodeFormat") newQRCodeFormat?: boolean
+    ): Promise<Envelope | void> {
         const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.fromTruncated(idOrReference).id.toString();
+
+        const result = await this.transportServices.files.getFile({ id: fileId });
 
         switch (accept) {
             case "image/png":
-                const qrCodeResult = await this.transportServices.files.createQRCodeForFile({ fileId });
-                return this.file(
-                    qrCodeResult,
-                    (r) => r.value.qrCodeBytes,
-                    () => `${fileId}.png`,
-                    () => Mimetype.png(),
-                    response,
-                    200
-                );
-
-            case "application/json":
-                const result = await this.transportServices.files.getFile({ id: fileId });
-                return this.ok(result);
-
+                return await this.qrCode(result, (r) => QRCode.for(newQRCodeFormat ? r.value.reference.url : r.value.reference.truncated), `${fileId}.png`, response, 200);
             default:
-                throw new Errors.NotAcceptableError();
+                return this.ok(result);
         }
     }
 
@@ -122,31 +125,36 @@ export class FilesController extends BaseController {
         @ContextResponse response: express.Response,
         request: any
     ): Promise<Return.NewResource<Envelope> | void> {
+        const newQRCodeFormat = request["newQRCodeFormat"] === true;
+        delete request["newQRCodeFormat"];
+
+        const result = await this.transportServices.files.createTokenForFile({
+            fileId: id,
+            expiresAt: request.expiresAt,
+            ephemeral: accept === "image/png" || request.ephemeral,
+            forIdentity: request.forIdentity,
+            passwordProtection: request.passwordProtection
+        });
+
         switch (accept) {
             case "image/png":
-                const qrCodeResult = await this.transportServices.files.createTokenQRCodeForFile({
-                    fileId: id,
-                    expiresAt: request.expiresAt,
-                    forIdentity: request.forIdentity,
-                    passwordProtection: request.passwordProtection
-                });
-                return this.file(
-                    qrCodeResult,
-                    (r) => r.value.qrCodeBytes,
-                    () => `${id}.png`,
-                    () => Mimetype.png(),
-                    response,
-                    201
-                );
+                return await this.qrCode(result, (r) => QRCode.for(newQRCodeFormat ? r.value.reference.url : r.value.reference.truncated), `${id}.png`, response, 201);
             default:
-                const jsonResult = await this.transportServices.files.createTokenForFile({
-                    fileId: id,
-                    expiresAt: request.expiresAt,
-                    ephemeral: request.ephemeral,
-                    forIdentity: request.forIdentity,
-                    passwordProtection: request.passwordProtection
-                });
-                return this.created(jsonResult);
+                return this.created(result);
         }
+    }
+
+    @DELETE
+    @Path("/:id")
+    public async deleteFile(@PathParam("id") fileId: string): Promise<void> {
+        const result = await this.transportServices.files.deleteFile({ fileId });
+        return this.noContent(result);
+    }
+
+    @PATCH
+    @Path("/:id/RegenerateOwnershipToken")
+    public async regenerateOwnershipToken(@PathParam("id") id: string): Promise<Envelope> {
+        const result = await this.transportServices.files.regenerateFileOwnershipToken({ id });
+        return this.ok(result);
     }
 }

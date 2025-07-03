@@ -5,15 +5,13 @@ import { ConnectorHttpResponse } from "../types/ConnectorHttpResponse";
 export abstract class Endpoint {
     public constructor(private readonly httpClient: AxiosInstance) {}
 
-    protected async getPlain<T>(path: string): Promise<T> {
-        const reponse = await this.httpClient.get<T>(path, { validateStatus: (status) => status === 200 });
+    protected async getPlain<T>(path: string, validateStatus?: (status: number) => boolean): Promise<T> {
+        const reponse = await this.httpClient.get<T>(path, { validateStatus: validateStatus ?? ((status) => status === 200) });
         return reponse.data;
     }
 
     protected async get<T>(path: string, query?: unknown): Promise<ConnectorHttpResponse<T>> {
-        const response = await this.httpClient.get(path, {
-            params: query
-        });
+        const response = await this.httpClient.get(path, { params: query });
 
         return this.makeResult(response);
     }
@@ -25,6 +23,11 @@ export abstract class Endpoint {
 
     protected async put<T>(path: string, data?: unknown): Promise<ConnectorHttpResponse<T>> {
         const response = await this.httpClient.put(path, data);
+        return this.makeResult(response);
+    }
+
+    protected async patch<T>(path: string, data?: unknown): Promise<ConnectorHttpResponse<T>> {
+        const response = await this.httpClient.patch(path, data);
         return this.makeResult(response);
     }
 
@@ -50,7 +53,7 @@ export abstract class Endpoint {
             const errorPayload = httpResponse.data.error;
             if (!errorPayload) {
                 throw new Error(
-                    `The http request to connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
+                    `The http request to Connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
                 );
             }
             return ConnectorHttpResponse.error({
@@ -69,9 +72,7 @@ export abstract class Endpoint {
     }
 
     protected async download(url: string): Promise<ConnectorHttpResponse<ArrayBuffer>> {
-        const httpResponse = await this.httpClient.get(url, {
-            responseType: "arraybuffer"
-        });
+        const httpResponse = await this.httpClient.get(url, { responseType: "arraybuffer" });
 
         if (httpResponse.status !== 200) {
             // Manually parse data because responseType is "arrayBuffer"
@@ -79,29 +80,18 @@ export abstract class Endpoint {
 
             if (!errorPayload) {
                 throw new Error(
-                    `The http request to connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
+                    `The http request to Connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
                 );
             }
 
-            return ConnectorHttpResponse.error({
-                id: errorPayload.id,
-                docs: errorPayload.docs,
-                time: errorPayload.time,
-                code: errorPayload.code,
-                message: errorPayload.message
-            });
+            return ConnectorHttpResponse.error({ id: errorPayload.id, docs: errorPayload.docs, time: errorPayload.time, code: errorPayload.code, message: errorPayload.message });
         }
 
         return ConnectorHttpResponse.success(httpResponse.data as ArrayBuffer);
     }
 
     protected async downloadQrCode(method: "GET" | "POST", url: string, request?: unknown): Promise<ConnectorHttpResponse<ArrayBuffer>> {
-        const config: AxiosRequestConfig = {
-            responseType: "arraybuffer",
-            headers: {
-                accept: "image/png"
-            }
-        };
+        const config: AxiosRequestConfig = { responseType: "arraybuffer", headers: { accept: "image/png" } };
 
         let httpResponse;
 
@@ -120,17 +110,11 @@ export abstract class Endpoint {
 
             if (!errorPayload) {
                 throw new Error(
-                    `The http request to connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
+                    `The http request to Connector route '${httpResponse.request.path}' failed with status '${httpResponse.status}': ${httpResponse.statusText} ${httpResponse.data}`
                 );
             }
 
-            return ConnectorHttpResponse.error({
-                id: errorPayload.id,
-                docs: errorPayload.docs,
-                time: errorPayload.time,
-                code: errorPayload.code,
-                message: errorPayload.message
-            });
+            return ConnectorHttpResponse.error({ id: errorPayload.id, docs: errorPayload.docs, time: errorPayload.time, code: errorPayload.code, message: errorPayload.message });
         }
 
         return ConnectorHttpResponse.success(httpResponse.data as ArrayBuffer);
@@ -149,14 +133,16 @@ export abstract class Endpoint {
 
             if (value instanceof Buffer) {
                 formData.append(key, value, { filename });
+            } else if (value instanceof Array) {
+                for (const item of value) {
+                    formData.append(key, item);
+                }
             } else {
                 formData.append(key, value);
             }
         }
 
-        const response = await this.httpClient.post(url, formData, {
-            headers: formData.getHeaders()
-        });
+        const response = await this.httpClient.post(url, formData, { headers: formData.getHeaders() });
 
         return response;
     }

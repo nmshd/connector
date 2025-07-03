@@ -2,7 +2,7 @@ name: Publish
 
 on:
   push:
-    tags: "*"
+    tags: ["*"]
 
 jobs:
   run-checks:
@@ -57,6 +57,30 @@ jobs:
           VERSION: ${{ github.ref_name }}
     needs: ["run-checks"]
 
+  publish-zipped-connector:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: current
+          registry-url: https://registry.npmjs.org/
+      - uses: gr2m/await-npm-package-version-action@v1
+        with:
+          package: "@nmshd/connector-types"
+          version: ${{ github.ref_name }}
+          registry: https://registry.npmjs.org
+      - run: bash .ci/buildConnectorZip.sh
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+          COMMIT_HASH: ${{ github.sha }}
+          VERSION: ${{ github.ref_name }}
+      - name: Add zipped Connector to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: connector-${{ github.ref_name }}.zip
+    needs: ["publish-npm"]
+
   publish-helm:
     runs-on: ubuntu-latest
     permissions:
@@ -65,7 +89,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: azure/setup-helm@v4
-      - run: echo "$PASSWORD" | helm registry login -u $USER --password-stdin https://ghcr.io
+      - run: echo "$PASSWORD" | helm registry login -u $USER --password-stdin ghcr.io
         env:
           USER: ${{ github.actor }}
           PASSWORD: ${{ secrets.GITHUB_TOKEN }}

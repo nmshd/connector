@@ -255,7 +255,99 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  # ------------------- Announcements -------------------
+
+  /api/v2/Announcements:
+    get:
+      operationId: getAnnouncements
+      description: Query Announcements
+      tags:
+        - Announcements
+      parameters:
+        - name: language
+          description: The 2-letter ISO639 code of the language to get the Announcements in. If an Announcement does not exist in this language, it is returned in English instead.
+          in: query
+          required: true
+          type: string
+          example: "en"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Announcement"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
   # ------------------- Attributes -------------------
+
+  /api/v2/Attributes/CanCreate:
+    put:
+      operationId: canCreateRepositoryAttribute
+      description: "Checks if a Repository Attribute can be created with the given parameters."
+      tags:
+        - Attributes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: false
+              properties:
+                content:
+                  type: object
+                  additionalProperties: false
+                  required:
+                    - value
+                  properties:
+                    value:
+                      $ref: "#/components/schemas/AttributeValue"
+                    tags:
+                      $ref: "#/components/schemas/IdentityAttributeContent_tags"
+                    validFrom:
+                      $ref: "#/components/schemas/AttributeContent_validFrom"
+                    validTo:
+                      $ref: "#/components/schemas/AttributeContent_validTo"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/CanCreateRepositoryAttributeResponse"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
 
   /api/v2/Attributes:
     post:
@@ -1761,6 +1853,10 @@ paths:
           schema:
             $ref: "#/components/schemas/TextFilter"
         - in: query
+          name: tags
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
           name: filesize
           schema:
             $ref: "#/components/schemas/NumberFilter"
@@ -1774,6 +1870,14 @@ paths:
             $ref: "#/components/schemas/TextFilter"
         - in: query
           name: isOwn
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
+        - in: query
+          name: ownershipToken
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: ownershipIsLocked
           schema:
             $ref: "#/components/schemas/BooleanFilter"
       responses:
@@ -1835,6 +1939,13 @@ paths:
                   type: string
                   format: binary
                   nullable: false
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  description: Tags for the file.
+                  example: ["tag1", "tag2"]
+                  nullable: false
               required:
                 - file
       responses:
@@ -1890,6 +2001,10 @@ paths:
           schema:
             $ref: "#/components/schemas/TextFilter"
         - in: query
+          name: tags
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
           name: filesize
           schema:
             $ref: "#/components/schemas/NumberFilter"
@@ -1901,6 +2016,14 @@ paths:
           name: title
           schema:
             $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: ownershipToken
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: ownershipIsLocked
+          schema:
+            $ref: "#/components/schemas/BooleanFilter"
       responses:
         200:
           description: Success
@@ -1931,7 +2054,7 @@ paths:
   /api/v2/Files/Peer:
     post:
       operationId: loadPeerFile
-      description: Loads a file of another identity. After it is loaded once, you can retrieve it without the need for the truncatedReference by calling one of the GET-routes.
+      description: Loads a file of another identity. After it is loaded once, you can retrieve it without the need for the reference by calling one of the GET-routes.
       tags:
         - Files
       requestBody:
@@ -1944,7 +2067,7 @@ paths:
                   type: string
                   format: byte
                   nullable: false
-                  description: The base64 encoded truncated reference of the File, alternatively of a Token for the File. It consists of all information to get and decrypt it.
+                  description: The base64 encoded truncated reference or url reference of the File, alternatively of a Token for the File. It consists of all information to get and decrypt it.
                 password:
                   type: string
                   nullable: true
@@ -2004,6 +2127,10 @@ paths:
           schema:
             $ref: "#/components/schemas/TextFilter"
         - in: query
+          name: tags
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
           name: filesize
           schema:
             $ref: "#/components/schemas/NumberFilter"
@@ -2059,6 +2186,14 @@ paths:
             oneOf:
               - $ref: "#/components/schemas/FileID"
               - $ref: "#/components/schemas/FileReferenceTruncated"
+              - $ref: "#/components/schemas/FileReferenceUrl"
+        - in: query
+          name: newQRCodeFormat
+          description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
+          required: false
+          schema:
+            type: boolean
+            default: false
 
       responses:
         200:
@@ -2153,7 +2288,7 @@ paths:
                   type: string
                   format: date-time
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
+                  description: If set to true the token will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
                   type: boolean
                 forIdentity:
                   $ref: "#/components/schemas/Address"
@@ -2163,6 +2298,10 @@ paths:
                   $ref: "#/components/schemas/PasswordProtection"
                   nullable: true
                   description: The password that will be required to load this Token and information about the password.
+                newQRCodeFormat:
+                  type: boolean
+                  description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
+                  nullable: true
       responses:
         201:
           description: Success
@@ -2181,6 +2320,76 @@ paths:
                 description: A QR Code that contains all necessary information about the token which itself contains a reference to the file.
                 type: string
                 format: binary
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v2/Files/{id}/RegenerateOwnershipToken:
+    patch:
+      operationId: regenerateOwnershipToken
+      description: Regenerates the ownership token for the file with the given `id`. This will invalidate the previous ownership token.
+      tags:
+        - Files
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the File to regenerate the ownership token for.
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileID"
+      responses:
+        200:
+          description: Success. The ownership token has been regenerated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    nullable: false
+                    $ref: "#/components/schemas/FileMetadata"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  /api/v2/Files/{id}:
+    delete:
+      operationId: deleteFile
+      description: Delete a File.
+      tags:
+        - Files
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the File to delete.
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileID"
+      responses:
+        204:
+          description: Success. Deleting a File.
           headers:
             X-Response-Duration-ms:
               schema:
@@ -2398,6 +2607,10 @@ paths:
       tags:
         - Messages
       parameters:
+        - in: query
+          name: isOwn
+          schema:
+            $ref: "#/components/schemas/PartialBooleanFilter"
         - in: query
           name: createdBy
           schema:
@@ -3246,6 +3459,10 @@ paths:
           schema:
             $ref: "#/components/schemas/PartialBooleanFilter"
         - in: query
+          name: passwordProtection.passwordLocationIndicator
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - in: query
           name: isOwn
           schema:
             $ref: "#/components/schemas/BooleanFilter"
@@ -3386,6 +3603,10 @@ paths:
           name: passwordProtection.passwordIsPin
           schema:
             $ref: "#/components/schemas/PartialBooleanFilter"
+        - in: query
+          name: passwordProtection.passwordLocationIndicator
+          schema:
+            $ref: "#/components/schemas/TextFilter"
       responses:
         200:
           description: Success
@@ -3429,7 +3650,7 @@ paths:
                   type: string
                   format: byte
                   nullable: false
-                  description: The base64 encoded truncated reference of the RelationshipTemplate, alternatively of a Token for the RelationshipTemplate. It consists of all information to get and decrypt it.
+                  description: The base64 encoded truncated reference or url reference of the RelationshipTemplate, alternatively of a Token for the RelationshipTemplate. It consists of all information to get and decrypt it.
                 password:
                   type: string
                   nullable: true
@@ -3501,6 +3722,10 @@ paths:
           name: passwordProtection.passwordIsPin
           schema:
             $ref: "#/components/schemas/PartialBooleanFilter"
+        - in: query
+          name: passwordProtection.passwordLocationIndicator
+          schema:
+            $ref: "#/components/schemas/TextFilter"
       responses:
         200:
           description: Success
@@ -3541,6 +3766,13 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipTemplateID"
+        - in: query
+          name: newQRCodeFormat
+          description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
+          required: false
+          schema:
+            type: boolean
+            default: false
       responses:
         200:
           description: Success
@@ -3575,7 +3807,7 @@ paths:
 
   /api/v2/RelationshipTemplates/Own/{id}/Token:
     post:
-      operationId: createTokenForTemplate
+      operationId: createTokenForOwnRelationshipTemplate
       description: Creates a `Token` for the own `RelationshipTemplate` with the given `id`. If the accept header is set to `image/png` instead of `application/json`, a QR Code containing the reference to the token is shown.
       tags:
         - RelationshipTemplates
@@ -3597,7 +3829,7 @@ paths:
                   type: string
                   format: date-time
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
+                  description: If set to true the token will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
                   type: boolean
                 forIdentity:
                   $ref: "#/components/schemas/Address"
@@ -3607,6 +3839,10 @@ paths:
                   $ref: "#/components/schemas/PasswordProtection"
                   nullable: true
                   description: The password that will be required to load this Token and information about the password. If passwordProtection is set for the RelationshipTemplate, the same passwordProtection must also be given here.
+                newQRCodeFormat:
+                  type: boolean
+                  description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
+                  nullable: true
       responses:
         201:
           description: Success
@@ -3664,6 +3900,10 @@ paths:
           name: status
           schema:
             $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: wasAutomaticallyDecided
+          schema:
+            $ref: "#/components/schemas/PartialBooleanFilter"
         - in: query
           name: content.expiresAt
           schema:
@@ -4196,7 +4436,7 @@ paths:
                   nullable: false
                   description: A timestamp that describes when this token expires. An expired token cannot be fetched from the platform anymore. However it will still be available for auditing purposes.
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
+                  description: If set to true the token will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to false.
                   type: boolean
                   example: false
                 forIdentity:
@@ -4271,6 +4511,10 @@ paths:
           name: passwordProtection.passwordIsPin
           schema:
             $ref: "#/components/schemas/PartialBooleanFilter"
+        - in: query
+          name: passwordProtection.passwordLocationIndicator
+          schema:
+            $ref: "#/components/schemas/TextFilter"
       responses:
         200:
           description: Success
@@ -4313,9 +4557,9 @@ paths:
                   type: string
                   format: byte
                   nullable: false
-                  description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
+                  description: The base64 encoded truncated reference or url reference of the Token, which actually consists of all information to get and decrypt it.
                 ephemeral:
-                  description: If set to true the token will will not be cached in the database of the connector. Note that you will not be able to fetch this token unless you remember the truncatedReference of the token. Defaults to false.
+                  description: If set to true the token will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to false.
                   type: boolean
                 password:
                   type: string
@@ -4384,6 +4628,10 @@ paths:
           name: passwordProtection.passwordIsPin
           schema:
             $ref: "#/components/schemas/PartialBooleanFilter"
+        - in: query
+          name: passwordProtection.passwordLocationIndicator
+          schema:
+            $ref: "#/components/schemas/TextFilter"
       responses:
         200:
           description: Success
@@ -4424,6 +4672,13 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/TokenID"
+        - in: query
+          name: newQRCodeFormat
+          description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
+          required: false
+          schema:
+            type: boolean
+            default: false
       responses:
         200:
           description: Success
@@ -4745,6 +5000,14 @@ components:
       minLength: 35
       example: did:e:<base-url>:dids:<22-characters>
 
+    AnnouncementID:
+      type: string
+      format: AnnouncementID
+      minLength: 20
+      maxLength: 20
+      example: ANC_________________
+      description: The ID of an announcement.
+
     AttributeID:
       type: string
       format: AttributeID
@@ -4923,6 +5186,34 @@ components:
         - private
       type: string
 
+    Announcement:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/AnnouncementID"
+          nullable: false
+          description: The ID of the announcement.
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time when the announcement was created.
+          example: 2026-05-25T11:05:02.924Z
+        expiresAt:
+          type: string
+          format: date-time
+          description: A timestamp that describes when this announcement will expire. "Expired" means that it is no longer relevant.
+          example: 2026-05-25T11:05:02.924Z
+          nullable: true
+        severity:
+          type: string
+          enum: [Low, Medium, High]
+        title:
+          type: string
+        body:
+          type: string
+
     Attribute:
       type: object
       additionalProperties: false
@@ -5049,6 +5340,32 @@ components:
       required:
         - displayNames
 
+    CanCreateRepositoryAttributeResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+      oneOf:
+        - properties:
+            isSuccess:
+              const: true
+          required:
+            - isSuccess
+          additionalProperties: false
+
+        - properties:
+            isSuccess:
+              const: false
+            code:
+              type: string
+            message:
+              type: string
+          required:
+            - isSuccess
+            - code
+            - message
+          additionalProperties: false
+
     ConnectorHealth:
       type: object
       properties:
@@ -5155,6 +5472,13 @@ components:
           description: The name of the file.
           example: CurriculumVitae.pdf
           nullable: false
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags for the file.
+          example: [tag1, tag2]
+          nullable: true
         filesize:
           type: integer
           format: int64
@@ -5192,6 +5516,19 @@ components:
           format: byte
           nullable: false
           description: The base64 encoded truncated reference of the File, which actually consists of all information to get and decrypt it.
+        reference:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/ObjectReference"
+        ownershipToken:
+          type: string
+          nullable: true
+          description: The ownership token of the file. This is used to transfer the ownership of this file. This will always be undefined if the file is not owned by the current identity.
+        ownershipIsLocked:
+          type: boolean
+          enum: [true]
+          nullable: true
+          description: true if the ownership of the file is locked, undefined otherwise. If the ownership is locked, the ownership token cannot be used to transfer the ownership of this file and would have to be regenerated for this purpose. This will always be undefined if the file is not owned by the current identity.
       required:
         - id
         - title
@@ -5215,6 +5552,16 @@ components:
       required:
         - reference
 
+    FileReferenceUrl:
+      type: object
+      properties:
+        reference:
+          type: string
+          nullable: false
+          description: The url reference of the File.
+      required:
+        - reference
+
     PasswordProtection:
       type: object
       properties:
@@ -5226,7 +5573,25 @@ components:
           type: boolean
           enum: [true]
           nullable: true
-          description: true if the password is a PIN, undefined otherwise. If it's a PIN, a numpad is displayed when entering the password in the app.
+          description: true if the password is a PIN, undefined otherwise. If it's a PIN, a numpad is displayed when entering the password in the App.
+        passwordLocationIndicator:
+          type:
+            - string
+            - number
+          oneOf:
+            - type: string
+              enum:
+                - Self
+                - Letter
+                - RegistrationLetter
+                - Email
+                - SMS
+                - Website
+            - type: number
+              minimum: 50
+              maximum: 99
+          nullable: true
+          description: An indicator that shows where the password is located. This is used to display a hint in the App when entering the password. The value is not validated and is only used for display purposes.
       required:
         - password
 
@@ -5435,6 +5800,10 @@ components:
           required:
             - createdAt
             - content
+        wasAutomaticallyDecided:
+          type: boolean
+          const: true
+          description: Indicates whether the Request was decided automatically by the Decider Module.
       required:
         - id
         - isOwn
@@ -5973,7 +6342,7 @@ components:
           description: The maximum number identities that can allocate this template. Omitting this property leads to an infinite number of possible allocations.
         isOwn:
           type: boolean
-          description: Describes whether the template was created by the connector (true) or whether it was loaded from another identity (false).
+          description: Describes whether the template was created by the Connector (true) or whether it was loaded from another identity (false).
           nullable: false
         createdBy:
           allOf:
@@ -6012,6 +6381,10 @@ components:
           format: byte
           nullable: false
           description: The base64 encoded truncated reference of the RelationshipTemplate, which actually consists of all information to get and decrypt it.
+        reference:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/ObjectReference"
       required:
         - id
         - isOwn
@@ -6159,6 +6532,10 @@ components:
           format: byte
           nullable: false
           description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
+        reference:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/ObjectReference"
       required:
         - id
         - createdBy
@@ -6210,6 +6587,19 @@ components:
       required:
         - reference
         - value
+
+    ObjectReference:
+      type: object
+      properties:
+        truncated:
+          type: string
+          description: The base64 encoded truncated reference of this Object, which actually consists of all information to get and decrypt it.
+        url:
+          type: string
+          description: The modern URL form of this reference, consisting of all information to get and decrypt it. Additionally this URL is valid for browsers and therefore it's possible to show a help page when the app ist not installed.
+      required:
+        - truncated
+        - url
 
     # ------------------- General -------------------
 

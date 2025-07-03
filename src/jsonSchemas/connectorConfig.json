@@ -49,6 +49,9 @@
         "debug": {
             "type": "boolean"
         },
+        "enforceCertificatePinning": {
+            "type": "boolean"
+        },
         "infrastructure": {
             "additionalProperties": false,
             "properties": {
@@ -62,6 +65,8 @@
                         "enabled": {
                             "type": "boolean"
                         },
+                        "helmetOptions": {},
+                        "oauth": {},
                         "port": {
                             "type": ["string", "number"]
                         }
@@ -1048,7 +1053,7 @@
                         "type": "array"
                     }
                 },
-                "required": ["enabled", "displayName", "location"],
+                "required": ["enabled", "location"],
                 "type": "object"
             },
             "type": "object"
@@ -1061,9 +1066,6 @@
                 "type": "array"
             },
             "type": "object"
-        },
-        "enforceCertificatePinning": {
-            "type": "boolean"
         },
         "transportLibrary": {
             "additionalProperties": false,
@@ -1099,6 +1101,7 @@
                     "type": "number"
                 }
             },
+            "required": ["platformClientId", "platformClientSecret", "baseUrl"],
             "type": "object"
         }
     },

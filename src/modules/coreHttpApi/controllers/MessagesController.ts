@@ -1,9 +1,8 @@
+import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, ContextResponse, GET, Path, PathParam, POST, Return, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
-import { Envelope } from "../../../infrastructure";
-import { BaseController, Mimetype } from "../common/BaseController";
 
 @Path("/api/v2/Messages")
 export class MessagesController extends BaseController {
@@ -29,7 +28,7 @@ export class MessagesController extends BaseController {
     }
 
     @GET
-    @Path(":id")
+    @Path("/:id")
     @Accept("application/json")
     public async getMessage(@PathParam("id") id: string): Promise<Envelope> {
         const result = await this.transportServices.messages.getMessage({ id });
@@ -37,7 +36,7 @@ export class MessagesController extends BaseController {
     }
 
     @GET
-    @Path(":id/Attachments/:attachmentId")
+    @Path("/:id/Attachments/:attachmentId")
     @Accept("application/json")
     public async getMessageAttachmentMetadata(@PathParam("id") id: string, @PathParam("attachmentId") attachmentId: string): Promise<Envelope> {
         const result = await this.transportServices.messages.getAttachmentMetadata({ id, attachmentId });
@@ -45,7 +44,7 @@ export class MessagesController extends BaseController {
     }
 
     @GET
-    @Path(":id/Attachments/:attachmentId/Download")
+    @Path("/:id/Attachments/:attachmentId/Download")
     @Accept("application/json")
     public async downloadMessageAttachment(
         @PathParam("id") id: string,
