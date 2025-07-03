@@ -65,6 +65,7 @@ interface IConfigOverwrite {
     addressGenerationHostnameOverride?: string;
     datawalletEnabled?: boolean;
     debug?: boolean;
+    allowIdentityCreation?: boolean;
 }
 
 // ================================ log4js ================================
