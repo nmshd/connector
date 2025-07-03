@@ -1,10 +1,10 @@
+import { CoreDate } from "@nmshd/core-types";
 import axios, { InternalAxiosRequestConfig } from "axios";
-import { DateTime } from "luxon";
 import { IConnectorClientAuthenticator } from "./IConnectorClientAuthenticator";
 
 export class OAuth2ConnectorClientAuthenticator implements IConnectorClientAuthenticator {
     #token: string | null = null;
-    #expiresAt: DateTime | null = null;
+    #expiresAt: CoreDate = CoreDate.utc();
 
     readonly #tokenEndpoint: string;
     readonly #clientId: string;
@@ -26,11 +26,11 @@ export class OAuth2ConnectorClientAuthenticator implements IConnectorClientAuthe
     }
 
     async #getOrCreateToken(): Promise<string> {
-        if (this.#token && this.#expiresAt && DateTime.now() < this.#expiresAt) {
-            return this.#token;
-        }
+        // A token is also considered as expired when 10 seconds are left, to make up for network latency
+        const isExpired = this.#expiresAt.subtract({ seconds: 10 }).isExpired();
+        if (isExpired || !this.#token) return await this.#refreshToken();
 
-        return await this.#refreshToken();
+        return this.#token;
     }
 
     async #refreshToken(): Promise<string> {
@@ -45,10 +45,7 @@ export class OAuth2ConnectorClientAuthenticator implements IConnectorClientAuthe
         if (!response.data?.access_token) throw new Error("Failed to retrieve access token");
 
         this.#token = response.data.access_token;
-        this.#expiresAt = DateTime.now()
-            .plus({ seconds: response.data.expires_in })
-            // Subtract 60 seconds for safety
-            .minus({ seconds: 30 });
+        this.#expiresAt = CoreDate.utc().add({ seconds: response.data.expires_in });
 
         return this.#token!;
     }
