@@ -231,6 +231,10 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             httpServer.oidc = "***";
         }
 
+        if (httpServer?.jwtBearer) {
+            httpServer.jwtBearer = "***";
+        }
+
         const transport = config.transportLibrary;
         if (transport.platformClientSecret) {
             transport.platformClientSecret = "***";
