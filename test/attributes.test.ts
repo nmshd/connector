@@ -7,6 +7,7 @@ import { getTimeout } from "./lib/setTimeout";
 import {
     connectAndEmptyCollection,
     createRepositoryAttribute,
+    deleteAllAttributes,
     establishRelationship,
     executeFullCreateAndShareRelationshipAttributeFlow,
     executeFullCreateAndShareRepositoryAttributeFlow,
@@ -31,12 +32,28 @@ beforeAll(async () => {
 }, getTimeout(30000));
 afterAll(() => launcher.stop());
 
-beforeEach(() => {
+beforeEach(async () => {
+    await deleteAllAttributes(client1, client1Address);
+    await deleteAllAttributes(client2, client2Address);
     client1._eventBus?.reset();
     client2._eventBus?.reset();
 });
 
 describe("Attributes", () => {
+    test("should check if a repository attribute can be created", async () => {
+        const canCreateAttributeResponse = await client1.attributes.canCreateRepositoryAttribute({
+            content: {
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
+                },
+                tags: ["content:edu.de"]
+            }
+        });
+
+        expect(canCreateAttributeResponse.result.isSuccess).toBe(true);
+    });
+
     test("should create a repository attribute", async () => {
         const createAttributeResponse = await client1.attributes.createRepositoryAttribute({
             content: {
@@ -254,6 +271,45 @@ describe("Attributes Query", () => {
             .addStringSet("shareInfo.sourceAttribute");
 
         await conditions.executeTests((c, q) => c.attributes.getValidAttributes(q), ValidationSchema.ConnectorAttributes);
+    });
+
+    test("should query own shared identity attributes", async () => {
+        const attribute = await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
+            "@type": "GivenName",
+            value: "AGivenName"
+        });
+
+        const conditions = new QueryParamConditions(attribute, client1)
+            .addStringSet("content.@type")
+            .addStringArraySet("content.tags")
+            .addStringSet("content.key")
+            .addBooleanSet("content.isTechnical")
+            .addStringSet("content.confidentiality")
+            .addStringSet("content.value.@type")
+            .addStringSet("shareInfo.requestReference")
+            .addStringSet("shareInfo.sourceAttribute");
+
+        await conditions.executeTests((c, q) => c.attributes.getOwnSharedIdentityAttributes({ ...q, peer: client2Address }), ValidationSchema.ConnectorAttributes);
+    });
+
+    test("should query peer shared identity attributes", async () => {
+        const ownSharedAttribute = await executeFullCreateAndShareRepositoryAttributeFlow(client2, client1, {
+            "@type": "GivenName",
+            value: "AGivenName"
+        });
+
+        const peerSharedAttribute = (await client1.attributes.getAttribute(ownSharedAttribute.id)).result;
+
+        const conditions = new QueryParamConditions(peerSharedAttribute, client1)
+            .addStringSet("content.@type")
+            .addStringArraySet("content.tags")
+            .addStringSet("content.key")
+            .addBooleanSet("content.isTechnical")
+            .addStringSet("content.confidentiality")
+            .addStringSet("content.value.@type")
+            .addStringSet("shareInfo.requestReference");
+
+        await conditions.executeTests((c, q) => c.attributes.getPeerSharedIdentityAttributes({ ...q, peer: client2Address }), ValidationSchema.ConnectorAttributes);
     });
 });
 

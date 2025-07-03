@@ -1,19 +1,16 @@
+import { ILogger } from "@js-soft/logging-abstractions";
 import { ApplicationError } from "@js-soft/ts-utils";
+import { ConnectorMode, Envelope, HttpError, HttpErrors } from "@nmshd/connector-types";
 import { RuntimeErrors } from "@nmshd/runtime";
 import { RequestError, TransportCoreErrors } from "@nmshd/transport";
 import { Errors } from "@nmshd/typescript-rest";
 import express from "express";
 import stringify from "json-stringify-safe";
-import { ConnectorMode } from "../../../ConnectorMode";
-import { ConnectorLoggerFactory } from "../../../logging/ConnectorLoggerFactory";
-import { Envelope, HttpError, HttpErrors } from "../common";
 
 export class RouteNotFoundError extends Error {}
 
-export function genericErrorHandler(connectorMode: ConnectorMode) {
+export function genericErrorHandler(connectorMode: ConnectorMode, logger: ILogger) {
     return (error: any, _req: express.Request, res: express.Response, next: express.NextFunction): void => {
-        const logger = ConnectorLoggerFactory.getLogger(genericErrorHandler);
-
         try {
             if (res.headersSent) {
                 logger.debug("Headers already sent. Calling next(error)...");
@@ -108,7 +105,7 @@ export function genericErrorHandler(connectorMode: ConnectorMode) {
                 "error.connector.errorInErrorHandler",
                 `The error handler ran into an error, caused by '${error.message}', this should not happen`,
                 stackTraceFromError(error),
-                "Report this to a connector developer"
+                "Report this to a Connector developer"
             );
 
             logger.fatal(httpError);

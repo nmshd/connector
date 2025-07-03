@@ -18,8 +18,8 @@
         "strictNullChecks": true,
         "strictPropertyInitialization": false,
         "downlevelIteration": true,
-        "lib": ["es2021", "dom"],
-        "typeRoots": ["./node_modules/@types"]
+        "noImplicitOverride": true,
+        "lib": ["es2021", "dom"]
     },
     "include": ["src/**/*"]
 }

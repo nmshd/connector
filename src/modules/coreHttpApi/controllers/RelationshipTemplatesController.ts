@@ -1,9 +1,8 @@
+import { BaseController, Envelope, QRCode } from "@nmshd/connector-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, Errors, GET, POST, Path, PathParam, Return, ServiceContext } from "@nmshd/typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, GET, POST, Path, PathParam, QueryParam, Return, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
-import { Envelope } from "../../../infrastructure";
-import { BaseController, Mimetype } from "../common/BaseController";
 
 @Path("/api/v2/RelationshipTemplates")
 export class RelationshipTemplatesController extends BaseController {
@@ -42,28 +41,21 @@ export class RelationshipTemplatesController extends BaseController {
     }
 
     @GET
-    @Path(":id")
-    // do not declare an @Accept here because the combination of @Accept and @GET causes an error that is logged but the functionality is not affected
-    public async getRelationshipTemplate(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+    @Path("/:id")
+    @Accept("application/json", "image/png")
+    public async getRelationshipTemplate(
+        @PathParam("id") id: string,
+        @ContextAccept accept: string,
+        @ContextResponse response: express.Response,
+        @QueryParam("newQRCodeFormat") newQRCodeFormat?: boolean
+    ): Promise<Envelope | void> {
+        const result = await this.transportServices.relationshipTemplates.getRelationshipTemplate({ id });
+
         switch (accept) {
             case "image/png":
-                const qrCodeResult = await this.transportServices.relationshipTemplates.createQRCodeForOwnTemplate({ templateId: id });
-
-                return this.file(
-                    qrCodeResult,
-                    (r) => r.value.qrCodeBytes,
-                    () => `${id}.png`,
-                    () => Mimetype.png(),
-                    response,
-                    200
-                );
-
-            case "application/json":
-                const result = await this.transportServices.relationshipTemplates.getRelationshipTemplate({ id });
-                return this.ok(result);
-
+                return await this.qrCode(result, (r) => QRCode.for(newQRCodeFormat ? r.value.reference.url : r.value.reference.truncated), `${id}.png`, response, 200);
             default:
-                throw new Errors.NotAcceptableError();
+                return this.ok(result);
         }
     }
 
@@ -86,37 +78,28 @@ export class RelationshipTemplatesController extends BaseController {
     @POST
     @Path("/Own/:id/Token")
     @Accept("application/json", "image/png")
-    public async createTokenForOwnTemplate(
+    public async createTokenForOwnRelationshipTemplate(
         @PathParam("id") id: string,
         @ContextAccept accept: string,
         @ContextResponse response: express.Response,
         request: any
     ): Promise<Return.NewResource<Envelope> | void> {
+        const newQRCodeFormat = request["newQRCodeFormat"] === true;
+        delete request["newQRCodeFormat"];
+
+        const result = await this.transportServices.relationshipTemplates.createTokenForOwnRelationshipTemplate({
+            templateId: id,
+            expiresAt: request.expiresAt,
+            ephemeral: accept === "image/png" || request.ephemeral,
+            forIdentity: request.forIdentity,
+            passwordProtection: request.passwordProtection
+        });
+
         switch (accept) {
             case "image/png":
-                const qrCodeResult = await this.transportServices.relationshipTemplates.createTokenQRCodeForOwnTemplate({
-                    templateId: id,
-                    expiresAt: request.expiresAt,
-                    forIdentity: request.forIdentity,
-                    passwordProtection: request.passwordProtection
-                });
-                return this.file(
-                    qrCodeResult,
-                    (r) => r.value.qrCodeBytes,
-                    () => `${id}.png`,
-                    () => Mimetype.png(),
-                    response,
-                    201
-                );
+                return await this.qrCode(result, (r) => QRCode.for(newQRCodeFormat ? r.value.reference.url : r.value.reference.truncated), `${id}.png`, response, 201);
             default:
-                const jsonResult = await this.transportServices.relationshipTemplates.createTokenForOwnTemplate({
-                    templateId: id,
-                    expiresAt: request.expiresAt,
-                    ephemeral: request.ephemeral,
-                    forIdentity: request.forIdentity,
-                    passwordProtection: request.passwordProtection
-                });
-                return this.created(jsonResult);
+                return this.created(result);
         }
     }
 }

@@ -1,32 +1,14 @@
-import { ILogger } from "@js-soft/logging-abstractions";
+import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
 import correlator from "correlation-id";
 import { EventSource } from "eventsource";
 import { Agent, fetch, ProxyAgent } from "undici";
-import { ConnectorMode } from "../../ConnectorMode";
-import { ConnectorRuntime } from "../../ConnectorRuntime";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "../../ConnectorRuntimeModule";
-
-export enum BackboneEventName {
-    DatawalletModificationsCreated = "DatawalletModificationsCreated",
-    ExternalEventCreated = "ExternalEventCreated"
-}
-
-export interface IBackboneEventContent {
-    eventName: BackboneEventName;
-    sentAt: string;
-    payload: any;
-}
 
 export interface SseModuleConfiguration extends ConnectorRuntimeModuleConfiguration {
     baseUrlOverride?: string;
 }
 
-export default class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
+export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
     private eventSource: EventSource | undefined;
-
-    public constructor(runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) {
-        super(runtime, configuration, logger, connectorMode);
-    }
 
     public init(): void | Promise<void> {
         if (this.configuration.baseUrlOverride && this.connectorMode !== "debug") {
@@ -52,19 +34,24 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
         const baseUrl = this.configuration.baseUrlOverride ?? this.runtime["runtimeConfig"].transportLibrary.baseUrl;
         const sseUrl = `${baseUrl}/api/v1/sse`;
 
-        this.logger.info(`Connecting to SSE endpoint: ${sseUrl}`);
-
         const baseOptions = { connect: { rejectUnauthorized: false } };
         const proxy = baseUrl.startsWith("https://") ? (process.env.https_proxy ?? process.env.HTTPS_PROXY) : (process.env.http_proxy ?? process.env.HTTP_PROXY);
-        const token = await this.runtime.getBackboneAuthenticationToken();
 
         const eventSource = new EventSource(sseUrl, {
-            fetch: (url, options) =>
-                fetch(url, {
+            fetch: async (url, options) => {
+                const token = await this.runtime.getBackboneAuthenticationToken();
+
+                this.logger.info(`Connecting to SSE endpoint: ${sseUrl}`);
+                const response = await fetch(url, {
                     ...options,
                     dispatcher: proxy ? new ProxyAgent({ ...baseOptions, uri: proxy }) : new Agent(baseOptions),
-                    headers: { ...options?.headers, authorization: `Bearer ${token}` }
-                })
+                    headers: { ...options.headers, authorization: `Bearer ${token}` }
+                });
+
+                this.logger.info(`Connected to SSE endpoint: ${sseUrl}`);
+
+                return response;
+            }
         });
 
         this.eventSource = eventSource;
@@ -72,22 +59,13 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
         eventSource.addEventListener("ExternalEventCreated", async () => await this.runSync());
 
         await new Promise<void>((resolve, reject) => {
-            eventSource.onopen = () => {
-                this.logger.info("Connected to SSE endpoint");
-                resolve();
-
-                eventSource.onopen = () => {
-                    // noop
-                };
-            };
-
-            eventSource.onerror = (error) => {
-                reject(error);
-            };
+            eventSource.onopen = () => resolve();
+            eventSource.onerror = (error) => reject(error);
         });
 
+        eventSource.onopen = async () => await this.runSync();
         eventSource.onerror = async (error) => {
-            if (error.status === 401) await this.recreateEventSource();
+            if (error.code === 401) await this.recreateEventSource();
         };
     }
 
@@ -104,7 +82,7 @@ export default class SseModule extends ConnectorRuntimeModule<SseModuleConfigura
         });
     }
 
-    public stop(): void {
+    public override stop(): void {
         this.eventSource?.close();
     }
 }

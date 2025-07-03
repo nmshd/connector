@@ -4,23 +4,27 @@ import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { ILogger } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
+import { AbstractConnectorRuntime, ConnectorMode, ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration, DocumentationLink } from "@nmshd/connector-types";
 import { ConsumptionController } from "@nmshd/consumption";
-import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
+import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import correlator from "correlation-id";
 import { HttpsProxyAgent } from "https-proxy-agent";
-import path from "path";
 import { checkServerIdentity, PeerCertificate } from "tls";
-import { ConnectorMode } from "./ConnectorMode";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
-import { ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration } from "./ConnectorRuntimeModule";
-import { DocumentationLink } from "./DocumentationLink";
 import { HealthChecker } from "./HealthChecker";
 import { buildInformation } from "./buildInformation";
-import { HttpServer } from "./infrastructure";
-import { ConnectorInfrastructureRegistry } from "./infrastructure/ConnectorInfrastructureRegistry";
-import { ConnectorLoggerFactory } from "./logging/ConnectorLoggerFactory";
+import { ConnectorInfrastructureRegistry, HttpServer } from "./infrastructure";
+import {
+    AutoAcceptPendingRelationshipsModule,
+    AutoDecomposeDeletionProposedRelationshipsModule,
+    CoreHttpApiModule,
+    MessageBrokerPublisherModule,
+    SseModule,
+    SyncModule,
+    WebhooksModule
+} from "./modules";
 
 interface SupportInformation {
     health: RuntimeHealth;
@@ -29,10 +33,7 @@ interface SupportInformation {
     identityInfo: GetIdentityInfoResponse | { error: string };
 }
 
-export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
-    private static readonly MODULES_DIRECTORY = path.join(__dirname, "modules");
-
-    private databaseConnection?: IDatabaseConnection;
+export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeConfig> {
     private accountController: AccountController;
 
     private _transportServices: TransportServices;
@@ -44,12 +45,8 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     private _dataViewExpander: DataViewExpander;
 
-    public override getServices(): RuntimeServices {
-        return {
-            transportServices: this._transportServices,
-            consumptionServices: this._consumptionServices,
-            dataViewExpander: this._dataViewExpander
-        };
+    public getServices(): RuntimeServices {
+        return { transportServices: this._transportServices, consumptionServices: this._consumptionServices, dataViewExpander: this._dataViewExpander };
     }
 
     public readonly infrastructure = new ConnectorInfrastructureRegistry();
@@ -62,7 +59,6 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
     public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
-        ConnectorLoggerFactory.init(loggerFactory);
 
         this.setServerIdentityCheckFromKeyPinning(connectorConfig, loggerFactory.getLogger(ConnectorRuntime));
         this.forceEnableMandatoryModules(connectorConfig);
@@ -128,7 +124,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         if (compatibilityResult.value.isCompatible) return;
 
         throw new Error(
-            `The given backbone is not compatible with this connector version. The version of the configured backbone is '${compatibilityResult.value.backboneVersion}' the supported min/max version is '${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}'.`
+            `The given Backbone is not compatible with this Connector version. The version of the configured Backbone is '${compatibilityResult.value.backboneVersion}' the supported min/max version is '${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}'.`
         );
     }
 
@@ -139,17 +135,12 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             const folder = this.runtimeConfig.database.folder;
             if (!folder) throw new Error("No folder provided for LokiJS database.");
 
-            this.databaseConnection = new LokiJsConnection(folder, undefined, { autoload: true, autosave: true, persistenceMethod: "fs" });
-            return this.databaseConnection;
+            return new LokiJsConnection(folder, undefined, { autoload: true, autosave: true, persistenceMethod: "fs" });
         }
 
         if (!this.runtimeConfig.database.connectionString) {
             this.logger.error(`No database connection string provided. See ${DocumentationLink.operate__configuration("database")} on how to configure the database connection.`);
             process.exit(1);
-        }
-
-        if (this.databaseConnection) {
-            throw new Error("The database connection was already created.");
         }
 
         const mongodbConnection = new MongoDbConnection(this.runtimeConfig.database.connectionString);
@@ -164,12 +155,11 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
 
         this.logger.debug("Finished initialization of Mongo DB connection.");
 
-        this.databaseConnection = mongodbConnection;
-        return this.databaseConnection;
+        return mongodbConnection;
     }
 
     protected async initAccount(): Promise<void> {
-        const db = await this.transport.createDatabase(`${this.runtimeConfig.database.dbNamePrefix}${this.runtimeConfig.database.dbName}`);
+        const db = await this.databaseConnection.getDatabase(`${this.runtimeConfig.database.dbNamePrefix}${this.runtimeConfig.database.dbName}`);
 
         this.accountController = await new AccountController(this.transport, db, this.transport.config).init().catch((e) => {
             if (e instanceof ApplicationError && e.code === "error.transport.general.platformClientInvalid") {
@@ -201,11 +191,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
                       waitQueueTimeoutMS: 1000,
                       serverSelectionTimeoutMS: 1000
                   }),
-            axios.create({
-                baseURL: this.transport.config.baseUrl,
-                proxy: false,
-                httpsAgent: httpsProxy ? new HttpsProxyAgent(httpsProxy) : undefined
-            }),
+            axios.create({ baseURL: this.transport.config.baseUrl, proxy: false, httpsAgent: httpsProxy ? new HttpsProxyAgent(httpsProxy) : undefined }),
             this.accountController.authenticator,
             this.loggerFactory.getLogger("HealthChecker")
         );
@@ -249,18 +235,13 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         return config;
     }
 
-    public async getSupportInformation(): Promise<SupportInformation> {
+    public override async getSupportInformation(): Promise<SupportInformation> {
         const supportInformation = await super.getSupportInformation();
 
         const identityInfoResult = await this._transportServices.account.getIdentityInfo();
         const identityInfo = identityInfoResult.isSuccess ? identityInfoResult.value : { error: identityInfoResult.error.message };
 
-        return {
-            version: buildInformation,
-            health: supportInformation.health,
-            configuration: this.sanitizeConfig(supportInformation.configuration),
-            identityInfo
-        };
+        return { version: buildInformation, health: supportInformation.health, configuration: this.sanitizeConfig(supportInformation.configuration), identityInfo };
     }
 
     public async getBackboneAuthenticationToken(): Promise<string> {
@@ -274,40 +255,70 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
             const infrastructureConfiguration = (this.runtimeConfig.infrastructure as any)[requiredInfrastructure];
             if (!infrastructureConfiguration?.enabled) {
                 this.logger.error(
-                    `Module '${this.getModuleName(connectorModuleConfiguration)}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`
+                    `The module on location '${connectorModuleConfiguration.location}' requires the '${requiredInfrastructure}' infrastructure, but it is not available / enabled.`
                 );
                 process.exit(1);
             }
         }
 
-        const modulePath = path.join(ConnectorRuntime.MODULES_DIRECTORY, moduleConfiguration.location);
-        const nodeModule = await this.import(modulePath);
-
-        if (!nodeModule) {
-            this.logger.error(
-                `Module '${this.getModuleName(moduleConfiguration)}' could not be loaded: the location of the module (${moduleConfiguration.location}) does not exist.`
-            );
-            return;
-        }
-
-        const moduleConstructor = nodeModule.default as
-            | (new (runtime: ConnectorRuntime, configuration: ConnectorRuntimeModuleConfiguration, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule)
-            | undefined;
-
-        if (!moduleConstructor) {
-            this.logger.error(
-                `Module '${this.getModuleName(
-                    moduleConfiguration
-                )}' could not be loaded: the constructor could not be found. Remember to use the default export ('export default class MyModule...').`
-            );
-            return;
-        }
+        const moduleConstructor = await this.resolveModule(moduleConfiguration);
+        if (!moduleConstructor) return;
 
         const module = new moduleConstructor(this, connectorModuleConfiguration, this.loggerFactory.getLogger(moduleConstructor), this.connectorMode);
 
         this.modules.add(module);
 
-        this.logger.info(`Module '${this.getModuleName(moduleConfiguration)}' was loaded successfully.`);
+        this.logger.info(`The module '${module.displayName}' was loaded successfully.`);
+    }
+
+    private async resolveModule(
+        configuration: ConnectorRuntimeModuleConfiguration
+    ): Promise<(new (runtime: ConnectorRuntime, configuration: any, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule) | undefined> {
+        if (configuration.location.startsWith("@nmshd/connector:")) {
+            return this.resolveInternalModule(configuration.location);
+        }
+
+        const importedModule = await this.import(configuration.location);
+        if (!importedModule) {
+            this.logger.error(`The module on location '${configuration.location}' could not be loaded: the location of the module does not exist.`);
+            return;
+        }
+
+        const defaultExport = importedModule?.default;
+        if (!defaultExport) {
+            this.logger.error(
+                `The module on location '${configuration.location}' could not be loaded: the constructor could not be found. Remember to use the default export ('export default class MyModule...').`
+            );
+            return;
+        }
+
+        return defaultExport;
+    }
+
+    private resolveInternalModule(
+        location: string
+    ): (new (runtime: ConnectorRuntime, configuration: any, logger: ILogger, connectorMode: ConnectorMode) => ConnectorRuntimeModule) | undefined {
+        const moduleName = location.split(":")[1];
+
+        switch (moduleName) {
+            case "AutoAcceptPendingRelationshipsModule":
+                return AutoAcceptPendingRelationshipsModule;
+            case "AutoDecomposeDeletionProposedRelationshipsModule":
+                return AutoDecomposeDeletionProposedRelationshipsModule;
+            case "CoreHttpApiModule":
+                return CoreHttpApiModule;
+            case "WebhooksModule":
+                return WebhooksModule;
+            case "MessageBrokerPublisherModule":
+                return MessageBrokerPublisherModule;
+            case "SyncModule":
+                return SyncModule;
+            case "SseModule":
+                return SseModule;
+            default:
+                this.logger.error(`The internal module on location '${location}' could not be loaded because it is not registered as an internal module.`);
+                return undefined;
+        }
     }
 
     private async import(moduleName: string) {
@@ -324,7 +335,7 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         }
     }
 
-    protected async initInfrastructure(): Promise<void> {
+    protected override async initInfrastructure(): Promise<void> {
         if (this.runtimeConfig.infrastructure.httpServer.enabled) {
             const httpServer = new HttpServer(this, this.runtimeConfig.infrastructure.httpServer, this.loggerFactory.getLogger(HttpServer), "httpServer", this.connectorMode);
             this.infrastructure.add(httpServer);
@@ -333,15 +344,19 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         for (const infrastructure of this.infrastructure) {
             await infrastructure.init();
         }
+
+        await super.initInfrastructure();
     }
 
-    protected async startInfrastructure(): Promise<void> {
+    protected override async startInfrastructure(): Promise<void> {
         for (const infrastructure of this.infrastructure) {
             await infrastructure.start();
         }
+
+        await super.startInfrastructure();
     }
 
-    public async stop(): Promise<void> {
+    public override async stop(): Promise<void> {
         if (this.isStarted) {
             try {
                 await super.stop();
@@ -349,13 +364,13 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
                 this.logger.error(e);
             }
         } else if (this.connectorMode === "debug") {
-            this.logger.warn("It seemed like the connector runtime didn't do a proper startup. Closing infrastructure.");
+            this.logger.warn("It seemed like the Connector Runtime didn't do a proper startup. Closing infrastructure.");
 
             await this.stopInfrastructure();
         }
 
         try {
-            await this.databaseConnection?.close();
+            await this.databaseConnection.close();
         } catch (e) {
             this.logger.error(e);
         }
@@ -364,10 +379,12 @@ export class ConnectorRuntime extends Runtime<ConnectorRuntimeConfig> {
         (this.loggerFactory as NodeLoggerFactory).close();
     }
 
-    protected async stopInfrastructure(): Promise<void> {
+    protected override async stopInfrastructure(): Promise<void> {
         for (const infrastructure of this.infrastructure) {
             await infrastructure.stop();
         }
+
+        await super.stopInfrastructure();
     }
 
     private scheduleKillTask() {

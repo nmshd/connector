@@ -2,6 +2,7 @@ import axios from "axios";
 import { ConnectorConfig } from "./ConnectorConfig";
 import {
     AccountEndpoint,
+    AnnouncementsEndpoint,
     AttributesEndpoint,
     ChallengesEndpoint,
     FilesEndpoint,
@@ -24,6 +25,7 @@ export class ConnectorClient {
     }
 
     public readonly account: AccountEndpoint;
+    public readonly announcements: AnnouncementsEndpoint;
     public readonly attributes: AttributesEndpoint;
     public readonly challenges: ChallengesEndpoint;
     public readonly files: FilesEndpoint;
@@ -36,7 +38,7 @@ export class ConnectorClient {
     public readonly relationshipTemplates: RelationshipTemplatesEndpoint;
     public readonly tokens: TokensEndpoint;
 
-    private constructor(config: ConnectorConfig) {
+    protected constructor(config: ConnectorConfig) {
         const axiosInstance = axios.create({
             baseURL: config.baseUrl,
             headers: {
@@ -59,6 +61,7 @@ export class ConnectorClient {
         });
 
         this.account = new AccountEndpoint(axiosInstance);
+        this.announcements = new AnnouncementsEndpoint(axiosInstance);
         this.attributes = new AttributesEndpoint(axiosInstance);
         this.challenges = new ChallengesEndpoint(axiosInstance);
         this.files = new FilesEndpoint(axiosInstance);

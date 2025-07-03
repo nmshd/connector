@@ -8,5 +8,6 @@ export interface GetRelationshipTemplatesRequest {
     passwordProtection?: "" | "!";
     "passwordProtection.password"?: string | string[];
     "passwordProtection.passwordIsPin"?: "true" | "!";
+    "passwordProtection.passwordLocationIndicator"?: string | string[];
     isOwn?: boolean | boolean[];
 }

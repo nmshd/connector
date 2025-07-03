@@ -1,4 +1,5 @@
 export * from "./AccountEndpoint";
+export * from "./AnnouncementsEndpoint";
 export * from "./AttributesEndpoint";
 export * from "./ChallengesEndpoint";
 export * from "./FilesEndpoint";

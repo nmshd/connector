@@ -1,4 +1,6 @@
 import {
+    CanCreateRepositoryAttributeRequest,
+    CanCreateRepositoryAttributeResponse,
     ConnectorAttribute,
     ConnectorAttributeTagCollection,
     ConnectorAttributes,
@@ -25,6 +27,10 @@ import {
 import { Endpoint } from "./Endpoint";
 
 export class AttributesEndpoint extends Endpoint {
+    public async canCreateRepositoryAttribute(request: CanCreateRepositoryAttributeRequest): Promise<ConnectorHttpResponse<CanCreateRepositoryAttributeResponse>> {
+        return await this.put("/api/v2/Attributes/CanCreate", request);
+    }
+
     public async createRepositoryAttribute(request: CreateRepositoryAttributeRequest): Promise<ConnectorHttpResponse<ConnectorAttribute>> {
         return await this.post("/api/v2/Attributes", request);
     }
@@ -60,11 +66,11 @@ export class AttributesEndpoint extends Endpoint {
         return await this.get("/api/v2/Attributes/Own/Repository", request);
     }
 
-    public async getOwnSharedIdentityAttributes(request?: GetOwnSharedIdentityAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
+    public async getOwnSharedIdentityAttributes(request: GetOwnSharedIdentityAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Own/Shared/Identity", request);
     }
 
-    public async getPeerSharedIdentityAttributes(request?: GetPeerSharedIdentityAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
+    public async getPeerSharedIdentityAttributes(request: GetPeerSharedIdentityAttributesRequest): Promise<ConnectorHttpResponse<ConnectorAttributes>> {
         return await this.get("/api/v2/Attributes/Peer/Shared/Identity", request);
     }
 

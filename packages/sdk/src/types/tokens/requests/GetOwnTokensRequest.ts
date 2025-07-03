@@ -6,4 +6,5 @@ export interface GetOwnTokensRequest {
     passwordProtection?: "" | "!";
     "passwordProtection.password"?: string | string[];
     "passwordProtection.passwordIsPin"?: "true" | "!";
+    "passwordProtection.passwordLocationIndicator"?: string | string[];
 }

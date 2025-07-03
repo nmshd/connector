@@ -1,5 +1,5 @@
 import { ConnectorClient } from "@nmshd/connector-sdk";
-import { Random, RandomCharacterRange } from "@nmshd/transport";
+import { Random, RandomCharacterRange } from "@nmshd/core-types";
 import { ChildProcess, spawn } from "child_process";
 import express from "express";
 import http, { Server } from "node:http";
@@ -102,7 +102,7 @@ export class Launcher {
         env["transportLibrary:platformClientId"] = process.env["NMSHD_TEST_CLIENTID"];
         env["transportLibrary:platformClientSecret"] = process.env["NMSHD_TEST_CLIENTSECRET"];
 
-        env.NODE_CONFIG_ENV = "test";
+        env.CUSTOM_CONFIG_LOCATION = ".dev/test.json";
         env.DATABASE_NAME = accountName;
 
         let webhookServer: Server | undefined;

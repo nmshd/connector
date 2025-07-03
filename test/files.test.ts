@@ -103,6 +103,7 @@ describe("File Upload", () => {
 
         expect(response).toBeAnError("must have required property 'content'", "error.runtime.validation.invalidPropertyValue");
     });
+
     test("can upload same file twice", async () => {
         const request = await makeUploadRequest({ file: await fs.promises.readFile(`${__dirname}/__assets__/test.txt`) });
 
@@ -115,6 +116,12 @@ describe("File Upload", () => {
     test("file description is optional", async () => {
         const response = await client1.files.uploadOwnFile(await makeUploadRequest({ description: "" }));
         expect(response).toBeSuccessful(ValidationSchema.File);
+    });
+
+    test("can upload file with tags", async () => {
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ tags: ["tag1", "tag2"] }));
+        expect(response).toBeSuccessful(ValidationSchema.File);
+        expect(response.result.tags).toStrictEqual(["tag1", "tag2"]);
     });
 
     test("cannot upload a file with expiry date in the past", async () => {
@@ -213,10 +220,10 @@ describe("Load peer file with token reference", () => {
         expect(file).toBeDefined();
 
         const token = (await client1.files.createTokenForFile(file.id)).result;
-        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference });
+        const response = await client2.files.loadPeerFile({ reference: token.reference.truncated });
 
         expect(response).toBeSuccessful(ValidationSchema.File);
-        expect(response.result).toMatchObject({ ...file, isOwn: false });
+        expect(response.result).toStrictEqualExcluding({ ...file, isOwn: false, ownershipToken: undefined }, "ownershipToken");
     });
 
     test("after peer file is loaded the file can be accessed under /Files/{id}", async () => {
@@ -224,7 +231,7 @@ describe("Load peer file with token reference", () => {
 
         const response = await client2.files.getFile(file.id);
         expect(response).toBeSuccessful(ValidationSchema.File);
-        expect(response.result).toMatchObject({ ...file, isOwn: false });
+        expect(response.result).toStrictEqualExcluding({ ...file, isOwn: false, ownershipToken: undefined }, "ownershipToken");
     });
 
     test("after peer file is loaded it can be accessed under /Files", async () => {
@@ -232,7 +239,7 @@ describe("Load peer file with token reference", () => {
 
         const response = await client2.files.getFiles({ createdAt: file.createdAt });
         expect(response).toBeSuccessful(ValidationSchema.Files);
-        expect(response.result).toContainEqual({ ...file, isOwn: false });
+        expect(response.result).toContainEqual({ ...file, isOwn: false, ownershipToken: undefined });
     });
 
     test("token can be personalized", async () => {
@@ -240,7 +247,7 @@ describe("Load peer file with token reference", () => {
         const token = (await client1.files.createTokenForFile(file.id, { forIdentity: client2address })).result;
         expect(token.forIdentity).toBe(client2address);
 
-        const response = await client2.files.loadPeerFile({ reference: token.truncatedReference });
+        const response = await client2.files.loadPeerFile({ reference: token.reference.truncated });
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
@@ -290,10 +297,10 @@ describe("Load peer file with reference", () => {
     test("peer file can be loaded", async () => {
         expect(file).toBeDefined();
 
-        const response = await client2.files.loadPeerFile({ reference: file.truncatedReference });
+        const response = await client2.files.loadPeerFile({ reference: file.reference.truncated });
 
         expect(response).toBeSuccessful(ValidationSchema.File);
-        expect(response.result).toMatchObject({ ...file, isOwn: false });
+        expect(response.result).toStrictEqualExcluding({ ...file, isOwn: false, ownershipToken: undefined }, "ownershipToken");
     });
 
     test("after peer file is loaded the file can be accessed under /Files/{id}", async () => {
@@ -301,7 +308,7 @@ describe("Load peer file with reference", () => {
 
         const response = await client2.files.getFile(file.id);
         expect(response).toBeSuccessful(ValidationSchema.File);
-        expect(response.result).toMatchObject({ ...file, isOwn: false });
+        expect(response.result).toStrictEqualExcluding({ ...file, isOwn: false, ownershipToken: undefined }, "ownershipToken");
     });
 
     test("after peer file is loaded it can be accessed under /Files", async () => {
@@ -309,34 +316,86 @@ describe("Load peer file with reference", () => {
 
         const response = await client2.files.getFiles({ createdAt: file.createdAt });
         expect(response).toBeSuccessful(ValidationSchema.Files);
-        expect(response.result).toContainEqual({ ...file, isOwn: false });
+        expect(response.result).toContainEqual({ ...file, isOwn: false, ownershipToken: undefined });
     });
 });
 
 describe("Password-protected tokens for files", () => {
-    test("send and receive an unprotected template via password-protected token", async () => {
+    test("send and receive an unprotected file via password-protected token", async () => {
         const file = await uploadFile(client1);
         const token = (await client1.files.createTokenForFile(file.id, { passwordProtection: { password: "password" } })).result;
         expect(token.passwordProtection?.password).toBe("password");
         expect(token.passwordProtection?.passwordIsPin).toBeUndefined();
 
-        const response = await client2.files.loadPeerFile({
-            reference: token.truncatedReference,
-            password: "password"
-        });
+        const response = await client2.files.loadPeerFile({ reference: token.reference.truncated, password: "password" });
         expect(response).toBeSuccessful(ValidationSchema.File);
     });
 
-    test("send and receive an unprotected template via PIN-protected token", async () => {
+    test("send and receive an unprotected file via PIN-protected token", async () => {
         const file = await uploadFile(client1);
         const token = (await client1.files.createTokenForFile(file.id, { passwordProtection: { password: "1234", passwordIsPin: true } })).result;
         expect(token.passwordProtection?.password).toBe("1234");
         expect(token.passwordProtection?.passwordIsPin).toBe(true);
 
-        const response = await client2.files.loadPeerFile({
-            reference: token.truncatedReference,
-            password: "1234"
-        });
+        const response = await client2.files.loadPeerFile({ reference: token.reference.truncated, password: "1234" });
         expect(response).toBeSuccessful(ValidationSchema.File);
+    });
+
+    test("send and receive an unprotected file via PIN-protected token with PasswordLocationIndicator that is a string", async () => {
+        const file = await uploadFile(client1);
+        const token = (await client1.files.createTokenForFile(file.id, { passwordProtection: { password: "1234", passwordIsPin: true, passwordLocationIndicator: "Self" } }))
+            .result;
+        expect(token.passwordProtection?.password).toBe("1234");
+        expect(token.passwordProtection?.passwordIsPin).toBe(true);
+        expect(token.passwordProtection?.passwordLocationIndicator).toBe("Self");
+
+        const response = await client2.files.loadPeerFile({ reference: token.reference.truncated, password: "1234" });
+        expect(response).toBeSuccessful(ValidationSchema.File);
+    });
+
+    test("send and receive an unprotected file via PIN-protected token with PasswordLocationIndicator that is a number", async () => {
+        const file = await uploadFile(client1);
+        const token = (await client1.files.createTokenForFile(file.id, { passwordProtection: { password: "1234", passwordIsPin: true, passwordLocationIndicator: 51 } })).result;
+        expect(token.passwordProtection?.password).toBe("1234");
+        expect(token.passwordProtection?.passwordIsPin).toBe(true);
+        expect(token.passwordProtection?.passwordLocationIndicator).toBe(51);
+
+        const response = await client2.files.loadPeerFile({ reference: token.reference.truncated, password: "1234" });
+        expect(response).toBeSuccessful(ValidationSchema.File);
+    });
+});
+
+describe("Delete file", () => {
+    test("delete a file", async () => {
+        const file = (await client1.files.uploadOwnFile(await makeUploadRequest())).result;
+
+        const getFileResult = await client1.files.getFile(file.id);
+        expect(getFileResult).toBeSuccessful(ValidationSchema.File);
+
+        const deleteFileResult = await client1.files.deleteFile(file.id);
+        expect(deleteFileResult).toBeSuccessfulVoidResult();
+
+        const getFileAfterDeletionResult = await client1.files.getFile(file.id);
+        expect(getFileAfterDeletionResult).toBeAnError("File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+    });
+});
+
+describe("File ownership", () => {
+    test("ownership token is returned when uploading a file", async () => {
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest());
+
+        expect(response).toBeSuccessful(ValidationSchema.File);
+        expect(response.result.ownershipToken).toBeDefined();
+    });
+
+    test("ownership token can be regenerated", async () => {
+        const file = await uploadFile(client1);
+        const initialOwnershipToken = file.ownershipToken;
+
+        const regenerateResponse = await client1.files.regenerateFileOwnershipToken(file.id);
+
+        expect(regenerateResponse).toBeSuccessful(ValidationSchema.File);
+        expect(regenerateResponse.result.ownershipToken).toBeDefined();
+        expect(regenerateResponse.result.ownershipToken).not.toBe(initialOwnershipToken);
     });
 });

@@ -128,12 +128,12 @@ describe("Message query", () => {
             .addDateSet("createdAt")
             .addStringSet("createdBy")
             .addStringSet("recipients.address", message.recipients[0].address)
+            .addStringSet("recipients.relationshipId", message.recipients[0].relationshipId)
             .addStringSet("content.@type")
             .addStringSet("content.subject")
             .addStringSet("content.body")
             .addStringSet("createdByDevice")
             .addStringArraySet("attachments")
-            .addStringArraySet("relationshipIds")
             .addSingleCondition({
                 key: "participant",
                 value: [message.createdBy, "id111111111111111111111111111111111"],

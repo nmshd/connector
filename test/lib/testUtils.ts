@@ -15,6 +15,7 @@ import {
     UploadOwnFileRequest
 } from "@nmshd/connector-sdk";
 import { AttributeValues, RelationshipAttributeJSON } from "@nmshd/content";
+import { PasswordLocationIndicator } from "@nmshd/core-types";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata } from "./Launcher";
@@ -139,7 +140,11 @@ export async function syncUntilHasMessageWithResponse(client: ConnectorClientWit
     ).data.message;
 }
 
-export async function uploadOwnToken(client: ConnectorClient, forIdentity?: string, passwordProtection?: { password: string; passwordIsPin?: true }): Promise<ConnectorToken> {
+export async function uploadOwnToken(
+    client: ConnectorClient,
+    forIdentity?: string,
+    passwordProtection?: { password: string; passwordIsPin?: true; passwordLocationIndicator?: PasswordLocationIndicator }
+): Promise<ConnectorToken> {
     const response = await client.tokens.createOwnToken({
         content: { aKey: "aValue" },
         expiresAt: DateTime.utc().plus({ days: 1 }).toString(),
@@ -182,7 +187,7 @@ export async function makeUploadRequest(values: Partial<UploadOwnFileRequest> = 
 export async function createTemplate(
     client: ConnectorClient,
     forIdentity?: string,
-    passwordProtection?: { password: string; passwordIsPin?: true }
+    passwordProtection?: { password: string; passwordIsPin?: true; passwordLocationIndicator?: PasswordLocationIndicator }
 ): Promise<ConnectorRelationshipTemplate> {
     const response = await client.relationshipTemplates.createOwnRelationshipTemplate({
         maxNumberOfAllocations: 1,
@@ -200,7 +205,11 @@ export async function createTemplate(
     return response.result;
 }
 
-export async function getTemplateToken(client: ConnectorClient, forIdentity?: string, passwordProtection?: { password: string; passwordIsPin?: true }): Promise<ConnectorToken> {
+export async function getTemplateToken(
+    client: ConnectorClient,
+    forIdentity?: string,
+    passwordProtection?: { password: string; passwordIsPin?: true; passwordLocationIndicator?: PasswordLocationIndicator }
+): Promise<ConnectorToken> {
     const template = await createTemplate(client, forIdentity, passwordProtection);
 
     const response = await client.relationshipTemplates.createTokenForOwnRelationshipTemplate(template.id, { forIdentity, passwordProtection });
@@ -222,7 +231,7 @@ export async function exchangeTemplate(clientCreator: ConnectorClient, clientRec
     const templateToken = await getTemplateToken(clientCreator, forIdentity);
 
     const response = await clientRecpipient.relationshipTemplates.loadPeerRelationshipTemplate({
-        reference: templateToken.truncatedReference
+        reference: templateToken.reference.truncated
     });
     expect(response).toBeSuccessful(ValidationSchema.RelationshipTemplate);
 
@@ -232,7 +241,7 @@ export async function exchangeTemplate(clientCreator: ConnectorClient, clientRec
 export async function exchangeFile(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient): Promise<ConnectorFile> {
     const fileToken = await getFileToken(clientCreator);
 
-    const response = await clientRecpipient.files.loadPeerFile({ reference: fileToken.truncatedReference });
+    const response = await clientRecpipient.files.loadPeerFile({ reference: fileToken.reference.truncated });
     expect(response).toBeSuccessful(ValidationSchema.File);
 
     return response.result;
@@ -241,7 +250,7 @@ export async function exchangeFile(clientCreator: ConnectorClient, clientRecpipi
 export async function exchangeToken(clientCreator: ConnectorClient, clientRecpipient: ConnectorClient, forIdentity?: string): Promise<ConnectorToken> {
     const token = await uploadOwnToken(clientCreator, forIdentity);
 
-    const response = await clientRecpipient.tokens.loadPeerToken({ reference: token.truncatedReference });
+    const response = await clientRecpipient.tokens.loadPeerToken({ reference: token.reference.truncated });
     expect(response).toBeSuccessful(ValidationSchema.Token);
 
     return response.result;
@@ -518,4 +527,37 @@ export async function waitForEvent<TEvent>(
         eventBus.unsubscribe(subscriptionId);
         clearTimeout(timeoutId);
     });
+}
+
+export async function deleteAllAttributes(client: ConnectorClient, clientAddress: string): Promise<void> {
+    const attributesResponse = await client.attributes.getAttributes({});
+    expect(attributesResponse).toBeSuccessful(ValidationSchema.ConnectorAttributes);
+
+    for (const attribute of attributesResponse.result) {
+        if (!attribute.shareInfo) {
+            const result = await client.attributes.deleteRepositoryAttribute(attribute.id);
+            expect(result).toBeSuccessfulVoidResult();
+            continue;
+        }
+
+        if (attribute.shareInfo.thirdPartyAddress) {
+            const result = await client.attributes.deleteThirdPartyRelationshipAttributeAndNotifyPeer(attribute.id);
+            expect(result).toBeSuccessful(ValidationSchema.DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse);
+            continue;
+        }
+
+        if (attribute.content.owner === clientAddress) {
+            const result = await client.attributes.deleteOwnSharedAttributeAndNotifyPeer(attribute.id);
+            expect(result).toBeSuccessful(ValidationSchema.DeleteOwnSharedAttributeAndNotifyPeerResponse);
+            continue;
+        }
+
+        if (attribute.content.owner !== clientAddress) {
+            const result = await client.attributes.deletePeerSharedAttributeAndNotifyOwner(attribute.id);
+            expect(result).toBeSuccessful(ValidationSchema.DeletePeerSharedAttributeAndNotifyOwnerResponse);
+            continue;
+        }
+
+        throw new Error("No delete method called");
+    }
 }

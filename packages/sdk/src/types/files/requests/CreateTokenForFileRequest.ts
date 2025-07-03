@@ -5,5 +5,6 @@ export interface CreateTokenForFileRequest {
     passwordProtection?: {
         password: string;
         passwordIsPin?: true;
+        passwordLocationIndicator?: string | number;
     };
 }

@@ -21,12 +21,7 @@ export class FilesEndpoint extends Endpoint {
     public async uploadOwnFile(request: UploadOwnFileRequest): Promise<ConnectorHttpResponse<ConnectorFile>> {
         const response = await this.postMultipart(
             "/api/v2/Files/Own",
-            {
-                title: request.title,
-                description: request.description,
-                expiresAt: request.expiresAt,
-                file: request.file
-            },
+            { title: request.title, description: request.description, expiresAt: request.expiresAt, file: request.file, tags: request.tags },
             request.filename
         );
         return this.makeResult(response);
@@ -52,8 +47,8 @@ export class FilesEndpoint extends Endpoint {
         return await this.download(`/api/v2/Files/${fileId}/Download`);
     }
 
-    public async getQrCodeForFile(fileId: string): Promise<ConnectorHttpResponse<ArrayBuffer>> {
-        return await this.downloadQrCode("GET", `/api/v2/Files/${fileId}`);
+    public async getQrCodeForFile(fileId: string, newQRCodeFormat?: boolean): Promise<ConnectorHttpResponse<ArrayBuffer>> {
+        return await this.downloadQrCode("GET", `/api/v2/Files/${fileId}`, { newQRCodeFormat: newQRCodeFormat ? "true" : undefined });
     }
 
     public async createTokenForFile(fileId: string, request?: CreateTokenForFileRequest): Promise<ConnectorHttpResponse<ConnectorToken>> {
@@ -62,5 +57,13 @@ export class FilesEndpoint extends Endpoint {
 
     public async createTokenQrCodeForFile(fileId: string, request?: CreateTokenQrCodeForFileRequest): Promise<ConnectorHttpResponse<ArrayBuffer>> {
         return await this.downloadQrCode("POST", `/api/v2/Files/${fileId}/Token`, request);
+    }
+
+    public async deleteFile(fileId: string): Promise<ConnectorHttpResponse<void>> {
+        return await this.delete(`/api/v2/Files/${fileId}`, undefined, 204);
+    }
+
+    public async regenerateFileOwnershipToken(fileId: string): Promise<ConnectorHttpResponse<ConnectorFile>> {
+        return await this.patch(`/api/v2/Files/${fileId}/RegenerateOwnershipToken`, undefined);
     }
 }

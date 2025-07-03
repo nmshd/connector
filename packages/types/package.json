@@ -1,0 +1,49 @@
+{
+    "name": "@nmshd/connector-types",
+    "description": "the enmeshed Connector types",
+    "keywords": [
+        "enmeshed",
+        "connector"
+    ],
+    "homepage": "https://enmeshed.eu/integrate",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nmshd/connector.git",
+        "directory": "/packages/types"
+    },
+    "license": "MIT",
+    "author": "j&s-soft AG",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist/",
+        "README.md"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "build:ci": "tsc",
+        "build:watch": "tsc --watch"
+    },
+    "devDependencies": {
+        "@js-soft/logging-abstractions": "^1.0.1",
+        "@types/express": "^5.0.3",
+        "@types/luxon": "^3.6.2",
+        "@types/node": "^22.15.33",
+        "@types/qrcode": "^1.5.5",
+        "typescript": "^5.8.3"
+    },
+    "peerDependencies": {
+        "@js-soft/docdb-access-abstractions": "^1.1.0",
+        "@js-soft/ts-utils": "^2.3.3",
+        "@nmshd/runtime": "^6.58.0",
+        "@nmshd/typescript-rest": "^3.1.5",
+        "express": "^5.1.0"
+    },
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
+    },
+    "dependencies": {
+        "qrcode": "^1.5.4"
+    }
+}

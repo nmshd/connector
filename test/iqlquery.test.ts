@@ -37,7 +37,7 @@ beforeAll(async () => {
             owner: client1Address,
             value: {
                 "@type": "GivenName",
-                value: "AGivenName"
+                value: "ASecondGivenName"
             },
             tags: ["language:de", "content:edu.de.higher"]
         }
@@ -50,7 +50,7 @@ beforeAll(async () => {
 
     /* Initialize relationship. */
     const token = await getTemplateToken(client1);
-    const templateId = (await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.truncatedReference })).result.id;
+    const templateId = (await client2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: token.reference.truncated })).result.id;
     const relationshipId = (await client2.relationships.createRelationship({ templateId, creationContent: { "@type": "ArbitraryRelationshipCreationContent", value: {} } })).result
         .id;
     for (const c of [client1, client2]) {
@@ -188,8 +188,8 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
     };
     await client1.incomingRequests.accept(incomingRequest.id, requestResponse);
     const syncRes = await syncUntilHasMessages(client2);
-    const attribute = (syncRes[0] as any).content.response.items[0].attribute;
-    expect(attribute).toStrictEqual(attributes[table[0].matches]);
+    const responseItem = (syncRes[0] as any).content.response.items[0];
+    expect(responseItem["@type"]).toBe("AttributeAlreadySharedAcceptResponseItem");
 });
 
 test("Remote ProposeAttributeRequest containing IQL Query without existing attribute response", async () => {

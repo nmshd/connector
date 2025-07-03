@@ -1,14 +1,21 @@
 export interface ConnectorFile {
     id: string;
+    isOwn: boolean;
     filename: string;
+    tags?: string[];
     filesize: number;
     createdAt: string;
     createdBy: string;
     createdByDevice: string;
     expiresAt: string;
     mimetype: string;
-    isOwn: boolean;
     title: string;
     description?: string;
     truncatedReference: string;
+    reference: {
+        truncated: string;
+        url: string;
+    };
+    ownershipToken?: string;
+    ownershipIsLocked?: true;
 }

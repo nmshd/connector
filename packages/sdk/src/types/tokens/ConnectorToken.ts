@@ -1,5 +1,6 @@
 export interface ConnectorToken {
     id: string;
+    isOwn: boolean;
     createdBy: string;
     createdByDevice: string;
     content: unknown;
@@ -9,7 +10,12 @@ export interface ConnectorToken {
     passwordProtection?: {
         password: string;
         passwordIsPin?: true;
+        passwordLocationIndicator?: string | number;
     };
     truncatedReference: string;
+    reference: {
+        truncated: string;
+        url: string;
+    };
     isEphemeral: boolean;
 }

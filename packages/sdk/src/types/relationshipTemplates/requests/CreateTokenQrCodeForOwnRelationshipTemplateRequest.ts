@@ -4,5 +4,7 @@ export interface CreateTokenQrCodeForOwnRelationshipTemplateRequest {
     passwordProtection?: {
         password: string;
         passwordIsPin?: true;
+        passwordLocationIndicator?: string | number;
     };
+    newQRCodeFormat?: boolean;
 }

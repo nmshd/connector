@@ -7,7 +7,7 @@ services:
       context: ..
       dockerfile: Dockerfile
       args:
-        VERSION: "{{version}}"
+        VERSION: "1.0.0"
         BUILD_NUMBER: "test"
         COMMIT_HASH: "test"
     container_name: connector
@@ -31,7 +31,7 @@ services:
   mongo:
     container_name: mongo
     hostname: mongo
-    image: mongo
+    image: mongo@sha256:98028cf281bb5d49ace5e1ddbd4509e8f1382fe80ef1cf101eeefdc106d76cd4
     ports:
       - "27017:27017"
     logging:

@@ -11,6 +11,8 @@ expect.extend(
 
 export enum ValidationSchema {
     Error = "ConnectorError",
+    ConnectorAnnouncement = "ConnectorAnnouncement",
+    ConnectorAnnouncements = "ConnectorAnnouncements",
     File = "ConnectorFile",
     Files = "ConnectorFiles",
     IdentityMetadata = "ConnectorIdentityMetadata",
@@ -37,7 +39,10 @@ export enum ValidationSchema {
     ConnectorAttribute = "ConnectorAttribute",
     ConnectorAttributes = "ConnectorAttributes",
     ConnectorAttributeTagCollection = "ConnectorAttributeTagCollection",
-    SucceedAttributeResponse = "SucceedAttributeResponse"
+    SucceedAttributeResponse = "SucceedAttributeResponse",
+    DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse = "DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse",
+    DeleteOwnSharedAttributeAndNotifyPeerResponse = "DeleteOwnSharedAttributeAndNotifyPeerResponse",
+    DeletePeerSharedAttributeAndNotifyOwnerResponse = "DeletePeerSharedAttributeAndNotifyOwnerResponse"
 }
 
 export function validateSchema(schemaName: ValidationSchema, obj: any): void {

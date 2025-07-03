@@ -13,6 +13,11 @@ export interface ConnectorRelationshipTemplate {
     passwordProtection?: {
         password: string;
         passwordIsPin?: true;
+        passwordLocationIndicator?: string | number;
     };
     truncatedReference: string;
+    reference: {
+        truncated: string;
+        url: string;
+    };
 }

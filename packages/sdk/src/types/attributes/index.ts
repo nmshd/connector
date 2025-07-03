@@ -4,6 +4,8 @@ export * from "./ConnectorAttributeTagCollection";
 export * from "./IdentityAttributeQuery";
 export * from "./IQLQuery";
 export * from "./RelationshipAttributeQuery";
+export * from "./requests/CanCreateRepositoryAttributeRequest";
+export * from "./requests/CanCreateRepositoryAttributeResponse";
 export * from "./requests/CreateRepositoryAttributeRequest";
 export * from "./requests/DeleteOwnSharedAttributeAndNotifyPeerResponse";
 export * from "./requests/DeletePeerSharedAttributeAndNotifyOwnerResponse";

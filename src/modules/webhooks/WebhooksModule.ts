@@ -1,14 +1,14 @@
 import { Event, DataEvent as tsUtilsDataEvent } from "@js-soft/ts-utils";
+import { ConnectorRuntimeModule } from "@nmshd/connector-types";
 import { DataEvent } from "@nmshd/runtime";
 import agentKeepAlive from "agentkeepalive";
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import correlator from "correlation-id";
-import { ConnectorRuntimeModule } from "../../ConnectorRuntimeModule";
 import { ConfigModel, Webhook } from "./ConfigModel";
 import { ConfigParser } from "./ConfigParser";
 import { WebhooksModuleConfiguration } from "./WebhooksModuleConfiguration";
 
-export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfiguration> {
+export class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfiguration> {
     private axios: AxiosInstance;
     private configModel: ConfigModel;
 
@@ -46,12 +46,19 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
         try {
             this.logger.debug(`Sending request to webhook '${url}' for trigger '${trigger}'.`);
 
-            let headers = webhook.target.headers;
+            const headers: Record<string, string> = { ...webhook.target.headers };
 
             const correlationId = correlator.getId();
-            if (correlationId) headers = { ...headers, "x-correlation-id": correlationId };
+            if (correlationId) headers["x-correlation-id"] = correlationId;
+            this.logger.info(`Sending request to webhook ${JSON.stringify(payload)}`);
 
-            const response = await this.axios.post(url, payload, { headers });
+            const config: AxiosRequestConfig = { headers };
+
+            if (webhook.target.authenticator) {
+                await webhook.target.authenticator.authenticate(config);
+            }
+
+            const response = await this.axios.post(url, payload, config);
 
             if (response.status < 200 || response.status > 299) {
                 this.logger.warn(`Request to webhook '${url}' returned status ${response.status}. Expected value between 200 and 299.`);
@@ -61,10 +68,6 @@ export default class WebhooksModule extends ConnectorRuntimeModule<WebhooksModul
         } catch (e) {
             this.logger.error(`Request to webhook '${url}' failed with the following error:`, e);
         }
-    }
-
-    public stop(): void {
-        this.unsubscribeFromAllEvents();
     }
 }
 
