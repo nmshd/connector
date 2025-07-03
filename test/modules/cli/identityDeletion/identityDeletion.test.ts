@@ -1,9 +1,10 @@
-import { identityDeletionCancelHandler, identityDeletionInitHandler } from "../../../../dist/cli/commands";
+import { identityDeletionCancelHandler, identityDeletionInitHandler, identityInitHandler } from "../../../../dist/cli/commands";
 import { resetDB, setupEnvironment } from "../setup";
 
 describe("Identity deletion", () => {
-    beforeAll(() => {
+    beforeAll(async () => {
         setupEnvironment();
+        await identityInitHandler({});
     });
 
     afterAll(async () => {

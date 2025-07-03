@@ -1,12 +1,13 @@
 import { sleep } from "@js-soft/ts-utils";
-import { identityDeletionInitHandler, identityStatusHandler } from "../../../../dist/cli/commands";
+import { identityDeletionInitHandler, identityInitHandler, identityStatusHandler } from "../../../../dist/cli/commands";
 import { resetDB, setupEnvironment } from "../setup";
 
 describe("Identity status", () => {
     const identityStatusPattern = /Identity Address: did:e:((([A-Za-z0-9]+(-[A-Za-z0-9]+)*)\.)+[a-z]{2,}|localhost):dids:[0-9a-f]{22}/;
 
-    beforeAll(() => {
+    beforeAll(async () => {
         setupEnvironment();
+        await identityInitHandler({});
     });
 
     afterAll(async () => {

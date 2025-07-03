@@ -2,14 +2,14 @@
 
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import { startConnectorCommand, yargsIdentityDeletionCancelCommand, yargsIdentityDeletionInitCommand, yargsIdentityStatusCommand } from "./cli/commands";
+import { startConnectorCommand, yargsIdentityDeletionCancelCommand, yargsIdentityDeletionInitCommand, yargsIdentityInitCommand, yargsIdentityStatusCommand } from "./cli/commands";
 
 yargs(hideBin(process.argv))
     .command({
         command: "identity [command]",
         describe: "Identity related commands",
         builder: (yargs) => {
-            return yargs.command(yargsIdentityStatusCommand);
+            return yargs.command(yargsIdentityStatusCommand).command(yargsIdentityInitCommand);
         },
         handler: () => {
             yargs.showHelp("log");
