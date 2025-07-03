@@ -30,7 +30,7 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
         .defaults({
             debug: false,
             transportLibrary: {
-                allowIdentityCreation: false
+                allowIdentityCreation: true
             },
             database: {
                 driver: "mongodb",
