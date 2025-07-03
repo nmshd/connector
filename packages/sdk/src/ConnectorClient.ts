@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ApiKeyAuthenticator } from "./authentication";
 import { ConnectorConfig } from "./ConnectorConfig";
 import {
     AccountEndpoint,
@@ -47,7 +48,10 @@ export class ConnectorClient {
             paramsSerializer: { dots: true, indexes: null }
         });
 
-        axiosInstance.interceptors.request.use(async (requestConfig) => await config.authenticator.authenticate(requestConfig));
+        const authenticator = "authenticator" in config ? config.authenticator : "apiKey" in config ? new ApiKeyAuthenticator(config.apiKey) : null;
+
+        if (!authenticator) throw new Error("No authenticator provided. Please provide an authenticator or an API key.");
+        axiosInstance.interceptors.request.use(async (requestConfig) => await authenticator.authenticate(requestConfig));
 
         axiosInstance.interceptors.request.use((config) => {
             const correlationId = this.#correlationId;
