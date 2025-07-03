@@ -223,9 +223,10 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         }
 
         const httpServer = config.infrastructure.httpServer as any;
-        if (httpServer?.authentication?.apiKeys) httpServer.authentication.apiKeys = "enabled";
-        if (httpServer?.authentication?.oidc) httpServer.authentication.oidc = "enabled";
-        if (httpServer?.authentication?.jwtBearer) httpServer.authentication.jwtBearer = "enabled";
+        const authentication = httpServer?.authentication;
+        if (authentication?.apiKeys) httpServer.authentication.apiKeys = "enabled";
+        if (authentication?.oidc) httpServer.authentication.oidc = "enabled";
+        if (authentication?.jwtBearer) httpServer.authentication.jwtBearer = "enabled";
 
         const transport = config.transportLibrary;
         if (transport.platformClientSecret) {
