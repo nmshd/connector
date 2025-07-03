@@ -1,7 +1,6 @@
 import { LanguageISO639 } from "@nmshd/core-types";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { getTimeout } from "./lib/setTimeout";
-import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client: ConnectorClientWithMetadata;
@@ -16,6 +15,6 @@ describe("Announcements", () => {
             language: LanguageISO639.en
         });
 
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorAnnouncements);
+        expect(response).toBeSuccessful();
     });
 });

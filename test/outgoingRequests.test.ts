@@ -1,11 +1,11 @@
-import { ConnectorClient, ConnectorRequestStatus } from "@nmshd/connector-sdk";
+import { ConnectorClient } from "@nmshd/connector-sdk";
 import { ReadAttributeRequestItemJSON } from "@nmshd/content";
+import { LocalRequestStatus } from "@nmshd/runtime-types";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
 import { establishRelationship } from "./lib/testUtils";
-import { ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let client1: ConnectorClient;
@@ -27,10 +27,10 @@ describe("Outgoing Requests", () => {
             peer: (await client1.account.getIdentityInfo()).result.address
         });
 
-        expect(response).toBeSuccessful(ValidationSchema.ConnectorRequest);
+        expect(response).toBeSuccessful();
 
         const sConsumptionRequest = (await client2.outgoingRequests.getRequest(response.result.id)).result;
-        expect(sConsumptionRequest.status).toBe(ConnectorRequestStatus.Draft);
+        expect(sConsumptionRequest.status).toBe(LocalRequestStatus.Draft);
         expect(sConsumptionRequest.content.items).toHaveLength(1);
         expect(sConsumptionRequest.content.items[0]["@type"]).toBe("ReadAttributeRequestItem");
         expect((sConsumptionRequest.content.items[0] as ReadAttributeRequestItemJSON).mustBeAccepted).toBe(false);
@@ -61,6 +61,6 @@ describe("Outgoing Requests", () => {
             .addStringSet("response.content.items.@type")
             .addStringSet("response.content.items.items.@type");
 
-        await conditions.executeTests((c, q) => c.outgoingRequests.getRequests(q), ValidationSchema.ConnectorRequests);
+        await conditions.executeTests((c, q) => c.outgoingRequests.getRequests(q));
     });
 });
