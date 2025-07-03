@@ -91,7 +91,7 @@ export class Launcher {
     private async spawnConnector(port: number, accountName: string, eventBus?: MockEventBus) {
         const env = process.env;
         env["infrastructure:httpServer:port"] = port.toString();
-        env["infrastructure:httpServer:apiKey"] = this.apiKey;
+        env["infrastructure:httpServer:authentication:apiKeys"] = `["${this.apiKey}"]`;
 
         const notDefinedEnvironmentVariables = ["NMSHD_TEST_BASEURL", "NMSHD_TEST_CLIENTID", "NMSHD_TEST_CLIENTSECRET"].filter((env) => !process.env[env]);
         if (notDefinedEnvironmentVariables.length > 0) {

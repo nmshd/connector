@@ -19,8 +19,8 @@ You can find a more detailed documentation [in the enmeshed docs](https://enmesh
             platformClientId: "<client-id>"
             platformClientSecret: "<client-secret>"
         infrastructure:
-            authentication:
-                httpServer:
+            httpServer:
+                authentication:
                     apiKeys: ["<api-key>"]
     ```
 
