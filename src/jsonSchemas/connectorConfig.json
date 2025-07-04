@@ -85,7 +85,7 @@
                                             "type": "object"
                                         }
                                     },
-                                    "required": ["enabled", "headerName", "keys"],
+                                    "required": ["enabled", "keys"],
                                     "type": "object"
                                 },
                                 "jwtBearer": {

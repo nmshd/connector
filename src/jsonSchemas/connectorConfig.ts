@@ -47,7 +47,7 @@ interface InfrastructureConfiguration {
         authentication: {
             apiKey?: {
                 enabled: boolean;
-                headerName: string;
+                headerName?: string;
                 keys: Record<
                     string,
                     {
