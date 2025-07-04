@@ -274,6 +274,10 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             .filter((apiKey) => apiKey.enabled !== false)
             .filter((apiKey) => apiKey.expiresAt === undefined || !CoreDate.from(apiKey.expiresAt).isExpired());
 
+        if (enabledAndNotExpiredApiKeys.length === 0) {
+            throw new Error("No valid API keys found in configuration. At least one is required.");
+        }
+
         const notMatchingApiKeys = enabledAndNotExpiredApiKeys.filter((apiKey) => !apiKey.key.match(apiKeyPolicy));
         if (notMatchingApiKeys.length !== 0) {
             throw new Error(
