@@ -51,6 +51,7 @@ interface InfrastructureConfiguration {
                 keys: Record<
                     string,
                     {
+                        enabled?: boolean;
                         key: string;
                         description?: string;
                         /**
