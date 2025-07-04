@@ -21,7 +21,11 @@ You can find a more detailed documentation [in the enmeshed docs](https://enmesh
         infrastructure:
             httpServer:
                 authentication:
-                    apiKeys: ["<api-key>"]
+                    apiKey:
+                        enabled: true
+                        keys:
+                            default:
+                                key: "<api-key>"
     ```
 
 ### Install the chart
@@ -46,7 +50,11 @@ config:
     infrastructure:
         httpServer:
             authentication:
-                apiKeys: ["<api-key>"]
+                apiKey:
+                    enabled: true
+                    keys:
+                        default:
+                            key: "<api-key>"
 
 pod:
     ferretdb:

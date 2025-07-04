@@ -55,14 +55,57 @@
                         "authentication": {
                             "additionalProperties": false,
                             "properties": {
-                                "apiKeys": {
-                                    "items": {
-                                        "type": "string"
+                                "apiKey": {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "enabled": {
+                                            "type": "boolean"
+                                        },
+                                        "headerName": {
+                                            "type": "string"
+                                        },
+                                        "keys": {
+                                            "additionalProperties": {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "expiresAt": {
+                                                        "format": "date",
+                                                        "type": "string"
+                                                    },
+                                                    "key": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["key"],
+                                                "type": "object"
+                                            },
+                                            "type": "object"
+                                        }
                                     },
-                                    "type": "array"
+                                    "required": ["enabled", "headerName", "keys"],
+                                    "type": "object"
                                 },
-                                "jwtBearer": {},
-                                "oidc": {}
+                                "jwtBearer": {
+                                    "properties": {
+                                        "enabled": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": ["enabled"],
+                                    "type": "object"
+                                },
+                                "oidc": {
+                                    "properties": {
+                                        "enabled": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": ["enabled"],
+                                    "type": "object"
+                                }
                             },
                             "type": "object"
                         },

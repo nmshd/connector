@@ -6,7 +6,10 @@
     "infrastructure": {
         "httpServer": {
             "authentication": {
-                "apiKeys": ["This_is_a_test_APIKEY_with_30_chars+"]
+                "apiKey": {
+                    "enabled": true,
+                    "keys": { "default": { "key": "This_is_a_test_APIKEY_with_30_chars+" } }
+                }
             }
         }
     },

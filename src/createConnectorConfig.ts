@@ -62,7 +62,11 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                         origin: false
                     },
 
-                    authentication: {}
+                    authentication: {
+                        apiKey: { enabled: false },
+                        oidc: { enabled: false },
+                        jwtBearer: { enabled: false }
+                    }
                 }
             },
             modules: {

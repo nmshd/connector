@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // To regenerate the json schema, execute the following command:
-// npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t "ConnectorConfig" --no-top-ref
+// npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t "ConnectorConfig" --no-top-ref && npx prettier --write src/jsonSchemas/connectorConfig.ts
 
 export interface MongoDBSettings {
     driver: "mongodb";
@@ -45,9 +45,24 @@ interface InfrastructureConfiguration {
         cors?: any;
         helmetOptions?: any;
         authentication: {
-            apiKeys?: string[];
-            oidc?: any;
-            jwtBearer?: any;
+            apiKey?: {
+                enabled: boolean;
+                headerName: string;
+                keys: Record<
+                    string,
+                    {
+                        key: string;
+                        description?: string;
+                        /**
+                         * @errorMessage must match ISO8601 datetime format
+                         * @format date
+                         */
+                        expiresAt?: string;
+                    }
+                >;
+            };
+            oidc?: any & { enabled: boolean };
+            jwtBearer?: any & { enabled: boolean };
         };
     };
 }

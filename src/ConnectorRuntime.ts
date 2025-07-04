@@ -224,9 +224,9 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
         const httpServer = config.infrastructure.httpServer as any;
         const authentication = httpServer?.authentication;
-        if (authentication?.apiKeys) authentication.apiKeys = "redacted, but enabled";
-        if (authentication?.oidc) authentication.oidc = "redacted, but enabled";
-        if (authentication?.jwtBearer) authentication.jwtBearer = "redacted, but enabled";
+        if (authentication?.apiKey) authentication.apiKey = authentication.apiKey.enabled ? "redacted (enabled)" : "redacted (disabled)";
+        if (authentication?.oidc) authentication.oidc = authentication.oidc.enabled ? "redacted (enabled)" : "redacted (disabled)";
+        if (authentication?.jwtBearer) authentication.jwtBearer = authentication.jwtBearer.enabled ? "redacted (enabled)" : "redacted (disabled)";
 
         const transport = config.transportLibrary;
         if (transport.platformClientSecret) {
