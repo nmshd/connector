@@ -56,37 +56,53 @@
                             "additionalProperties": false,
                             "properties": {
                                 "apiKey": {
-                                    "additionalProperties": false,
-                                    "properties": {
-                                        "enabled": {
-                                            "type": "boolean"
-                                        },
-                                        "headerName": {
-                                            "type": "string"
-                                        },
-                                        "keys": {
-                                            "additionalProperties": {
-                                                "additionalProperties": false,
-                                                "properties": {
-                                                    "description": {
-                                                        "type": "string"
-                                                    },
-                                                    "expiresAt": {
-                                                        "format": "date",
-                                                        "type": "string"
-                                                    },
-                                                    "key": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                "required": ["key"],
-                                                "type": "object"
+                                    "anyOf": [
+                                        {
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "enabled": {
+                                                    "const": false,
+                                                    "type": "boolean"
+                                                }
                                             },
+                                            "required": ["enabled"],
+                                            "type": "object"
+                                        },
+                                        {
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "enabled": {
+                                                    "const": true,
+                                                    "type": "boolean"
+                                                },
+                                                "headerName": {
+                                                    "type": "string"
+                                                },
+                                                "keys": {
+                                                    "additionalProperties": {
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                            "description": {
+                                                                "type": "string"
+                                                            },
+                                                            "expiresAt": {
+                                                                "format": "date",
+                                                                "type": "string"
+                                                            },
+                                                            "key": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": ["key"],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "required": ["enabled", "keys"],
                                             "type": "object"
                                         }
-                                    },
-                                    "required": ["enabled", "keys"],
-                                    "type": "object"
+                                    ]
                                 },
                                 "jwtBearer": {
                                     "properties": {
