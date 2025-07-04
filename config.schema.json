@@ -50,7 +50,8 @@
                         "authentication": {
                             "additionalProperties": false,
                             "properties": {
-                                "apiKeys": {
+                                // TODO: copy me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                "apiKey": {
                                     "items": {
                                         "type": "string"
                                     },
