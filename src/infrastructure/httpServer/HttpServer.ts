@@ -278,15 +278,12 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
         const allApiKeys = Object.values(configuredApiKeys).map((def) => def.key);
         if (allApiKeys.length !== new Set(allApiKeys).size) {
-            // TODO: is is easy to tell which keys are duplicates?
             throw new Error("Duplicate API keys found in configuration. Each API key must be unique.");
         }
 
         const validApiKeys = Object.entries(configuredApiKeys)
             .filter((apiKey) => apiKey[1].enabled !== false)
             .filter((apiKey) => apiKey[1].expiresAt === undefined || !CoreDate.from(apiKey[1].expiresAt).isExpired());
-
-        // TODO: tell which keys are disabled or expired by reference (id)?
 
         if (validApiKeys.length === 0) throw new Error("No valid API keys found in configuration. At least one is required.");
 
