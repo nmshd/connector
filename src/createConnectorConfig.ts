@@ -69,7 +69,7 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                 notification: { enabled: true, location: "@nmshd/runtime:NotificationModule" },
                 decider: { enabled: true, location: "@nmshd/runtime:DeciderModule" },
                 request: { enabled: true, location: "@nmshd/runtime:RequestModule" },
-                attributeListener: { enabled: true, location: "@nmshd/runtime:AttributeListenerModule" },
+
                 autoAcceptPendingRelationships: { enabled: false, location: "@nmshd/connector:AutoAcceptPendingRelationshipsModule" },
                 autoDecomposeDeletionProposedRelationships: { enabled: false, location: "@nmshd/connector:AutoDecomposeDeletionProposedRelationshipsModule" },
                 coreHttpApi: {
