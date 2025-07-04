@@ -274,23 +274,29 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private getValidApiKeys(): { apiKey: string; expiresAt?: CoreDate }[] | undefined {
         if (!this.configuration.authentication.apiKey.enabled || Object.keys(this.configuration.authentication.apiKey.keys).length === 0) return;
 
-        const validApiKeys = Object.values(this.configuration.authentication.apiKey.keys)
-            .filter((apiKey) => apiKey.enabled !== false)
-            .filter((apiKey) => apiKey.expiresAt === undefined || !CoreDate.from(apiKey.expiresAt).isExpired());
+        const allApiKeys = Object.values(this.configuration.authentication.apiKey.keys).map((def) => def.key);
+        if (allApiKeys.length !== new Set(allApiKeys).size) {
+            // TODO: is is easy to tell which keys are duplicates?
+            throw new Error("Duplicate API keys found in configuration. Each API key must be unique.");
+        }
 
-        // TODO: throw if two api keys have the same key
+        const validApiKeys = Object.entries(this.configuration.authentication.apiKey.keys)
+            .filter((apiKey) => apiKey[1].enabled !== false)
+            .filter((apiKey) => apiKey[1].expiresAt === undefined || !CoreDate.from(apiKey[1].expiresAt).isExpired());
+
+        // TODO: tell which keys are disabled or expired by reference (id)?
 
         if (validApiKeys.length === 0) throw new Error("No valid API keys found in configuration. At least one is required.");
 
         const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
-        const apiKeysViolatingThePolicy = validApiKeys.filter((apiKey) => !apiKey.key.match(apiKeyPolicy));
+        const apiKeysViolatingThePolicy = validApiKeys.filter((apiKey) => !apiKey[1].key.match(apiKeyPolicy));
         if (apiKeysViolatingThePolicy.length !== 0) {
             throw new Error(
-                `${apiKeysViolatingThePolicy.length} API keys do not meet the requirements. They must be at least 30 characters long and contain at least 2 digits, 2 uppercase letters, 2 lowercase letters and 1 special character (!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~).`
+                `The API keys with the following key(s) does not meet the requirements: ${apiKeysViolatingThePolicy.map((k) => k[0]).join(", ")}. They must be at least 30 characters long and contain at least 2 digits, 2 uppercase letters, 2 lowercase letters and 1 special character (!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~).`
             );
         }
 
-        return validApiKeys.map((apiKey) => ({ apiKey: apiKey.key, expiresAt: apiKey.expiresAt ? CoreDate.from(apiKey.expiresAt) : undefined }));
+        return validApiKeys.map((apiKey) => ({ apiKey: apiKey[1].key, expiresAt: apiKey[1].expiresAt ? CoreDate.from(apiKey[1].expiresAt) : undefined }));
     }
 
     private useHealthEndpoint() {
