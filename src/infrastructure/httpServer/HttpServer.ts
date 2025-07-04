@@ -266,29 +266,21 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     private getValidApiKeys(): { apiKey: string; expiresAt?: CoreDate }[] | undefined {
         if (!this.configuration.authentication.apiKey.enabled) return;
 
-        const apiKeys = Object.values(this.configuration.authentication.apiKey.keys);
-
-        const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
-
-        const enabledAndNotExpiredApiKeys = apiKeys
+        const validApiKeys = Object.values(this.configuration.authentication.apiKey.keys)
             .filter((apiKey) => apiKey.enabled !== false)
             .filter((apiKey) => apiKey.expiresAt === undefined || !CoreDate.from(apiKey.expiresAt).isExpired());
 
-        if (enabledAndNotExpiredApiKeys.length === 0) {
-            throw new Error("No valid API keys found in configuration. At least one is required.");
-        }
+        if (validApiKeys.length === 0) throw new Error("No valid API keys found in configuration. At least one is required.");
 
-        const notMatchingApiKeys = enabledAndNotExpiredApiKeys.filter((apiKey) => !apiKey.key.match(apiKeyPolicy));
-        if (notMatchingApiKeys.length !== 0) {
+        const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
+        const apiKeysViolatingThePolicy = validApiKeys.filter((apiKey) => !apiKey.key.match(apiKeyPolicy));
+        if (apiKeysViolatingThePolicy.length !== 0) {
             throw new Error(
-                `${notMatchingApiKeys.length} API keys do not meet the requirements. They must be at least 30 characters long and contain at least 2 digits, 2 uppercase letters, 2 lowercase letters and 1 special character (!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~).`
+                `${apiKeysViolatingThePolicy.length} API keys do not meet the requirements. They must be at least 30 characters long and contain at least 2 digits, 2 uppercase letters, 2 lowercase letters and 1 special character (!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~).`
             );
         }
 
-        return enabledAndNotExpiredApiKeys.map((apiKey) => ({
-            apiKey: apiKey.key,
-            expiresAt: apiKey.expiresAt ? CoreDate.from(apiKey.expiresAt) : undefined
-        }));
+        return validApiKeys.map((apiKey) => ({ apiKey: apiKey.key, expiresAt: apiKey.expiresAt ? CoreDate.from(apiKey.expiresAt) : undefined }));
     }
 
     private useHealthEndpoint() {
