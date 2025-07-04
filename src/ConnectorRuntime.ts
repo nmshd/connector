@@ -223,6 +223,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
         const httpServer = config.infrastructure.httpServer as any;
         const authentication = httpServer?.authentication;
+        // TODO: change the logic when the auth methods are enabled and when not. We cannot use the `enabled` property here, because it is not required and enabled=undefined can mean both, enabled and disabled.
         if (authentication?.apiKey) authentication.apiKey = authentication.apiKey.enabled ? "redacted (enabled)" : "redacted (disabled)";
         if (authentication?.oidc) authentication.oidc = authentication.oidc.enabled ? "redacted (enabled)" : "redacted (disabled)";
         if (authentication?.jwtBearer) authentication.jwtBearer = authentication.jwtBearer.enabled ? "redacted (enabled)" : "redacted (disabled)";
