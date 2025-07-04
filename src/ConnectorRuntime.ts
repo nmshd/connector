@@ -114,7 +114,6 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
     private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
         connectorConfig.modules.decider.enabled = true;
         connectorConfig.modules.request.enabled = true;
-        connectorConfig.modules.attributeListener.enabled = true;
     }
 
     private static async runBackboneCompatibilityCheck(runtime: ConnectorRuntime) {
