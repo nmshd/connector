@@ -29,7 +29,9 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
         .file("bundled-config", { file: path.resolve(path.join(__dirname, "..", "bundled.config.json")) })
         .defaults({
             debug: false,
-            transportLibrary: {},
+            transportLibrary: {
+                allowIdentityCreation: true
+            },
             database: {
                 driver: "mongodb",
                 dbName: "default"

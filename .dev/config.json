@@ -1,5 +1,8 @@
 {
     "debug": true,
+    "transportLibrary": {
+        "allowIdentityCreation": true
+    },
     "database": {
         "connectionString": "mongodb://mongo:27017"
     },
