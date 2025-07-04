@@ -243,7 +243,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 return;
             }
 
-            if (this.configuration.authentication.jwtBearer.enabled && req.headers["authorization"]) {
+            if (jwtBearerAuthenticationEnabled && req.headers["authorization"]) {
                 if (!req.auth) return await unauthorized(req, res);
 
                 next();
