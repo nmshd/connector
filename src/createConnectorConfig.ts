@@ -65,9 +65,9 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                     },
 
                     authentication: {
-                        apiKey: { enabled: false },
-                        oidc: { enabled: false },
-                        jwtBearer: { enabled: false }
+                        apiKey: { headerName: "X-API-KEY", keys: {} },
+                        oidc: {},
+                        jwtBearer: {}
                     }
                 }
             },

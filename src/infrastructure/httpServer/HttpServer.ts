@@ -42,15 +42,13 @@ export interface HttpServerConfiguration extends InfrastructureConfiguration {
     cors?: CorsOptions;
     helmetOptions?: HelmetOptions;
     authentication: {
-        apiKey:
-            | { enabled: false }
-            | {
-                  enabled: true;
-                  headerName?: string;
-                  keys: Record<string, { enabled?: boolean; key: string; description?: string; expiresAt?: string }>;
-              };
-        oidc: { enabled: false } | (OauthParams & { enabled: true });
-        jwtBearer: { enabled: false } | (BearerAuthOptions & { enabled: true });
+        apiKey: {
+            enabled?: boolean;
+            headerName: string;
+            keys: Record<string, { enabled?: boolean; key: string; description?: string; expiresAt?: string }>;
+        };
+        oidc: { enabled?: boolean } & OauthParams;
+        jwtBearer: { enabled?: boolean } & BearerAuthOptions;
     };
 }
 
@@ -200,9 +198,11 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private applyAuthentication() {
-        const apiKeyAuthenticationEnabled = this.configuration.authentication.apiKey.enabled;
-        const oidcAuthenticationEnabled = this.configuration.authentication.oidc.enabled;
-        const jwtBearerAuthenticationEnabled = this.configuration.authentication.jwtBearer.enabled;
+        const apiKeyAuthenticationEnabled = this.configuration.authentication.apiKey.enabled ?? Object.keys(this.configuration.authentication.apiKey.keys).length !== 0;
+        const oidcAuthenticationEnabled =
+            this.configuration.authentication.oidc.enabled ?? Object.keys(this.configuration.authentication.oidc).filter((k) => k !== "enabled").length !== 0;
+        const jwtBearerAuthenticationEnabled =
+            this.configuration.authentication.jwtBearer.enabled ?? Object.keys(this.configuration.authentication.jwtBearer).filter((k) => k !== "enabled").length !== 0;
         if (!apiKeyAuthenticationEnabled && !oidcAuthenticationEnabled && !jwtBearerAuthenticationEnabled) {
             switch (this.connectorMode) {
                 case "debug":
@@ -215,11 +215,19 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         const apiKeys = this.getValidApiKeys();
 
         if (oidcAuthenticationEnabled) {
-            this.app.use(openidAuth({ ...this.configuration.authentication.oidc, authRequired: false }));
+            const config = { ...this.configuration.authentication.oidc, authRequired: false };
+            // remove the enabled property as it is not supported by the express-openid-connect library
+            delete config.enabled;
+
+            this.app.use(openidAuth(config));
         }
 
         if (jwtBearerAuthenticationEnabled) {
-            this.app.use(bearerAuth({ ...this.configuration.authentication.jwtBearer, authRequired: false }));
+            const config = { ...this.configuration.authentication.jwtBearer, authRequired: false };
+            // remove the enabled property as it is not supported by the express-oauth2-jwt-bearer library
+            delete config.enabled;
+
+            this.app.use(bearerAuth(config));
         }
 
         const unauthorized = async (_: express.Request, res: express.Response) => {
@@ -264,11 +272,13 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private getValidApiKeys(): { apiKey: string; expiresAt?: CoreDate }[] | undefined {
-        if (!this.configuration.authentication.apiKey.enabled) return;
+        if (!this.configuration.authentication.apiKey.enabled || Object.keys(this.configuration.authentication.apiKey.keys).length === 0) return;
 
         const validApiKeys = Object.values(this.configuration.authentication.apiKey.keys)
             .filter((apiKey) => apiKey.enabled !== false)
             .filter((apiKey) => apiKey.expiresAt === undefined || !CoreDate.from(apiKey.expiresAt).isExpired());
+
+        // TODO: throw if two api keys have the same key
 
         if (validApiKeys.length === 0) throw new Error("No valid API keys found in configuration. At least one is required.");
 

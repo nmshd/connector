@@ -22,7 +22,6 @@ You can find a more detailed documentation [in the enmeshed docs](https://enmesh
             httpServer:
                 authentication:
                     apiKey:
-                        enabled: true
                         keys:
                             default:
                                 key: "<api-key>"
@@ -51,7 +50,6 @@ config:
         httpServer:
             authentication:
                 apiKey:
-                    enabled: true
                     keys:
                         default:
                             key: "<api-key>"

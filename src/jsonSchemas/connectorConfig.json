@@ -56,53 +56,37 @@
                             "additionalProperties": false,
                             "properties": {
                                 "apiKey": {
-                                    "anyOf": [
-                                        {
-                                            "additionalProperties": false,
-                                            "properties": {
-                                                "enabled": {
-                                                    "const": false,
-                                                    "type": "boolean"
-                                                }
-                                            },
-                                            "required": ["enabled"],
-                                            "type": "object"
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "enabled": {
+                                            "type": "boolean"
                                         },
-                                        {
-                                            "additionalProperties": false,
-                                            "properties": {
-                                                "enabled": {
-                                                    "const": true,
-                                                    "type": "boolean"
-                                                },
-                                                "headerName": {
-                                                    "type": "string"
-                                                },
-                                                "keys": {
-                                                    "additionalProperties": {
-                                                        "additionalProperties": false,
-                                                        "properties": {
-                                                            "description": {
-                                                                "type": "string"
-                                                            },
-                                                            "expiresAt": {
-                                                                "format": "date",
-                                                                "type": "string"
-                                                            },
-                                                            "key": {
-                                                                "type": "string"
-                                                            }
-                                                        },
-                                                        "required": ["key"],
-                                                        "type": "object"
+                                        "headerName": {
+                                            "type": "string"
+                                        },
+                                        "keys": {
+                                            "additionalProperties": {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "description": {
+                                                        "type": "string"
                                                     },
-                                                    "type": "object"
-                                                }
+                                                    "expiresAt": {
+                                                        "pattern": "^([+-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24:?00)([.,]\\d+(?!:))?)?(\\17[0-5]\\d([.,]\\d+)?)?([zZ]|([+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$",
+                                                        "type": "string"
+                                                    },
+                                                    "key": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": ["key"],
+                                                "type": "object"
                                             },
-                                            "required": ["enabled", "keys"],
                                             "type": "object"
                                         }
-                                    ]
+                                    },
+                                    "required": ["headerName", "keys"],
+                                    "type": "object"
                                 },
                                 "jwtBearer": {
                                     "properties": {
@@ -110,7 +94,6 @@
                                             "type": "boolean"
                                         }
                                     },
-                                    "required": ["enabled"],
                                     "type": "object"
                                 },
                                 "oidc": {
@@ -119,7 +102,6 @@
                                             "type": "boolean"
                                         }
                                     },
-                                    "required": ["enabled"],
                                     "type": "object"
                                 }
                             },
