@@ -272,15 +272,17 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private getValidApiKeys(): { apiKey: string; expiresAt?: CoreDate }[] | undefined {
-        if (!this.configuration.authentication.apiKey.enabled || Object.keys(this.configuration.authentication.apiKey.keys).length === 0) return;
+        const configuredApiKeys = this.configuration.authentication.apiKey.keys;
+        const apiKeyAuthenticationEnabled = this.configuration.authentication.apiKey.enabled ?? Object.keys(configuredApiKeys).length !== 0;
+        if (!apiKeyAuthenticationEnabled) return;
 
-        const allApiKeys = Object.values(this.configuration.authentication.apiKey.keys).map((def) => def.key);
+        const allApiKeys = Object.values(configuredApiKeys).map((def) => def.key);
         if (allApiKeys.length !== new Set(allApiKeys).size) {
             // TODO: is is easy to tell which keys are duplicates?
             throw new Error("Duplicate API keys found in configuration. Each API key must be unique.");
         }
 
-        const validApiKeys = Object.entries(this.configuration.authentication.apiKey.keys)
+        const validApiKeys = Object.entries(configuredApiKeys)
             .filter((apiKey) => apiKey[1].enabled !== false)
             .filter((apiKey) => apiKey[1].expiresAt === undefined || !CoreDate.from(apiKey[1].expiresAt).isExpired());
 
