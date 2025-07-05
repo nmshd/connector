@@ -20,7 +20,11 @@ You can find a more detailed documentation [in the enmeshed docs](https://enmesh
             platformClientSecret: "<client-secret>"
         infrastructure:
             httpServer:
-                apiKey: "<api-key>"
+                authentication:
+                    apiKey:
+                        keys:
+                            default:
+                                key: "<api-key>"
     ```
 
 ### Install the chart
@@ -44,7 +48,11 @@ config:
         platformClientSecret: "<client-secret>"
     infrastructure:
         httpServer:
-            apiKey: "<api-key>"
+            authentication:
+                apiKey:
+                    keys:
+                        default:
+                            key: "<api-key>"
 
 pod:
     ferretdb:

@@ -1,5 +1,6 @@
 import { sleep } from "@js-soft/ts-utils";
 import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration } from "@nmshd/connector-types";
+import { CoreDate } from "@nmshd/core-types";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
 import compression from "compression";
@@ -37,12 +38,18 @@ export interface ControllerConfig {
 }
 
 export interface HttpServerConfiguration extends InfrastructureConfiguration {
-    oidc?: OauthParams;
-    jwtBearer?: BearerAuthOptions;
     port?: number;
-    apiKey: string;
     cors?: CorsOptions;
     helmetOptions?: HelmetOptions;
+    authentication: {
+        apiKey: {
+            enabled?: boolean;
+            headerName: string;
+            keys: Record<string, { enabled?: boolean; key: string; description?: string; expiresAt?: string }>;
+        };
+        oidc: { enabled?: boolean } & OauthParams;
+        jwtBearer: { enabled?: boolean } & BearerAuthOptions;
+    };
 }
 
 export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration> implements IHttpServer {
@@ -93,8 +100,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.useUnsecuredCustomEndpoints();
 
         this.useHealthEndpoint();
-        this.initAuthentication();
-        this.useAuthentication();
+        this.applyAuthentication();
 
         this.useVersionEndpoint();
         this.useResponsesEndpoint();
@@ -191,8 +197,13 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.app.use(genericErrorHandler(this.connectorMode, this.logger));
     }
 
-    private initAuthentication() {
-        if (!this.configuration.apiKey && !this.configuration.oidc && !this.configuration.jwtBearer) {
+    private applyAuthentication() {
+        const apiKeyAuthenticationEnabled = this.configuration.authentication.apiKey.enabled ?? Object.keys(this.configuration.authentication.apiKey.keys).length !== 0;
+        const oidcAuthenticationEnabled =
+            this.configuration.authentication.oidc.enabled ?? Object.keys(this.configuration.authentication.oidc).filter((k) => k !== "enabled").length !== 0;
+        const jwtBearerAuthenticationEnabled =
+            this.configuration.authentication.jwtBearer.enabled ?? Object.keys(this.configuration.authentication.jwtBearer).filter((k) => k !== "enabled").length !== 0;
+        if (!apiKeyAuthenticationEnabled && !oidcAuthenticationEnabled && !jwtBearerAuthenticationEnabled) {
             switch (this.connectorMode) {
                 case "debug":
                     return;
@@ -201,65 +212,53 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             }
         }
 
-        this.initApiKey();
-        this.initOIDC();
-        this.initJWTBearer();
-    }
+        const apiKeys = this.getValidApiKeys();
 
-    private initOIDC() {
-        if (!this.configuration.oidc) return;
+        if (oidcAuthenticationEnabled) {
+            const config = { ...this.configuration.authentication.oidc, authRequired: false };
+            // remove the enabled property as it is not supported by the express-openid-connect library
+            delete config.enabled;
 
-        this.app.use(openidAuth({ ...this.configuration.oidc, authRequired: false }));
-    }
-
-    private initJWTBearer() {
-        if (!this.configuration.jwtBearer) return;
-
-        this.app.use(
-            bearerAuth({
-                ...this.configuration.jwtBearer,
-                authRequired: false
-            })
-        );
-    }
-
-    private initApiKey() {
-        if (!this.configuration.apiKey) return;
-
-        const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
-        if (!this.configuration.apiKey.match(apiKeyPolicy)) {
-            this.logger.warn(
-                "The configured API key does not meet the requirements. It must be at least 30 characters long and contain at least 2 digits, 2 uppercase letters, 2 lowercase letters and 1 special character (!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~])."
-            );
-            this.logger.warn("The API key will be used as is, but it is recommended to change it as it will not be supported in future versions.");
+            this.app.use(openidAuth(config));
         }
-    }
 
-    private useAuthentication() {
-        if (!this.configuration.apiKey && !this.configuration.oidc && !this.configuration.jwtBearer) return;
+        if (jwtBearerAuthenticationEnabled) {
+            const config = { ...this.configuration.authentication.jwtBearer, authRequired: false };
+            // remove the enabled property as it is not supported by the express-oauth2-jwt-bearer library
+            delete config.enabled;
+
+            this.app.use(bearerAuth(config));
+        }
 
         const unauthorized = async (_: express.Request, res: express.Response) => {
             await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
             res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
         };
 
+        const isApiKeyValid = (apiKey: string): boolean => {
+            if (!apiKeys) return false;
+
+            return apiKeys.some((keyDefinition) => keyDefinition.apiKey === apiKey && !(keyDefinition.expiresAt?.isExpired() ?? false));
+        };
+
         this.app.use(async (req, res, next) => {
-            const apiKeyFromHeader = req.headers["x-api-key"];
-            if (this.configuration.apiKey && apiKeyFromHeader) {
-                if (apiKeyFromHeader !== this.configuration.apiKey) return await unauthorized(req, res);
+            const xApiKeyHeaderValue = req.headers["x-api-key"];
+            const apiKeyFromHeader = Array.isArray(xApiKeyHeaderValue) ? xApiKeyHeaderValue[0] : xApiKeyHeaderValue;
+            if (apiKeyAuthenticationEnabled && apiKeyFromHeader && apiKeys) {
+                if (!isApiKeyValid(apiKeyFromHeader)) return await unauthorized(req, res);
 
                 next();
                 return;
             }
 
-            if (this.configuration.jwtBearer && req.headers["authorization"]) {
+            if (jwtBearerAuthenticationEnabled && req.headers["authorization"]) {
                 if (!req.auth) return await unauthorized(req, res);
 
                 next();
                 return;
             }
 
-            if (this.configuration.oidc) {
+            if (oidcAuthenticationEnabled) {
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
                 if (!req.oidc) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
                 if (!req.oidc.isAuthenticated()) return await res.oidc.login();
@@ -270,6 +269,33 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
             await unauthorized(req, res);
         });
+    }
+
+    private getValidApiKeys(): { apiKey: string; expiresAt?: CoreDate }[] | undefined {
+        const configuredApiKeys = this.configuration.authentication.apiKey.keys;
+        const apiKeyAuthenticationEnabled = this.configuration.authentication.apiKey.enabled ?? Object.keys(configuredApiKeys).length !== 0;
+        if (!apiKeyAuthenticationEnabled) return;
+
+        const allApiKeys = Object.values(configuredApiKeys).map((def) => def.key);
+        if (allApiKeys.length !== new Set(allApiKeys).size) {
+            throw new Error("Duplicate API keys found in configuration. Each API key must be unique.");
+        }
+
+        const validApiKeys = Object.entries(configuredApiKeys)
+            .filter((apiKey) => apiKey[1].enabled !== false)
+            .filter((apiKey) => apiKey[1].expiresAt === undefined || !CoreDate.from(apiKey[1].expiresAt).isExpired());
+
+        if (validApiKeys.length === 0) throw new Error("No valid API keys found in configuration. At least one is required.");
+
+        const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
+        const apiKeysViolatingThePolicy = validApiKeys.filter((apiKey) => !apiKey[1].key.match(apiKeyPolicy));
+        if (apiKeysViolatingThePolicy.length !== 0) {
+            throw new Error(
+                `The API keys with the following key(s) does not meet the requirements: ${apiKeysViolatingThePolicy.map((k) => k[0]).join(", ")}. They must be at least 30 characters long and contain at least 2 digits, 2 uppercase letters, 2 lowercase letters and 1 special character (!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~).`
+            );
+        }
+
+        return validApiKeys.map((apiKey) => ({ apiKey: apiKey[1].key, expiresAt: apiKey[1].expiresAt ? CoreDate.from(apiKey[1].expiresAt) : undefined }));
     }
 
     private useHealthEndpoint() {

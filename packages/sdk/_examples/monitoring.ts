@@ -1,9 +1,9 @@
-import { ConnectorClient } from "../src";
+import { ApiKeyAuthenticator, ConnectorClient } from "../src";
 
 async function run() {
     const client = ConnectorClient.create({
         baseUrl: process.env.BASE_URL!,
-        apiKey: process.env.API_KEY!
+        authenticator: new ApiKeyAuthenticator(process.env.API_KEY!)
     });
 
     const health = await client.monitoring.getHealth().catch((e) => console.log(e));
