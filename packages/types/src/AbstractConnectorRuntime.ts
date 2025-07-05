@@ -3,7 +3,7 @@ import { Runtime, RuntimeConfig, RuntimeServices } from "@nmshd/runtime";
 import { IConnectorInfrastructureRegistry } from "./infrastructure";
 
 export interface ConnectorRuntimeConfig extends RuntimeConfig {
-    database: { dbName: string; dbNamePrefix: string };
+    database: { dbName: string };
 }
 
 export abstract class AbstractConnectorRuntime<TConfig extends ConnectorRuntimeConfig = ConnectorRuntimeConfig> extends Runtime<TConfig> {

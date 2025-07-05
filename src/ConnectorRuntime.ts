@@ -114,7 +114,6 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
     private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
         connectorConfig.modules.decider.enabled = true;
         connectorConfig.modules.request.enabled = true;
-        connectorConfig.modules.attributeListener.enabled = true;
     }
 
     private static async runBackboneCompatibilityCheck(runtime: ConnectorRuntime) {
@@ -159,7 +158,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
     }
 
     protected async initAccount(): Promise<void> {
-        const db = await this.databaseConnection.getDatabase(`${this.runtimeConfig.database.dbNamePrefix}${this.runtimeConfig.database.dbName}`);
+        const db = await this.databaseConnection.getDatabase(this.runtimeConfig.database.dbName);
 
         this.accountController = await new AccountController(this.transport, db, this.transport.config).init().catch((e) => {
             if (e instanceof ApplicationError && e.code === "error.transport.general.platformClientInvalid") {

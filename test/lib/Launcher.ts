@@ -56,7 +56,7 @@ export class Launcher {
                 httpsAgent: debugging ? new https.Agent({ keepAlive: false }) : undefined,
                 authenticator: new ApiKeyAuthenticator(this.apiKey)
             }) as ConnectorClientWithMetadata;
-            connectorClient["_metadata"] = { accountName: `acc-${accountName}` };
+            connectorClient["_metadata"] = { accountName };
 
             connectorClient._eventBus = new MockEventBus();
 

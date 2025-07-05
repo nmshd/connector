@@ -15,7 +15,7 @@ export interface LokiJSSettings {
 export interface ConnectorConfig {
     debug: boolean;
 
-    database: (MongoDBSettings | LokiJSSettings) & { dbName: string; dbNamePrefix: string };
+    database: (MongoDBSettings | LokiJSSettings) & { dbName: string };
 
     transportLibrary: IConfigOverwrite;
 
