@@ -336,19 +336,25 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useVersionEndpoint() {
-        this.app.get("/Monitoring/Version", (_req: any, res: any) => {
+        this.app.get("/Monitoring/Version", (req: express.Request, res: express.Response) => {
+            if (!req.userRoles?.includes("admin")) throw new Errors.ForbiddenError("You are not allowed to access this endpoint.");
+
             res.status(200).json(buildInformation);
         });
     }
 
     private useResponsesEndpoint() {
-        this.app.get("/Monitoring/Requests", (_req: any, res: any) => {
+        this.app.get("/Monitoring/Requests", (req: express.Request, res: express.Response) => {
+            if (!req.userRoles?.includes("admin")) throw new Errors.ForbiddenError("You are not allowed to access this endpoint.");
+
             res.status(200).json(this.requestTracker.getCount());
         });
     }
 
     private useSupportEndpoint() {
-        this.app.get("/Monitoring/Support", async (_req: any, res: any) => {
+        this.app.get("/Monitoring/Support", async (req: express.Request, res: express.Response) => {
+            if (!req.userRoles?.includes("admin")) throw new Errors.ForbiddenError("You are not allowed to access this endpoint.");
+
             const supportInformation = await this.runtime.getSupportInformation();
             res.status(200).json(supportInformation);
         });
