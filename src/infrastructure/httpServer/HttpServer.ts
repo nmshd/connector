@@ -2,7 +2,7 @@ import { sleep } from "@js-soft/ts-utils";
 import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration } from "@nmshd/connector-types";
 import { CoreDate } from "@nmshd/core-types";
 import { Container } from "@nmshd/typescript-ioc";
-import { Server } from "@nmshd/typescript-rest";
+import { Errors, Server } from "@nmshd/typescript-rest";
 import compression from "compression";
 import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
@@ -18,6 +18,15 @@ import { RouteNotFoundError, genericErrorHandler } from "./middlewares/genericEr
 import { requestLogger } from "./middlewares/requestLogger";
 import { setDurationHeader } from "./middlewares/setResponseDurationHeader";
 import { setResponseTimeHeader } from "./middlewares/setResponseTimeHeader";
+
+declare global {
+    namespace Express {
+        interface Request {
+            userRoles?: string[];
+            getApiKeyObject: (apiKey: string) => { scopes?: string[] } | undefined;
+        }
+    }
+}
 
 export interface CustomEndpoint {
     httpMethod: HttpMethod;
@@ -45,7 +54,16 @@ export interface HttpServerConfiguration extends InfrastructureConfiguration {
         apiKey: {
             enabled?: boolean;
             headerName: string;
-            keys: Record<string, { enabled?: boolean; key: string; description?: string; expiresAt?: string }>;
+            keys: Record<
+                string,
+                {
+                    enabled?: boolean;
+                    key: string;
+                    description?: string;
+                    expiresAt?: string;
+                    scopes?: string[];
+                }
+            >;
         };
         oidc: { enabled?: boolean } & OauthParams;
         jwtBearer: { enabled?: boolean } & BearerAuthOptions;
@@ -212,7 +230,19 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             }
         }
 
-        const apiKeys = this.getValidApiKeys();
+        if (apiKeyAuthenticationEnabled) {
+            const apiKeys = this.getValidApiKeys();
+            this.app.use((req, _, next) => {
+                req.getApiKeyObject = (apiKey: string): { scopes?: string[] } | undefined => {
+                    const apiKeyObject = apiKeys.find((keyDefinition) => keyDefinition.apiKey === apiKey && !(keyDefinition.expiresAt?.isExpired() ?? false));
+                    if (!apiKeyObject) return;
+
+                    return { scopes: apiKeyObject.scopes };
+                };
+
+                next();
+            });
+        }
 
         if (oidcAuthenticationEnabled) {
             const config = { ...this.configuration.authentication.oidc, authRequired: false };
@@ -235,17 +265,16 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
         };
 
-        const isApiKeyValid = (apiKey: string): boolean => {
-            if (!apiKeys) return false;
-
-            return apiKeys.some((keyDefinition) => keyDefinition.apiKey === apiKey && !(keyDefinition.expiresAt?.isExpired() ?? false));
-        };
-
         this.app.use(async (req, res, next) => {
-            const xApiKeyHeaderValue = req.headers["x-api-key"];
+            const headerName = this.configuration.authentication.apiKey.headerName.toLowerCase();
+            const xApiKeyHeaderValue = req.headers[headerName];
             const apiKeyFromHeader = Array.isArray(xApiKeyHeaderValue) ? xApiKeyHeaderValue[0] : xApiKeyHeaderValue;
-            if (apiKeyAuthenticationEnabled && apiKeyFromHeader && apiKeys) {
-                if (!isApiKeyValid(apiKeyFromHeader)) return await unauthorized(req, res);
+            if (apiKeyAuthenticationEnabled && apiKeyFromHeader) {
+                const matchingApiKey = req.getApiKeyObject(apiKeyFromHeader);
+                if (!matchingApiKey) return await unauthorized(req, res);
+
+                const apiKeyRoles = this.connectorMode == "debug" ? ["admin", "developer"] : ["admin"];
+                req.userRoles = matchingApiKey.scopes ?? apiKeyRoles;
 
                 next();
                 return;
@@ -271,10 +300,10 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         });
     }
 
-    private getValidApiKeys(): { apiKey: string; expiresAt?: CoreDate }[] | undefined {
+    private getValidApiKeys(): { apiKey: string; expiresAt?: CoreDate; scopes?: string[] }[] {
         const configuredApiKeys = this.configuration.authentication.apiKey.keys;
         const apiKeyAuthenticationEnabled = this.configuration.authentication.apiKey.enabled ?? Object.keys(configuredApiKeys).length !== 0;
-        if (!apiKeyAuthenticationEnabled) return;
+        if (!apiKeyAuthenticationEnabled) throw new Error("API key authentication is not enabled in configuration. At least one API key is required.");
 
         const allApiKeys = Object.values(configuredApiKeys).map((def) => def.key);
         if (allApiKeys.length !== new Set(allApiKeys).size) {
@@ -295,7 +324,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             );
         }
 
-        return validApiKeys.map((apiKey) => ({ apiKey: apiKey[1].key, expiresAt: apiKey[1].expiresAt ? CoreDate.from(apiKey[1].expiresAt) : undefined }));
+        return validApiKeys.map((apiKey) => ({ apiKey: apiKey[1].key, expiresAt: apiKey[1].expiresAt ? CoreDate.from(apiKey[1].expiresAt) : undefined, scopes: apiKey[1].scopes }));
     }
 
     private useHealthEndpoint() {
@@ -346,6 +375,14 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 this.logger.error("Can not identify the base Type for requested target: %o", serviceClass);
                 throw new TypeError("Can not identify the base Type for requested target");
             }
+        });
+
+        Server.registerAuthenticator({
+            getMiddleware: () => async (_req, _res, next) => next(),
+
+            initialize: (_app: Application) => {},
+
+            getRoles: (req) => req.userRoles ?? []
         });
 
         for (const controller of this.controllers) {
