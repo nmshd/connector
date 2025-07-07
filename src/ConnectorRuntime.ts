@@ -223,10 +223,20 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
         const httpServer = config.infrastructure.httpServer as any;
         const authentication = httpServer?.authentication;
-        // TODO: change the logic when the auth methods are enabled and when not. We cannot use the `enabled` property here, because it is not required and enabled=undefined can mean both, enabled and disabled.
-        if (authentication?.apiKey) authentication.apiKey = authentication.apiKey.enabled ? "redacted (enabled)" : "redacted (disabled)";
-        if (authentication?.oidc) authentication.oidc = authentication.oidc.enabled ? "redacted (enabled)" : "redacted (disabled)";
-        if (authentication?.jwtBearer) authentication.jwtBearer = authentication.jwtBearer.enabled ? "redacted (enabled)" : "redacted (disabled)";
+        if (authentication?.apiKey) {
+            const apiKeyAuthenticationEnabled = authentication.apiKey.enabled ?? Object.keys(authentication.apiKey.keys).length !== 0;
+            authentication.apiKey = apiKeyAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
+        }
+
+        if (authentication?.oidc) {
+            const oidcAuthenticationEnabled = authentication.oidc.enabled ?? Object.keys(authentication.oidc).filter((k) => k !== "enabled").length !== 0;
+            authentication.oidc = oidcAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
+        }
+
+        if (authentication?.jwtBearer) {
+            const jwtBearerAuthenticationEnabled = authentication.jwtBearer.enabled ?? Object.keys(authentication.jwtBearer).filter((k) => k !== "enabled").length !== 0;
+            authentication.jwtBearer = jwtBearerAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
+        }
 
         const transport = config.transportLibrary;
         if (transport.platformClientSecret) {
