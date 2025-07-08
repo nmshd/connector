@@ -1,6 +1,5 @@
 import { sleep } from "@js-soft/ts-utils";
-import { ApiKeyAuthenticator, ConnectorClient } from "@nmshd/connector-sdk";
-import { RelationshipStatus } from "@nmshd/runtime-types";
+import { ApiKeyAuthenticator, ConnectorClient, RelationshipStatus } from "@nmshd/connector-sdk";
 
 async function run() {
     const connector1 = ConnectorClient.create({
