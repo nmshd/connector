@@ -283,6 +283,15 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             if (jwtBearerAuthenticationEnabled && req.headers["authorization"]) {
                 if (!req.auth) return await unauthorized(req, res);
 
+                // TODO: test this properly
+                const rolesFromToken = req.auth.payload?.roles;
+                if (!rolesFromToken && !Array.isArray(rolesFromToken)) {
+                    this.logger.warn("JWT Bearer token does not contain roles, using empty array as default.");
+                    this.logger.warn(req.auth.payload);
+                }
+
+                req.userRoles = Array.isArray(rolesFromToken) ? rolesFromToken : [];
+
                 next();
                 return;
             }
@@ -291,6 +300,15 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
                 if (!req.oidc) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
                 if (!req.oidc.isAuthenticated()) return await res.oidc.login();
+
+                // TODO: test this properly
+                const rolesFromToken = req.oidc.user?.roles;
+                if (!rolesFromToken && !Array.isArray(rolesFromToken)) {
+                    this.logger.warn("oidc user does not contain roles, using empty array as default.");
+                    this.logger.warn(req.oidc.user);
+                }
+
+                req.userRoles = Array.isArray(rolesFromToken) ? rolesFromToken : [];
 
                 next();
                 return;
