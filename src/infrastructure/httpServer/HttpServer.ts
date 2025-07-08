@@ -283,14 +283,13 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             if (jwtBearerAuthenticationEnabled && req.headers["authorization"]) {
                 if (!req.auth) return await unauthorized(req, res);
 
-                // TODO: test this properly
-                const rolesFromToken = req.auth.payload?.roles;
-                if (!rolesFromToken && !Array.isArray(rolesFromToken)) {
-                    this.logger.warn("JWT Bearer token does not contain roles, using empty array as default.");
-                    this.logger.warn(req.auth.payload);
+                const scope = req.auth.payload?.scope;
+                if (typeof scope === "string") {
+                    this.logger.warn("JWT Bearer token does not contain a scope, using empty array as default.");
                 }
 
-                req.userRoles = Array.isArray(rolesFromToken) ? rolesFromToken : [];
+                const roles = typeof scope === "string" ? scope.split(" ") : [];
+                req.userRoles = roles;
 
                 next();
                 return;

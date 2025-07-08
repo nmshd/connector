@@ -10,12 +10,14 @@ export class OAuth2ConnectorClientAuthenticator implements IConnectorClientAuthe
     readonly #clientId: string;
     readonly #clientSecret: string;
     readonly #audience: string;
+    readonly #scopes: string[] | undefined;
 
-    public constructor(tokenEndpoint: string, clientId: string, clientSecret: string, audience: string) {
+    public constructor(tokenEndpoint: string, clientId: string, clientSecret: string, audience: string, scopes?: string[]) {
         this.#tokenEndpoint = tokenEndpoint;
         this.#clientId = clientId;
         this.#clientSecret = clientSecret;
         this.#audience = audience;
+        this.#scopes = scopes;
     }
 
     public async authenticate(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
@@ -34,13 +36,18 @@ export class OAuth2ConnectorClientAuthenticator implements IConnectorClientAuthe
     }
 
     async #refreshToken(): Promise<string> {
-        const response = await axios.post(
-            this.#tokenEndpoint,
-            new URLSearchParams({ grant_type: "client_credentials", client_id: this.#clientId, client_secret: this.#clientSecret, audience: this.#audience }),
-            {
-                headers: { "content-type": "application/x-www-form-urlencoded" }
-            }
-        );
+        const params = new URLSearchParams({
+            grant_type: "client_credentials",
+            client_id: this.#clientId,
+            client_secret: this.#clientSecret,
+            audience: this.#audience
+        });
+
+        if (this.#scopes && this.#scopes.length > 0) params.append("scope", this.#scopes.join(" "));
+
+        const response = await axios.post(this.#tokenEndpoint, params, {
+            headers: { "content-type": "application/x-www-form-urlencoded" }
+        });
 
         if (!response.data?.access_token) {
             const errorFromData = response.data?.error;
