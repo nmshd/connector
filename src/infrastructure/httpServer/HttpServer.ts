@@ -22,7 +22,7 @@ import { setResponseTimeHeader } from "./middlewares/setResponseTimeHeader";
 declare global {
     namespace Express {
         interface Request {
-            getApiKeyObject: (apiKey: string) => { scopes?: string[] } | undefined;
+            getApiKeyObject(apiKey: string): { scopes?: string[] } | undefined;
         }
     }
 }
@@ -272,7 +272,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 const matchingApiKey = req.getApiKeyObject(apiKeyFromHeader);
                 if (!matchingApiKey) return await unauthorized(req, res);
 
-                const apiKeyRoles = this.connectorMode == "debug" ? ["admin", "developer"] : ["admin"];
+                const apiKeyRoles = this.connectorMode === "debug" ? ["admin", "developer"] : ["admin"];
                 req.userRoles = matchingApiKey.scopes ?? apiKeyRoles;
 
                 next();
@@ -282,7 +282,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             if (jwtBearerAuthenticationEnabled && req.headers["authorization"]) {
                 if (!req.auth) return await unauthorized(req, res);
 
-                const scope = req.auth.payload?.scope;
+                const scope = req.auth.payload.scope;
                 if (typeof scope !== "string") this.logger.warn("JWT Bearer token does not contain a scope, using empty array as default.");
 
                 const roles = typeof scope === "string" ? scope.split(" ") : [];
@@ -385,9 +385,11 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         });
 
         Server.registerAuthenticator({
-            getMiddleware: () => async (_req, _res, next) => next(),
+            getMiddleware: () => (_req, _res, next) => next(),
 
-            initialize: (_app: Application) => {},
+            initialize: (_app: Application) => {
+                // no initialization needed
+            },
 
             getRoles: (req) => req.userRoles ?? []
         });
