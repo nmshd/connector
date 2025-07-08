@@ -1,7 +1,6 @@
 import { DataEvent } from "@js-soft/ts-utils";
-import { ConnectorHttpResponse, CreateRepositoryAttributeRequest, SucceedAttributeRequest } from "@nmshd/connector-sdk";
+import { ConnectorHttpResponse, CreateRepositoryAttributeRequest, LocalAttributeDeletionStatus, LocalAttributeDTO, SucceedAttributeRequest } from "@nmshd/connector-sdk";
 import { GivenNameJSON, RelationshipAttributeConfidentiality } from "@nmshd/content";
-import { LocalAttributeDeletionStatus, LocalAttributeDTO } from "@nmshd/runtime-types";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
