@@ -1,5 +1,5 @@
 import { sleep } from "@js-soft/ts-utils";
-import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration, routeRequiresRole } from "@nmshd/connector-types";
+import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration, routeRequiresRoles } from "@nmshd/connector-types";
 import { CoreDate } from "@nmshd/core-types";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
@@ -343,19 +343,19 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useVersionEndpoint() {
-        this.app.get("/Monitoring/Version", routeRequiresRole("admin"), (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Version", routeRequiresRoles("admin", "monitoring"), (_: express.Request, res: express.Response) => {
             res.status(200).json(buildInformation);
         });
     }
 
     private useResponsesEndpoint() {
-        this.app.get("/Monitoring/Requests", routeRequiresRole("admin"), (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Requests", routeRequiresRoles("admin", "monitoring"), (_: express.Request, res: express.Response) => {
             res.status(200).json(this.requestTracker.getCount());
         });
     }
 
     private useSupportEndpoint() {
-        this.app.get("/Monitoring/Support", routeRequiresRole("admin"), async (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Support", routeRequiresRoles("admin", "monitoring"), async (_: express.Request, res: express.Response) => {
             const supportInformation = await this.runtime.getSupportInformation();
             res.status(200).json(supportInformation);
         });

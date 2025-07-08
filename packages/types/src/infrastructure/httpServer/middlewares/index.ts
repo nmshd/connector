@@ -1,1 +1,1 @@
-export * from "./routeRequiresRole";
+export * from "./routeRequiresRoles";
