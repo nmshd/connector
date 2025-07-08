@@ -11,8 +11,7 @@
             "authentication": {
                 "apiKey": {
                     "keys": {
-                        "default": { "key": "This_is_a_test_APIKEY_with_30_chars+" },
-                        "messages": { "key": "This_is_a_test_APIKEY_with_30_chars+onlyMessages", "scopes": ["core:messages"] }
+                        "default": { "key": "This_is_a_test_APIKEY_with_30_chars+" }
                     }
                 }
             }
