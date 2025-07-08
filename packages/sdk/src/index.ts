@@ -3,3 +3,5 @@ export * from "./ConnectorClient";
 export * from "./ConnectorClientConfig";
 export * from "./jsonSchemaDefinition";
 export * from "./types";
+
+export * from "@nmshd/runtime-types";
