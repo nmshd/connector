@@ -39,9 +39,7 @@ export class OAuth2ConnectorClientAuthenticator implements IConnectorClientAuthe
         const params = new URLSearchParams({ grant_type: "client_credentials", client_id: this.#clientId, client_secret: this.#clientSecret, audience: this.#audience });
         if (this.#scopes && this.#scopes.length > 0) params.append("scope", this.#scopes.join(" "));
 
-        const response = await axios.post(this.#tokenEndpoint, params, {
-            headers: { "content-type": "application/x-www-form-urlencoded" }
-        });
+        const response = await axios.post(this.#tokenEndpoint, params, { headers: { "content-type": "application/x-www-form-urlencoded" } });
 
         if (!response.data?.access_token) {
             const errorFromData = response.data?.error;
