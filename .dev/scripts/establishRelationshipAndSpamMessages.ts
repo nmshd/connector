@@ -1,6 +1,5 @@
 import { sleep } from "@js-soft/ts-utils";
-import { ConnectorClient } from "@nmshd/connector-sdk";
-import { RelationshipStatus } from "@nmshd/runtime-types";
+import { ConnectorClient, RelationshipStatus } from "@nmshd/connector-sdk";
 
 async function run() {
     const connector1 = ConnectorClient.create({

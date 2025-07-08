@@ -1,5 +1,4 @@
-import { ConnectorClient } from "@nmshd/connector-sdk";
-import { RelationshipTemplateDTO } from "@nmshd/runtime-types";
+import { ConnectorClient, RelationshipTemplateDTO } from "@nmshd/connector-sdk";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
