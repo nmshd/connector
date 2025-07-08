@@ -1776,7 +1776,7 @@ paths:
                   type: array
                   items:
                     type: string
-                  description: The tags of the File. A tag is valid if it is contained in the AttributeTagCollection for the IdentityAttribute value type IdentityFileReference and starts with the prefix `bkb:` or if it starts with the custom tag prefix `x:` or `X:`, the prefix `urn:`, the prefix `language:` followed by a valid ISO 639 language code or the prefix `mimetype:` followed by a valid MIME type matching the pattern `^[a-z-*]+/[a-z-*]+$`.
+                  description: The tags of the File. A tag is valid if it is contained in the AttributeTagCollection for the IdentityAttribute value type IdentityFileReference and starts with the prefix `bkb:` or if it starts with the custom tag prefix `x:` or `X:`, the prefix `urn:`, the prefix `language:` followed by a valid ISO 639 language code or the prefix `mimetype:` followed by a valid MIME type.
                   example: ["x:tag1", "x:tag2"]
                   nullable: false
               required:
@@ -4962,7 +4962,7 @@ components:
       type: array
       items:
         type: string
-      description: The tags of the IdentityAttribute. A tag is valid if it is contained in the AttributeTagCollection and starts with the prefix `bkb:` or if it starts with the custom tag prefix `x:` or `X:`, the prefix `urn:`, the prefix `language:` followed by a valid ISO 639 language code or the prefix `mimetype:` followed by a valid MIME type matching the pattern `^[a-z-*]+/[a-z-*]+$`.
+      description: The tags of the IdentityAttribute. A tag is valid if it is contained in the AttributeTagCollection and starts with the prefix `bkb:` or if it starts with the custom tag prefix `x:` or `X:`, the prefix `urn:`, the prefix `language:` followed by a valid ISO 639 language code or the prefix `mimetype:` followed by a valid MIME type.
       example: ["x:tag1", "x:tag2"]
 
     Confidentiality:
@@ -5262,7 +5262,7 @@ components:
           type: array
           items:
             type: string
-          description: The tags of the File. A tag is valid if it is contained in the AttributeTagCollection for the IdentityAttribute value type IdentityFileReference and starts with the prefix `bkb:` or if it starts with the custom tag prefix `x:` or `X:`, the prefix `urn:`, the prefix `language:` followed by a valid ISO 639 language code or the prefix `mimetype:` followed by a valid MIME type matching the pattern `^[a-z-*]+/[a-z-*]+$`.
+          description: The tags of the File. A tag is valid if it is contained in the AttributeTagCollection for the IdentityAttribute value type IdentityFileReference and starts with the prefix `bkb:` or if it starts with the custom tag prefix `x:` or `X:`, the prefix `urn:`, the prefix `language:` followed by a valid ISO 639 language code or the prefix `mimetype:` followed by a valid MIME type.
           example: [x:tag1, x:tag2]
           nullable: true
         filesize:
