@@ -1,4 +1,4 @@
-FROM node:24.3.0@sha256:8369522c586f6cafcf77e44630e7036e4972933892f8b45e42d9baeb012d521c AS builder
+FROM node:24.3.0@sha256:256a2e7037e745228f7630d578e6c1d327ab4c0a8e401c63d0d4d9dfb3c13465 AS builder
 WORKDIR /usr/app
 
 # Webserver, Debugger
