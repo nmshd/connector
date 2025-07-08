@@ -1,9 +1,21 @@
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { DataEvent, EventBus, SubscriptionTarget, sleep } from "@js-soft/ts-utils";
-import { ConnectorClient, CreateOutgoingRequestRequest, CreateRepositoryAttributeRequest, UploadOwnFileRequest } from "@nmshd/connector-sdk";
+import {
+    ConnectorClient,
+    CreateOutgoingRequestRequest,
+    CreateRepositoryAttributeRequest,
+    FileDTO,
+    LocalAttributeDTO,
+    LocalRequestDTO,
+    LocalRequestStatus,
+    MessageDTO,
+    RelationshipDTO,
+    RelationshipTemplateDTO,
+    TokenDTO,
+    UploadOwnFileRequest
+} from "@nmshd/connector-sdk";
 import { AttributeValues, RelationshipAttributeJSON } from "@nmshd/content";
 import { PasswordLocationIndicator } from "@nmshd/core-types";
-import { FileDTO, LocalAttributeDTO, LocalRequestDTO, LocalRequestStatus, MessageDTO, RelationshipDTO, RelationshipTemplateDTO, TokenDTO } from "@nmshd/runtime-types";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata } from "./Launcher";

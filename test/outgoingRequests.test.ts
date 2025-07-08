@@ -1,6 +1,5 @@
-import { ConnectorClient } from "@nmshd/connector-sdk";
+import { ConnectorClient, LocalRequestStatus } from "@nmshd/connector-sdk";
 import { ReadAttributeRequestItemJSON } from "@nmshd/content";
-import { LocalRequestStatus } from "@nmshd/runtime-types";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";

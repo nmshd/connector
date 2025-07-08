@@ -1,5 +1,4 @@
-import { ConnectorClient } from "@nmshd/connector-sdk";
-import { FileDTO } from "@nmshd/runtime-types";
+import { ConnectorClient, FileDTO } from "@nmshd/connector-sdk";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { Launcher } from "./lib/Launcher";
