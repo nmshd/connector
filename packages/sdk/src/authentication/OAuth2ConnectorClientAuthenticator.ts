@@ -36,13 +36,7 @@ export class OAuth2ConnectorClientAuthenticator implements IConnectorClientAuthe
     }
 
     async #refreshToken(): Promise<string> {
-        const params = new URLSearchParams({
-            grant_type: "client_credentials",
-            client_id: this.#clientId,
-            client_secret: this.#clientSecret,
-            audience: this.#audience
-        });
-
+        const params = new URLSearchParams({ grant_type: "client_credentials", client_id: this.#clientId, client_secret: this.#clientSecret, audience: this.#audience });
         if (this.#scopes && this.#scopes.length > 0) params.append("scope", this.#scopes.join(" "));
 
         const response = await axios.post(this.#tokenEndpoint, params, {
