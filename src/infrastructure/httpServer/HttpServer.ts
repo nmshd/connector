@@ -1,8 +1,8 @@
 import { sleep } from "@js-soft/ts-utils";
-import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration } from "@nmshd/connector-types";
+import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration, routeRequiresRole } from "@nmshd/connector-types";
 import { CoreDate } from "@nmshd/core-types";
 import { Container } from "@nmshd/typescript-ioc";
-import { Errors, Server } from "@nmshd/typescript-rest";
+import { Server } from "@nmshd/typescript-rest";
 import compression from "compression";
 import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
@@ -22,7 +22,6 @@ import { setResponseTimeHeader } from "./middlewares/setResponseTimeHeader";
 declare global {
     namespace Express {
         interface Request {
-            userRoles?: string[];
             getApiKeyObject: (apiKey: string) => { scopes?: string[] } | undefined;
         }
     }
@@ -207,7 +206,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useCustomMiddleware(middleware: MiddlewareConfig) {
-        this.app.use(middleware.route, middleware.handlers);
+        this.app.use(middleware.route, ...middleware.handlers);
     }
 
     private useErrorHandlers() {
@@ -284,9 +283,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 if (!req.auth) return await unauthorized(req, res);
 
                 const scope = req.auth.payload?.scope;
-                if (typeof scope === "string") {
-                    this.logger.warn("JWT Bearer token does not contain a scope, using empty array as default.");
-                }
+                if (typeof scope === "string") this.logger.warn("JWT Bearer token does not contain a scope, using empty array as default.");
 
                 const roles = typeof scope === "string" ? scope.split(" ") : [];
                 req.userRoles = roles;
@@ -353,25 +350,19 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useVersionEndpoint() {
-        this.app.get("/Monitoring/Version", (req: express.Request, res: express.Response) => {
-            if (!req.userRoles?.includes("admin")) throw new Errors.ForbiddenError("You are not allowed to access this endpoint.");
-
+        this.app.get("/Monitoring/Version", routeRequiresRole("admin"), (_: express.Request, res: express.Response) => {
             res.status(200).json(buildInformation);
         });
     }
 
     private useResponsesEndpoint() {
-        this.app.get("/Monitoring/Requests", (req: express.Request, res: express.Response) => {
-            if (!req.userRoles?.includes("admin")) throw new Errors.ForbiddenError("You are not allowed to access this endpoint.");
-
+        this.app.get("/Monitoring/Requests", routeRequiresRole("admin"), (_: express.Request, res: express.Response) => {
             res.status(200).json(this.requestTracker.getCount());
         });
     }
 
     private useSupportEndpoint() {
-        this.app.get("/Monitoring/Support", async (req: express.Request, res: express.Response) => {
-            if (!req.userRoles?.includes("admin")) throw new Errors.ForbiddenError("You are not allowed to access this endpoint.");
-
+        this.app.get("/Monitoring/Support", routeRequiresRole("admin"), async (_: express.Request, res: express.Response) => {
             const supportInformation = await this.runtime.getSupportInformation();
             res.status(200).json(supportInformation);
         });
@@ -411,6 +402,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         for (const controller of this.controllers) {
             Server.loadControllers(this.app, controller.globs, controller.baseDirectory);
         }
+
         Server.ignoreNextMiddlewares(true);
     }
 
