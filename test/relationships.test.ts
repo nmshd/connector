@@ -1,6 +1,5 @@
-import { ConnectorClient } from "@nmshd/connector-sdk";
+import { ConnectorClient, RelationshipAuditLogEntryReason, RelationshipStatus } from "@nmshd/connector-sdk";
 import { RelationshipAttributeConfidentiality } from "@nmshd/content";
-import { RelationshipAuditLogEntryReason, RelationshipStatus } from "@nmshd/runtime-types";
 import { Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
