@@ -1,2 +1,2 @@
 export * from "./apiKeyAuth";
-export * from "./forceAuthentication";
+export * from "./enforceAuthentication";

@@ -16,7 +16,7 @@ import {
     RouteNotFoundError,
     apiKeyAuth,
     csrfErrorHandler,
-    forceAuthentication,
+    enforceAuthentication,
     genericErrorHandler,
     isApiKeyAuthenticationEnabled,
     requestLogger,
@@ -232,7 +232,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         }
 
         this.app.use(
-            forceAuthentication(
+            enforceAuthentication(
                 {
                     apiKey: {
                         enabled: apiKeyAuthenticationEnabled,

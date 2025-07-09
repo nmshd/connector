@@ -3,7 +3,7 @@ import { sleep } from "@js-soft/ts-utils";
 import { Envelope, HttpErrors, HttpServerRole } from "@nmshd/connector-types";
 import express from "express";
 
-export function forceAuthentication(
+export function enforceAuthentication(
     config: {
         apiKey: { enabled: boolean; headerName: string };
         jwtBearer: { enabled: boolean };
