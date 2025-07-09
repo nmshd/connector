@@ -10,7 +10,7 @@ const scopelessApiKey = `${launcher.apiKey}scopeless`;
 
 beforeAll(async () => {
     const apiKeys = {
-        default: { key: launcher.apiKey },
+        allPermissions: { key: launcher.apiKey },
         onlyRelationships: { key: onlyRelationshipsApiKey, scopes: ["core:relationships"] },
         scopeLess: { key: scopelessApiKey, scopes: [] }
     };

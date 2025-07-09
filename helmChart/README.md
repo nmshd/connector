@@ -23,7 +23,7 @@ You can find a more detailed documentation [in the enmeshed docs](https://enmesh
                 authentication:
                     apiKey:
                         keys:
-                            default:
+                            <anApiKeyName>:
                                 key: "<api-key>"
     ```
 
@@ -51,7 +51,7 @@ config:
             authentication:
                 apiKey:
                     keys:
-                        default:
+                        <anApiKeyName>:
                             key: "<api-key>"
 
 pod:
