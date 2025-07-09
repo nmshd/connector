@@ -82,10 +82,11 @@ export class AttributesController extends BaseController {
         @Context context: ServiceContext,
         @QueryParam("peer") peer: string,
         @QueryParam("hideTechnical") hideTechnical?: boolean,
-        @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean
+        @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean,
+        @QueryParam("onlyValid") onlyValid?: boolean
     ): Promise<Envelope> {
-        const query: Record<string, any> = this.extractQuery(context.request.query, ["peer", "hideTechnical", "onlyLatestVersions"]);
-        const result = await this.consumptionServices.attributes.getOwnSharedAttributes({ peer, hideTechnical, query, onlyLatestVersions });
+        const query: Record<string, any> = this.extractQuery(context.request.query, ["peer", "hideTechnical", "onlyLatestVersions", "onlyValid"]);
+        const result = await this.consumptionServices.attributes.getOwnSharedAttributes({ peer, hideTechnical, query, onlyLatestVersions, onlyValid });
         return this.ok(result);
     }
 
@@ -96,11 +97,12 @@ export class AttributesController extends BaseController {
         @Context context: ServiceContext,
         @QueryParam("peer") peer: string,
         @QueryParam("hideTechnical") hideTechnical?: boolean,
-        @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean
+        @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean,
+        @QueryParam("onlyValid") onlyValid?: boolean
     ): Promise<Envelope> {
-        const query: Record<string, any> = this.extractQuery(context.request.query, ["peer", "hideTechnical", "onlyLatestVersions"]);
+        const query: Record<string, any> = this.extractQuery(context.request.query, ["peer", "hideTechnical", "onlyLatestVersions", "onlyValid"]);
 
-        const result = await this.consumptionServices.attributes.getPeerSharedAttributes({ peer, hideTechnical, query, onlyLatestVersions });
+        const result = await this.consumptionServices.attributes.getPeerSharedAttributes({ peer, hideTechnical, query, onlyLatestVersions, onlyValid });
         return this.ok(result);
     }
 
@@ -127,6 +129,14 @@ export class AttributesController extends BaseController {
         }
 
         const result = await this.consumptionServices.attributes.getSharedVersionsOfAttribute({ attributeId, onlyLatestVersions, peers });
+        return this.ok(result);
+    }
+
+    @GET
+    @Path("/Valid")
+    @Accept("application/json")
+    public async getValidAttributes(@Context context: ServiceContext): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.getAttributes({ query: context.request.query, onlyValid: true });
         return this.ok(result);
     }
 
