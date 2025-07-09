@@ -1,5 +1,5 @@
 import { sleep } from "@js-soft/ts-utils";
-import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration, routeRequiresRoles } from "@nmshd/connector-types";
+import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, HttpServerRole, IHttpServer, InfrastructureConfiguration, routeRequiresRoles } from "@nmshd/connector-types";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
 import compression from "compression";
@@ -248,7 +248,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             if (this.configuration.apiKey && apiKeyFromHeader) {
                 if (apiKeyFromHeader !== this.configuration.apiKey) return await unauthorized(req, res);
 
-                const apiKeyRoles = this.connectorMode === "debug" ? ["admin", "developer"] : ["admin"];
+                const apiKeyRoles = this.connectorMode === "debug" ? [HttpServerRole.ADMIN, HttpServerRole.DEVELOPER] : [HttpServerRole.ADMIN];
                 req.userRoles = apiKeyRoles;
 
                 next();
@@ -296,19 +296,19 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useVersionEndpoint() {
-        this.app.get("/Monitoring/Version", routeRequiresRoles("admin", "monitoring"), (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Version", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), (_: express.Request, res: express.Response) => {
             res.status(200).json(buildInformation);
         });
     }
 
     private useResponsesEndpoint() {
-        this.app.get("/Monitoring/Requests", routeRequiresRoles("admin", "monitoring"), (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Requests", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), (_: express.Request, res: express.Response) => {
             res.status(200).json(this.requestTracker.getCount());
         });
     }
 
     private useSupportEndpoint() {
-        this.app.get("/Monitoring/Support", routeRequiresRoles("admin", "monitoring"), async (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Support", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), async (_: express.Request, res: express.Response) => {
             const supportInformation = await this.runtime.getSupportInformation();
             res.status(200).json(supportInformation);
         });

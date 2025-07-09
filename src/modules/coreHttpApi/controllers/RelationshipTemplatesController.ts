@@ -1,10 +1,10 @@
-import { BaseController, Envelope, QRCode } from "@nmshd/connector-types";
+import { BaseController, Envelope, HttpServerRole, QRCode } from "@nmshd/connector-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, ContextAccept, ContextResponse, GET, POST, Path, PathParam, QueryParam, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
 
-@Security(["admin", "core:*", "core:relationshipTemplates"])
+@Security([HttpServerRole.ADMIN, "core:*", "core:relationshipTemplates"])
 @Path("/api/v2/RelationshipTemplates")
 export class RelationshipTemplatesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
