@@ -117,7 +117,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.useUnsecuredCustomEndpoints();
 
         this.useHealthEndpoint();
-        this.applyAuthentication();
+        this.useAuthentication();
 
         this.useVersionEndpoint();
         this.useResponsesEndpoint();
@@ -214,7 +214,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.app.use(genericErrorHandler(this.connectorMode, this.logger));
     }
 
-    private applyAuthentication() {
+    private useAuthentication() {
         const apiKeyAuthenticationEnabled = this.configuration.authentication.apiKey.enabled ?? Object.keys(this.configuration.authentication.apiKey.keys).length !== 0;
         const oidcAuthenticationEnabled =
             this.configuration.authentication.oidc.enabled ?? Object.keys(this.configuration.authentication.oidc).filter((k) => k !== "enabled").length !== 0;
