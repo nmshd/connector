@@ -1,5 +1,5 @@
 import { sleep } from "@js-soft/ts-utils";
-import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration } from "@nmshd/connector-types";
+import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration, routeRequiresRoles } from "@nmshd/connector-types";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
 import compression from "compression";
@@ -183,7 +183,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useCustomMiddleware(middleware: MiddlewareConfig) {
-        this.app.use(middleware.route, middleware.handlers);
+        this.app.use(middleware.route, ...middleware.handlers);
     }
 
     private useErrorHandlers() {
@@ -248,12 +248,21 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             if (this.configuration.apiKey && apiKeyFromHeader) {
                 if (apiKeyFromHeader !== this.configuration.apiKey) return await unauthorized(req, res);
 
+                const apiKeyRoles = this.connectorMode === "debug" ? ["admin", "developer"] : ["admin"];
+                req.userRoles = apiKeyRoles;
+
                 next();
                 return;
             }
 
             if (this.configuration.jwtBearer && req.headers["authorization"]) {
                 if (!req.auth) return await unauthorized(req, res);
+
+                const scope = req.auth.payload.scope;
+                if (typeof scope !== "string") this.logger.warn("JWT Bearer token does not contain a scope, using empty array as default.");
+
+                const roles = typeof scope === "string" ? scope.split(" ") : [];
+                req.userRoles = roles;
 
                 next();
                 return;
@@ -264,6 +273,8 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 if (!req.oidc) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
                 if (!req.oidc.isAuthenticated()) return await res.oidc.login();
 
+                req.userRoles = [];
+
                 next();
                 return;
             }
@@ -273,7 +284,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useHealthEndpoint() {
-        this.app.get("/health", async (_req: any, res: any) => {
+        this.app.get("/health", async (_: express.Request, res: express.Response) => {
             const health = await this.runtime.getHealth();
             const httpStatus = health.isHealthy ? 200 : 500;
             res.status(httpStatus).json(health);
@@ -281,19 +292,19 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useVersionEndpoint() {
-        this.app.get("/Monitoring/Version", (_req: any, res: any) => {
+        this.app.get("/Monitoring/Version", routeRequiresRoles("admin", "monitoring"), (_: express.Request, res: express.Response) => {
             res.status(200).json(buildInformation);
         });
     }
 
     private useResponsesEndpoint() {
-        this.app.get("/Monitoring/Requests", (_req: any, res: any) => {
+        this.app.get("/Monitoring/Requests", routeRequiresRoles("admin", "monitoring"), (_: express.Request, res: express.Response) => {
             res.status(200).json(this.requestTracker.getCount());
         });
     }
 
     private useSupportEndpoint() {
-        this.app.get("/Monitoring/Support", async (_req: any, res: any) => {
+        this.app.get("/Monitoring/Support", routeRequiresRoles("admin", "monitoring"), async (_: express.Request, res: express.Response) => {
             const supportInformation = await this.runtime.getSupportInformation();
             res.status(200).json(supportInformation);
         });
@@ -322,9 +333,20 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             }
         });
 
+        Server.registerAuthenticator({
+            getMiddleware: () => (_req, _res, next) => next(),
+
+            initialize: (_app: Application) => {
+                // no initialization needed
+            },
+
+            getRoles: (req) => req.userRoles ?? []
+        });
+
         for (const controller of this.controllers) {
             Server.loadControllers(this.app, controller.globs, controller.baseDirectory);
         }
+
         Server.ignoreNextMiddlewares(true);
     }
 
