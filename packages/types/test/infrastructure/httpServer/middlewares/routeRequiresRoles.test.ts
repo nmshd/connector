@@ -6,12 +6,12 @@ describe("routeRequiresRoles middleware", () => {
     const res = {} as any as express.Response;
 
     it.each([
-        [["admin"], ["admin"], undefined],
-        [["admin"], [], new Errors.ForbiddenError("You are not allowed to access this endpoint.")],
-        [["admin"], ["aRandomRole"], new Errors.ForbiddenError("You are not allowed to access this endpoint.")],
-        [["admin", "core:messages"], ["core:messages"], undefined],
-        [["admin"], undefined, new Errors.ForbiddenError("You are not allowed to access this endpoint.")]
-    ])("should properly handle the required and given roles", (requiredRoles: string[], userRoles: string[] | undefined, nextCall: Error | undefined) => {
+        [["admin"], ["admin"], true],
+        [["admin"], [], false],
+        [["admin"], ["aRandomRole"], false],
+        [["admin", "core:messages"], ["core:messages"], true],
+        [["admin"], undefined, false]
+    ])("should properly handle the required and given roles", (requiredRoles: string[], userRoles: string[] | undefined, shouldBeAuthorized: boolean) => {
         const next = jest.fn();
 
         const fn = routeRequiresRoles(requiredRoles.at(0)!, ...requiredRoles.slice(1));
@@ -19,10 +19,10 @@ describe("routeRequiresRoles middleware", () => {
 
         expect(next).toHaveBeenCalledTimes(1);
 
-        if (nextCall) {
-            expect(next).toHaveBeenCalledWith(nextCall);
-        } else {
+        if (shouldBeAuthorized) {
             expect(next).toHaveBeenCalledWith();
+        } else {
+            expect(next).toHaveBeenCalledWith(new Errors.ForbiddenError("You are not allowed to access this endpoint."));
         }
     });
 
