@@ -1,6 +1,4 @@
-import { sleep } from "@js-soft/ts-utils";
-import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, HttpServerRole, IHttpServer, InfrastructureConfiguration, routeRequiresRoles } from "@nmshd/connector-types";
-import { CoreDate } from "@nmshd/core-types";
+import { ConnectorInfrastructure, HttpMethod, HttpServerRole, IHttpServer, InfrastructureConfiguration, routeRequiresRoles } from "@nmshd/connector-types";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
 import compression from "compression";
@@ -13,19 +11,17 @@ import helmet, { HelmetOptions } from "helmet";
 import http from "http";
 import { buildInformation } from "../../buildInformation";
 import { RequestTracker } from "./RequestTracker";
-import { csrfErrorHandler } from "./middlewares/csrfErrorHandler";
-import { RouteNotFoundError, genericErrorHandler } from "./middlewares/genericErrorHandler";
-import { requestLogger } from "./middlewares/requestLogger";
-import { setDurationHeader } from "./middlewares/setResponseDurationHeader";
-import { setResponseTimeHeader } from "./middlewares/setResponseTimeHeader";
-
-declare global {
-    namespace Express {
-        interface Request {
-            validateApiKey(apiKey: string): { isValid: boolean; scopes?: string[] };
-        }
-    }
-}
+import {
+    ApiKeyAuthenticationConfig,
+    RouteNotFoundError,
+    apiKeyAuth,
+    csrfErrorHandler,
+    forceAuthentication,
+    genericErrorHandler,
+    requestLogger,
+    setDurationHeader,
+    setResponseTimeHeader
+} from "./middlewares";
 
 export interface CustomEndpoint {
     httpMethod: HttpMethod;
@@ -50,20 +46,7 @@ export interface HttpServerConfiguration extends InfrastructureConfiguration {
     cors?: CorsOptions;
     helmetOptions?: HelmetOptions;
     authentication: {
-        apiKey: {
-            enabled?: boolean;
-            headerName: string;
-            keys: Record<
-                string,
-                {
-                    enabled?: boolean;
-                    key: string;
-                    description?: string;
-                    expiresAt?: string;
-                    scopes?: string[];
-                }
-            >;
-        };
+        apiKey: ApiKeyAuthenticationConfig;
         oidc: { enabled?: boolean } & OauthParams;
         jwtBearer: { enabled?: boolean } & BearerAuthOptions;
     };
@@ -230,17 +213,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         }
 
         if (apiKeyAuthenticationEnabled) {
-            const apiKeys = this.getValidApiKeys();
-            this.app.use((req, _, next) => {
-                req.validateApiKey = (apiKey: string): { isValid: boolean; scopes?: string[] } => {
-                    const apiKeyObject = apiKeys.find((keyDefinition) => keyDefinition.apiKey === apiKey && !(keyDefinition.expiresAt?.isExpired() ?? false));
-                    if (!apiKeyObject) return { isValid: false };
-
-                    return { isValid: true, scopes: apiKeyObject.scopes };
-                };
-
-                next();
-            });
+            this.app.use(apiKeyAuth(this.configuration.authentication.apiKey));
         }
 
         if (oidcAuthenticationEnabled) {
@@ -259,82 +232,20 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             this.app.use(bearerAuth(config));
         }
 
-        const unauthorized = async (_: express.Request, res: express.Response) => {
-            await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
-            res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
-        };
-
-        this.app.use(async (req, res, next) => {
-            const headerName = this.configuration.authentication.apiKey.headerName.toLowerCase();
-            const xApiKeyHeaderValue = req.headers[headerName];
-            const apiKeyFromHeader = Array.isArray(xApiKeyHeaderValue) ? xApiKeyHeaderValue[0] : xApiKeyHeaderValue;
-            if (apiKeyAuthenticationEnabled && apiKeyFromHeader) {
-                const validationResult = req.validateApiKey(apiKeyFromHeader);
-                if (!validationResult.isValid) return await unauthorized(req, res);
-
-                const defaultApiKeyRoles = this.connectorMode === "debug" ? [HttpServerRole.ADMIN, HttpServerRole.DEVELOPER] : [HttpServerRole.ADMIN];
-                req.userRoles = validationResult.scopes ?? defaultApiKeyRoles;
-
-                next();
-                return;
-            }
-
-            if (jwtBearerAuthenticationEnabled && req.headers["authorization"]) {
-                if (!req.auth) return await unauthorized(req, res);
-
-                const scope = req.auth.payload.scope;
-
-                if (typeof scope === "string") {
-                    req.userRoles = scope.split(" ");
-                } else {
-                    this.logger.warn("JWT Bearer token does not contain a scope, using empty array as default.");
-                    req.userRoles = [];
-                }
-
-                next();
-                return;
-            }
-
-            if (oidcAuthenticationEnabled) {
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
-                if (!req.oidc) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
-                if (!req.oidc.isAuthenticated()) return await res.oidc.login();
-
-                req.userRoles = [];
-
-                next();
-                return;
-            }
-
-            await unauthorized(req, res);
-        });
-    }
-
-    private getValidApiKeys(): { apiKey: string; expiresAt?: CoreDate; scopes?: string[] }[] {
-        const configuredApiKeys = this.configuration.authentication.apiKey.keys;
-        const apiKeyAuthenticationEnabled = this.configuration.authentication.apiKey.enabled ?? Object.keys(configuredApiKeys).length !== 0;
-        if (!apiKeyAuthenticationEnabled) throw new Error("API key authentication is not enabled in configuration. At least one API key is required.");
-
-        const allApiKeys = Object.values(configuredApiKeys).map((def) => def.key);
-        if (allApiKeys.length !== new Set(allApiKeys).size) {
-            throw new Error("Duplicate API keys found in configuration. Each API key must be unique.");
-        }
-
-        const validApiKeys = Object.entries(configuredApiKeys)
-            .filter((apiKey) => apiKey[1].enabled !== false)
-            .filter((apiKey) => apiKey[1].expiresAt === undefined || !CoreDate.from(apiKey[1].expiresAt).isExpired());
-
-        if (validApiKeys.length === 0) throw new Error("No valid API keys found in configuration. At least one is required.");
-
-        const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
-        const apiKeysViolatingThePolicy = validApiKeys.filter((apiKey) => !apiKey[1].key.match(apiKeyPolicy));
-        if (apiKeysViolatingThePolicy.length !== 0) {
-            throw new Error(
-                `The API keys with the following key(s) does not meet the requirements: ${apiKeysViolatingThePolicy.map((k) => k[0]).join(", ")}. They must be at least 30 characters long and contain at least 2 digits, 2 uppercase letters, 2 lowercase letters and 1 special character (!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~).`
-            );
-        }
-
-        return validApiKeys.map((apiKey) => ({ apiKey: apiKey[1].key, expiresAt: apiKey[1].expiresAt ? CoreDate.from(apiKey[1].expiresAt) : undefined, scopes: apiKey[1].scopes }));
+        this.app.use(
+            forceAuthentication(
+                {
+                    apiKey: {
+                        enabled: apiKeyAuthenticationEnabled,
+                        headerName: this.configuration.authentication.apiKey.headerName.toLocaleLowerCase()
+                    },
+                    jwtBearer: { enabled: jwtBearerAuthenticationEnabled },
+                    oidc: { enabled: oidcAuthenticationEnabled },
+                    connectorMode: this.connectorMode
+                },
+                this.logger
+            )
+        );
     }
 
     private useHealthEndpoint() {
