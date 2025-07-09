@@ -22,7 +22,7 @@ import { setResponseTimeHeader } from "./middlewares/setResponseTimeHeader";
 declare global {
     namespace Express {
         interface Request {
-            getApiKeyObject(apiKey: string): { scopes?: string[] } | undefined;
+            validateApiKey(apiKey: string): { isValid: boolean; scopes?: string[] };
         }
     }
 }
@@ -232,11 +232,11 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         if (apiKeyAuthenticationEnabled) {
             const apiKeys = this.getValidApiKeys();
             this.app.use((req, _, next) => {
-                req.getApiKeyObject = (apiKey: string): { scopes?: string[] } | undefined => {
+                req.validateApiKey = (apiKey: string): { isValid: boolean; scopes?: string[] } => {
                     const apiKeyObject = apiKeys.find((keyDefinition) => keyDefinition.apiKey === apiKey && !(keyDefinition.expiresAt?.isExpired() ?? false));
-                    if (!apiKeyObject) return;
+                    if (!apiKeyObject) return { isValid: false };
 
-                    return { scopes: apiKeyObject.scopes };
+                    return { isValid: true, scopes: apiKeyObject.scopes };
                 };
 
                 next();
@@ -269,11 +269,11 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             const xApiKeyHeaderValue = req.headers[headerName];
             const apiKeyFromHeader = Array.isArray(xApiKeyHeaderValue) ? xApiKeyHeaderValue[0] : xApiKeyHeaderValue;
             if (apiKeyAuthenticationEnabled && apiKeyFromHeader) {
-                const matchingApiKey = req.getApiKeyObject(apiKeyFromHeader);
-                if (!matchingApiKey) return await unauthorized(req, res);
+                const validationResult = req.validateApiKey(apiKeyFromHeader);
+                if (!validationResult.isValid) return await unauthorized(req, res);
 
                 const defaultApiKeyRoles = this.connectorMode === "debug" ? [HttpServerRole.ADMIN, HttpServerRole.DEVELOPER] : [HttpServerRole.ADMIN];
-                req.userRoles = matchingApiKey.scopes ?? defaultApiKeyRoles;
+                req.userRoles = validationResult.scopes ?? defaultApiKeyRoles;
 
                 next();
                 return;
