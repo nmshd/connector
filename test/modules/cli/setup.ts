@@ -9,7 +9,7 @@ export function setupEnvironment(randomAccountName: string): void {
         dbName: `default${randomAccountName}`
     });
     process.env.CUSTOM_CONFIG_LOCATION = ".dev/test.json";
-    process.env["infrastructure:httpServer:authentication:apiKey:keys:default:key"] = "test";
+    process.env["infrastructure:httpServer:authentication:apiKey:keys:test:key"] = "test";
     process.env["infrastructure:httpServer:port"] = getPort().toString();
 
     process.env["transportLibrary:baseUrl"] = process.env["NMSHD_TEST_BASEURL"];

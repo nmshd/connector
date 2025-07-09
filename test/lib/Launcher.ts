@@ -90,7 +90,7 @@ export class Launcher {
         return await Random.string(7, RandomCharacterRange.Alphabet);
     }
 
-    private async spawnConnector(port: number, accountName: string, eventBus?: MockEventBus, apiKeys: LauncherApiKeyDefinition = { default: { key: this.apiKey } }) {
+    private async spawnConnector(port: number, accountName: string, eventBus?: MockEventBus, apiKeys: LauncherApiKeyDefinition = { test: { key: this.apiKey } }) {
         const env = process.env;
         env["infrastructure:httpServer:port"] = port.toString();
 
