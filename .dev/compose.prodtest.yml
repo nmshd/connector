@@ -31,7 +31,7 @@ services:
   mongo:
     container_name: mongo
     hostname: mongo
-    image: mongo@sha256:5941949d3887e40be5175787aade07dc052f2cddb8ce21b740c3948eba6a3ed0
+    image: mongo@sha256:f331890607b5cdce091da9823f91ab1e4c54d31fd572282037880b2eaafff454
     ports:
       - "27017:27017"
     logging:
