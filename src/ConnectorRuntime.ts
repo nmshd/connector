@@ -229,12 +229,12 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         }
 
         if (authentication?.oidc) {
-            const oidcAuthenticationEnabled = authentication.oidc.enabled ?? Object.keys(authentication.oidc).filter((k) => k !== "enabled").length !== 0;
+            const oidcAuthenticationEnabled = authentication.oidc.enabled ?? Object.keys(authentication.oidc).length !== 0;
             authentication.oidc = oidcAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
         }
 
         if (authentication?.jwtBearer) {
-            const jwtBearerAuthenticationEnabled = authentication.jwtBearer.enabled ?? Object.keys(authentication.jwtBearer).filter((k) => k !== "enabled").length !== 0;
+            const jwtBearerAuthenticationEnabled = authentication.jwtBearer.enabled ?? Object.keys(authentication.jwtBearer).length !== 0;
             authentication.jwtBearer = jwtBearerAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
         }
 

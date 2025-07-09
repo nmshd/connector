@@ -18,6 +18,7 @@ import {
     csrfErrorHandler,
     forceAuthentication,
     genericErrorHandler,
+    isApiKeyAuthenticationEnabled,
     requestLogger,
     setDurationHeader,
     setResponseTimeHeader
@@ -198,11 +199,9 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useAuthentication() {
-        const apiKeyAuthenticationEnabled = this.configuration.authentication.apiKey.enabled ?? Object.keys(this.configuration.authentication.apiKey.keys).length !== 0;
-        const oidcAuthenticationEnabled =
-            this.configuration.authentication.oidc.enabled ?? Object.keys(this.configuration.authentication.oidc).filter((k) => k !== "enabled").length !== 0;
-        const jwtBearerAuthenticationEnabled =
-            this.configuration.authentication.jwtBearer.enabled ?? Object.keys(this.configuration.authentication.jwtBearer).filter((k) => k !== "enabled").length !== 0;
+        const apiKeyAuthenticationEnabled = isApiKeyAuthenticationEnabled(this.configuration.authentication.apiKey);
+        const oidcAuthenticationEnabled = this.configuration.authentication.oidc.enabled ?? Object.keys(this.configuration.authentication.oidc).length !== 0;
+        const jwtBearerAuthenticationEnabled = this.configuration.authentication.jwtBearer.enabled ?? Object.keys(this.configuration.authentication.jwtBearer).length !== 0;
         if (!apiKeyAuthenticationEnabled && !oidcAuthenticationEnabled && !jwtBearerAuthenticationEnabled) {
             switch (this.connectorMode) {
                 case "debug":
