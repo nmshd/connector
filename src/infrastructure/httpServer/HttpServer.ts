@@ -1,5 +1,5 @@
 import { sleep } from "@js-soft/ts-utils";
-import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, IHttpServer, InfrastructureConfiguration, routeRequiresRoles } from "@nmshd/connector-types";
+import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, HttpServerRole, IHttpServer, InfrastructureConfiguration, routeRequiresRoles } from "@nmshd/connector-types";
 import { CoreDate } from "@nmshd/core-types";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
@@ -275,6 +275,9 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 const apiKeyRoles = this.connectorMode === "debug" ? ["admin", "developer"] : ["admin"];
                 req.userRoles = matchingApiKey.scopes ?? apiKeyRoles;
 
+                const apiKeyRoles = this.connectorMode === "debug" ? [HttpServerRole.ADMIN, HttpServerRole.DEVELOPER] : [HttpServerRole.ADMIN];
+                req.userRoles = apiKeyRoles;
+
                 next();
                 return;
             }
@@ -283,10 +286,13 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 if (!req.auth) return await unauthorized(req, res);
 
                 const scope = req.auth.payload.scope;
-                if (typeof scope !== "string") this.logger.warn("JWT Bearer token does not contain a scope, using empty array as default.");
 
-                const roles = typeof scope === "string" ? scope.split(" ") : [];
-                req.userRoles = roles;
+                if (typeof scope === "string") {
+                    req.userRoles = scope.split(" ");
+                } else {
+                    this.logger.warn("JWT Bearer token does not contain a scope, using empty array as default.");
+                    req.userRoles = [];
+                }
 
                 next();
                 return;
@@ -335,7 +341,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useHealthEndpoint() {
-        this.app.get("/health", async (_req: any, res: any) => {
+        this.app.get("/health", async (_: express.Request, res: express.Response) => {
             const health = await this.runtime.getHealth();
             const httpStatus = health.isHealthy ? 200 : 500;
             res.status(httpStatus).json(health);
@@ -343,19 +349,19 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useVersionEndpoint() {
-        this.app.get("/Monitoring/Version", routeRequiresRoles("admin", "monitoring"), (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Version", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), (_: express.Request, res: express.Response) => {
             res.status(200).json(buildInformation);
         });
     }
 
     private useResponsesEndpoint() {
-        this.app.get("/Monitoring/Requests", routeRequiresRoles("admin", "monitoring"), (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Requests", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), (_: express.Request, res: express.Response) => {
             res.status(200).json(this.requestTracker.getCount());
         });
     }
 
     private useSupportEndpoint() {
-        this.app.get("/Monitoring/Support", routeRequiresRoles("admin", "monitoring"), async (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Support", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), async (_: express.Request, res: express.Response) => {
             const supportInformation = await this.runtime.getSupportInformation();
             res.status(200).json(supportInformation);
         });

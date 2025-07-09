@@ -1,9 +1,9 @@
-import { BaseController, Envelope } from "@nmshd/connector-types";
+import { BaseController, Envelope, HttpServerRole } from "@nmshd/connector-types";
 import { ConsumptionServices, RuntimeErrors } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, DELETE, GET, POST, PUT, Path, PathParam, QueryParam, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 
-@Security(["admin", "core:*", "core:attributes"])
+@Security([HttpServerRole.ADMIN, "core:*", "core:attributes"])
 @Path("/api/v2/Attributes")
 export class AttributesController extends BaseController {
     public constructor(@Inject private readonly consumptionServices: ConsumptionServices) {
