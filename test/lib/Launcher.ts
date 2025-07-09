@@ -18,14 +18,16 @@ export type ConnectorClientWithMetadata = ConnectorClient & {
     /* eslint-enable @typescript-eslint/naming-convention */
 };
 
+export type LauncherApiKeyDefinition = Record<string, { key: string; scopes?: string[] }>;
+
 export class Launcher {
     private readonly _processes: { connector: ChildProcess; webhookServer: Server | undefined }[] = [];
     public readonly apiKey = "This_is_a_test_APIKEY_with_30_chars+";
 
-    public async launchSimple(): Promise<string> {
+    public async launchSimple(apiKeys?: LauncherApiKeyDefinition): Promise<string> {
         const port = await getPort();
         const accountName = await this.randomString();
-        const { connector, webhookServer } = await this.spawnConnector(port, accountName);
+        const { connector, webhookServer } = await this.spawnConnector(port, accountName, undefined, apiKeys);
         this._processes.push({
             connector,
             webhookServer
@@ -88,10 +90,11 @@ export class Launcher {
         return await Random.string(7, RandomCharacterRange.Alphabet);
     }
 
-    private async spawnConnector(port: number, accountName: string, eventBus?: MockEventBus) {
+    private async spawnConnector(port: number, accountName: string, eventBus?: MockEventBus, apiKeys: LauncherApiKeyDefinition = { default: { key: this.apiKey } }) {
         const env = process.env;
         env["infrastructure:httpServer:port"] = port.toString();
-        env["infrastructure:httpServer:authentication:apiKey:keys:default:key"] = this.apiKey;
+
+        for (const [key, value] of Object.entries(apiKeys)) env[`infrastructure:httpServer:authentication:apiKey:keys:${key}`] = JSON.stringify(value);
 
         const notDefinedEnvironmentVariables = ["NMSHD_TEST_BASEURL", "NMSHD_TEST_CLIENTID", "NMSHD_TEST_CLIENTSECRET"].filter((env) => !process.env[env]);
         if (notDefinedEnvironmentVariables.length > 0) {
