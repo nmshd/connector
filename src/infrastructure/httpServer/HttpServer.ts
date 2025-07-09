@@ -261,8 +261,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 const scope = req.auth.payload.scope;
 
                 if (typeof scope === "string") {
-                    const roles = scope.split(" ");
-                    req.userRoles = roles;
+                    req.userRoles = scope.split(" ");
                 } else {
                     this.logger.warn("JWT Bearer token does not contain a scope, using empty array as default.");
                     req.userRoles = [];
