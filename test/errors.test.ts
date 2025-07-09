@@ -5,12 +5,12 @@ import { validateSchema, ValidationSchema } from "./lib/validation";
 
 const launcher = new Launcher();
 let axiosClient: AxiosInstance;
-const onlyCoreApiKey = `${launcher.apiKey}onlyCore`;
+const onlyRelationshipsApiKey = `${launcher.apiKey}onlyRelationships`;
 
 beforeAll(async () => {
     const apiKeys = {
         default: { key: launcher.apiKey },
-        onlyCore: { key: onlyCoreApiKey, scopes: ["core:*"] }
+        onlyRelationships: { key: onlyRelationshipsApiKey, scopes: ["core:relationships"] }
     };
 
     const baseUrl = await launcher.launchSimple(apiKeys);
@@ -30,8 +30,8 @@ describe("Errors", () => {
         validateSchema(ValidationSchema.Error, response.data.error);
     });
 
-    test.each(["/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support"])("http error 403 on route '%s'", async (route: string) => {
-        const response = await axiosClient.get<any>(route, { headers: { "X-API-KEY": onlyCoreApiKey } });
+    test.each(["/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support", "/api/v2/Files"])("http error 403 on route '%s'", async (route: string) => {
+        const response = await axiosClient.get<any>(route, { headers: { "X-API-KEY": onlyRelationshipsApiKey } });
         expect(response.status).toBe(403);
         validateSchema(ValidationSchema.Error, response.data.error);
     });
