@@ -272,9 +272,6 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 const matchingApiKey = req.getApiKeyObject(apiKeyFromHeader);
                 if (!matchingApiKey) return await unauthorized(req, res);
 
-                const apiKeyRoles = this.connectorMode === "debug" ? ["admin", "developer"] : ["admin"];
-                req.userRoles = matchingApiKey.scopes ?? apiKeyRoles;
-
                 const apiKeyRoles = this.connectorMode === "debug" ? [HttpServerRole.ADMIN, HttpServerRole.DEVELOPER] : [HttpServerRole.ADMIN];
                 req.userRoles = apiKeyRoles;
 
