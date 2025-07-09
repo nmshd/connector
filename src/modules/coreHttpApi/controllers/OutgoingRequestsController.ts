@@ -1,8 +1,9 @@
 import { BaseController, Envelope } from "@nmshd/connector-types";
 import { ConsumptionServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, Context, GET, Path, PathParam, POST, Return, ServiceContext } from "@nmshd/typescript-rest";
+import { Accept, Context, GET, Path, PathParam, POST, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 
+@Security(["admin", "core:*", "core:requests:*", "core:requests:outgoing"])
 @Path("/api/v2/Requests/Outgoing")
 export class OutgoingRequestsController extends BaseController {
     public constructor(@Inject private readonly consumptionServices: ConsumptionServices) {
