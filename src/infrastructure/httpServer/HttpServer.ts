@@ -259,10 +259,14 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                 if (!req.auth) return await unauthorized(req, res);
 
                 const scope = req.auth.payload.scope;
-                if (typeof scope !== "string") this.logger.warn("JWT Bearer token does not contain a scope, using empty array as default.");
 
-                const roles = typeof scope === "string" ? scope.split(" ") : [];
-                req.userRoles = roles;
+                if (typeof scope === "string") {
+                    const roles = scope.split(" ");
+                    req.userRoles = roles;
+                } else {
+                    this.logger.warn("JWT Bearer token does not contain a scope, using empty array as default.");
+                    req.userRoles = [];
+                }
 
                 next();
                 return;
