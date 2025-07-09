@@ -5,6 +5,10 @@ export class HttpErrors {
         return new HttpError("error.connector.unauthorized", "Unauthorized.");
     }
 
+    public static forbidden(): HttpError {
+        return new HttpError("error.connector.forbidden", "You are not allowed to access this endpoint.");
+    }
+
     public static invalidJsonInPayload(): HttpError {
         return new HttpError("error.connector.validation.invalidJsonInPayload", "The given payload is not a valid json object.");
     }

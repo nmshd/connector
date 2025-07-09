@@ -1,10 +1,27 @@
-import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
+import { BaseController, Envelope, HttpServerRole, Mimetype } from "@nmshd/connector-types";
 import { Reference } from "@nmshd/core-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, DELETE, FileParam, FormParam, GET, PATCH, Path, PathParam, POST, Return, ServiceContext } from "@nmshd/typescript-rest";
+import {
+    Accept,
+    Context,
+    ContextAccept,
+    ContextResponse,
+    DELETE,
+    FileParam,
+    FormParam,
+    GET,
+    PATCH,
+    Path,
+    PathParam,
+    POST,
+    Return,
+    Security,
+    ServiceContext
+} from "@nmshd/typescript-rest";
 import express from "express";
 
+@Security([HttpServerRole.ADMIN, "core:*", "core:files"])
 @Path("/api/v2/Files")
 export class FilesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {

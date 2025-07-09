@@ -1,8 +1,9 @@
-import { BaseController, Envelope } from "@nmshd/connector-types";
+import { BaseController, Envelope, HttpServerRole } from "@nmshd/connector-types";
 import { ConsumptionServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, DELETE, GET, PUT, Path, QueryParam } from "@nmshd/typescript-rest";
+import { Accept, DELETE, GET, PUT, Path, QueryParam, Security } from "@nmshd/typescript-rest";
 
+@Security([HttpServerRole.ADMIN, "core:*", "core:identityMetadata"])
 @Path("/api/v2/IdentityMetadata")
 export class IdentityMetadataController extends BaseController {
     public constructor(@Inject private readonly consumptionServices: ConsumptionServices) {
