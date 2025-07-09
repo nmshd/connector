@@ -7,7 +7,10 @@ export function routeRequiresRoles(...requiredRoles: [string, ...string[]]) {
     return (req: express.Request, _: express.Response, next: express.NextFunction): void => {
         const userRoles = req.userRoles;
         const hasRole = userRoles && Array.isArray(userRoles) && requiredRoles.some((role) => userRoles.includes(role));
-        if (!hasRole) throw new Errors.ForbiddenError("You are not allowed to access this endpoint.");
+        if (!hasRole) {
+            next(new Errors.ForbiddenError("You are not allowed to access this endpoint."));
+            return;
+        }
 
         next();
     };
