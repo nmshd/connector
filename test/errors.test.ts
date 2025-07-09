@@ -6,11 +6,13 @@ import { validateSchema, ValidationSchema } from "./lib/validation";
 const launcher = new Launcher();
 let axiosClient: AxiosInstance;
 const onlyRelationshipsApiKey = `${launcher.apiKey}onlyRelationships`;
+const scopelessApiKey = `${launcher.apiKey}scopeless`;
 
 beforeAll(async () => {
     const apiKeys = {
         default: { key: launcher.apiKey },
-        onlyRelationships: { key: onlyRelationshipsApiKey, scopes: ["core:relationships"] }
+        onlyRelationships: { key: onlyRelationshipsApiKey, scopes: ["core:relationships"] },
+        scopeLess: { key: scopelessApiKey, scopes: [] }
     };
 
     const baseUrl = await launcher.launchSimple(apiKeys);
@@ -30,11 +32,23 @@ describe("Errors", () => {
         validateSchema(ValidationSchema.Error, response.data.error);
     });
 
-    test.each(["/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support", "/api/v2/Files"])("http error 403 on route '%s'", async (route: string) => {
-        const response = await axiosClient.get<any>(route, { headers: { "X-API-KEY": onlyRelationshipsApiKey } });
-        expect(response.status).toBe(403);
-        validateSchema(ValidationSchema.Error, response.data.error);
-    });
+    test.each(["/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support", "/api/v2/Files"])(
+        "http error 403 on route '%s' with apiKey that can only access /api/v2/Relationships",
+        async (route: string) => {
+            const response = await axiosClient.get<any>(route, { headers: { "X-API-KEY": onlyRelationshipsApiKey } });
+            expect(response.status).toBe(403);
+            validateSchema(ValidationSchema.Error, response.data.error);
+        }
+    );
+
+    test.each(["/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support", "/api/v2/Files"])(
+        "http error 403 on route '%s' with apiKey that can not access authorized routes",
+        async (route: string) => {
+            const response = await axiosClient.get<any>(route, { headers: { "X-API-KEY": scopelessApiKey } });
+            expect(response.status).toBe(403);
+            validateSchema(ValidationSchema.Error, response.data.error);
+        }
+    );
 
     test("http error 404", async () => {
         const response = await axiosClient.get<any>("/apii/v2/Files");
