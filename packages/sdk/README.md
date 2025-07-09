@@ -37,7 +37,10 @@ npm i @nmshd/connector-sdk
 1. Initialize the `ConnectorClient`
 
     ```typescript
-    const connectorClient = ConnectorClient.create({ baseUrl: "https://<INSERT_YOUR_CONNECTOR_DOMAIN_HERE>", apiKey: "<INSERT_YOUR_API_KEY_HERE>" });
+    const connectorClient = ConnectorClient.create({
+        baseUrl: "https://<INSERT_YOUR_CONNECTOR_DOMAIN_HERE>",
+        authenticator: new ApiKeyAuthenticator("<INSERT_YOUR_API_KEY_HERE>")
+    });
     ```
 
 2. Start using the client
