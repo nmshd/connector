@@ -35,6 +35,11 @@ export function genericErrorHandler(connectorMode: ConnectorMode, logger: ILogge
                 return;
             }
 
+            if (error instanceof Errors.ForbiddenError) {
+                res.status(403).json(Envelope.error(HttpErrors.forbidden(), connectorMode));
+                return;
+            }
+
             if (error instanceof Errors.MethodNotAllowedError) {
                 logger.debug(`Handling ${Errors.MethodNotAllowedError.name}...`);
 

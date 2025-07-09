@@ -1,4 +1,4 @@
-import { BaseController, Envelope, Mimetype, QRCode } from "@nmshd/connector-types";
+import { BaseController, Envelope, HttpServerRole, Mimetype, QRCode } from "@nmshd/connector-types";
 import { Reference } from "@nmshd/core-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
@@ -17,10 +17,12 @@ import {
     POST,
     QueryParam,
     Return,
+    Security,
     ServiceContext
 } from "@nmshd/typescript-rest";
 import express from "express";
 
+@Security([HttpServerRole.ADMIN, "core:*", "core:files"])
 @Path("/api/v2/Files")
 export class FilesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
