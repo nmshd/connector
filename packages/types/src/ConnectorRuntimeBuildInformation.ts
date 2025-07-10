@@ -3,6 +3,7 @@ export interface ConnectorRuntimeBuildInformation {
     build: string;
     date: string;
     commit: string;
+    runtimeVersion: string;
     modules: Record<string, ConnectorRuntimeModuleBuildInformation>;
 }
 
