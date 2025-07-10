@@ -19,4 +19,9 @@ export abstract class ConnectorRuntimeModule<TConfig extends ConnectorRuntimeMod
     ) {
         super(runtime, configuration, logger);
     }
+
+    public getBuildInformation(): { version: string; build: string; date: string; commit: string } | undefined {
+        // This method can be overridden by subclasses to provide module-specific build information
+        return undefined;
+    }
 }
