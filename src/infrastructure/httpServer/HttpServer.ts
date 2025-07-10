@@ -9,7 +9,6 @@ import { AuthOptions as BearerAuthOptions, auth as bearerAuth } from "express-oa
 import { ConfigParams as OauthParams, auth as openidAuth } from "express-openid-connect";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
-import { buildInformation } from "../../buildInformation";
 import { RequestTracker } from "./RequestTracker";
 import {
     ApiKeyAuthenticationConfig,
@@ -257,6 +256,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
     private useVersionEndpoint() {
         this.app.get("/Monitoring/Version", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), (_: express.Request, res: express.Response) => {
+            const buildInformation = this.runtime.getBuildInformation();
             res.status(200).json(buildInformation);
         });
     }
