@@ -254,17 +254,17 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
     }
 
     public getBuildInformation(): ConnectorRuntimeBuildInformation {
-        const modulesBildInformation: Record<string, { version: string; build: string; date: string; commit: string }> = {};
+        const modulesBuildInformation: Record<string, { version: string; build: string; date: string; commit: string }> = {};
         for (const module of this.modules) {
             if (!(module instanceof ConnectorRuntimeModule)) continue;
 
             const moduleBuildInformation = module.getBuildInformation();
             if (!moduleBuildInformation) continue;
 
-            modulesBildInformation[module.displayName] = moduleBuildInformation;
+            modulesBuildInformation[module.displayName] = moduleBuildInformation;
         }
 
-        return { ...buildInformation, modules: modulesBildInformation };
+        return { ...buildInformation, modules: modulesBuildInformation };
     }
 
     public async getBackboneAuthenticationToken(): Promise<string> {
