@@ -4,7 +4,14 @@ import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { ILogger } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ApplicationError } from "@js-soft/ts-utils";
-import { AbstractConnectorRuntime, ConnectorMode, ConnectorRuntimeModule, ConnectorRuntimeModuleConfiguration, DocumentationLink } from "@nmshd/connector-types";
+import {
+    AbstractConnectorRuntime,
+    ConnectorMode,
+    ConnectorRuntimeBuildInformation,
+    ConnectorRuntimeModule,
+    ConnectorRuntimeModuleConfiguration,
+    DocumentationLink
+} from "@nmshd/connector-types";
 import { ConsumptionController } from "@nmshd/consumption";
 import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleConfiguration, RuntimeHealth, RuntimeServices, TransportServices } from "@nmshd/runtime";
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";
@@ -241,7 +248,23 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         const identityInfoResult = await this._transportServices.account.getIdentityInfo();
         const identityInfo = identityInfoResult.isSuccess ? identityInfoResult.value : { error: identityInfoResult.error.message };
 
-        return { version: buildInformation, health: supportInformation.health, configuration: this.sanitizeConfig(supportInformation.configuration), identityInfo };
+        const version = this.getBuildInformation();
+
+        return { version, health: supportInformation.health, configuration: this.sanitizeConfig(supportInformation.configuration), identityInfo };
+    }
+
+    public getBuildInformation(): ConnectorRuntimeBuildInformation {
+        const modulesBuildInformation: Record<string, { version: string; build: string; date: string; commit: string }> = {};
+        for (const module of this.modules) {
+            if (!(module instanceof ConnectorRuntimeModule)) continue;
+
+            const moduleBuildInformation = module.getBuildInformation();
+            if (!moduleBuildInformation) continue;
+
+            modulesBuildInformation[module.displayName] = moduleBuildInformation;
+        }
+
+        return { ...buildInformation, modules: modulesBuildInformation };
     }
 
     public async getBackboneAuthenticationToken(): Promise<string> {
