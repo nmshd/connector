@@ -32,6 +32,7 @@ export function enforceAuthentication(
         }
 
         if (config.jwtBearer.enabled && req.headers["authorization"]) {
+            // req.auth is set by the jwt-bearer middleware if the bearer token in the Authorization header is valid
             if (!req.auth) return await unauthorized(req, res);
 
             const scope = req.auth.payload.scope;
