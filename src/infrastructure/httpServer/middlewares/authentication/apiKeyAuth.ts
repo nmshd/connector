@@ -27,13 +27,15 @@ export interface ApiKeyAuthenticationConfig {
 }
 
 export function apiKeyAuth(config: ApiKeyAuthenticationConfig): express.RequestHandler {
+    if (!isApiKeyAuthenticationEnabled(config)) throw new Error("API key authentication is not enabled in configuration. At least one API key is required.");
+
     const apiKeys = getValidApiKeys(config);
     return (req: express.Request, _res: express.Response, next: express.NextFunction) => {
         const validateApiKey = (apiKey: string): { isValid: boolean; scopes?: string[] } => {
-            const apiKeyObject = apiKeys.find((keyDefinition) => keyDefinition.apiKey === apiKey && !(keyDefinition.expiresAt?.isExpired() ?? false));
-            if (!apiKeyObject) return { isValid: false };
+            const matchingApiKey = apiKeys.find((keyDefinition) => keyDefinition.apiKey === apiKey);
+            if (!matchingApiKey || matchingApiKey.expiresAt?.isExpired()) return { isValid: false };
 
-            return { isValid: true, scopes: apiKeyObject.scopes };
+            return { isValid: true, scopes: matchingApiKey.scopes };
         };
 
         req.apiKey = { validateApiKey };
@@ -42,9 +44,12 @@ export function apiKeyAuth(config: ApiKeyAuthenticationConfig): express.RequestH
     };
 }
 
+export function isApiKeyAuthenticationEnabled(config: ApiKeyAuthenticationConfig): boolean {
+    return config.enabled ?? Object.keys(config.keys).length !== 0;
+}
+
 function getValidApiKeys(config: ApiKeyAuthenticationConfig): { apiKey: string; expiresAt?: CoreDate; scopes?: string[] }[] {
     const configuredApiKeys = config.keys;
-    if (!isApiKeyAuthenticationEnabled(config)) throw new Error("API key authentication is not enabled in configuration. At least one API key is required.");
 
     const allApiKeys = Object.values(configuredApiKeys).map((def) => def.key);
     if (allApiKeys.length !== new Set(allApiKeys).size) {
@@ -66,8 +71,4 @@ function getValidApiKeys(config: ApiKeyAuthenticationConfig): { apiKey: string; 
     }
 
     return validApiKeys.map((apiKey) => ({ apiKey: apiKey[1].key, expiresAt: apiKey[1].expiresAt ? CoreDate.from(apiKey[1].expiresAt) : undefined, scopes: apiKey[1].scopes }));
-}
-
-export function isApiKeyAuthenticationEnabled(config: ApiKeyAuthenticationConfig): boolean {
-    return config.enabled ?? Object.keys(config.keys).length !== 0;
 }
