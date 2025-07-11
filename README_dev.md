@@ -154,7 +154,7 @@ npm run test:local -- testSuiteName
                 "authentication": {
                     "apiKey": {
                         "enabled": true,
-                        "keys": { "<anApiKeyName>": { "key": "<api-key>" } }
+                        "keys": { "<an-api-key-name>": { "key": "<api-key>" } }
                     }
                 },
                 "port": 8080
