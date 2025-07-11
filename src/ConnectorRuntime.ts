@@ -229,9 +229,21 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         }
 
         const httpServer = config.infrastructure.httpServer as any;
-        if (httpServer?.apiKey) httpServer.apiKey = "redacted, but enabled";
-        if (httpServer?.oidc) httpServer.oidc = "redacted, but enabled";
-        if (httpServer?.jwtBearer) httpServer.jwtBearer = "redacted, but enabled";
+        const authentication = httpServer?.authentication;
+        if (authentication?.apiKey) {
+            const apiKeyAuthenticationEnabled = authentication.apiKey.enabled ?? Object.keys(authentication.apiKey.keys).length !== 0;
+            authentication.apiKey = apiKeyAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
+        }
+
+        if (authentication?.oidc) {
+            const oidcAuthenticationEnabled = authentication.oidc.enabled ?? Object.keys(authentication.oidc).length !== 0;
+            authentication.oidc = oidcAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
+        }
+
+        if (authentication?.jwtBearer) {
+            const jwtBearerAuthenticationEnabled = authentication.jwtBearer.enabled ?? Object.keys(authentication.jwtBearer).length !== 0;
+            authentication.jwtBearer = jwtBearerAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
+        }
 
         const transport = config.transportLibrary;
         if (transport.platformClientSecret) {

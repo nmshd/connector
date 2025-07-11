@@ -62,6 +62,12 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
 
                     cors: {
                         origin: false
+                    },
+
+                    authentication: {
+                        apiKey: { headerName: "X-API-KEY", keys: {} },
+                        oidc: {},
+                        jwtBearer: {}
                     }
                 }
             },
@@ -137,7 +143,6 @@ function addCorrelationIdSupportToLogger(connectorConfig: ConnectorRuntimeConfig
 
 const envKeyMapping: Record<string, string> = {
     DATABASE_NAME: "database:dbName", // eslint-disable-line @typescript-eslint/naming-convention
-    API_KEY: "infrastructure:httpServer:apiKey", // eslint-disable-line @typescript-eslint/naming-convention
     DATABASE_CONNECTION_STRING: "database:connectionString", // eslint-disable-line @typescript-eslint/naming-convention
     SYNC_ENABLED: "modules:sync:enabled", // eslint-disable-line @typescript-eslint/naming-convention
     PLATFORM_CLIENT_ID: "transportLibrary:platformClientId", // eslint-disable-line @typescript-eslint/naming-convention
