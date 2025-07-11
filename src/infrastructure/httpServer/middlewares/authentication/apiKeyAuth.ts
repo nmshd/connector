@@ -33,6 +33,8 @@ export function apiKeyAuth(config: ApiKeyAuthenticationConfig): express.RequestH
     return (req: express.Request, _res: express.Response, next: express.NextFunction) => {
         const validateApiKey = (apiKey: string): { isValid: boolean; scopes?: string[] } => {
             const matchingApiKey = apiKeys.find((keyDefinition) => keyDefinition.apiKey === apiKey);
+
+            // even if the API key is found, we need to check if it is still valid because it might have been expired between server start and request
             if (!matchingApiKey || matchingApiKey.expiresAt?.isExpired()) return { isValid: false };
 
             return { isValid: true, scopes: matchingApiKey.scopes };
