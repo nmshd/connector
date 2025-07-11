@@ -320,10 +320,6 @@ paths:
                       $ref: "#/components/schemas/AttributeValue"
                     tags:
                       $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
       responses:
         200:
           description: Success
@@ -371,10 +367,6 @@ paths:
                       $ref: "#/components/schemas/AttributeValue"
                     tags:
                       $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
       responses:
         201:
           description: Success
@@ -426,16 +418,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: content.validFrom
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
-        - name: content.validTo
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
         - name: content.key
           in: query
           required: false
@@ -523,16 +505,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: content.validFrom
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
-        - name: content.validTo
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
         - name: content.value.@type
           in: query
           required: false
@@ -606,16 +578,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: content.validFrom
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
-        - name: content.validTo
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
         - name: content.key
           in: query
           required: false
@@ -661,11 +623,6 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/Address"
-        - name: onlyValid
-          in: query
-          required: false
-          schema:
-            type: boolean
         - name: hideTechnical
           in: query
           required: false
@@ -727,16 +684,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: content.validFrom
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
-        - name: content.validTo
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
         - name: content.key
           in: query
           required: false
@@ -777,11 +724,6 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/Address"
-        - name: onlyValid
-          in: query
-          required: false
-          schema:
-            type: boolean
         - name: hideTechnical
           in: query
           required: false
@@ -941,10 +883,6 @@ paths:
                       $ref: "#/components/schemas/AttributeValue"
                     tags:
                       $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
 
       responses:
         201:
@@ -1267,99 +1205,6 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/Valid:
-    get:
-      operationId: getValidAttributes
-      description: List valid Attributes
-      tags:
-        - Attributes
-      parameters:
-        - name: content.@type
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: content.tags
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: content.owner
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: content.key
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: content.isTechnical
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/BooleanFilter"
-        - name: content.confidentiality
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: content.value.@type
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: succeeds
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: succeededBy
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.requestReference
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.peer
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.sourceAttribute
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Attribute"
-                required:
-                  - result
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-
   /api/v2/Attributes/TagCollection:
     get:
       operationId: getAttributeTagCollection
@@ -1412,10 +1257,6 @@ paths:
                       items:
                         type: string
                       type: array
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
                     valueType:
                       description: The valueType of the attribute.
                       type: string
@@ -1470,10 +1311,6 @@ paths:
                     owner:
                       description: The owner of the relationship attribute.
                       type: string
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
                     attributeCreationHints:
                       description: This describes how to create an attribute if it does not exist.
                       type: object
@@ -1585,10 +1422,6 @@ paths:
                       type: array
                       items:
                         $ref: "#/components/schemas/Address"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
                   required:
                     - key
                     - owner
@@ -1943,8 +1776,8 @@ paths:
                   type: array
                   items:
                     type: string
-                  description: Tags for the file.
-                  example: ["tag1", "tag2"]
+                  description: The tags of the File. A tag is valid if it is contained in the AttributeTagCollection for the IdentityAttribute value type IdentityFileReference and starts with the prefix `bkb:` or if it starts with the custom tag prefix `x:` or `X:`, the prefix `urn:`, the prefix `language:` followed by a valid ISO 639 language code or the prefix `mimetype:` followed by a valid MIME type.
+                  example: ["x:tag1", "x:tag2"]
                   nullable: false
               required:
                 - file
@@ -2187,13 +2020,6 @@ paths:
               - $ref: "#/components/schemas/FileID"
               - $ref: "#/components/schemas/FileReferenceTruncated"
               - $ref: "#/components/schemas/FileReferenceUrl"
-        - in: query
-          name: newQRCodeFormat
-          description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
-          required: false
-          schema:
-            type: boolean
-            default: false
 
       responses:
         200:
@@ -2298,10 +2124,6 @@ paths:
                   $ref: "#/components/schemas/PasswordProtection"
                   nullable: true
                   description: The password that will be required to load this Token and information about the password.
-                newQRCodeFormat:
-                  type: boolean
-                  description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
-                  nullable: true
       responses:
         201:
           description: Success
@@ -2930,7 +2752,7 @@ paths:
         - Relationships
       parameters:
         - in: query
-          name: template.id
+          name: templateId
           schema:
             $ref: "#/components/schemas/IdFilter"
         - in: query
@@ -3766,13 +3588,6 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipTemplateID"
-        - in: query
-          name: newQRCodeFormat
-          description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
-          required: false
-          schema:
-            type: boolean
-            default: false
       responses:
         200:
           description: Success
@@ -3839,10 +3654,6 @@ paths:
                   $ref: "#/components/schemas/PasswordProtection"
                   nullable: true
                   description: The password that will be required to load this Token and information about the password. If passwordProtection is set for the RelationshipTemplate, the same passwordProtection must also be given here.
-                newQRCodeFormat:
-                  type: boolean
-                  description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
-                  nullable: true
       responses:
         201:
           description: Success
@@ -4672,13 +4483,6 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/TokenID"
-        - in: query
-          name: newQRCodeFormat
-          description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
-          required: false
-          schema:
-            type: boolean
-            default: false
       responses:
         200:
           description: Success
@@ -5121,10 +4925,6 @@ components:
           description: The address of the identity that owns the attribute.
         tags:
           $ref: "#/components/schemas/IdentityAttributeContent_tags"
-        validFrom:
-          $ref: "#/components/schemas/AttributeContent_validFrom"
-        validTo:
-          $ref: "#/components/schemas/AttributeContent_validTo"
         value:
           "$ref": "#/components/schemas/AttributeValue"
 
@@ -5149,10 +4949,6 @@ components:
           allOf:
             - $ref: "#/components/schemas/Address"
           description: The address of the identity that owns the attribute.
-        validFrom:
-          $ref: "#/components/schemas/AttributeContent_validFrom"
-        validTo:
-          $ref: "#/components/schemas/AttributeContent_validTo"
         value:
           "$ref": "#/components/schemas/AttributeValue"
       required:
@@ -5162,22 +4958,12 @@ components:
         - owner
         - value
 
-    AttributeContent_validFrom:
-      type: string
-      format: date-time
-      description: The date and time when the attribute becomes valid.
-
-    AttributeContent_validTo:
-      type: string
-      format: date-time
-      description: The date and time when the attribute expires.
-
     IdentityAttributeContent_tags:
       type: array
       items:
         type: string
-      description: The tags of the attribute.
-      example: ["tag_1", "tag_2"]
+      description: The tags of the IdentityAttribute. A tag is valid if it is contained in the AttributeTagCollection and starts with the prefix `bkb:` or if it starts with the custom tag prefix `x:` or `X:`, the prefix `urn:`, the prefix `language:` followed by a valid ISO 639 language code or the prefix `mimetype:` followed by a valid MIME type.
+      example: ["x:tag1", "x:tag2"]
 
     Confidentiality:
       enum:
@@ -5476,8 +5262,8 @@ components:
           type: array
           items:
             type: string
-          description: Tags for the file.
-          example: [tag1, tag2]
+          description: The tags of the File. A tag is valid if it is contained in the AttributeTagCollection for the IdentityAttribute value type IdentityFileReference and starts with the prefix `bkb:` or if it starts with the custom tag prefix `x:` or `X:`, the prefix `urn:`, the prefix `language:` followed by a valid ISO 639 language code or the prefix `mimetype:` followed by a valid MIME type.
+          example: [x:tag1, x:tag2]
           nullable: true
         filesize:
           type: integer
@@ -5511,11 +5297,6 @@ components:
         isOwn:
           type: boolean
           nullable: false
-        truncatedReference:
-          type: string
-          format: byte
-          nullable: false
-          description: The base64 encoded truncated reference of the File, which actually consists of all information to get and decrypt it.
         reference:
           type: object
           allOf:
@@ -5531,7 +5312,6 @@ components:
           description: true if the ownership of the file is locked, undefined otherwise. If the ownership is locked, the ownership token cannot be used to transfer the ownership of this file and would have to be regenerated for this purpose. This will always be undefined if the file is not owned by the current identity.
       required:
         - id
-        - title
         - filename
         - filesize
         - createdAt
@@ -5540,7 +5320,7 @@ components:
         - expiresAt
         - mimetype
         - isOwn
-        - truncatedReference
+        - reference
 
     FileReferenceTruncated:
       type: object
@@ -5617,9 +5397,6 @@ components:
       properties:
         "@type":
           type: string
-        title:
-          type: string
-          description: Will be rendered as title of the request.
         description:
           type: string
           description: Will be rendered as description of the request.
@@ -6209,9 +5986,9 @@ components:
             - $ref: "#/components/schemas/RelationshipID"
           nullable: false
           description: The ID of the relationship.
-        template:
+        templateId:
           allOf:
-            - $ref: "#/components/schemas/RelationshipTemplate"
+            - $ref: "#/components/schemas/RelationshipTemplateID"
           nullable: false
         status:
           $ref: "#/components/schemas/RelationshipStatus"
@@ -6262,7 +6039,7 @@ components:
           description: The audit log of the relationship.
       required:
         - id
-        - template
+        - templateId
         - status
         - peer
         - peerIdentity
@@ -6376,11 +6153,6 @@ components:
             - $ref: "#/components/schemas/RelationshipTemplateContent"
             - $ref: "#/components/schemas/ArbitraryRelationshipTemplateContent"
           nullable: false
-        truncatedReference:
-          type: string
-          format: byte
-          nullable: false
-          description: The base64 encoded truncated reference of the RelationshipTemplate, which actually consists of all information to get and decrypt it.
         reference:
           type: object
           allOf:
@@ -6393,7 +6165,7 @@ components:
         - createdAt
         - expiresAt
         - content
-        - truncatedReference
+        - reference
 
     RelationshipAuditLogEntry:
       type: object
@@ -6527,11 +6299,6 @@ components:
           $ref: "#/components/schemas/PasswordProtection"
           nullable: true
           description: The password that is required to load this Token and information about the password.
-        truncatedReference:
-          type: string
-          format: byte
-          nullable: false
-          description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
         reference:
           type: object
           allOf:
@@ -6543,7 +6310,7 @@ components:
         - content
         - createdAt
         - expiresAt
-        - truncatedReference
+        - reference
 
     TokenContent:
       type: object
