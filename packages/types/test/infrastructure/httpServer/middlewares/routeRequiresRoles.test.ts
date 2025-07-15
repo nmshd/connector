@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-conditional-expect, jest/no-conditional-in-test */
 import { Errors } from "@nmshd/typescript-rest";
 import express from "express";
 import { routeRequiresRoles } from "../../../../src";
@@ -5,7 +6,7 @@ import { routeRequiresRoles } from "../../../../src";
 describe("routeRequiresRoles middleware", () => {
     const res = {} as any as express.Response;
 
-    it.each([
+    test.each([
         [["admin"], ["admin"], true],
         [["admin"], [], false],
         [["admin"], ["aRandomRole"], false],
@@ -26,7 +27,7 @@ describe("routeRequiresRoles middleware", () => {
         }
     });
 
-    it("should throw an error if no roles are specified", () => {
+    test("should throw an error if no roles are specified", () => {
         expect(() => {
             // @ts-expect-error
             routeRequiresRoles();
