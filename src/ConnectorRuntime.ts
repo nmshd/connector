@@ -121,7 +121,6 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
     private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
         connectorConfig.modules.decider.enabled = true;
         connectorConfig.modules.request.enabled = true;
-        connectorConfig.modules.attributeListener.enabled = true;
     }
 
     private static async runBackboneCompatibilityCheck(runtime: ConnectorRuntime) {
@@ -166,7 +165,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
     }
 
     protected async initAccount(): Promise<void> {
-        const db = await this.databaseConnection.getDatabase(`${this.runtimeConfig.database.dbNamePrefix}${this.runtimeConfig.database.dbName}`);
+        const db = await this.databaseConnection.getDatabase(this.runtimeConfig.database.dbName);
 
         this.accountController = await new AccountController(this.transport, db, this.transport.config).init().catch((e) => {
             if (e instanceof ApplicationError && e.code === "error.transport.general.platformClientInvalid") {
@@ -230,9 +229,21 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         }
 
         const httpServer = config.infrastructure.httpServer as any;
-        if (httpServer?.apiKey) httpServer.apiKey = "redacted, but enabled";
-        if (httpServer?.oidc) httpServer.oidc = "redacted, but enabled";
-        if (httpServer?.jwtBearer) httpServer.jwtBearer = "redacted, but enabled";
+        const authentication = httpServer?.authentication;
+        if (authentication?.apiKey) {
+            const apiKeyAuthenticationEnabled = authentication.apiKey.enabled ?? Object.keys(authentication.apiKey.keys).length !== 0;
+            authentication.apiKey = apiKeyAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
+        }
+
+        if (authentication?.oidc) {
+            const oidcAuthenticationEnabled = authentication.oidc.enabled ?? Object.keys(authentication.oidc).length !== 0;
+            authentication.oidc = oidcAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
+        }
+
+        if (authentication?.jwtBearer) {
+            const jwtBearerAuthenticationEnabled = authentication.jwtBearer.enabled ?? Object.keys(authentication.jwtBearer).length !== 0;
+            authentication.jwtBearer = jwtBearerAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
+        }
 
         const transport = config.transportLibrary;
         if (transport.platformClientSecret) {
