@@ -59,7 +59,7 @@
         "@js-soft/docdb-access-abstractions": "^1.2.0",
         "@js-soft/ts-utils": "^2.3.4",
         "@nmshd/runtime": "^6.60.5",
-        "@nmshd/typescript-rest": "^3.1.5",
+        "@nmshd/typescript-rest": "^3.1.6",
         "express": "^5.1.0"
     },
     "publishConfig": {
