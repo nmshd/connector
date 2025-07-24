@@ -1721,7 +1721,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  # ------------------- Challenges -------------------
+  # ------------------- BackboneNotifications -------------------
 
   /api/v2/BackboneNotifications:
     post:
