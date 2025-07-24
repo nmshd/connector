@@ -1,6 +1,7 @@
 export * from "./AccountEndpoint";
 export * from "./AnnouncementsEndpoint";
 export * from "./AttributesEndpoint";
+export * from "./BackboneNotificationsEndpoint";
 export * from "./ChallengesEndpoint";
 export * from "./FilesEndpoint";
 export * from "./IdentityMetadataEndpoint";
