@@ -1723,6 +1723,48 @@ paths:
 
   # ------------------- Challenges -------------------
 
+  /api/v2/BackboneNotifications:
+    post:
+      operationId: sendBackboneNotification
+      description: Send a BackboneNotification.
+      tags:
+        - BackboneNotifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Address"
+                  description: An array of addresses that will receive the notification. There must be an active Relationship to every recipient.
+                code:
+                  type: string
+                  description: The code of the notification. This code has to be configured in the Backbone.
+                  example: "BACKBONE_NOTIFICATION_CODE"
+              required:
+                - recipients
+                - code
+      responses:
+        204:
+          description: No content.
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
+  # ------------------- Challenges -------------------
+
   /api/v2/Challenges:
     post:
       operationId: createChallenge
