@@ -4,6 +4,7 @@ import {
     AccountEndpoint,
     AnnouncementsEndpoint,
     AttributesEndpoint,
+    BackboneNotificationsEndpoint,
     ChallengesEndpoint,
     FilesEndpoint,
     IdentityMetadataEndpoint,
@@ -26,6 +27,7 @@ export class ConnectorClient {
 
     public readonly account: AccountEndpoint;
     public readonly announcements: AnnouncementsEndpoint;
+    public readonly backboneNotifications: BackboneNotificationsEndpoint;
     public readonly attributes: AttributesEndpoint;
     public readonly challenges: ChallengesEndpoint;
     public readonly files: FilesEndpoint;
@@ -61,6 +63,7 @@ export class ConnectorClient {
 
         this.account = new AccountEndpoint(axiosInstance);
         this.announcements = new AnnouncementsEndpoint(axiosInstance);
+        this.backboneNotifications = new BackboneNotificationsEndpoint(axiosInstance);
         this.attributes = new AttributesEndpoint(axiosInstance);
         this.challenges = new ChallengesEndpoint(axiosInstance);
         this.files = new FilesEndpoint(axiosInstance);
