@@ -20,7 +20,12 @@ import {
 
 export class ConnectorClient {
     #correlationId: string | null = null;
-    protected readonly axiosInstance: AxiosInstance;
+    readonly #axiosInstance: AxiosInstance;
+
+    protected get axiosInstance(): AxiosInstance {
+        return this.#axiosInstance;
+    }
+
     public withCorrelationId(correlationId: string): this {
         this.#correlationId = correlationId;
 
@@ -43,7 +48,7 @@ export class ConnectorClient {
     public readonly tokens: TokensEndpoint;
 
     protected constructor(config: ConnectorClientConfig) {
-        this.axiosInstance = axios.create({
+        this.#axiosInstance = axios.create({
             baseURL: config.baseUrl,
             httpAgent: config.httpAgent,
             httpsAgent: config.httpsAgent,
