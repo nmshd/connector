@@ -104,10 +104,10 @@
         "nconf": "0.13.0",
         "on-headers": "1.1.0",
         "rapidoc": "9.3.8",
-        "redis": "^5.6.1",
+        "redis": "^5.7.0",
         "reflect-metadata": "0.2.2",
         "swagger-ui-express": "5.0.1",
-        "undici": "^7.12.0",
+        "undici": "^7.13.0",
         "yamljs": "0.3.0",
         "yargs": "^18.0.0"
     },
@@ -147,7 +147,7 @@
         "prettier": "^3.6.2",
         "ts-jest": "^29.4.0",
         "ts-node": "^10.9.2",
-        "typescript": "^5.8.3"
+        "typescript": "^5.9.2"
     },
     "engines": {
         "node": ">=22.17.1"
