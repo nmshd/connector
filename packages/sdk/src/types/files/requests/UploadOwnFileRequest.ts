@@ -2,7 +2,7 @@ export interface UploadOwnFileRequest {
     title?: string;
     description?: string;
     expiresAt: string;
-    file: ArrayBuffer;
+    file: Uint8Array;
     filename: string;
     tags?: string[];
 }

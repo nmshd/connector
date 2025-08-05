@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 import { ConnectorClientConfig } from "./ConnectorClientConfig";
 import {
     AccountEndpoint,
@@ -19,6 +19,12 @@ import {
 
 export class ConnectorClient {
     #correlationId: string | null = null;
+    readonly #axiosInstance: AxiosInstance;
+
+    protected get axiosInstance(): AxiosInstance {
+        return this.#axiosInstance;
+    }
+
     public withCorrelationId(correlationId: string): this {
         this.#correlationId = correlationId;
 
@@ -41,7 +47,7 @@ export class ConnectorClient {
     public readonly tokens: TokensEndpoint;
 
     protected constructor(config: ConnectorClientConfig) {
-        const axiosInstance = axios.create({
+        this.#axiosInstance = axios.create({
             baseURL: config.baseUrl,
             httpAgent: config.httpAgent,
             httpsAgent: config.httpsAgent,
@@ -49,9 +55,9 @@ export class ConnectorClient {
             paramsSerializer: { dots: true, indexes: null }
         });
 
-        axiosInstance.interceptors.request.use(async (requestConfig) => await config.authenticator.authenticate(requestConfig));
+        this.axiosInstance.interceptors.request.use(async (requestConfig) => await config.authenticator.authenticate(requestConfig));
 
-        axiosInstance.interceptors.request.use((config) => {
+        this.axiosInstance.interceptors.request.use((config) => {
             const correlationId = this.#correlationId;
             if (correlationId) {
                 config.headers["x-correlation-id"] = correlationId;
@@ -61,20 +67,20 @@ export class ConnectorClient {
             return config;
         });
 
-        this.account = new AccountEndpoint(axiosInstance);
-        this.announcements = new AnnouncementsEndpoint(axiosInstance);
-        this.backboneNotifications = new BackboneNotificationsEndpoint(axiosInstance);
-        this.attributes = new AttributesEndpoint(axiosInstance);
-        this.challenges = new ChallengesEndpoint(axiosInstance);
-        this.files = new FilesEndpoint(axiosInstance);
-        this.identityMetadata = new IdentityMetadataEndpoint(axiosInstance);
-        this.incomingRequests = new IncomingRequestsEndpoint(axiosInstance);
-        this.messages = new MessagesEndpoint(axiosInstance);
-        this.monitoring = new MonitoringEndpoint(axiosInstance);
-        this.outgoingRequests = new OutgoingRequestsEndpoint(axiosInstance);
-        this.relationships = new RelationshipsEndpoint(axiosInstance);
-        this.relationshipTemplates = new RelationshipTemplatesEndpoint(axiosInstance);
-        this.tokens = new TokensEndpoint(axiosInstance);
+        this.account = new AccountEndpoint(this.axiosInstance);
+        this.announcements = new AnnouncementsEndpoint(this.axiosInstance);
+        this.backboneNotifications = new BackboneNotificationsEndpoint(this.axiosInstance);
+        this.attributes = new AttributesEndpoint(this.axiosInstance);
+        this.challenges = new ChallengesEndpoint(this.axiosInstance);
+        this.files = new FilesEndpoint(this.axiosInstance);
+        this.identityMetadata = new IdentityMetadataEndpoint(this.axiosInstance);
+        this.incomingRequests = new IncomingRequestsEndpoint(this.axiosInstance);
+        this.messages = new MessagesEndpoint(this.axiosInstance);
+        this.monitoring = new MonitoringEndpoint(this.axiosInstance);
+        this.outgoingRequests = new OutgoingRequestsEndpoint(this.axiosInstance);
+        this.relationships = new RelationshipsEndpoint(this.axiosInstance);
+        this.relationshipTemplates = new RelationshipTemplatesEndpoint(this.axiosInstance);
+        this.tokens = new TokensEndpoint(this.axiosInstance);
     }
 
     public static create(config: ConnectorClientConfig): ConnectorClient {
