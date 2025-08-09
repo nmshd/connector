@@ -6,5 +6,4 @@ export interface CreateTokenQrCodeForFileRequest {
         passwordIsPin?: true;
         passwordLocationIndicator?: string | number;
     };
-    newQRCodeFormat?: boolean;
 }
