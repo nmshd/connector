@@ -25,87 +25,101 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                 return variable;
             }
         })
-        .file("file-from-env", { file: customConfigLocation ?? process.env.CUSTOM_CONFIG_LOCATION ?? "config.json" })
-        .file("bundled-config", { file: path.resolve(path.join(__dirname, "..", "bundled.config.json")) })
-        .defaults({
-            debug: false,
-            transportLibrary: {
-                allowIdentityCreation: true
-            },
-            database: {
-                driver: "mongodb",
-                dbName: "default",
-                dbNamePrefix: "acc-"
-            },
-            logging: {
-                appenders: {
-                    consoleAppender: {
-                        type: "stdout",
-                        layout: { type: "pattern", pattern: "%[[%d] [%p] %c - %m %x{correlationId}%]" }
-                    },
-                    console: {
-                        type: "logLevelFilter",
-                        level: "INFO",
-                        appender: "consoleAppender"
-                    }
-                },
+        .file("file-from-env", { file: customConfigLocation ?? process.env.CUSTOM_CONFIG_LOCATION ?? "config.json" });
 
-                categories: {
-                    default: {
-                        appenders: ["console"],
-                        level: "TRACE"
-                    }
-                }
-            },
-            infrastructure: {
-                httpServer: {
-                    enabled: true,
+    const bundledConfigsPath = path.join(__dirname, "..", "bundledConfigs");
 
-                    cors: {
-                        origin: false
-                    }
-                }
-            },
-            modules: {
-                notification: { enabled: true, location: "@nmshd/runtime:NotificationModule" },
-                decider: { enabled: true, location: "@nmshd/runtime:DeciderModule" },
-                request: { enabled: true, location: "@nmshd/runtime:RequestModule" },
-                attributeListener: { enabled: true, location: "@nmshd/runtime:AttributeListenerModule" },
-                autoAcceptPendingRelationships: { enabled: false, location: "@nmshd/connector:AutoAcceptPendingRelationshipsModule" },
-                autoDecomposeDeletionProposedRelationships: { enabled: false, location: "@nmshd/connector:AutoDecomposeDeletionProposedRelationshipsModule" },
-                coreHttpApi: {
-                    enabled: true,
-                    location: "@nmshd/connector:CoreHttpApiModule",
+    if (fs.existsSync(bundledConfigsPath)) {
+        let bundledConfigPaths = fs.readdirSync(bundledConfigsPath);
 
-                    requiredInfrastructure: ["httpServer"],
-
-                    docs: {
-                        enabled: false,
-                        rapidoc: {
-                            persistAuth: false
-                        }
-                    }
-                },
-                webhooks: {
-                    enabled: false,
-                    location: "@nmshd/connector:WebhooksModule",
-                    targets: {},
-                    webhooks: []
-                },
-                messageBrokerPublisher: {
-                    enabled: false,
-                    location: "@nmshd/connector:MessageBrokerPublisherModule",
-                    brokers: []
-                },
-                sync: {
-                    enabled: false,
-                    location: "@nmshd/connector:SyncModule",
-
-                    interval: 60
-                },
-                sse: { enabled: false, location: "@nmshd/connector:SseModule" }
-            }
+        bundledConfigPaths = bundledConfigPaths.filter((file) => {
+            return file.endsWith(".json");
         });
+
+        for (const bundledConfigPath of bundledConfigPaths) {
+            nconf.file(bundledConfigPath, { file: path.join(bundledConfigsPath, bundledConfigPath) });
+        }
+    }
+
+    nconf.defaults({
+        debug: false,
+        transportLibrary: {
+            allowIdentityCreation: true
+        },
+        database: {
+            driver: "mongodb",
+            dbName: "default",
+            dbNamePrefix: "acc-"
+        },
+        logging: {
+            appenders: {
+                consoleAppender: {
+                    type: "stdout",
+                    layout: { type: "pattern", pattern: "%[[%d] [%p] %c - %m %x{correlationId}%]" }
+                },
+                console: {
+                    type: "logLevelFilter",
+                    level: "INFO",
+                    appender: "consoleAppender"
+                }
+            },
+
+            categories: {
+                default: {
+                    appenders: ["console"],
+                    level: "TRACE"
+                }
+            }
+        },
+        infrastructure: {
+            httpServer: {
+                enabled: true,
+
+                cors: {
+                    origin: false
+                }
+            }
+        },
+        modules: {
+            notification: { enabled: true, location: "@nmshd/runtime:NotificationModule" },
+            decider: { enabled: true, location: "@nmshd/runtime:DeciderModule" },
+            request: { enabled: true, location: "@nmshd/runtime:RequestModule" },
+            attributeListener: { enabled: true, location: "@nmshd/runtime:AttributeListenerModule" },
+            autoAcceptPendingRelationships: { enabled: false, location: "@nmshd/connector:AutoAcceptPendingRelationshipsModule" },
+            autoDecomposeDeletionProposedRelationships: { enabled: false, location: "@nmshd/connector:AutoDecomposeDeletionProposedRelationshipsModule" },
+            coreHttpApi: {
+                enabled: true,
+                location: "@nmshd/connector:CoreHttpApiModule",
+
+                requiredInfrastructure: ["httpServer"],
+
+                docs: {
+                    enabled: false,
+                    rapidoc: {
+                        persistAuth: false
+                    }
+                }
+            },
+            webhooks: {
+                enabled: false,
+                location: "@nmshd/connector:WebhooksModule",
+                targets: {},
+                webhooks: []
+            },
+            messageBrokerPublisher: {
+                enabled: false,
+                location: "@nmshd/connector:MessageBrokerPublisherModule",
+                brokers: []
+            },
+            sync: {
+                enabled: false,
+                location: "@nmshd/connector:SyncModule",
+
+                interval: 60
+            },
+            sse: { enabled: false, location: "@nmshd/connector:SseModule" }
+        }
+    });
 
     const connectorConfig = nconf.get() as ConnectorRuntimeConfig;
 
