@@ -204,6 +204,11 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         if (!apiKeyAuthenticationEnabled && !oidcAuthenticationEnabled && !jwtBearerAuthenticationEnabled) {
             switch (this.connectorMode) {
                 case "debug":
+                    this.app.use((req: express.Request, _: express.Response, next: express.NextFunction) => {
+                        req.userRoles = [HttpServerRole.ADMIN, HttpServerRole.DEVELOPER];
+
+                        next();
+                    });
                     return;
                 case "production":
                     throw new Error(`No API key and OAuth config set in configuration. At least one is required in production mode.`);
