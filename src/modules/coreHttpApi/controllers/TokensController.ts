@@ -4,7 +4,7 @@ import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, ContextAccept, ContextResponse, GET, Path, PathParam, POST, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
 
-@Security(["core:tokens"])
+@Security("core:tokens")
 @Path("/api/v2/Tokens")
 export class TokensController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {

@@ -3,7 +3,7 @@ import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Path, POST, Return, Security } from "@nmshd/typescript-rest";
 
-@Security(["core:challenges"])
+@Security("core:challenges")
 @Path("/api/v2/Challenges")
 export class ChallengesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {

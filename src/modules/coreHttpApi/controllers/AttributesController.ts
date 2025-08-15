@@ -3,7 +3,7 @@ import { ConsumptionServices, RuntimeErrors } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, DELETE, GET, POST, PUT, Path, PathParam, QueryParam, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 
-@Security(["core:attributes"])
+@Security("core:attributes")
 @Path("/api/v2/Attributes")
 export class AttributesController extends BaseController {
     public constructor(@Inject private readonly consumptionServices: ConsumptionServices) {

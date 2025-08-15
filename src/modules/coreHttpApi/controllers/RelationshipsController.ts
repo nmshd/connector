@@ -3,7 +3,7 @@ import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, DELETE, GET, Path, PathParam, POST, PUT, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 
-@Security(["core:relationships"])
+@Security("core:relationships")
 @Path("/api/v2/Relationships")
 export class RelationshipsController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {

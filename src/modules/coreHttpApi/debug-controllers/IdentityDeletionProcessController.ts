@@ -3,7 +3,7 @@ import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, DELETE, GET, Path, POST, QueryParam, Security } from "@nmshd/typescript-rest";
 
-@Security(["debug:identityDeletionProcess"])
+@Security("debug:identityDeletionProcess")
 @Path("/api/v2/IdentityDeletionProcess")
 export class IdentityDeletionProcessController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {

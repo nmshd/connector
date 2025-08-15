@@ -3,7 +3,7 @@ import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, GET, Path, QueryParam, Security } from "@nmshd/typescript-rest";
 
-@Security(["core:announcements"])
+@Security("core:announcements")
 @Path("/api/v2/Announcements")
 export class AnnouncementsController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {

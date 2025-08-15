@@ -21,7 +21,7 @@ import {
 } from "@nmshd/typescript-rest";
 import express from "express";
 
-@Security(["core:files"])
+@Security("core:files")
 @Path("/api/v2/Files")
 export class FilesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
