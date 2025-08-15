@@ -1,4 +1,4 @@
-import { ConnectorInfrastructure, HttpMethod, HttpServerRole, IHttpServer, InfrastructureConfiguration, routeRequiresRoles } from "@nmshd/connector-types";
+import { ConnectorInfrastructure, HttpMethod, IHttpServer, InfrastructureConfiguration, routeRequiresRoles } from "@nmshd/connector-types";
 import { Container } from "@nmshd/typescript-ioc";
 import { Server } from "@nmshd/typescript-rest";
 import compression from "compression";
@@ -260,20 +260,20 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useVersionEndpoint() {
-        this.app.get("/Monitoring/Version", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Version", routeRequiresRoles("monitoring:version"), (_: express.Request, res: express.Response) => {
             const buildInformation = this.runtime.getBuildInformation();
             res.status(200).json(buildInformation);
         });
     }
 
     private useResponsesEndpoint() {
-        this.app.get("/Monitoring/Requests", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Requests", routeRequiresRoles("monitoring:responses"), (_: express.Request, res: express.Response) => {
             res.status(200).json(this.requestTracker.getCount());
         });
     }
 
     private useSupportEndpoint() {
-        this.app.get("/Monitoring/Support", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), async (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Support", routeRequiresRoles("monitoring:support"), async (_: express.Request, res: express.Response) => {
             const supportInformation = await this.runtime.getSupportInformation();
             res.status(200).json(supportInformation);
         });
