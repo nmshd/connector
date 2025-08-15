@@ -302,15 +302,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             }
         });
 
-        Server.registerAuthenticator({
-            getMiddleware: () => (_req, _res, next) => next(),
-
-            initialize: (_app: Application) => {
-                // no initialization needed
-            },
-
-            getRoles: (req) => req.userRoles ?? []
-        });
+        Server.registerAuthenticator({ getRoles: (req) => req.userRoles ?? [] });
 
         for (const controller of this.controllers) {
             Server.loadControllers(this.app, controller.globs, controller.baseDirectory);
