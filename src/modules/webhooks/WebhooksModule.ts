@@ -1,7 +1,7 @@
 import { Event, DataEvent as tsUtilsDataEvent } from "@js-soft/ts-utils";
 import { ConnectorRuntimeModule } from "@nmshd/connector-types";
 import { DataEvent } from "@nmshd/runtime";
-import agentKeepAlive from "agentkeepalive";
+import { HttpAgent as HttpKeepaliveAgent, HttpsAgent as HttpsKeepaliveAgent } from "agentkeepalive";
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import correlator from "correlation-id";
 import { ConfigModel, Webhook } from "./ConfigModel";
