@@ -16,8 +16,8 @@ export class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfigu
         this.configModel = ConfigParser.parse(this.configuration).value;
 
         this.axios = axios.create({
-            httpAgent: new agentKeepAlive(),
-            httpsAgent: new agentKeepAlive.HttpsAgent({ rejectUnauthorized: !this.configModel.skipTlsCheck }),
+            httpAgent: new HttpKeepaliveAgent(),
+            httpsAgent: new HttpsKeepaliveAgent({ rejectUnauthorized: !this.configModel.skipTlsCheck }),
             validateStatus: () => true,
             maxRedirects: 0
         });
