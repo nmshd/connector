@@ -205,7 +205,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             switch (this.connectorMode) {
                 case "debug":
                     this.app.use((req: express.Request, _: express.Response, next: express.NextFunction) => {
-                        req.userRoles = [HttpServerRole.ADMIN, HttpServerRole.DEVELOPER];
+                        req.userRoles = ["**"];
 
                         next();
                     });

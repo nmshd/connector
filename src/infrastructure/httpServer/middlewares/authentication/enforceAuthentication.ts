@@ -1,6 +1,6 @@
 import { ILogger } from "@js-soft/logging-abstractions";
 import { sleep } from "@js-soft/ts-utils";
-import { Envelope, HttpErrors, HttpServerRole } from "@nmshd/connector-types";
+import { Envelope, HttpErrors } from "@nmshd/connector-types";
 import express from "express";
 
 export function enforceAuthentication(
@@ -24,7 +24,7 @@ export function enforceAuthentication(
             const validationResult = req.apiKey!.validateApiKey(apiKeyFromHeader);
             if (!validationResult.isValid) return await unauthorized(req, res);
 
-            const defaultApiKeyRoles = config.connectorMode === "debug" ? [HttpServerRole.ADMIN, HttpServerRole.DEVELOPER] : [HttpServerRole.ADMIN];
+            const defaultApiKeyRoles = ["**"];
             req.userRoles = validationResult.scopes ?? defaultApiKeyRoles;
 
             next();
