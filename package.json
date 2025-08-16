@@ -86,7 +86,7 @@
         "@nmshd/connector-types": "*",
         "@nmshd/runtime": "6.61.1",
         "@nmshd/typescript-ioc": "^3.2.4",
-        "@nmshd/typescript-rest": "^3.1.6",
+        "@nmshd/typescript-rest": "^3.2.0",
         "agentkeepalive": "4.6.0",
         "amqplib": "^0.10.8",
         "axios": "^1.11.0",
