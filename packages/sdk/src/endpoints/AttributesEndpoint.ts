@@ -16,7 +16,6 @@ import {
     GetOwnSharedIdentityAttributesRequest,
     GetPeerSharedIdentityAttributesRequest,
     GetSharedVersionsOfAttributeRequest,
-    GetValidAttributesRequest,
     NotifyPeerAboutRepositoryAttributeSuccessionRequest,
     NotifyPeerAboutRepositoryAttributeSuccessionResponse,
     SucceedAttributeRequest,
@@ -50,10 +49,6 @@ export class AttributesEndpoint extends Endpoint {
 
     public async getAttribute(attributeId: string): Promise<ConnectorHttpResponse<LocalAttributeDTO>> {
         return await this.get(`/api/v2/Attributes/${attributeId}`);
-    }
-
-    public async getValidAttributes(request: GetValidAttributesRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
-        return await this.get("/api/v2/Attributes/Valid", request);
     }
 
     public async getAttributeTagCollection(): Promise<ConnectorHttpResponse<AttributeTagCollectionDTO>> {
