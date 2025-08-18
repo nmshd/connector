@@ -1,7 +1,7 @@
 import { Event, DataEvent as tsUtilsDataEvent } from "@js-soft/ts-utils";
 import { ConnectorRuntimeModule } from "@nmshd/connector-types";
 import { DataEvent } from "@nmshd/runtime";
-import agentKeepAlive from "agentkeepalive";
+import { HttpAgent as HttpKeepaliveAgent, HttpsAgent as HttpsKeepaliveAgent } from "agentkeepalive";
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import correlator from "correlation-id";
 import { ConfigModel, Webhook } from "./ConfigModel";
@@ -16,8 +16,8 @@ export class WebhooksModule extends ConnectorRuntimeModule<WebhooksModuleConfigu
         this.configModel = ConfigParser.parse(this.configuration).value;
 
         this.axios = axios.create({
-            httpAgent: new agentKeepAlive(),
-            httpsAgent: new agentKeepAlive.HttpsAgent({ rejectUnauthorized: !this.configModel.skipTlsCheck }),
+            httpAgent: new HttpKeepaliveAgent(),
+            httpsAgent: new HttpsKeepaliveAgent({ rejectUnauthorized: !this.configModel.skipTlsCheck }),
             validateStatus: () => true,
             maxRedirects: 0
         });
