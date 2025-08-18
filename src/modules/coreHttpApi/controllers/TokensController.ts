@@ -1,10 +1,10 @@
-import { BaseController, Envelope, HttpServerRole } from "@nmshd/connector-types";
+import { BaseController, Envelope } from "@nmshd/connector-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, ContextAccept, ContextResponse, GET, Path, PathParam, POST, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
 
-@Security([HttpServerRole.ADMIN, "core:*", "core:tokens"])
+@Security("core:tokens")
 @Path("/api/v2/Tokens")
 export class TokensController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {

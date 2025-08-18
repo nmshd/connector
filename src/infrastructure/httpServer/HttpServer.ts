@@ -1,6 +1,6 @@
-import { ConnectorInfrastructure, HttpMethod, HttpServerRole, IHttpServer, InfrastructureConfiguration, routeRequiresRoles } from "@nmshd/connector-types";
+import { ConnectorInfrastructure, HttpMethod, IHttpServer, InfrastructureConfiguration } from "@nmshd/connector-types";
 import { Container } from "@nmshd/typescript-ioc";
-import { Server } from "@nmshd/typescript-rest";
+import { Server, ServiceAuthenticator, routeRequiresAuthorization } from "@nmshd/typescript-rest";
 import compression from "compression";
 import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
@@ -144,6 +144,10 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         }
     }
 
+    get #authenticator(): ServiceAuthenticator {
+        return { getRoles: (req) => req.userRoles ?? [] };
+    }
+
     private useUnsecuredCustomEndpoints() {
         const securedCustomEndpoints = this.customEndpoints.filter((e) => !e.authenticationRequired);
         for (const endpoint of securedCustomEndpoints) {
@@ -205,7 +209,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             switch (this.connectorMode) {
                 case "debug":
                     this.app.use((req: express.Request, _: express.Response, next: express.NextFunction) => {
-                        req.userRoles = [HttpServerRole.ADMIN, HttpServerRole.DEVELOPER];
+                        req.userRoles = ["**"];
 
                         next();
                     });
@@ -260,20 +264,20 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useVersionEndpoint() {
-        this.app.get("/Monitoring/Version", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Version", routeRequiresAuthorization(this.#authenticator, "monitoring:version"), (_: express.Request, res: express.Response) => {
             const buildInformation = this.runtime.getBuildInformation();
             res.status(200).json(buildInformation);
         });
     }
 
     private useResponsesEndpoint() {
-        this.app.get("/Monitoring/Requests", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Requests", routeRequiresAuthorization(this.#authenticator, "monitoring:responses"), (_: express.Request, res: express.Response) => {
             res.status(200).json(this.requestTracker.getCount());
         });
     }
 
     private useSupportEndpoint() {
-        this.app.get("/Monitoring/Support", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), async (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Support", routeRequiresAuthorization(this.#authenticator, "monitoring:support"), async (_: express.Request, res: express.Response) => {
             const supportInformation = await this.runtime.getSupportInformation();
             res.status(200).json(supportInformation);
         });
@@ -302,15 +306,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             }
         });
 
-        Server.registerAuthenticator({
-            getMiddleware: () => (_req, _res, next) => next(),
-
-            initialize: (_app: Application) => {
-                // no initialization needed
-            },
-
-            getRoles: (req) => req.userRoles ?? []
-        });
+        Server.registerAuthenticator(this.#authenticator);
 
         for (const controller of this.controllers) {
             Server.loadControllers(this.app, controller.globs, controller.baseDirectory);

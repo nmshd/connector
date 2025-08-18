@@ -1,10 +1,10 @@
 import { ApplicationError } from "@js-soft/ts-utils";
-import { BaseController, Envelope, HttpServerRole } from "@nmshd/connector-types";
+import { BaseController, Envelope } from "@nmshd/connector-types";
 import { ConsumptionServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, GET, Path, PathParam, PUT, Security, ServiceContext } from "@nmshd/typescript-rest";
 
-@Security([HttpServerRole.ADMIN, "core:*", "core:requests:*", "core:requests:incoming"])
+@Security(["core:requests", "core:requests:incoming"])
 @Path("/api/v2/Requests/Incoming")
 export class IncomingRequestsController extends BaseController {
     public constructor(@Inject private readonly consumptionServices: ConsumptionServices) {

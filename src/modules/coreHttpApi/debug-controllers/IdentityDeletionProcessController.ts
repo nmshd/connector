@@ -1,9 +1,9 @@
-import { BaseController, Envelope, HttpServerRole } from "@nmshd/connector-types";
+import { BaseController, Envelope } from "@nmshd/connector-types";
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, DELETE, GET, Path, POST, QueryParam, Security } from "@nmshd/typescript-rest";
 
-@Security([HttpServerRole.DEVELOPER])
+@Security("debug:identityDeletionProcess")
 @Path("/api/v2/IdentityDeletionProcess")
 export class IdentityDeletionProcessController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
