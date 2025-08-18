@@ -103,7 +103,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.useAuthentication();
 
         this.useVersionEndpoint();
-        this.useResponsesEndpoint();
+        this.useRequestsEndpoint();
         this.useSupportEndpoint();
 
         this.useCustomControllers();
@@ -270,7 +270,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         });
     }
 
-    private useResponsesEndpoint() {
+    private useRequestsEndpoint() {
         this.app.get("/Monitoring/Requests", routeRequiresAuthorization(this.#authenticator, "monitoring:responses"), (_: express.Request, res: express.Response) => {
             res.status(200).json(this.requestTracker.getCount());
         });
