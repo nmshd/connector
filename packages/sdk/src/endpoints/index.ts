@@ -3,6 +3,7 @@ export * from "./AnnouncementsEndpoint";
 export * from "./AttributesEndpoint";
 export * from "./BackboneNotificationsEndpoint";
 export * from "./ChallengesEndpoint";
+export * from "./Endpoint";
 export * from "./FilesEndpoint";
 export * from "./IdentityMetadataEndpoint";
 export * from "./IncomingRequestsEndpoint";
