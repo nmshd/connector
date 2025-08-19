@@ -5,7 +5,7 @@ import { Accept, Context, ContextResponse, GET, Path, PathParam, POST, Return, S
 import express from "express";
 
 @Security("core:messages")
-@Path("/api/v2/Messages")
+@Path("/api/core/v1/Messages")
 export class MessagesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();

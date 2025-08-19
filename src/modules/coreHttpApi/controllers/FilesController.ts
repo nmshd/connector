@@ -23,7 +23,7 @@ import express from "express";
 
 @Security("core:files")
 @Path("/api/v2/Files")
-export class FilesController extends BaseController {
+export /api/core/v1ilesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();
     }

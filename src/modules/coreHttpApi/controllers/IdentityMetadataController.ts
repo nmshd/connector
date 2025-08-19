@@ -4,7 +4,7 @@ import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, DELETE, GET, PUT, Path, QueryParam, Security } from "@nmshd/typescript-rest";
 
 @Security("core:identityMetadata")
-@Path("/api/v2/IdentityMetadata")
+@Path("/api/core/v1/IdentityMetadata")
 export class IdentityMetadataController extends BaseController {
     public constructor(@Inject private readonly consumptionServices: ConsumptionServices) {
         super();
