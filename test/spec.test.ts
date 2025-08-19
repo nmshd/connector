@@ -56,15 +56,15 @@ describe.skip("test openapi spec against routes", () => {
         // Paths to ignore in regard to return code consistency (Post requests that return 200 due to no creation, deletes that return 204)
         /* eslint-disable @typescript-eslint/naming-convention */
         const returnCodeOverwrite: Record<string, Record<string, string> | undefined> = {
-            "/api/v2/Account/Sync": { post: "204" },
-            "/api/v2/Attributes/ExecuteIQLQuery": { post: "200" },
-            "/api/v2/Attributes/ValidateIQLQuery": { post: "200" },
-            "/api/v2/BackboneNotifications": { post: "204" },
-            "/api/v2/Challenges/Validate": { post: "200" },
-            "/api/v2/Relationships/{param}": { delete: "204" },
-            "/api/v2/Attributes/{param}": { delete: "204" },
-            "/api/v2/Files/{param}": { delete: "204" },
-            "/api/v2/IdentityMetadata": { delete: "204" }
+            "/api/core/v1/Account/Sync": { post: "204" },
+            "/api/core/v1/Attributes/ExecuteIQLQuery": { post: "200" },
+            "/api/core/v1/Attributes/ValidateIQLQuery": { post: "200" },
+            "/api/core/v1/BackboneNotifications": { post: "204" },
+            "/api/core/v1/Challenges/Validate": { post: "200" },
+            "/api/core/v1/Relationships/{param}": { delete: "204" },
+            "/api/core/v1/Attributes/{param}": { delete: "204" },
+            "/api/core/v1/Files/{param}": { delete: "204" },
+            "/api/core/v1/IdentityMetadata": { delete: "204" }
         };
         /* eslint-enable @typescript-eslint/naming-convention */
 
@@ -99,10 +99,10 @@ describe.skip("test openapi spec against routes", () => {
 
     test("all generated params should be in the manual spec", () => {
         const pathsWithDBQueries = [
-            { path: "/api/v2/Attributes/Own/Shared/Identity", method: "get" },
-            { path: "/api/v2/Attributes/Peer/Shared/Identity", method: "get" },
-            { path: "/api/v2/Attributes/Own/Shared/Identity", method: "get" },
-            { path: "/api/v2/Attributes/Own/Repository", method: "get" }
+            { path: "/api/core/v1/Attributes/Own/Shared/Identity", method: "get" },
+            { path: "/api/core/v1/Attributes/Peer/Shared/Identity", method: "get" },
+            { path: "/api/core/v1/Attributes/Own/Shared/Identity", method: "get" },
+            { path: "/api/core/v1/Attributes/Own/Repository", method: "get" }
         ];
 
         const generatedPaths = getPaths(generatedOpenApiSpec);

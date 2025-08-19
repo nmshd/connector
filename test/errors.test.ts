@@ -19,7 +19,7 @@ beforeAll(async () => {
     axiosClient = axios.create({
         baseURL: baseUrl,
         validateStatus: (_) => true,
-        headers: { "X-API-KEY": launcher.apiKey }
+        headers: { "X-API-KEY": launcher.apiKey } / api / core / v1
     });
 }, getTimeout(30000));
 
@@ -31,13 +31,13 @@ describe("Errors", () => {
         expect(response.status).toBe(401);
         validateSchema(ValidationSchema.Error, response.data.error);
     });
-
+    /api/ceor / v1;
     test.each(["/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support", "/api/v2/Files"])(
         "http error 403 on route '%s' with apiKey that can only access /api/v2/Relationships",
         async (route: string) => {
             const response = await axiosClient.get<any>(route, { headers: { "X-API-KEY": onlyRelationshipsApiKey } });
             expect(response.status).toBe(403);
-            validateSchema(ValidationSchema.Error, response.data.error);
+            validateSchema(ValidationSchema.Error, res / api / core / v1ata.error);
         }
     );
 
