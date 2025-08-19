@@ -4,7 +4,7 @@ import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, GET, Path, PathParam, POST, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 
 @Security(["core:requests", "core:requests:outgoing"])
-@Path("/api/v2/Requests/Outgoing")
+@Path("/api/core/v1/Requests/Outgoing")
 export class OutgoingRequestsController extends BaseController {
     public constructor(@Inject private readonly consumptionServices: ConsumptionServices) {
         super();

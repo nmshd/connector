@@ -5,7 +5,7 @@ import { Accept, Context, ContextAccept, ContextResponse, GET, POST, Path, PathP
 import express from "express";
 
 @Security("core:relationshipTemplates")
-@Path("/api/v2/RelationshipTemplates")
+@Path("/api/core/v1/RelationshipTemplates")
 export class RelationshipTemplatesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();

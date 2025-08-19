@@ -9,26 +9,26 @@ export class TokensEndpoint extends Endpoint {
     }
 
     public async getToken(tokenId: string): Promise<ConnectorHttpResponse<TokenDTO>> {
-        return await this.get(`/api/v2/Tokens/${tokenId}`);
+        return await this.get(`/api/core/v1/Tokens/${tokenId}`);
     }
 
     public async getQrCodeForToken(tokenId: string): Promise<ConnectorHttpResponse<ArrayBuffer>> {
-        return await this.downloadQrCode("GET", `/api/v2/Tokens/${tokenId}`);
+        return await this.downloadQrCode("GET", `/api/core/v1/Tokens/${tokenId}`);
     }
 
     public async getOwnTokens(request?: GetOwnTokensRequest): Promise<ConnectorHttpResponse<TokenDTO[]>> {
-        return await this.get("/api/v2/Tokens/Own", request);
+        return await this.get("/api/core/v1/Tokens/Own", request);
     }
 
     public async createOwnToken(request: CreateOwnTokenRequest): Promise<ConnectorHttpResponse<TokenDTO>> {
-        return await this.post("/api/v2/Tokens/Own", request);
+        return await this.post("/api/core/v1/Tokens/Own", request);
     }
 
     public async getPeerTokens(request?: GetPeerTokensRequest): Promise<ConnectorHttpResponse<TokenDTO[]>> {
-        return await this.get("/api/v2/Tokens/Peer", request);
+        return await this.get("/api/core/v1/Tokens/Peer", request);
     }
 
     public async loadPeerToken(request: LoadPeerTokenRequest): Promise<ConnectorHttpResponse<TokenDTO>> {
-        return await this.post("/api/v2/Tokens/Peer", request);
+        return await this.post("/api/core/v1/Tokens/Peer", request);
     }
 }

@@ -4,18 +4,18 @@ import { Endpoint } from "./Endpoint";
 
 export class OutgoingRequestsEndpoint extends Endpoint {
     public async canCreateRequest(request: CanCreateOutgoingRequestRequest): Promise<ConnectorHttpResponse<ConnectorRequestValidationResult>> {
-        return await this.post("/api/v2/Requests/Outgoing/Validate", request);
+        return await this.post("/api/core/v1/Requests/Outgoing/Validate", request);
     }
 
     public async createRequest(request: CreateOutgoingRequestRequest): Promise<ConnectorHttpResponse<LocalRequestDTO>> {
-        return await this.post("/api/v2/Requests/Outgoing", request);
+        return await this.post("/api/core/v1/Requests/Outgoing", request);
     }
 
     public async getRequest(requestId: string): Promise<ConnectorHttpResponse<LocalRequestDTO>> {
-        return await this.get(`/api/v2/Requests/Outgoing/${requestId}`);
+        return await this.get(`/api/core/v1/Requests/Outgoing/${requestId}`);
     }
 
     public async getRequests(request: GetOutgoingRequestsRequest): Promise<ConnectorHttpResponse<LocalRequestDTO[]>> {
-        return await this.get("/api/v2/Requests/Outgoing", request);
+        return await this.get("/api/core/v1/Requests/Outgoing", request);
     }
 }

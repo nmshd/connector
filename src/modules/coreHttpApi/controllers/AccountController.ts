@@ -4,7 +4,7 @@ import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, GET, Path, POST, Security } from "@nmshd/typescript-rest";
 
 @Security("core:account")
-@Path("/api/v2/Account")
+@Path("/api/core/v1/Account")
 export class AccountController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();

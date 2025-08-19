@@ -160,7 +160,7 @@ paths:
 
   # ------------------- Account -------------------
 
-  /api/v2/Account/IdentityInfo:
+  /api/core/v1/Account/IdentityInfo:
     get:
       operationId: getIdentityInfo
       description: Shows the Account Information.
@@ -192,7 +192,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Account/SyncInfo:
+  /api/core/v1/Account/SyncInfo:
     get:
       operationId: getSyncInfo
       description: show information about the last completed sync run
@@ -231,7 +231,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Account/Sync:
+  /api/core/v1/Account/Sync:
     post:
       operationId: sync
       description: >
@@ -257,7 +257,7 @@ paths:
 
   # ------------------- Announcements -------------------
 
-  /api/v2/Announcements:
+  /api/core/v1/Announcements:
     get:
       operationId: getAnnouncements
       description: Query Announcements
@@ -298,7 +298,7 @@ paths:
 
   # ------------------- Attributes -------------------
 
-  /api/v2/Attributes/CanCreate:
+  /api/core/v1/Attributes/CanCreate:
     put:
       operationId: canCreateRepositoryAttribute
       description: "Checks if a Repository Attribute can be created with the given parameters."
@@ -345,7 +345,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes:
+  /api/core/v1/Attributes:
     post:
       operationId: createRepositoryAttribute
       description: "Creates a Repository Attribute."
@@ -489,7 +489,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/Own/Repository:
+  /api/core/v1/Attributes/Own/Repository:
     get:
       operationId: getOwnRepositoryAttributes
       tags:
@@ -557,7 +557,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/Own/Shared/Identity:
+  /api/core/v1/Attributes/Own/Shared/Identity:
     get:
       operationId: getOwnSharedIdentityAttributes
       tags:
@@ -662,7 +662,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/Peer/Shared/Identity:
+  /api/core/v1/Attributes/Peer/Shared/Identity:
     get:
       operationId: getPeerSharedIdentityAttributes
       tags:
@@ -763,7 +763,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/{id}/Versions:
+  /api/core/v1/Attributes/{id}/Versions:
     get:
       operationId: getVersionsOfAttribute
       tags:
@@ -801,7 +801,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/{id}/Versions/Shared:
+  /api/core/v1/Attributes/{id}/Versions/Shared:
     get:
       operationId: getSharedVersionsOfAttribute
       tags:
@@ -854,7 +854,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/{predecessorId}/Succeed:
+  /api/core/v1/Attributes/{predecessorId}/Succeed:
     post:
       operationId: succeedAttribute
       description: Succeeds either a relationship attribute or a repository attribute.
@@ -925,7 +925,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/{attributeId}/NotifyPeer:
+  /api/core/v1/Attributes/{attributeId}/NotifyPeer:
     post:
       operationId: notifyPeerAboutRepositoryAttributeSuccession
       description: |
@@ -990,7 +990,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/{id}:
+  /api/core/v1/Attributes/{id}:
     get:
       operationId: getAttribute
       description: Fetches the attribute with the given `id`.
@@ -1058,7 +1058,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/Own/Shared/{id}:
+  /api/core/v1/Attributes/Own/Shared/{id}:
     delete:
       operationId: deleteOwnSharedAttributeAndNotifyPeer
       description: Delete an own shared attribute and notify the peer.
@@ -1107,7 +1107,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/Peer/Shared/{id}:
+  /api/core/v1/Attributes/Peer/Shared/{id}:
     delete:
       operationId: deletePeerSharedAttributeAndNotifyOwner
       description: Delete an peer shared attribute and notify the owner.
@@ -1156,7 +1156,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/ThirdParty/{id}:
+  /api/core/v1/Attributes/ThirdParty/{id}:
     delete:
       operationId: deleteThirdPartyRelationshipAttributeAndNotifyPeer
       description: Delete a ThirdPartyRelationshipAttribute and notify the peer.
@@ -1205,7 +1205,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/TagCollection:
+  /api/core/v1/Attributes/TagCollection:
     get:
       operationId: getAttributeTagCollection
       description: List valid Tags for Attributes
@@ -1237,7 +1237,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/ExecuteIdentityAttributeQuery:
+  /api/core/v1/Attributes/ExecuteIdentityAttributeQuery:
     post:
       operationId: executeIdentityQuery
       description: Execute an IdentityAttributeQuery
@@ -1290,7 +1290,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/ExecuteRelationshipAttributeQuery:
+  /api/core/v1/Attributes/ExecuteRelationshipAttributeQuery:
     post:
       operationId: executeRelationshipQuery
       description: Execute a RelationshipAttributeQuery
@@ -1396,7 +1396,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/ExecuteThirdPartyRelationshipAttributeQuery:
+  /api/core/v1/Attributes/ExecuteThirdPartyRelationshipAttributeQuery:
     post:
       operationId: executeThirdPartyRelationshipQuery
       description: Execute a ThirdPartyAttributeQuery
@@ -1454,7 +1454,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/ExecuteIQLQuery:
+  /api/core/v1/Attributes/ExecuteIQLQuery:
     post:
       operationId: executeIQLQuery
       description: Execute IQL Query
@@ -1493,7 +1493,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/ValidateIQLQuery:
+  /api/core/v1/Attributes/ValidateIQLQuery:
     post:
       operationId: validateIQLQuery
       description: Validate IQL Query
@@ -1556,7 +1556,7 @@ paths:
 
   # ------------------- BackboneNotifications -------------------
 
-  /api/v2/BackboneNotifications:
+  /api/core/v1/BackboneNotifications:
     post:
       operationId: sendBackboneNotification
       description: Send a BackboneNotification.
@@ -1598,7 +1598,7 @@ paths:
 
   # ------------------- Challenges -------------------
 
-  /api/v2/Challenges:
+  /api/core/v1/Challenges:
     post:
       operationId: createChallenge
       description: Create a signed challenge.
@@ -1638,7 +1638,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Challenges/Validate:
+  /api/core/v1/Challenges/Validate:
     post:
       operationId: validateChallenge
       description: Validate a challenge.
@@ -1696,7 +1696,7 @@ paths:
 
   # ------------------- Files -------------------
 
-  /api/v2/Files:
+  /api/core/v1/Files:
     get:
       operationId: getAllFileMetadata
       description: Queries metadata of all files.
@@ -1782,7 +1782,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Files/Own:
+  /api/core/v1/Files/Own:
     post:
       operationId: uploadNewOwnFile
       description: Uploads a new own file with metadata.
@@ -1926,7 +1926,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Files/Peer:
+  /api/core/v1/Files/Peer:
     post:
       operationId: loadPeerFile
       description: Loads a file of another identity. After it is loaded once, you can retrieve it without the need for the reference by calling one of the GET-routes.
@@ -2044,7 +2044,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Files/{idOrReference}:
+  /api/core/v1/Files/{idOrReference}:
     get:
       operationId: getFileMetadata
       description: |
@@ -2095,7 +2095,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Files/{id}/Download:
+  /api/core/v1/Files/{id}/Download:
     get:
       operationId: downloadFile
       description: Downloads the file with the given `id`.
@@ -2132,7 +2132,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Files/{id}/Token:
+  /api/core/v1/Files/{id}/Token:
     post:
       operationId: createTokenForFile
       description: Creates a `Token` for the `File` with the given `id`. If the accept header is set to `image/png` instead of `application/json`, a QR Code containing the reference to the token is shown.
@@ -2198,7 +2198,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Files/{id}/RegenerateOwnershipToken:
+  /api/core/v1/Files/{id}/RegenerateOwnershipToken:
     patch:
       operationId: regenerateOwnershipToken
       description: Regenerates the ownership token for the file with the given `id`. This will invalidate the previous ownership token.
@@ -2238,7 +2238,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Files/{id}:
+  /api/core/v1/Files/{id}:
     delete:
       operationId: deleteFile
       description: Delete a File.
@@ -2270,7 +2270,7 @@ paths:
 
   # ------------------- IdentityMetadata -------------------
 
-  /api/v2/IdentityMetadata:
+  /api/core/v1/IdentityMetadata:
     put:
       operationId: upsertIdentityMetadata
       description: Creates or updates an IdentityMetadata object for the specified `reference` and `key` combination.
@@ -2395,7 +2395,7 @@ paths:
 
   # ------------------- Messages -------------------
 
-  /api/v2/Messages:
+  /api/core/v1/Messages:
     post:
       operationId: sendMessage
       description: >
@@ -2546,7 +2546,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Messages/{id}:
+  /api/core/v1/Messages/{id}:
     get:
       operationId: getMessage
       description: Fetches the message with the given `id`.
@@ -2586,7 +2586,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Messages/{messageId}/Attachments/{attachmentId}:
+  /api/core/v1/Messages/{messageId}/Attachments/{attachmentId}:
     get:
       operationId: getMetadataOfMessageAttachment
       description: Returns the attachment's metadata of the given `attachmentId` of message with `messageId`.
@@ -2631,7 +2631,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Messages/{messageId}/Attachments/{attachmentId}/Download:
+  /api/core/v1/Messages/{messageId}/Attachments/{attachmentId}/Download:
     get:
       operationId: downloadAttachmentOfMessage
       description: Downloads the file of the given `attachmentId` of message with `messageId`.
@@ -2674,7 +2674,7 @@ paths:
 
   # ------------------- Relationships -------------------
 
-  /api/v2/Relationships/CanCreate:
+  /api/core/v1/Relationships/CanCreate:
     put:
       operationId: canCreateRelationship
       description: Checks if a Relationship can be created with a given RelationshipTemplate to its creator. Optionally, the potential `creationContent` of the Relationship can also be validated.
@@ -2732,7 +2732,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships:
+  /api/core/v1/Relationships:
     post:
       operationId: createRelationship
       description: Creates a `Relationship` to the creator of a given relationshipTemplateId. The `RelationshipTemplate` of the given `relationshipTemplateId` must come from another identity and must be loaded by `POST /RelationshipTemplates/Peer` first.
@@ -2832,7 +2832,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Relationships/{id}:
+  /api/core/v1/Relationships/{id}:
     get:
       operationId: getRelationshipById
       description: Fetches the `Relationship` with the given `id`.
@@ -2902,7 +2902,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Attributes:
+  /api/core/v1/Relationships/{id}/Attributes:
     get:
       operationId: getAttributesForRelationship
       description: Queries attributes that are related to the given relationship.
@@ -2942,7 +2942,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Relationships/{id}/Accept:
+  /api/core/v1/Relationships/{id}/Accept:
     put:
       operationId: acceptRelationship
       description: Accepts the pending Relationship.
@@ -2983,7 +2983,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Reject:
+  /api/core/v1/Relationships/{id}/Reject:
     put:
       operationId: rejectRelationship
       description: Rejects the pending Relationship.
@@ -3025,7 +3025,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Revoke:
+  /api/core/v1/Relationships/{id}/Revoke:
     put:
       operationId: revokeRelationship
       description: Revoke the pending relationship. If the relationship was created by another identity the request will return with the error code 500.
@@ -3067,7 +3067,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Terminate:
+  /api/core/v1/Relationships/{id}/Terminate:
     put:
       operationId: terminateRelationship
       description: Terminate the relationship.
@@ -3109,7 +3109,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Reactivate:
+  /api/core/v1/Relationships/{id}/Reactivate:
     put:
       operationId: requestRelationshipReactivation
       description: Request the relationship reactivation.
@@ -3151,7 +3151,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Reactivate/Accept:
+  /api/core/v1/Relationships/{id}/Reactivate/Accept:
     put:
       operationId: acceptRelationshipReactivation
       description: Accept a relationship reactivation.
@@ -3193,7 +3193,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Reactivate/Reject:
+  /api/core/v1/Relationships/{id}/Reactivate/Reject:
     put:
       operationId: rejectRelationshipReactivation
       description: Reject a relationship reactivation.
@@ -3235,7 +3235,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Reactivate/Revoke:
+  /api/core/v1/Relationships/{id}/Reactivate/Revoke:
     put:
       operationId: revokeRelationshipReactivation
       description: Revoke a relationship reactivation.
@@ -3279,7 +3279,7 @@ paths:
 
   # ------------------- RelationshipTemplates -------------------
 
-  /api/v2/RelationshipTemplates:
+  /api/core/v1/RelationshipTemplates:
     get:
       operationId: getRelationshipTemplates
       description: Queries `RelationshipTemplates`.
@@ -3357,7 +3357,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/RelationshipTemplates/Own:
+  /api/core/v1/RelationshipTemplates/Own:
     post:
       operationId: createOwnRelationshipTemplate
       description: Creates a new `RelationshipTemplate`.
@@ -3498,7 +3498,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/RelationshipTemplates/Peer:
+  /api/core/v1/RelationshipTemplates/Peer:
     post:
       operationId: loadPeerRelationshipTemplate
       description: Loads a `RelationshipTemplate` created by others. This is a prerequisite for using the template while creating a new `Relationship`.
@@ -3617,7 +3617,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/RelationshipTemplates/{id}:
+  /api/core/v1/RelationshipTemplates/{id}:
     get:
       operationId: getRelationshipTemplate
       description: Fetches the `RelationshipTemplate` with the given `id` when the accept header is set to `application/json` or a QR Code containing the reference to the RelationshipTemplate if the accept header it set to `image/png`.
@@ -3662,7 +3662,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/RelationshipTemplates/Own/{id}/Token:
+  /api/core/v1/RelationshipTemplates/Own/{id}/Token:
     post:
       operationId: createTokenForOwnRelationshipTemplate
       description: Creates a `Token` for the own `RelationshipTemplate` with the given `id`. If the accept header is set to `image/png` instead of `application/json`, a QR Code containing the reference to the token is shown.
@@ -3730,7 +3730,7 @@ paths:
 
   # ------------------- Requests -------------------
 
-  /api/v2/Requests/Incoming:
+  /api/core/v1/Requests/Incoming:
     get:
       operationId: getIncomingRequests
       description: Queries incoming `Requests`.
@@ -3828,7 +3828,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Requests/Incoming/{id}:
+  /api/core/v1/Requests/Incoming/{id}:
     get:
       operationId: getIncomingRequest
       description: Fetches the incoming `Request` with the given `id`.
@@ -3868,7 +3868,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Requests/Incoming/{id}/CanAccept:
+  /api/core/v1/Requests/Incoming/{id}/CanAccept:
     put:
       operationId: canAcceptIncomingRequest
       description: Checks if the `Request` with the given `id` can be accepted.
@@ -3914,7 +3914,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Requests/Incoming/{id}/Accept:
+  /api/core/v1/Requests/Incoming/{id}/Accept:
     put:
       operationId: acceptIncomingRequest
       description: Accepts the incoming `Request` with the given `id`.
@@ -3960,7 +3960,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Requests/Incoming/{id}/CanReject:
+  /api/core/v1/Requests/Incoming/{id}/CanReject:
     put:
       operationId: canRejectIncomingRequest
       description: Checks if the `Request` with the given `id` can be rejected.
@@ -4006,7 +4006,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Requests/Incoming/{id}/Reject:
+  /api/core/v1/Requests/Incoming/{id}/Reject:
     put:
       operationId: rejectIncomingRequest
       description: Rejects the incoming `Request` with the given `id`.
@@ -4052,7 +4052,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Requests/Outgoing:
+  /api/core/v1/Requests/Outgoing:
     get:
       operationId: getOutgoingRequests
       description: Queries outgoing `Requests`.
@@ -4182,7 +4182,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Requests/Outgoing/{id}:
+  /api/core/v1/Requests/Outgoing/{id}:
     get:
       operationId: getOutgoingRequest
       description: Fetches the `Request` with the given `id`.
@@ -4222,10 +4222,10 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Requests/Outgoing/Validate:
+  /api/core/v1/Requests/Outgoing/Validate:
     post:
       operationId: validateOutgoingRequest
-      description: Validates the given `OutgoingRequest` before creating it via POST `/api/v2/Requests/Outgoing`.
+      description: Validates the given `OutgoingRequest` before creating it via POST `/api/core/v1/Requests/Outgoing`.
       tags:
         - Requests
       requestBody:
@@ -4263,7 +4263,7 @@ paths:
 
   # ------------------- Tokens -------------------
 
-  /api/v2/Tokens/Own:
+  /api/core/v1/Tokens/Own:
     post:
       operationId: createOwnToken
       description: Creates a new `Token` with the given content.
@@ -4395,7 +4395,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Tokens/Peer:
+  /api/core/v1/Tokens/Peer:
     post:
       operationId: loadPeerToken
       description: Load a `Token` created by others.
@@ -4512,7 +4512,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Tokens/{id}:
+  /api/core/v1/Tokens/{id}:
     get:
       operationId: getToken
       description: Fetches the `Token` with the given `id`.

@@ -5,7 +5,7 @@ import { Accept, Context, ContextAccept, ContextResponse, GET, Path, PathParam, 
 import express from "express";
 
 @Security("core:tokens")
-@Path("/api/v2/Tokens")
+@Path("/api/core/v1/Tokens")
 export class TokensController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();
