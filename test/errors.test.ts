@@ -19,7 +19,7 @@ beforeAll(async () => {
     axiosClient = axios.create({
         baseURL: baseUrl,
         validateStatus: (_) => true,
-        headers: { "X-API-KEY": launcher.apiKey } / api / core / v1
+        headers: { "X-API-KEY": launcher.apiKey }
     });
 }, getTimeout(30000));
 
@@ -27,21 +27,21 @@ afterAll(() => launcher.stop());
 
 describe("Errors", () => {
     test("http error 401", async () => {
-        const response = await axiosClient.get<any>("/api/v2/Files", { headers: { "X-API-KEY": "invalid" } });
+        const response = await axiosClient.get<any>("/api/core/v1/Files", { headers: { "X-API-KEY": "invalid" } });
         expect(response.status).toBe(401);
         validateSchema(ValidationSchema.Error, response.data.error);
     });
-    /api/ceor / v1;
-    test.each(["/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support", "/api/v2/Files"])(
-        "http error 403 on route '%s' with apiKey that can only access /api/v2/Relationships",
+
+    test.each(["/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support", "/api/core/v1/Files"])(
+        "http error 403 on route '%s' with apiKey that can only access /api/core/v1/Relationships",
         async (route: string) => {
             const response = await axiosClient.get<any>(route, { headers: { "X-API-KEY": onlyRelationshipsApiKey } });
             expect(response.status).toBe(403);
-            validateSchema(ValidationSchema.Error, res / api / core / v1ata.error);
+            validateSchema(ValidationSchema.Error, response.data.error);
         }
     );
 
-    test.each(["/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support", "/api/v2/Files"])(
+    test.each(["/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support", "/api/core/v1/Files"])(
         "http error 403 on route '%s' with apiKey that can not access authorized routes",
         async (route: string) => {
             const response = await axiosClient.get<any>(route, { headers: { "X-API-KEY": scopelessApiKey } });
@@ -57,13 +57,13 @@ describe("Errors", () => {
     });
 
     test("http error 405", async () => {
-        const response = await axiosClient.patch<any>("/api/v2/Files", undefined);
+        const response = await axiosClient.patch<any>("/api/core/v1/Files", undefined);
         expect(response.status).toBe(405);
         validateSchema(ValidationSchema.Error, response.data.error);
     });
 
     test("http error 400", async () => {
-        const response = await axiosClient.post<any>("/api/v2/Files/Own", undefined);
+        const response = await axiosClient.post<any>("/api/core/v1/Files/Own", undefined);
         expect(response.status).toBe(400);
         expect(response.data.error.docs).toBe("https://enmeshed.eu/integrate/error-codes#error.runtime.validation.invalidPropertyValue");
         validateSchema(ValidationSchema.Error, response.data.error);

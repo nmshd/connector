@@ -22,8 +22,8 @@ import {
 import express from "express";
 
 @Security("core:files")
-@Path("/api/v2/Files")
-export /api/core/v1ilesController extends BaseController {
+@Path("/api/core/v1/Files")
+export class FilesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();
     }
