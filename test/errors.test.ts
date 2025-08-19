@@ -51,7 +51,7 @@ describe("Errors", () => {
     );
 
     test("http error 404", async () => {
-        const response = await axiosClient.get<any>("/apii/v2/Files");
+        const response = await axiosClient.get<any>("/apii/core/v1/Files");
         expect(response.status).toBe(404);
         validateSchema(ValidationSchema.Error, response.data.error);
     });
