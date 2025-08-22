@@ -58,7 +58,7 @@
     "peerDependencies": {
         "@js-soft/docdb-access-abstractions": "^1.2.0",
         "@js-soft/ts-utils": "^2.3.4",
-        "@nmshd/runtime": "^6.61.1",
+        "@nmshd/runtime": "^6.61.2",
         "@nmshd/typescript-rest": "^3.1.6",
         "express": "^5.1.0"
     },
