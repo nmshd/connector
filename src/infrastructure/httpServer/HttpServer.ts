@@ -5,7 +5,7 @@ import { Server } from "@nmshd/typescript-rest";
 import compression from "compression";
 import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
-import express, { Application, RequestHandler } from "express";
+import express, { Application, RequestHandler, Router } from "express";
 import { AuthOptions as BearerAuthOptions, auth as bearerAuth } from "express-oauth2-jwt-bearer";
 import { ConfigParams as OauthParams, auth as openidAuth } from "express-openid-connect";
 import helmet, { HelmetOptions } from "helmet";
@@ -339,7 +339,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         Server.registerAuthenticator({
             getMiddleware: () => (_req, _res, next) => next(),
 
-            initialize: (_app: Application) => {
+            initialize: (_app: Router) => {
                 // no initialization needed
             },
 
