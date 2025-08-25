@@ -7,13 +7,6 @@
     reviewers: ["jkoenig134", "Milena-Czierlinski"],
     packageRules: [
         {
-            // we don't want to update eslint currently, because there is a breaking change in its config
-            matchDatasources: ["npm"],
-            matchPackageNames: ["eslint"],
-            matchUpdateTypes: ["major"],
-            enabled: false
-        },
-        {
             // all patch versions of all packages should be part of a single group
             groupName: "patch-all",
             matchUpdateTypes: ["patch", "digest"],

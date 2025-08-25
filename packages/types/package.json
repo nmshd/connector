@@ -31,15 +31,15 @@
         "@js-soft/logging-abstractions": "^1.0.1",
         "@types/express": "^5.0.3",
         "@types/luxon": "^3.7.1",
-        "@types/node": "^22.17.2",
+        "@types/node": "^22.18.0",
         "@types/qrcode": "^1.5.5",
         "typescript": "^5.9.2"
     },
     "peerDependencies": {
         "@js-soft/docdb-access-abstractions": "^1.2.0",
         "@js-soft/ts-utils": "^2.3.4",
-        "@nmshd/runtime": "^7.0.0-alpha.57",
-        "@nmshd/typescript-rest": "^3.1.6",
+        "@nmshd/runtime": "^7.0.0-alpha.58",
+        "@nmshd/typescript-rest": "^3.2.0",
         "express": "^5.1.0"
     },
     "publishConfig": {
