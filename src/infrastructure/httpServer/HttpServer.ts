@@ -47,7 +47,7 @@ export interface HttpServerConfiguration extends InfrastructureConfiguration {
     helmetOptions?: HelmetOptions;
     authentication: {
         apiKey: ApiKeyAuthenticationConfig;
-        oidc: { enabled?: boolean } & OauthParams;
+        oidc: { enabled?: boolean; rolesPath?: string } & OauthParams;
         jwtBearer: { enabled?: boolean } & BearerAuthOptions;
     };
 }
@@ -225,8 +225,9 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
 
         if (oidcAuthenticationEnabled) {
             const config = { ...this.configuration.authentication.oidc, authRequired: false };
-            // remove the enabled property as it is not supported by the express-openid-connect library
+            // remove the enabled and rolesPath properties as they are not supported by the express-openid-connect library
             delete config.enabled;
+            delete config.rolesPath;
 
             this.app.use(openidAuth(config));
         }
@@ -247,7 +248,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                         headerName: this.configuration.authentication.apiKey.headerName.toLocaleLowerCase()
                     },
                     jwtBearer: { enabled: jwtBearerAuthenticationEnabled },
-                    oidc: { enabled: oidcAuthenticationEnabled },
+                    oidc: { enabled: oidcAuthenticationEnabled, rolesPath: this.configuration.authentication.oidc.rolesPath },
                     connectorMode: this.connectorMode
                 },
                 this.logger
