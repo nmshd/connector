@@ -2,12 +2,13 @@ import { ILogger } from "@js-soft/logging-abstractions";
 import { sleep } from "@js-soft/ts-utils";
 import { Envelope, HttpErrors } from "@nmshd/connector-types";
 import express from "express";
+import { RequestContext as OIDCRequestContext } from "express-openid-connect";
 
 export function enforceAuthentication(
     config: {
         apiKey: { enabled: boolean; headerName: string };
         jwtBearer: { enabled: boolean };
-        oidc: { enabled: boolean };
+        oidc: { enabled: boolean; rolesPath?: string };
         connectorMode: "debug" | "production";
     },
     logger: ILogger
@@ -53,7 +54,7 @@ export function enforceAuthentication(
             if (!req.oidc) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
             if (!req.oidc.isAuthenticated()) return await res.oidc.login();
 
-            req.userRoles = [];
+            req.userRoles = extractRolesFromOIDC(logger, req.oidc, config.oidc.rolesPath);
 
             next();
             return;
@@ -61,4 +62,31 @@ export function enforceAuthentication(
 
         await unauthorized(req, res);
     };
+}
+
+function extractRolesFromOIDC(logger: ILogger, context: OIDCRequestContext, rolesPath?: string): string[] {
+    if (!context.user || !rolesPath) return [];
+
+    const segments = rolesPath.split(".");
+    if (segments.length === 0) return [];
+
+    let current: any = context.user;
+    const processedSegements = [];
+
+    for (const segment of segments) {
+        processedSegements.push(segment);
+        if (!current[segment]) {
+            logger.warn(`Roles path '${processedSegements.join(".")}' not found in OIDC user info, using empty array as default.`);
+            return [];
+        }
+
+        current = current[segment];
+    }
+
+    if (!Array.isArray(current)) {
+        logger.warn(`Roles path '${rolesPath}' does not point to an array in OIDC user info, using empty array as default.`);
+        return [];
+    }
+
+    return current;
 }
