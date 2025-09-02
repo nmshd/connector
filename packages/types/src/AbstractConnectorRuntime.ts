@@ -13,6 +13,6 @@ export abstract class AbstractConnectorRuntime<TConfig extends ConnectorRuntimeC
     public abstract getBuildInformation(): ConnectorRuntimeBuildInformation;
     public abstract readonly infrastructure: IConnectorInfrastructureRegistry;
 
-    public override databaseConnection: IDatabaseConnection;
-    public override readonly runtimeConfig: TConfig;
+    declare public databaseConnection: IDatabaseConnection;
+    declare public readonly runtimeConfig: TConfig;
 }
