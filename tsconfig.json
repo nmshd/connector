@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es2021",
+        "target": "es2022",
         "module": "commonjs",
         "sourceMap": true,
         "declarationMap": true,
@@ -19,7 +19,7 @@
         "strictPropertyInitialization": false,
         "downlevelIteration": true,
         "noImplicitOverride": true,
-        "lib": ["es2021", "dom"]
+        "lib": ["es2022", "dom"]
     },
     "include": ["src/**/*"]
 }
