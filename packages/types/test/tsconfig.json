@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es2019",
+        "target": "es2022",
         "module": "commonjs",
         "sourceMap": true,
         "declaration": true,
@@ -18,7 +18,7 @@
         "strictNullChecks": true,
         "strictPropertyInitialization": false,
         "downlevelIteration": true,
-        "lib": ["es2021", "dom"],
+        "lib": ["es2022", "dom"],
         "baseUrl": "../"
     },
     "include": ["**/*.ts"],
