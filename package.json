@@ -100,6 +100,7 @@
         "helmet": "8.1.0",
         "json-stringify-safe": "5.0.1",
         "jsonschema": "1.5.0",
+        "jwt-decode": "^4.0.0",
         "mqtt": "^5.14.0",
         "nconf": "0.13.0",
         "on-headers": "1.1.0",
