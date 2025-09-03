@@ -4,7 +4,7 @@ import { Envelope, HttpErrors } from "@nmshd/connector-types";
 import { CoreDate } from "@nmshd/core-types";
 import express from "express";
 import { RequestContext as OIDCRequestContext } from "express-openid-connect";
-import { decodeJwt } from "jose";
+import { jwtDecode } from "jwt-decode";
 
 export function enforceAuthentication(
     config: {
@@ -62,7 +62,7 @@ export function enforceAuthentication(
                 if (!refreshToken) {
                     return await res.oidc.login();
                 }
-                const decodedRefreshToken = decodeJwt(refreshToken);
+                const decodedRefreshToken = jwtDecode(refreshToken);
 
                 if (CoreDate.from((decodedRefreshToken.exp ?? 0) * 1000).isExpired()) {
                     return await res.oidc.login();
