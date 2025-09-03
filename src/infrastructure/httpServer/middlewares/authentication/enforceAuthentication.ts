@@ -1,8 +1,10 @@
 import { ILogger } from "@js-soft/logging-abstractions";
 import { sleep } from "@js-soft/ts-utils";
 import { Envelope, HttpErrors } from "@nmshd/connector-types";
+import { CoreDate } from "@nmshd/core-types";
 import express from "express";
 import { RequestContext as OIDCRequestContext } from "express-openid-connect";
+import { decodeJwt } from "jose";
 
 export function enforceAuthentication(
     config: {
@@ -50,11 +52,26 @@ export function enforceAuthentication(
         }
 
         if (config.oidc.enabled) {
+            const oidcContext = req.oidc;
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
-            if (!req.oidc) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
-            if (!req.oidc.isAuthenticated()) return await res.oidc.login();
+            if (!oidcContext) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
+            if (!oidcContext.isAuthenticated()) return await res.oidc.login();
 
-            req.userRoles = extractRolesFromOIDC(logger, req.oidc, config.oidc.rolesPath);
+            if (oidcContext.accessToken?.isExpired()) {
+                const refreshToken = oidcContext.refreshToken;
+                if (!refreshToken) {
+                    return await res.oidc.login();
+                }
+                const decodedRefreshToken = decodeJwt(refreshToken);
+
+                if (CoreDate.from((decodedRefreshToken.exp ?? 0) * 1000).isExpired()) {
+                    return await res.oidc.login();
+                }
+
+                await req.oidc.accessToken?.refresh();
+            }
+
+            req.userRoles = extractRolesFromOIDC(logger, oidcContext, config.oidc.rolesPath);
 
             next();
             return;
