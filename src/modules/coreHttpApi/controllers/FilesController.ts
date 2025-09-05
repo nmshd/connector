@@ -106,7 +106,7 @@ export class FilesController extends BaseController {
         @ContextResponse response: express.Response,
         @QueryParam("newQRCodeFormat") newQRCodeFormat?: boolean
     ): Promise<Envelope | void> {
-        const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.fromTruncated(idOrReference).id.toString();
+        const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.from(idOrReference).id.toString();
 
         const result = await this.transportServices.files.getFile({ id: fileId });
 
