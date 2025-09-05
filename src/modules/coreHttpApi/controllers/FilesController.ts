@@ -100,7 +100,7 @@ export class FilesController extends BaseController {
     @Path("/:idOrReference")
     @Accept("application/json", "image/png")
     public async getFile(@PathParam("idOrReference") idOrReference: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
-        const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.fromTruncated(idOrReference).id.toString();
+        const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.from(idOrReference).id.toString();
 
         const result = await this.transportServices.files.getFile({ id: fileId });
 
