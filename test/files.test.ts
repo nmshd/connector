@@ -97,7 +97,7 @@ describe("File Upload", () => {
 
     test("cannot upload a file that is null", async () => {
         // Cannot use client1.files.uploadOwn because it cannot deal with null values
-        const _response = await (client1.files as any).httpClient.post("/api/v2/Files/Own", makeUploadRequest({ file: null as any }));
+        const _response = await (client1.files as any).httpClient.post("/api/core/v1/Files/Own", makeUploadRequest({ file: null as any }));
         const response = (client1.files as any).makeResult(_response);
 
         expect(response).toBeAnError("must have required property 'content'", "error.runtime.validation.invalidPropertyValue");
@@ -118,9 +118,9 @@ describe("File Upload", () => {
     });
 
     test("can upload file with tags", async () => {
-        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ tags: ["tag1", "tag2"] }));
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ tags: ["x:tag1", "x:tag2"] }));
         expect(response).toBeSuccessful();
-        expect(response.result.tags).toStrictEqual(["tag1", "tag2"]);
+        expect(response.result.tags).toStrictEqual(["x:tag1", "x:tag2"]);
     });
 
     test("cannot upload a file with expiry date in the past", async () => {

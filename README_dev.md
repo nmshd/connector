@@ -139,18 +139,28 @@ npm run test:local -- testSuiteName
 4. build the Connector `npm run build`
 5. create a config file (for example `local.config.json`)
 
-    ```
+    ```json
     {
-      "debug": true,
-      "transportLibrary": {
-          "baseUrl": "<base-url>",
-          "platformClientId": "<client-id>",
-          "platformClientSecret": "<client-secret>"
-      },
-      "database": { "driver": "lokijs", "folder": "./" },
-      "logging": { "categories": { "default": { "appenders": ["console"] } } },
-      "infrastructure": { "httpServer": { "apiKey": "<api-key-or-empty-string>", "port": 8080 } },
-      "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
+        "debug": true,
+        "transportLibrary": {
+            "baseUrl": "<base-url>",
+            "platformClientId": "<client-id>",
+            "platformClientSecret": "<client-secret>"
+        },
+        "database": { "driver": "lokijs", "folder": "./" },
+        "logging": { "categories": { "default": { "appenders": ["console"] } } },
+        "infrastructure": {
+            "httpServer": {
+                "authentication": {
+                    "apiKey": {
+                        "enabled": true,
+                        "keys": { "<an-api-key-name>": { "key": "<api-key>" } }
+                    }
+                },
+                "port": 8080
+            }
+        },
+        "modules": { "coreHttpApi": { "docs": { "enabled": true } } }
     }
     ```
 
