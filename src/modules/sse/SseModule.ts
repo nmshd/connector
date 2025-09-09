@@ -34,7 +34,7 @@ export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
         const baseUrl = this.configuration.baseUrlOverride ?? this.runtime["runtimeConfig"].transportLibrary.baseUrl;
         const sseUrl = `${baseUrl}/api/v1/sse`;
 
-        const baseOptions = { connect: { rejectUnauthorized: false } };
+        const baseOptions: Agent.Options = { connect: { rejectUnauthorized: false } };
         const proxy = baseUrl.startsWith("https://") ? (process.env.https_proxy ?? process.env.HTTPS_PROXY) : (process.env.http_proxy ?? process.env.HTTP_PROXY);
 
         const eventSource = new EventSource(sseUrl, {
