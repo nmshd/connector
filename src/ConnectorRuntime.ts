@@ -17,7 +17,8 @@ import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleC
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import correlator from "correlation-id";
-import { HttpsProxyAgent } from "https-proxy-agent";
+import { Agent as HTTPAgent, AgentOptions as HTTPAgentOptions } from "http";
+import { Agent as HTTPSAgent, AgentOptions as HTTPSAgentOptions } from "https";
 import { checkServerIdentity, PeerCertificate } from "tls";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { HealthChecker } from "./HealthChecker";
@@ -186,7 +187,16 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             dataViewExpander: this._dataViewExpander
         } = await this.login(this.accountController, consumptionController));
 
-        const httpsProxy = process.env.https_proxy ?? process.env.HTTPS_PROXY;
+        const httpAgent = new HTTPAgent({
+            // @ts-expect-error @types/node does not have proxyEnv, but it can already be used
+            proxyEnv: process.env
+        } satisfies HTTPAgentOptions);
+
+        const httpsAgent = new HTTPSAgent({
+            // @ts-expect-error @types/node does not have proxyEnv, but it can already be used
+            proxyEnv: process.env
+        } satisfies HTTPSAgentOptions);
+
         this.healthChecker = HealthChecker.create(
             this.runtimeConfig.database.driver === "lokijs"
                 ? undefined
@@ -197,7 +207,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
                       waitQueueTimeoutMS: 1000,
                       serverSelectionTimeoutMS: 1000
                   }),
-            axios.create({ baseURL: this.transport.config.baseUrl, proxy: false, httpsAgent: httpsProxy ? new HttpsProxyAgent(httpsProxy) : undefined }),
+            axios.create({ baseURL: this.transport.config.baseUrl, proxy: false, httpAgent, httpsAgent }),
             this.accountController.authenticator,
             this.loggerFactory.getLogger("HealthChecker")
         );
