@@ -1,4 +1,4 @@
-FROM node:24.8.0@sha256:3357ef4c358ae0f92e943fe51c0c8dfaaadb5d4ee3f989121f54b1aabab39009 AS builder
+FROM node:24.8.0@sha256:82a1d74c5988b72e839ac01c5bf0f7879a8ffd14ae40d7008016bca6ae12852b AS builder
 
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
@@ -16,7 +16,7 @@ COPY packages/types/src packages/types/src
 RUN npm run build:ci --ws
 RUN .ci/writeBuildInformation.sh
 
-FROM node:24.8.0-slim@sha256:f36ed6d02276ecf5e97c8fa676aee66056d8d10c3ee53f1ca65e12f8070f14db
+FROM node:24.8.0-slim@sha256:cadbfafeb6baf87eaaffa40b3640209c4b7fd38cebde65059d15bc39cd636b85
 
 ARG VERSION
 
