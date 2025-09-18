@@ -187,15 +187,8 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             dataViewExpander: this._dataViewExpander
         } = await this.login(this.accountController, consumptionController));
 
-        const httpAgent = new HTTPAgent({
-            // @ts-expect-error @types/node does not have proxyEnv, but it can already be used
-            proxyEnv: process.env
-        } satisfies HTTPAgentOptions);
-
-        const httpsAgent = new HTTPSAgent({
-            // @ts-expect-error @types/node does not have proxyEnv, but it can already be used
-            proxyEnv: process.env
-        } satisfies HTTPSAgentOptions);
+        const httpAgent = new HTTPAgent({ proxyEnv: process.env } satisfies HTTPAgentOptions);
+        const httpsAgent = new HTTPSAgent({ proxyEnv: process.env } satisfies HTTPSAgentOptions);
 
         this.healthChecker = HealthChecker.create(
             this.runtimeConfig.database.driver === "lokijs"
