@@ -53,18 +53,31 @@ export function enforceAuthentication(
 
         if (config.oidc.enabled) {
             const oidcContext = req.oidc;
+            const shouldReturnUnauthorized = req.xhr || (!req.accepts("html") && req.accepts("json"));
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
             if (!oidcContext) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
-            if (!oidcContext.isAuthenticated()) return await res.oidc.login();
+
+            if (!oidcContext.isAuthenticated()) {
+                if (shouldReturnUnauthorized) {
+                    return await unauthorized(req, res);
+                }
+                return await res.oidc.login();
+            }
 
             if (oidcContext.accessToken?.isExpired()) {
                 const refreshToken = oidcContext.refreshToken;
                 if (!refreshToken) {
+                    if (shouldReturnUnauthorized) {
+                        return await unauthorized(req, res);
+                    }
                     return await res.oidc.login();
                 }
                 const decodedRefreshToken = jwtDecode(refreshToken);
 
                 if (CoreDate.from((decodedRefreshToken.exp ?? 0) * 1000).isExpired()) {
+                    if (shouldReturnUnauthorized) {
+                        return await unauthorized(req, res);
+                    }
                     return await res.oidc.login();
                 }
 
