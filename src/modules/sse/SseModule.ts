@@ -72,7 +72,6 @@ export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
 
             if (error.message?.includes("fetch failed")) {
                 this.logger.error(`An error occurred while connecting to the SSE server: '${error.message}'`);
-
                 return;
             }
 
