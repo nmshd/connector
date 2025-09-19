@@ -64,8 +64,19 @@ export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
         });
 
         eventSource.onopen = async () => await this.runSync();
-        eventSource.onerror = async (error) => {
-            if (error.code === 401) await this.recreateEventSource();
+        eventSource.onerror = (error) => {
+            if (error.message?.includes("terminated")) {
+                this.logger.error(`The connection to the SSE server was terminated: '${error.message}'`);
+                return;
+            }
+
+            if (error.message?.includes("fetch failed")) {
+                this.logger.error(`An error occurred while connecting to the SSE server: '${error.message}'`);
+
+                return;
+            }
+
+            this.logger.error(`An error occurred: '${error.message}'`);
         };
     }
 
