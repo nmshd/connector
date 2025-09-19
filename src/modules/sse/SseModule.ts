@@ -41,14 +41,14 @@ export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
             fetch: async (url, options) => {
                 const token = await this.runtime.getBackboneAuthenticationToken();
 
-                this.logger.info(`Connecting to SSE endpoint: ${sseUrl}`);
+                this.logger.info(`Trying to connect to the SSE endpoint ${sseUrl}`);
                 const response = await fetch(url, {
                     ...options,
                     dispatcher: proxy ? new ProxyAgent({ ...baseOptions, uri: proxy }) : new Agent(baseOptions),
                     headers: { ...options.headers, authorization: `Bearer ${token}` }
                 });
 
-                this.logger.info(`Connected to SSE endpoint: ${sseUrl}`);
+                this.logger.info(`Connected to the SSE endpoint ${sseUrl}`);
 
                 return response;
             }
@@ -64,8 +64,18 @@ export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
         });
 
         eventSource.onopen = async () => await this.runSync();
-        eventSource.onerror = async (error) => {
-            if (error.code === 401) await this.recreateEventSource();
+        eventSource.onerror = (error) => {
+            if (error.message?.includes("terminated")) {
+                this.logger.error(`The connection to the SSE server was terminated: '${error.message}'`);
+                return;
+            }
+
+            if (error.message?.includes("fetch failed")) {
+                this.logger.error(`An error occurred while connecting to the SSE server: '${error.message}'`);
+                return;
+            }
+
+            this.logger.error(`An error occurred: '${error.message}'`);
         };
     }
 
