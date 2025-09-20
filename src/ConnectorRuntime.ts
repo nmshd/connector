@@ -17,7 +17,8 @@ import { ConsumptionServices, DataViewExpander, GetIdentityInfoResponse, ModuleC
 import { AccountController, TransportCoreErrors } from "@nmshd/transport";
 import axios from "axios";
 import correlator from "correlation-id";
-import { HttpsProxyAgent } from "https-proxy-agent";
+import { Agent as HTTPAgent, AgentOptions as HTTPAgentOptions } from "http";
+import { Agent as HTTPSAgent, AgentOptions as HTTPSAgentOptions } from "https";
 import { checkServerIdentity, PeerCertificate } from "tls";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { HealthChecker } from "./HealthChecker";
@@ -121,7 +122,6 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
     private static forceEnableMandatoryModules(connectorConfig: ConnectorRuntimeConfig) {
         connectorConfig.modules.decider.enabled = true;
         connectorConfig.modules.request.enabled = true;
-        connectorConfig.modules.attributeListener.enabled = true;
     }
 
     private static async runBackboneCompatibilityCheck(runtime: ConnectorRuntime) {
@@ -166,7 +166,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
     }
 
     protected async initAccount(): Promise<void> {
-        const db = await this.databaseConnection.getDatabase(`${this.runtimeConfig.database.dbNamePrefix}${this.runtimeConfig.database.dbName}`);
+        const db = await this.databaseConnection.getDatabase(this.runtimeConfig.database.dbName);
 
         this.accountController = await new AccountController(this.transport, db, this.transport.config).init().catch((e) => {
             if (e instanceof ApplicationError && e.code === "error.transport.general.platformClientInvalid") {
@@ -187,7 +187,9 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             dataViewExpander: this._dataViewExpander
         } = await this.login(this.accountController, consumptionController));
 
-        const httpsProxy = process.env.https_proxy ?? process.env.HTTPS_PROXY;
+        const httpAgent = new HTTPAgent({ proxyEnv: process.env } satisfies HTTPAgentOptions);
+        const httpsAgent = new HTTPSAgent({ proxyEnv: process.env } satisfies HTTPSAgentOptions);
+
         this.healthChecker = HealthChecker.create(
             this.runtimeConfig.database.driver === "lokijs"
                 ? undefined
@@ -198,7 +200,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
                       waitQueueTimeoutMS: 1000,
                       serverSelectionTimeoutMS: 1000
                   }),
-            axios.create({ baseURL: this.transport.config.baseUrl, proxy: false, httpsAgent: httpsProxy ? new HttpsProxyAgent(httpsProxy) : undefined }),
+            axios.create({ baseURL: this.transport.config.baseUrl, proxy: false, httpAgent, httpsAgent }),
             this.accountController.authenticator,
             this.loggerFactory.getLogger("HealthChecker")
         );
@@ -230,9 +232,21 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         }
 
         const httpServer = config.infrastructure.httpServer as any;
-        if (httpServer?.apiKey) httpServer.apiKey = "redacted, but enabled";
-        if (httpServer?.oidc) httpServer.oidc = "redacted, but enabled";
-        if (httpServer?.jwtBearer) httpServer.jwtBearer = "redacted, but enabled";
+        const authentication = httpServer?.authentication;
+        if (authentication?.apiKey) {
+            const apiKeyAuthenticationEnabled = authentication.apiKey.enabled ?? Object.keys(authentication.apiKey.keys).length !== 0;
+            authentication.apiKey = apiKeyAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
+        }
+
+        if (authentication?.oidc) {
+            const oidcAuthenticationEnabled = authentication.oidc.enabled ?? Object.keys(authentication.oidc).length !== 0;
+            authentication.oidc = oidcAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
+        }
+
+        if (authentication?.jwtBearer) {
+            const jwtBearerAuthenticationEnabled = authentication.jwtBearer.enabled ?? Object.keys(authentication.jwtBearer).length !== 0;
+            authentication.jwtBearer = jwtBearerAuthenticationEnabled ? "redacted (enabled)" : "redacted (disabled)";
+        }
 
         const transport = config.transportLibrary;
         if (transport.platformClientSecret) {
