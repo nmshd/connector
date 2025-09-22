@@ -1,6 +1,6 @@
 services:
   consumer-api:
-    image: ghcr.io/nmshd/backbone-consumer-api:6.57.0@sha256:ba39b5de47b547ec0627143da87f18d2527e7c30f76bca04347dc7eb40399658
+    image: ghcr.io/nmshd/backbone-consumer-api:6.58.0@sha256:d4c7e241ed0455ca3c5d1fc31def61c84f2cbce1e4226119a24dd65fe9fe9638
     container_name: consumer-api
     hostname: consumer-api
     environment:
@@ -23,7 +23,7 @@ services:
         target: app/appsettings.override.json
 
   event-handler-service:
-    image: ghcr.io/nmshd/backbone-event-handler:6.57.0@sha256:67bd3bc024011f74fcfddb2ca2d80d282bec94e4d074ad990f16a5bb3e9ceab4
+    image: ghcr.io/nmshd/backbone-event-handler:6.58.0@sha256:dddb95594333732fa9ea7a9f574bca9fd9af65a5dee569ba96cbb0778f021272
     container_name: event-handler-service
     depends_on:
       database:
@@ -37,7 +37,7 @@ services:
         target: app/appsettings.override.json
 
   sse-server:
-    image: ghcr.io/nmshd/backbone-sse-server:6.57.0@sha256:62b146ad37efb33e0e135c9e4c1dd985e0961535bf874924d396d6678168e76a
+    image: ghcr.io/nmshd/backbone-sse-server:6.58.0@sha256:96fd2b2898c0f5f40cd95def06819fadde5ceefb1a36a41ae25539438d911c41
     container_name: sse-server
     hostname: sse-server
     ports:
@@ -51,7 +51,7 @@ services:
 
   database-migrator:
     container_name: database-migrator-test
-    image: ghcr.io/nmshd/backbone-database-migrator:6.57.0@sha256:a90b390aa5ee58c778503862938a22bed732a486410eed25da508c65f5a28881
+    image: ghcr.io/nmshd/backbone-database-migrator:6.58.0@sha256:527c5774f77dd354d14b7704fe08c2b5506677d3029b822134af48a4a86b737a
     environment:
       Infrastructure__SqlDatabase__Provider: Postgres
       Infrastructure__SqlDatabase__ConnectionString: "Server=postgres;Database=enmeshed;User Id=postgres;Password=Passw0rd;Port=5432"
@@ -94,7 +94,7 @@ services:
 
   seed-client:
     container_name: seed-client
-    image: ghcr.io/nmshd/backbone-admin-cli:6.57.0@sha256:687804e533c4326c6bd2408cde904ee5a9a205ac7518f8e3125c0e2fd4151624
+    image: ghcr.io/nmshd/backbone-admin-cli:6.58.0@sha256:8c28ff227185ad15b3176274e3faede37972edfab9ef2a7ee301c7d5632cee40
     depends_on:
       consumer-api:
         condition: service_healthy
