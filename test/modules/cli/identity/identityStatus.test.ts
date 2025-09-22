@@ -32,7 +32,7 @@ describe("Identity status", () => {
         await identityStatusHandler({});
         expect(consoleSpy).toHaveBeenCalledTimes(3);
         expect(consoleSpy.mock.lastCall![0]).toMatch(identityStatusPattern);
-        expect(consoleSpy.mock.lastCall![0]).toContain("Identity deletion status: Approved");
+        expect(consoleSpy.mock.lastCall![0]).toContain("Identity deletion status: Active");
         expect(consoleSpy.mock.lastCall![0]).toMatch(/End of grace period:/);
     });
 });
