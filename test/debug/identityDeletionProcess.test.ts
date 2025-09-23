@@ -15,21 +15,6 @@ beforeAll(async () => {
 }, getTimeout(30000));
 afterAll(() => launcher.stop());
 
-interface IdentityDeletionProcess {
-    id: string;
-    status: "WaitingForApproval" | "Rejected" | "Approved" | "Cancelled";
-    createdAt?: string;
-    createdByDevice?: string;
-    approvalPeriodEndsAt?: string;
-    rejectedAt?: string;
-    rejectedByDevice?: string;
-    approvedAt?: string;
-    approvedByDevice?: string;
-    gracePeriodEndsAt?: string;
-    cancelledAt?: string;
-    cancelledByDevice?: string;
-}
-
 describe("Identity Deletion Process", () => {
     afterEach(async () => await axiosInstance.delete("/api/v2/IdentityDeletionProcess"));
 
@@ -39,7 +24,7 @@ describe("Identity Deletion Process", () => {
     });
 
     test("should start an identity deletion and get its status", async () => {
-        const response = await axiosInstance.post<{ result: IdentityDeletionProcess }>("/api/v2/IdentityDeletionProcess");
+        const response = await axiosInstance.post<{ result: IdentityDeletionProcessDTO }>("/api/v2/IdentityDeletionProcess");
 
         expect(response.status).toBe(200);
         const identityDeletionProcess = response.data.result;
