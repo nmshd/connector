@@ -1,4 +1,4 @@
-import { ConnectorClient } from "@nmshd/connector-sdk";
+import { ConnectorClient, IdentityDeletionProcessDTO } from "@nmshd/connector-sdk";
 import { AxiosInstance } from "axios";
 import { DateTime } from "luxon";
 import { Launcher } from "../lib/Launcher";
@@ -33,18 +33,18 @@ describe("Identity Deletion Process", () => {
     });
 
     test("should get the active identity deletion process", async () => {
-        const initiateResult = await axiosInstance.post<{ result: IdentityDeletionProcess }>("/api/v2/IdentityDeletionProcess");
+        const initiateResult = await axiosInstance.post<{ result: IdentityDeletionProcessDTO }>("/api/v2/IdentityDeletionProcess");
         expect(initiateResult.status).toBe(200);
         const identityDeletionProcess = initiateResult.data.result;
 
-        const getResult = await axiosInstance.get<{ result: IdentityDeletionProcess }>("/api/v2/IdentityDeletionProcess");
+        const getResult = await axiosInstance.get<{ result: IdentityDeletionProcessDTO }>("/api/v2/IdentityDeletionProcess");
         expect(getResult.status).toBe(200);
         expect(getResult.data.result.status).toBe(identityDeletionProcess.status);
         expect(getResult.data.result.gracePeriodEndsAt).toBe(identityDeletionProcess.gracePeriodEndsAt);
     });
 
     test("should return 400 when trying to start a new identity deletion process", async () => {
-        const initiateResult = await axiosInstance.post<{ result: IdentityDeletionProcess }>("/api/v2/IdentityDeletionProcess");
+        const initiateResult = await axiosInstance.post<{ result: IdentityDeletionProcessDTO }>("/api/v2/IdentityDeletionProcess");
         expect(initiateResult.status).toBe(200);
 
         const initiateResult2 = await axiosInstance.post("/api/v2/IdentityDeletionProcess");
@@ -52,7 +52,7 @@ describe("Identity Deletion Process", () => {
     });
 
     test("should cancel an identity deletion", async () => {
-        const initiateResult = await axiosInstance.post<{ result: IdentityDeletionProcess }>("/api/v2/IdentityDeletionProcess");
+        const initiateResult = await axiosInstance.post<{ result: IdentityDeletionProcessDTO }>("/api/v2/IdentityDeletionProcess");
         expect(initiateResult.status).toBe(200);
 
         const cancelResult = await axiosInstance.delete("/api/v2/IdentityDeletionProcess");
