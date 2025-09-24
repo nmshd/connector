@@ -2,12 +2,14 @@ import { identityDeletionCancelHandler, identityDeletionInitHandler } from "../.
 import { resetDB, setupEnvironment } from "../setup";
 
 describe("Identity deletion", () => {
+    const randomAccountName = Math.random().toString(36).substring(2, 15);
+
     beforeAll(() => {
-        setupEnvironment();
+        setupEnvironment(randomAccountName);
     });
 
     afterAll(async () => {
-        await resetDB();
+        await resetDB(randomAccountName);
     });
 
     beforeEach(() => {
