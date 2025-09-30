@@ -74,8 +74,11 @@ export function enforceAuthentication(
                 if (CoreDate.from((decodedRefreshToken.exp ?? 0) * 1000).isExpired()) {
                     return await rejectRequest(req, res);
                 }
-
-                await req.oidc.accessToken?.refresh();
+                try {
+                    await req.oidc.accessToken?.refresh();
+                } catch {
+                    return await rejectRequest(req, res);
+                }
             }
 
             req.userRoles = extractRolesFromOIDC(logger, oidcContext, config.oidc.rolesPath);
@@ -95,12 +98,12 @@ function extractRolesFromOIDC(logger: ILogger, context: OIDCRequestContext, role
     if (segments.length === 0) return [];
 
     let current: any = context.user;
-    const processedSegements = [];
+    const processedSegments = [];
 
     for (const segment of segments) {
-        processedSegements.push(segment);
+        processedSegments.push(segment);
         if (!current[segment]) {
-            logger.warn(`Roles path '${processedSegements.join(".")}' not found in OIDC user info, using empty array as default.`);
+            logger.warn(`Roles path '${processedSegments.join(".")}' not found in OIDC user info, using empty array as default.`);
             return [];
         }
 
