@@ -74,6 +74,7 @@ export function enforceAuthentication(
                 if (CoreDate.from((decodedRefreshToken.exp ?? 0) * 1000).isExpired()) {
                     return await rejectRequest(req, res);
                 }
+
                 try {
                     await req.oidc.accessToken?.refresh();
                 } catch {
