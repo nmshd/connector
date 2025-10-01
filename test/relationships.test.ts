@@ -69,7 +69,7 @@ describe("Relationships", () => {
     test("query relationships", async () => {
         await establishRelationship(client1, client2);
         const relationship = await getRelationship(client1);
-        const conditions = new QueryParamConditions(relationship, client1).addStringSet("peer").addStringSet("status").addStringSet("template.id");
+        const conditions = new QueryParamConditions(relationship, client1).addStringSet("peer").addStringSet("status").addStringSet("templateId");
 
         await conditions.executeTests((c, q) => c.relationships.getRelationships(q));
     });
