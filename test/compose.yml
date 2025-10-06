@@ -1,3 +1,5 @@
+name: connector-tests
+
 services:
   mongo:
     container_name: connector-mongodb
