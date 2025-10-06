@@ -27,7 +27,7 @@ export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
             try {
                 this.eventSource.close();
             } catch (error) {
-                this.logger.error("Failed to close event source", error);
+                this.logger.error("Failed to close event source", JSON.stringify(error));
             }
         }
 
