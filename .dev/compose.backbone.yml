@@ -124,6 +124,10 @@ services:
       - source: Config
         target: app/appsettings.override.json
 
+networks:
+  default:
+    name: local-test-backbone
+
 configs:
   Config:
     file: appsettings.override.json
