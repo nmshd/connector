@@ -9,6 +9,8 @@ export interface SseModuleConfiguration extends ConnectorRuntimeModuleConfigurat
 
 export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
     private eventSource: EventSource | undefined;
+    private connectionCheckingTimer: NodeJS.Timeout | undefined;
+    static readonly #reconnectIntervalSeconds = 3;
 
     public init(): void | Promise<void> {
         if (this.configuration.baseUrlOverride && this.connectorMode !== "debug") {
@@ -20,6 +22,18 @@ export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
         await this.runSync();
 
         await this.recreateEventSource();
+
+        this.connectionCheckingTimer = setInterval(async () => {
+            if (!this.eventSource || this.eventSource.readyState !== EventSource.CLOSED) return;
+
+            this.logger.error("The event source has closed without reconnecting on its own");
+
+            await this.runSync();
+
+            await this.recreateEventSource().catch((error) => {
+                this.logger.error(`Failed to recreate event source, trying again in ${SseModule.#reconnectIntervalSeconds} seconds`, JSON.stringify(error));
+            });
+        }, SseModule.#reconnectIntervalSeconds * 1000);
     }
 
     private async recreateEventSource(): Promise<void> {
@@ -94,5 +108,10 @@ export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
 
     public override stop(): void {
         this.eventSource?.close();
+
+        if (this.connectionCheckingTimer) {
+            clearInterval(this.connectionCheckingTimer);
+            this.connectionCheckingTimer = undefined;
+        }
     }
 }
