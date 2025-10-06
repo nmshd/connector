@@ -1,3 +1,5 @@
+name: local-test-backbone
+
 services:
   consumer-api:
     image: ghcr.io/nmshd/backbone-consumer-api:6.58.0@sha256:d4c7e241ed0455ca3c5d1fc31def61c84f2cbce1e4226119a24dd65fe9fe9638
@@ -49,8 +51,27 @@ services:
       - source: Config
         target: app/appsettings.override.json
 
+  admin-ui:
+    image: ghcr.io/nmshd/backbone-admin-ui:6.58.0@sha256:2d8fa4d061752aa5645eac5a9ff483b5d06447667ced48110e2f9a7e63e8a036
+    container_name: admin-ui
+    hostname: admin-ui
+    ports:
+      - "8091:8080"
+    depends_on:
+      database:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      consumer-api:
+        condition: service_healthy
+      database-migrator:
+        condition: service_completed_successfully
+    configs:
+      - source: Config
+        target: app/appsettings.override.json
+
   database-migrator:
-    container_name: database-migrator-test
+    container_name: database-migrator
     image: ghcr.io/nmshd/backbone-database-migrator:6.58.0@sha256:527c5774f77dd354d14b7704fe08c2b5506677d3029b822134af48a4a86b737a
     environment:
       Infrastructure__SqlDatabase__Provider: Postgres
@@ -68,7 +89,7 @@ services:
   database:
     container_name: bkb-postgres
     hostname: postgres
-    image: postgres@sha256:b0a5628e5f6f4ef1feb6a6d5ef2f399f080ad1fa5e333a24659cebfafaca2ac1
+    image: postgres@sha256:073e7c8b84e2197f94c8083634640ab37105effe1bc853ca4d5fbece3219b0e8
     environment:
       - POSTGRES_PASSWORD=Passw0rd
       - POSTGRES_DB=enmeshed
@@ -82,13 +103,13 @@ services:
     container_name: azure-storage-emulator
     hostname: azurite
     image: mcr.microsoft.com/azure-storage/azurite@sha256:647c63a91102a9d8e8000aab803436e1fc85fbb285e7ce830a82ee5d6661cf37
-    command: azurite -d /data/debug.log -l /data --blobHost "0.0.0.0" --queueHost "0.0.0.0"
     pull_policy: always
+    command: azurite -d /data/debug.log -l /data --blobHost "0.0.0.0" --queueHost "0.0.0.0"
 
   rabbitmq:
     container_name: bkb-rabbitmq
     hostname: rabbitmq
-    image: rabbitmq:4.1.4-alpine@sha256:0d74affad41fc3f63d945578e344b683f054289b52949f971fce8797f88fc036
+    image: rabbitmq:4.1.4-alpine@sha256:4f154c7360678dd1cb3fd53eb353db3a8b5f1e8ee593adcc16559dff6c0b4a6e
 
   ### seeds ###
 
