@@ -1,5 +1,5 @@
 export interface UploadOwnFileRequest {
-    title: string;
+    title?: string;
     description?: string;
     expiresAt: string;
     file: Uint8Array;

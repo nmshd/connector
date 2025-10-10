@@ -7,12 +7,6 @@
     reviewers: ["jkoenig134", "Milena-Czierlinski"],
     packageRules: [
         {
-            // we don't want to update typescript-rest currently, because the connector v6 is incompatible with the latest version
-            matchDatasources: ["npm"],
-            matchPackageNames: ["@nmshd/typescript-rest"],
-            enabled: false
-        },
-        {
             // all patch versions of all packages should be part of a single group
             groupName: "patch-all",
             matchUpdateTypes: ["patch", "digest"],
