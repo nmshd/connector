@@ -19,7 +19,8 @@
         "strictPropertyInitialization": false,
         "downlevelIteration": true,
         "lib": ["es2022", "dom"],
-        "baseUrl": "../"
+        "baseUrl": "../",
+        "skipLibCheck": true
     },
     "files": ["../node_modules/jest-expect-message/types/index.d.ts"],
     "include": ["**/*.ts"],
