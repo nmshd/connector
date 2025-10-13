@@ -31,9 +31,9 @@
         "@js-soft/logging-abstractions": "^1.0.1",
         "@types/express": "^5.0.3",
         "@types/luxon": "^3.7.1",
-        "@types/node": "^24.6.0",
+        "@types/node": "^24.7.1",
         "@types/qrcode": "^1.5.5",
-        "typescript": "^5.9.2"
+        "typescript": "^5.9.3"
     },
     "peerDependencies": {
         "@js-soft/docdb-access-abstractions": "^1.2.0",

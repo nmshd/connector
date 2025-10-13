@@ -5352,6 +5352,9 @@ components:
           enum: [true]
           nullable: true
           description: true if the ownership of the file is locked, undefined otherwise. If the ownership is locked, the ownership token cannot be used to transfer the ownership of this file and would have to be regenerated for this purpose. This will always be undefined if the file is not owned by the current identity.
+        owner:
+          allOf:
+            - $ref: "#/components/schemas/Address"
       required:
         - id
         - filename
@@ -5363,6 +5366,7 @@ components:
         - mimetype
         - isOwn
         - reference
+        - owner
 
     FileReferenceTruncated:
       type: object

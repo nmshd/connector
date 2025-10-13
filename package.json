@@ -33,13 +33,13 @@
         "test:local:coverage": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" c8 jest",
         "test:local:ferretdb": "npm run build --workspaces && npm run start:test-env:ferretdb && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27019\" jest",
         "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json",
-        "start:backbone": "docker compose -p connector-test-backbone -f .dev/compose.backbone.yml up -d",
-        "start:test-env": "docker compose -p connector-tests -f test/compose.yml up -d",
+        "start:backbone": "docker compose -f .dev/compose.backbone.yml up -d",
+        "start:test-env": "docker compose -f test/compose.yml up -d",
         "start:test-env:ferretdb": "npm run start:test-env -- ferret",
         "start:test-env:mongo": "npm run start:test-env -- mongo",
         "teardown": "npm run teardown:backbone && npm run teardown:test-env && npm run teardown:testconnectors",
-        "teardown:backbone": "docker compose -p connector-test-backbone -f .dev/compose.backbone.yml down -v",
-        "teardown:test-env": "docker compose -p connector-tests -f test/compose.yml down -v",
+        "teardown:backbone": "docker compose -f .dev/compose.backbone.yml down -v",
+        "teardown:test-env": "docker compose -f test/compose.yml down -v",
         "teardown:testconnectors": "docker compose -f .dev/compose.yml down -v"
     },
     "jest": {
@@ -106,7 +106,7 @@
         "nconf": "0.13.0",
         "on-headers": "1.1.0",
         "rapidoc": "9.3.8",
-        "redis": "^5.8.2",
+        "redis": "^5.8.3",
         "reflect-metadata": "0.2.2",
         "swagger-ui-express": "5.0.1",
         "undici": "^7.16.0",
@@ -131,14 +131,14 @@
         "@types/lodash": "^4.17.20",
         "@types/luxon": "^3.7.1",
         "@types/nconf": "^0.10.7",
-        "@types/node": "^24.6.0",
+        "@types/node": "^24.7.1",
         "@types/on-headers": "^1.0.4",
         "@types/swagger-ui-express": "^4.1.8",
         "@types/ws": "^8.18.1",
         "@types/yamljs": "^0.2.34",
         "c8": "^10.1.3",
         "cpx2": "^8.0.0",
-        "eslint": "^9.36.0",
+        "eslint": "^9.37.0",
         "jest": "^30.2.0",
         "jest-expect-message": "^1.1.3",
         "jest-json-schema": "^6.1.0",
@@ -149,9 +149,9 @@
         "prettier": "^3.6.2",
         "ts-jest": "^29.4.4",
         "ts-node": "^10.9.2",
-        "typescript": "^5.9.2"
+        "typescript": "^5.9.3"
     },
     "engines": {
-        "node": ">=24.9.0"
+        "node": ">=24.10.0"
     }
 }
