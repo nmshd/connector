@@ -38,7 +38,7 @@
     "peerDependencies": {
         "@js-soft/docdb-access-abstractions": "^1.2.0",
         "@js-soft/ts-utils": "^2.3.4",
-        "@nmshd/runtime": "7.0.0-alpha.67",
+        "@nmshd/runtime": "7.0.0-openid4vc.3",
         "@nmshd/typescript-rest": "^3.2.0",
         "express": "^5.1.0"
     },
