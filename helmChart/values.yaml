@@ -1,6 +1,7 @@
 image:
   pullPolicy: IfNotPresent
   tag: ""
+  imagePullSecrets: []
 
 # a json or yaml config
 # see https://enmeshed.eu/operate/configuration for configuration options
