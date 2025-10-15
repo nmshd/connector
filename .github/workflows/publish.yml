@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: current
       - run: bash .ci/runChecks.sh
@@ -21,15 +21,14 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: current
-          registry-url: https://registry.npmjs.org/
+          registry-url: https://registry.npmjs.org
       - run: npm ci
       - run: npm run build:ci --workspaces --if-present
       - run: bash .ci/publishNpm.sh
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           VERSION: ${{ github.ref_name }}
     needs: ["run-checks"]
 
@@ -61,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: current
           registry-url: https://registry.npmjs.org/
