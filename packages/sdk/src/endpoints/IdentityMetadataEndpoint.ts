@@ -4,14 +4,14 @@ import { Endpoint } from "./Endpoint";
 
 export class IdentityMetadataEndpoint extends Endpoint {
     public async upsertIdentityMetadata(request: UpsertIdentityMetadataRequest): Promise<ConnectorHttpResponse<IdentityMetadataDTO>> {
-        return await this.put("/api/v2/IdentityMetadata", request);
+        return await this.put("/api/core/v1/IdentityMetadata", request);
     }
 
     public async getIdentityMetadata(reference: string, key?: string): Promise<ConnectorHttpResponse<IdentityMetadataDTO>> {
-        return await this.get("/api/v2/IdentityMetadata", { reference: reference, key: key });
+        return await this.get("/api/core/v1/IdentityMetadata", { reference: reference, key: key });
     }
 
     public async deleteIdentityMetadata(reference: string, key?: string): Promise<ConnectorHttpResponse<void>> {
-        return await this.delete("/api/v2/IdentityMetadata", { reference: reference, key: key }, 204);
+        return await this.delete("/api/core/v1/IdentityMetadata", { reference: reference, key: key }, 204);
     }
 }
