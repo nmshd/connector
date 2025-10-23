@@ -4,7 +4,7 @@
     "description": "The enmeshed Connector",
     "homepage": "https://enmeshed.eu/integrate",
     "repository": "github:nmshd/connector",
-    "license": "MIT",
+    "license": "AGPL-3.0-or-later",
     "author": "j&s-soft AG",
     "workspaces": [
         "packages/types",
