@@ -204,7 +204,7 @@ describe("Relationships", () => {
             value: "AGivenName"
         });
 
-        const attributes = await client1.attributes.getAttributes({ shareInfo: { peer: client2Address } });
+        const attributes = await client1.attributes.getOwnAttributesSharedWithPeer({ peer: client2Address });
         expect(attributes).toBeSuccessful();
         expect(attributes.result).toHaveLength(2);
 
@@ -220,7 +220,7 @@ describe("Relationships", () => {
         expect(relationships).toBeSuccessful();
         expect(relationships.result).toHaveLength(0);
 
-        const attributesAfterDecomposition = await client2.attributes.getAttributes({ shareInfo: { peer: client2Address } });
+        const attributesAfterDecomposition = await client2.attributes.getAttributes({ peer: client2Address });
         expect(attributesAfterDecomposition).toBeSuccessful();
         expect(attributesAfterDecomposition.result).toHaveLength(0);
 
@@ -238,7 +238,7 @@ describe("Relationships", () => {
         expect(client1RelationshipsAfterDecompose).toBeSuccessful();
         expect(client1RelationshipsAfterDecompose.result).toHaveLength(0);
 
-        const client1AttributesAfterDecomposition = await client1.attributes.getAttributes({ shareInfo: { peer: client2Address } });
+        const client1AttributesAfterDecomposition = await client1.attributes.getAttributes({ peer: client2Address });
         expect(client1AttributesAfterDecomposition).toBeSuccessful();
         expect(client1AttributesAfterDecomposition.result).toHaveLength(0);
     });

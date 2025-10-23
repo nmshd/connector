@@ -1,6 +1,5 @@
 export interface GetAttributesRequest {
     "@type"?: string;
-    peer?: string;
     createdAt?: string;
     content?: {
         "@type"?: string;
@@ -15,10 +14,11 @@ export interface GetAttributesRequest {
     };
     succeeds?: string;
     succeededBy?: string;
-    shareInfo?: {
-        requestReference?: string;
-        peer?: string;
-        sourceAttribute?: string;
-        thirdPartyAddress?: string;
+    peer?: string;
+    sourceReference?: string;
+    initialAttributePeer?: string;
+    deletionInfo?: {
+        deletionStatus?: string;
+        deletionDate?: string;
     };
 }

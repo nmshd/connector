@@ -223,9 +223,9 @@ describe("Attributes Query", () => {
             .addStringSet("content.value.@type")
             .addStringSet("succeeds")
             .addStringSet("succeededBy")
-            .addStringSet("shareInfo.requestReference")
-            .addStringSet("shareInfo.peer")
-            .addStringSet("shareInfo.sourceAttribute");
+            .addStringSet("peer")
+            .addStringSet("sourceReference")
+            .addStringSet("initialAttributePeer");
 
         await conditions.executeTests((c, q) => c.attributes.getAttributes(q));
     });
