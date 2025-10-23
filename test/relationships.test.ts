@@ -238,7 +238,7 @@ describe("Relationships", () => {
         expect(client1RelationshipsAfterDecompose).toBeSuccessful();
         expect(client1RelationshipsAfterDecompose.result).toHaveLength(0);
 
-        const client1AttributesAfterDecomposition = await client1.attributes.getAttributes({ peer: client2Address });
+        const client1AttributesAfterDecomposition = await client1.attributes.getOwnAttributesSharedWithPeer({ peer: client2Address });
         expect(client1AttributesAfterDecomposition).toBeSuccessful();
         expect(client1AttributesAfterDecomposition.result).toHaveLength(0);
     });
