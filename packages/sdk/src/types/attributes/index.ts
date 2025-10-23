@@ -8,7 +8,7 @@ export * from "./requests/ExecuteRelationshipAttributeQueryRequest";
 export * from "./requests/ExecuteThirdPartyRelationshipAttributeQueryRequest";
 export * from "./requests/GetAttributesRequest";
 export * from "./requests/GetOwnAttributesSharedWithPeerRequest";
-export * from "./requests/GetOwnRepositoryAttributesRequest";
+export * from "./requests/GetOwnIdentityAttributesRequest";
 export * from "./requests/GetVersionsOfAttributeSharedWithPeerRequest";
 export * from "./requests/NotifyPeerAboutOwnIdentityAttributeSuccessionRequest";
 export * from "./requests/NotifyPeerAboutOwnIdentityAttributeSuccessionResponse";

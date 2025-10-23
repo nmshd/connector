@@ -5,8 +5,8 @@ import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
 import {
     establishRelationship,
+    executeFullCreateAndShareOwnIdentityAttributeFlow,
     executeFullCreateAndShareRelationshipAttributeFlow,
-    executeFullCreateAndShareRepositoryAttributeFlow,
     getRelationship,
     getTemplateToken,
     syncUntilHasRelationship
@@ -199,7 +199,7 @@ describe("Relationships", () => {
             confidentiality: RelationshipAttributeConfidentiality.Public
         });
 
-        await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
+        await executeFullCreateAndShareOwnIdentityAttributeFlow(client1, client2, {
             "@type": "GivenName",
             value: "AGivenName"
         });

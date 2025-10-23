@@ -316,7 +316,7 @@ export async function establishRelationship(client1: ConnectorClient, client2: C
     await syncUntilHasRelationship(client2, acceptResponse.result.id);
 }
 
-export async function createRepositoryAttribute(client: ConnectorClient, request: CreateOwnIdentityAttributeRequest): Promise<LocalAttributeDTO> {
+export async function createOwnIdentityAttribute(client: ConnectorClient, request: CreateOwnIdentityAttributeRequest): Promise<LocalAttributeDTO> {
     const response = await client.attributes.createOwnIdentityAttribute(request);
     expect(response).toBeSuccessful();
     return response.result;
@@ -387,17 +387,17 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
  *
  * Returns the sender's own shared identity attribute.
  */
-export async function executeFullCreateAndShareRepositoryAttributeFlow(
+export async function executeFullCreateAndShareOwnIdentityAttributeFlow(
     sender: ConnectorClient,
     recipient: ConnectorClient,
     attributeValue: AttributeValues.Identity.Json
 ): Promise<LocalAttributeDTO>;
-export async function executeFullCreateAndShareRepositoryAttributeFlow(
+export async function executeFullCreateAndShareOwnIdentityAttributeFlow(
     sender: ConnectorClient,
     recipient: ConnectorClient[],
     attributeValue: AttributeValues.Identity.Json
 ): Promise<LocalAttributeDTO[]>;
-export async function executeFullCreateAndShareRepositoryAttributeFlow(
+export async function executeFullCreateAndShareOwnIdentityAttributeFlow(
     sender: ConnectorClient,
     recipients: ConnectorClient | ConnectorClient[],
     attributeValue: AttributeValues.Identity.Json
