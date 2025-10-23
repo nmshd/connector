@@ -15,7 +15,7 @@ info:
     View this documenation in [rapidoc](/docs/rapidoc) or [swagger](/docs/swagger).
 
   license:
-    name: MIT
+    name: AGPL-3.0-or-later
     url: https://raw.githubusercontent.com/nmshd/connector/main/LICENSE
   contact:
     name: j&s-soft AG

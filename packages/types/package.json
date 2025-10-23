@@ -11,7 +11,7 @@
         "url": "https://github.com/nmshd/connector.git",
         "directory": "/packages/types"
     },
-    "license": "MIT",
+    "license": "AGPL-3.0-or-later",
     "author": "j&s-soft AG",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
