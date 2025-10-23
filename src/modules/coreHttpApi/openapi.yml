@@ -160,7 +160,7 @@ paths:
 
   # ------------------- Account -------------------
 
-  /api/v2/Account/IdentityInfo:
+  /api/core/v1/Account/IdentityInfo:
     get:
       operationId: getIdentityInfo
       description: Shows the Account Information.
@@ -192,7 +192,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Account/SyncInfo:
+  /api/core/v1/Account/SyncInfo:
     get:
       operationId: getSyncInfo
       description: show information about the last completed sync run
@@ -231,7 +231,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Account/Sync:
+  /api/core/v1/Account/Sync:
     post:
       operationId: sync
       description: >
@@ -257,7 +257,7 @@ paths:
 
   # ------------------- Announcements -------------------
 
-  /api/v2/Announcements:
+  /api/core/v1/Announcements:
     get:
       operationId: getAnnouncements
       description: Query Announcements
@@ -298,7 +298,7 @@ paths:
 
   # ------------------- Attributes -------------------
 
-  /api/v2/Attributes/CanCreate:
+  /api/core/v1/Attributes/CanCreate:
     put:
       operationId: canCreateRepositoryAttribute
       description: "Checks if a Repository Attribute can be created with the given parameters."
@@ -320,10 +320,6 @@ paths:
                       $ref: "#/components/schemas/AttributeValue"
                     tags:
                       $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
       responses:
         200:
           description: Success
@@ -349,7 +345,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes:
+  /api/core/v1/Attributes:
     post:
       operationId: createRepositoryAttribute
       description: "Creates a Repository Attribute."
@@ -371,10 +367,6 @@ paths:
                       $ref: "#/components/schemas/AttributeValue"
                     tags:
                       $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
       responses:
         201:
           description: Success
@@ -426,16 +418,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: content.validFrom
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
-        - name: content.validTo
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
         - name: content.key
           in: query
           required: false
@@ -507,7 +489,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/Own/Repository:
+  /api/core/v1/Attributes/Own/Repository:
     get:
       operationId: getOwnRepositoryAttributes
       tags:
@@ -523,16 +505,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: content.validFrom
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
-        - name: content.validTo
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
         - name: content.value.@type
           in: query
           required: false
@@ -585,7 +557,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/Own/Shared/Identity:
+  /api/core/v1/Attributes/Own/Shared/Identity:
     get:
       operationId: getOwnSharedIdentityAttributes
       tags:
@@ -606,16 +578,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: content.validFrom
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
-        - name: content.validTo
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
         - name: content.key
           in: query
           required: false
@@ -661,11 +623,6 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/Address"
-        - name: onlyValid
-          in: query
-          required: false
-          schema:
-            type: boolean
         - name: hideTechnical
           in: query
           required: false
@@ -705,7 +662,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/Peer/Shared/Identity:
+  /api/core/v1/Attributes/Peer/Shared/Identity:
     get:
       operationId: getPeerSharedIdentityAttributes
       tags:
@@ -727,16 +684,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: content.validFrom
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
-        - name: content.validTo
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/DateFilter"
         - name: content.key
           in: query
           required: false
@@ -777,11 +724,6 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/Address"
-        - name: onlyValid
-          in: query
-          required: false
-          schema:
-            type: boolean
         - name: hideTechnical
           in: query
           required: false
@@ -821,7 +763,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/{id}/Versions:
+  /api/core/v1/Attributes/{id}/Versions:
     get:
       operationId: getVersionsOfAttribute
       tags:
@@ -859,7 +801,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/{id}/Versions/Shared:
+  /api/core/v1/Attributes/{id}/Versions/Shared:
     get:
       operationId: getSharedVersionsOfAttribute
       tags:
@@ -912,7 +854,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/{predecessorId}/Succeed:
+  /api/core/v1/Attributes/{predecessorId}/Succeed:
     post:
       operationId: succeedAttribute
       description: Succeeds either a relationship attribute or a repository attribute.
@@ -941,10 +883,6 @@ paths:
                       $ref: "#/components/schemas/AttributeValue"
                     tags:
                       $ref: "#/components/schemas/IdentityAttributeContent_tags"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
 
       responses:
         201:
@@ -987,7 +925,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/{attributeId}/NotifyPeer:
+  /api/core/v1/Attributes/{attributeId}/NotifyPeer:
     post:
       operationId: notifyPeerAboutRepositoryAttributeSuccession
       description: |
@@ -1052,7 +990,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/{id}:
+  /api/core/v1/Attributes/{id}:
     get:
       operationId: getAttribute
       description: Fetches the attribute with the given `id`.
@@ -1120,7 +1058,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/Own/Shared/{id}:
+  /api/core/v1/Attributes/Own/Shared/{id}:
     delete:
       operationId: deleteOwnSharedAttributeAndNotifyPeer
       description: Delete an own shared attribute and notify the peer.
@@ -1169,7 +1107,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/Peer/Shared/{id}:
+  /api/core/v1/Attributes/Peer/Shared/{id}:
     delete:
       operationId: deletePeerSharedAttributeAndNotifyOwner
       description: Delete an peer shared attribute and notify the owner.
@@ -1218,7 +1156,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/ThirdParty/{id}:
+  /api/core/v1/Attributes/ThirdParty/{id}:
     delete:
       operationId: deleteThirdPartyRelationshipAttributeAndNotifyPeer
       description: Delete a ThirdPartyRelationshipAttribute and notify the peer.
@@ -1267,100 +1205,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Attributes/Valid:
-    get:
-      operationId: getValidAttributes
-      description: List valid Attributes
-      tags:
-        - Attributes
-      parameters:
-        - name: content.@type
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: content.tags
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: content.owner
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: content.key
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: content.isTechnical
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/BooleanFilter"
-        - name: content.confidentiality
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: content.value.@type
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: succeeds
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: succeededBy
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.requestReference
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.peer
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.sourceAttribute
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/TextFilter"
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Attribute"
-                required:
-                  - result
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-
-  /api/v2/Attributes/TagCollection:
+  /api/core/v1/Attributes/TagCollection:
     get:
       operationId: getAttributeTagCollection
       description: List valid Tags for Attributes
@@ -1392,7 +1237,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/ExecuteIdentityAttributeQuery:
+  /api/core/v1/Attributes/ExecuteIdentityAttributeQuery:
     post:
       operationId: executeIdentityQuery
       description: Execute an IdentityAttributeQuery
@@ -1412,10 +1257,6 @@ paths:
                       items:
                         type: string
                       type: array
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
                     valueType:
                       description: The valueType of the attribute.
                       type: string
@@ -1449,7 +1290,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/ExecuteRelationshipAttributeQuery:
+  /api/core/v1/Attributes/ExecuteRelationshipAttributeQuery:
     post:
       operationId: executeRelationshipQuery
       description: Execute a RelationshipAttributeQuery
@@ -1470,10 +1311,6 @@ paths:
                     owner:
                       description: The owner of the relationship attribute.
                       type: string
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
                     attributeCreationHints:
                       description: This describes how to create an attribute if it does not exist.
                       type: object
@@ -1559,7 +1396,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/ExecuteThirdPartyRelationshipAttributeQuery:
+  /api/core/v1/Attributes/ExecuteThirdPartyRelationshipAttributeQuery:
     post:
       operationId: executeThirdPartyRelationshipQuery
       description: Execute a ThirdPartyAttributeQuery
@@ -1585,10 +1422,6 @@ paths:
                       type: array
                       items:
                         $ref: "#/components/schemas/Address"
-                    validFrom:
-                      $ref: "#/components/schemas/AttributeContent_validFrom"
-                    validTo:
-                      $ref: "#/components/schemas/AttributeContent_validTo"
                   required:
                     - key
                     - owner
@@ -1621,7 +1454,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/ExecuteIQLQuery:
+  /api/core/v1/Attributes/ExecuteIQLQuery:
     post:
       operationId: executeIQLQuery
       description: Execute IQL Query
@@ -1660,7 +1493,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Attributes/ValidateIQLQuery:
+  /api/core/v1/Attributes/ValidateIQLQuery:
     post:
       operationId: validateIQLQuery
       description: Validate IQL Query
@@ -1723,7 +1556,7 @@ paths:
 
   # ------------------- BackboneNotifications -------------------
 
-  /api/v2/BackboneNotifications:
+  /api/core/v1/BackboneNotifications:
     post:
       operationId: sendBackboneNotification
       description: Send a BackboneNotification.
@@ -1765,7 +1598,7 @@ paths:
 
   # ------------------- Challenges -------------------
 
-  /api/v2/Challenges:
+  /api/core/v1/Challenges:
     post:
       operationId: createChallenge
       description: Create a signed challenge.
@@ -1805,7 +1638,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Challenges/Validate:
+  /api/core/v1/Challenges/Validate:
     post:
       operationId: validateChallenge
       description: Validate a challenge.
@@ -1863,7 +1696,7 @@ paths:
 
   # ------------------- Files -------------------
 
-  /api/v2/Files:
+  /api/core/v1/Files:
     get:
       operationId: getAllFileMetadata
       description: Queries metadata of all files.
@@ -1949,7 +1782,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Files/Own:
+  /api/core/v1/Files/Own:
     post:
       operationId: uploadNewOwnFile
       description: Uploads a new own file with metadata.
@@ -1985,8 +1818,8 @@ paths:
                   type: array
                   items:
                     type: string
-                  description: Tags for the file.
-                  example: ["tag1", "tag2"]
+                  description: The tags of the File. A tag is valid if it is contained in the AttributeTagCollection for the IdentityAttribute value type IdentityFileReference and starts with the prefix `bkb:` or if it starts with the custom tag prefix `x:` or `X:`, the prefix `urn:`, the prefix `language:` followed by a valid ISO 639 language code or the prefix `mimetype:` followed by a valid MIME type.
+                  example: ["x:tag1", "x:tag2"]
                   nullable: false
               required:
                 - file
@@ -2093,7 +1926,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Files/Peer:
+  /api/core/v1/Files/Peer:
     post:
       operationId: loadPeerFile
       description: Loads a file of another identity. After it is loaded once, you can retrieve it without the need for the reference by calling one of the GET-routes.
@@ -2211,7 +2044,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Files/{idOrReference}:
+  /api/core/v1/Files/{idOrReference}:
     get:
       operationId: getFileMetadata
       description: |
@@ -2229,13 +2062,6 @@ paths:
               - $ref: "#/components/schemas/FileID"
               - $ref: "#/components/schemas/FileReferenceTruncated"
               - $ref: "#/components/schemas/FileReferenceUrl"
-        - in: query
-          name: newQRCodeFormat
-          description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
-          required: false
-          schema:
-            type: boolean
-            default: false
 
       responses:
         200:
@@ -2269,7 +2095,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Files/{id}/Download:
+  /api/core/v1/Files/{id}/Download:
     get:
       operationId: downloadFile
       description: Downloads the file with the given `id`.
@@ -2306,7 +2132,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Files/{id}/Token:
+  /api/core/v1/Files/{id}/Token:
     post:
       operationId: createTokenForFile
       description: Creates a `Token` for the `File` with the given `id`. If the accept header is set to `image/png` instead of `application/json`, a QR Code containing the reference to the token is shown.
@@ -2330,7 +2156,7 @@ paths:
                   type: string
                   format: date-time
                 ephemeral:
-                  description: If set to true the token will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
+                  description: If set to true the token will not be stored in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
                   type: boolean
                 forIdentity:
                   $ref: "#/components/schemas/Address"
@@ -2340,10 +2166,6 @@ paths:
                   $ref: "#/components/schemas/PasswordProtection"
                   nullable: true
                   description: The password that will be required to load this Token and information about the password.
-                newQRCodeFormat:
-                  type: boolean
-                  description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
-                  nullable: true
       responses:
         201:
           description: Success
@@ -2376,7 +2198,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Files/{id}/RegenerateOwnershipToken:
+  /api/core/v1/Files/{id}/RegenerateOwnershipToken:
     patch:
       operationId: regenerateOwnershipToken
       description: Regenerates the ownership token for the file with the given `id`. This will invalidate the previous ownership token.
@@ -2416,7 +2238,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Files/{id}:
+  /api/core/v1/Files/{id}:
     delete:
       operationId: deleteFile
       description: Delete a File.
@@ -2448,7 +2270,7 @@ paths:
 
   # ------------------- IdentityMetadata -------------------
 
-  /api/v2/IdentityMetadata:
+  /api/core/v1/IdentityMetadata:
     put:
       operationId: upsertIdentityMetadata
       description: Creates or updates an IdentityMetadata object for the specified `reference` and `key` combination.
@@ -2573,7 +2395,7 @@ paths:
 
   # ------------------- Messages -------------------
 
-  /api/v2/Messages:
+  /api/core/v1/Messages:
     post:
       operationId: sendMessage
       description: >
@@ -2724,7 +2546,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Messages/{id}:
+  /api/core/v1/Messages/{id}:
     get:
       operationId: getMessage
       description: Fetches the message with the given `id`.
@@ -2764,7 +2586,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Messages/{messageId}/Attachments/{attachmentId}:
+  /api/core/v1/Messages/{messageId}/Attachments/{attachmentId}:
     get:
       operationId: getMetadataOfMessageAttachment
       description: Returns the attachment's metadata of the given `attachmentId` of message with `messageId`.
@@ -2809,7 +2631,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Messages/{messageId}/Attachments/{attachmentId}/Download:
+  /api/core/v1/Messages/{messageId}/Attachments/{attachmentId}/Download:
     get:
       operationId: downloadAttachmentOfMessage
       description: Downloads the file of the given `attachmentId` of message with `messageId`.
@@ -2852,7 +2674,7 @@ paths:
 
   # ------------------- Relationships -------------------
 
-  /api/v2/Relationships/CanCreate:
+  /api/core/v1/Relationships/CanCreate:
     put:
       operationId: canCreateRelationship
       description: Checks if a Relationship can be created with a given RelationshipTemplate to its creator. Optionally, the potential `creationContent` of the Relationship can also be validated.
@@ -2910,7 +2732,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships:
+  /api/core/v1/Relationships:
     post:
       operationId: createRelationship
       description: Creates a `Relationship` to the creator of a given relationshipTemplateId. The `RelationshipTemplate` of the given `relationshipTemplateId` must come from another identity and must be loaded by `POST /RelationshipTemplates/Peer` first.
@@ -2972,7 +2794,7 @@ paths:
         - Relationships
       parameters:
         - in: query
-          name: template.id
+          name: templateId
           schema:
             $ref: "#/components/schemas/IdFilter"
         - in: query
@@ -3010,7 +2832,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Relationships/{id}:
+  /api/core/v1/Relationships/{id}:
     get:
       operationId: getRelationshipById
       description: Fetches the `Relationship` with the given `id`.
@@ -3080,7 +2902,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Attributes:
+  /api/core/v1/Relationships/{id}/Attributes:
     get:
       operationId: getAttributesForRelationship
       description: Queries attributes that are related to the given relationship.
@@ -3120,7 +2942,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Relationships/{id}/Accept:
+  /api/core/v1/Relationships/{id}/Accept:
     put:
       operationId: acceptRelationship
       description: Accepts the pending Relationship.
@@ -3161,7 +2983,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Reject:
+  /api/core/v1/Relationships/{id}/Reject:
     put:
       operationId: rejectRelationship
       description: Rejects the pending Relationship.
@@ -3203,7 +3025,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Revoke:
+  /api/core/v1/Relationships/{id}/Revoke:
     put:
       operationId: revokeRelationship
       description: Revoke the pending relationship. If the relationship was created by another identity the request will return with the error code 500.
@@ -3245,7 +3067,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Terminate:
+  /api/core/v1/Relationships/{id}/Terminate:
     put:
       operationId: terminateRelationship
       description: Terminate the relationship.
@@ -3287,7 +3109,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Reactivate:
+  /api/core/v1/Relationships/{id}/Reactivate:
     put:
       operationId: requestRelationshipReactivation
       description: Request the relationship reactivation.
@@ -3329,7 +3151,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Reactivate/Accept:
+  /api/core/v1/Relationships/{id}/Reactivate/Accept:
     put:
       operationId: acceptRelationshipReactivation
       description: Accept a relationship reactivation.
@@ -3371,7 +3193,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Reactivate/Reject:
+  /api/core/v1/Relationships/{id}/Reactivate/Reject:
     put:
       operationId: rejectRelationshipReactivation
       description: Reject a relationship reactivation.
@@ -3413,7 +3235,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Relationships/{id}/Reactivate/Revoke:
+  /api/core/v1/Relationships/{id}/Reactivate/Revoke:
     put:
       operationId: revokeRelationshipReactivation
       description: Revoke a relationship reactivation.
@@ -3457,7 +3279,7 @@ paths:
 
   # ------------------- RelationshipTemplates -------------------
 
-  /api/v2/RelationshipTemplates:
+  /api/core/v1/RelationshipTemplates:
     get:
       operationId: getRelationshipTemplates
       description: Queries `RelationshipTemplates`.
@@ -3535,7 +3357,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/RelationshipTemplates/Own:
+  /api/core/v1/RelationshipTemplates/Own:
     post:
       operationId: createOwnRelationshipTemplate
       description: Creates a new `RelationshipTemplate`.
@@ -3676,7 +3498,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/RelationshipTemplates/Peer:
+  /api/core/v1/RelationshipTemplates/Peer:
     post:
       operationId: loadPeerRelationshipTemplate
       description: Loads a `RelationshipTemplate` created by others. This is a prerequisite for using the template while creating a new `Relationship`.
@@ -3795,7 +3617,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/RelationshipTemplates/{id}:
+  /api/core/v1/RelationshipTemplates/{id}:
     get:
       operationId: getRelationshipTemplate
       description: Fetches the `RelationshipTemplate` with the given `id` when the accept header is set to `application/json` or a QR Code containing the reference to the RelationshipTemplate if the accept header it set to `image/png`.
@@ -3808,13 +3630,6 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/RelationshipTemplateID"
-        - in: query
-          name: newQRCodeFormat
-          description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
-          required: false
-          schema:
-            type: boolean
-            default: false
       responses:
         200:
           description: Success
@@ -3847,7 +3662,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/RelationshipTemplates/Own/{id}/Token:
+  /api/core/v1/RelationshipTemplates/Own/{id}/Token:
     post:
       operationId: createTokenForOwnRelationshipTemplate
       description: Creates a `Token` for the own `RelationshipTemplate` with the given `id`. If the accept header is set to `image/png` instead of `application/json`, a QR Code containing the reference to the token is shown.
@@ -3871,7 +3686,7 @@ paths:
                   type: string
                   format: date-time
                 ephemeral:
-                  description: If set to true the token will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
+                  description: If set to true the token will not be stored in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to true. Will be ignored if the accept header is set to `image/png`.
                   type: boolean
                 forIdentity:
                   $ref: "#/components/schemas/Address"
@@ -3881,10 +3696,6 @@ paths:
                   $ref: "#/components/schemas/PasswordProtection"
                   nullable: true
                   description: The password that will be required to load this Token and information about the password. If passwordProtection is set for the RelationshipTemplate, the same passwordProtection must also be given here.
-                newQRCodeFormat:
-                  type: boolean
-                  description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
-                  nullable: true
       responses:
         201:
           description: Success
@@ -3919,7 +3730,7 @@ paths:
 
   # ------------------- Requests -------------------
 
-  /api/v2/Requests/Incoming:
+  /api/core/v1/Requests/Incoming:
     get:
       operationId: getIncomingRequests
       description: Queries incoming `Requests`.
@@ -4017,7 +3828,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Requests/Incoming/{id}:
+  /api/core/v1/Requests/Incoming/{id}:
     get:
       operationId: getIncomingRequest
       description: Fetches the incoming `Request` with the given `id`.
@@ -4057,7 +3868,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Requests/Incoming/{id}/CanAccept:
+  /api/core/v1/Requests/Incoming/{id}/CanAccept:
     put:
       operationId: canAcceptIncomingRequest
       description: Checks if the `Request` with the given `id` can be accepted.
@@ -4103,7 +3914,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Requests/Incoming/{id}/Accept:
+  /api/core/v1/Requests/Incoming/{id}/Accept:
     put:
       operationId: acceptIncomingRequest
       description: Accepts the incoming `Request` with the given `id`.
@@ -4149,7 +3960,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Requests/Incoming/{id}/CanReject:
+  /api/core/v1/Requests/Incoming/{id}/CanReject:
     put:
       operationId: canRejectIncomingRequest
       description: Checks if the `Request` with the given `id` can be rejected.
@@ -4195,7 +4006,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Requests/Incoming/{id}/Reject:
+  /api/core/v1/Requests/Incoming/{id}/Reject:
     put:
       operationId: rejectIncomingRequest
       description: Rejects the incoming `Request` with the given `id`.
@@ -4241,7 +4052,7 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Requests/Outgoing:
+  /api/core/v1/Requests/Outgoing:
     get:
       operationId: getOutgoingRequests
       description: Queries outgoing `Requests`.
@@ -4371,7 +4182,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Requests/Outgoing/{id}:
+  /api/core/v1/Requests/Outgoing/{id}:
     get:
       operationId: getOutgoingRequest
       description: Fetches the `Request` with the given `id`.
@@ -4411,10 +4222,10 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/v2/Requests/Outgoing/Validate:
+  /api/core/v1/Requests/Outgoing/Validate:
     post:
       operationId: validateOutgoingRequest
-      description: Validates the given `OutgoingRequest` before creating it via POST `/api/v2/Requests/Outgoing`.
+      description: Validates the given `OutgoingRequest` before creating it via POST `/api/core/v1/Requests/Outgoing`.
       tags:
         - Requests
       requestBody:
@@ -4452,7 +4263,7 @@ paths:
 
   # ------------------- Tokens -------------------
 
-  /api/v2/Tokens/Own:
+  /api/core/v1/Tokens/Own:
     post:
       operationId: createOwnToken
       description: Creates a new `Token` with the given content.
@@ -4478,7 +4289,7 @@ paths:
                   nullable: false
                   description: A timestamp that describes when this token expires. An expired token cannot be fetched from the platform anymore. However it will still be available for auditing purposes.
                 ephemeral:
-                  description: If set to true the token will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to false.
+                  description: If set to true the token will not be stored in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to false.
                   type: boolean
                   example: false
                 forIdentity:
@@ -4584,7 +4395,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Tokens/Peer:
+  /api/core/v1/Tokens/Peer:
     post:
       operationId: loadPeerToken
       description: Load a `Token` created by others.
@@ -4601,7 +4412,7 @@ paths:
                   nullable: false
                   description: The base64 encoded truncated reference or url reference of the Token, which actually consists of all information to get and decrypt it.
                 ephemeral:
-                  description: If set to true the token will not be cached in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to false.
+                  description: If set to true the token will not be stored in the database of the Connector. Note that you will not be able to fetch this token unless you remember the reference of the token. Defaults to false.
                   type: boolean
                 password:
                   type: string
@@ -4701,7 +4512,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/v2/Tokens/{id}:
+  /api/core/v1/Tokens/{id}:
     get:
       operationId: getToken
       description: Fetches the `Token` with the given `id`.
@@ -4714,13 +4525,6 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/TokenID"
-        - in: query
-          name: newQRCodeFormat
-          description: If set to true, the QRCode will contain the new url format. This is only relevant if the accept header is set to `image/png`.
-          required: false
-          schema:
-            type: boolean
-            default: false
       responses:
         200:
           description: Success
@@ -5163,10 +4967,6 @@ components:
           description: The address of the identity that owns the attribute.
         tags:
           $ref: "#/components/schemas/IdentityAttributeContent_tags"
-        validFrom:
-          $ref: "#/components/schemas/AttributeContent_validFrom"
-        validTo:
-          $ref: "#/components/schemas/AttributeContent_validTo"
         value:
           "$ref": "#/components/schemas/AttributeValue"
 
@@ -5191,10 +4991,6 @@ components:
           allOf:
             - $ref: "#/components/schemas/Address"
           description: The address of the identity that owns the attribute.
-        validFrom:
-          $ref: "#/components/schemas/AttributeContent_validFrom"
-        validTo:
-          $ref: "#/components/schemas/AttributeContent_validTo"
         value:
           "$ref": "#/components/schemas/AttributeValue"
       required:
@@ -5204,22 +5000,12 @@ components:
         - owner
         - value
 
-    AttributeContent_validFrom:
-      type: string
-      format: date-time
-      description: The date and time when the attribute becomes valid.
-
-    AttributeContent_validTo:
-      type: string
-      format: date-time
-      description: The date and time when the attribute expires.
-
     IdentityAttributeContent_tags:
       type: array
       items:
         type: string
-      description: The tags of the attribute.
-      example: ["tag_1", "tag_2"]
+      description: The tags of the IdentityAttribute. A tag is valid if it is contained in the AttributeTagCollection and starts with the prefix `bkb:` or if it starts with the custom tag prefix `x:` or `X:`, the prefix `urn:`, the prefix `language:` followed by a valid ISO 639 language code or the prefix `mimetype:` followed by a valid MIME type.
+      example: ["x:tag1", "x:tag2"]
 
     Confidentiality:
       enum:
@@ -5518,8 +5304,8 @@ components:
           type: array
           items:
             type: string
-          description: Tags for the file.
-          example: [tag1, tag2]
+          description: The tags of the File. A tag is valid if it is contained in the AttributeTagCollection for the IdentityAttribute value type IdentityFileReference and starts with the prefix `bkb:` or if it starts with the custom tag prefix `x:` or `X:`, the prefix `urn:`, the prefix `language:` followed by a valid ISO 639 language code or the prefix `mimetype:` followed by a valid MIME type.
+          example: [x:tag1, x:tag2]
           nullable: true
         filesize:
           type: integer
@@ -5553,11 +5339,6 @@ components:
         isOwn:
           type: boolean
           nullable: false
-        truncatedReference:
-          type: string
-          format: byte
-          nullable: false
-          description: The base64 encoded truncated reference of the File, which actually consists of all information to get and decrypt it.
         reference:
           type: object
           allOf:
@@ -5576,7 +5357,6 @@ components:
             - $ref: "#/components/schemas/Address"
       required:
         - id
-        - title
         - filename
         - filesize
         - createdAt
@@ -5585,7 +5365,7 @@ components:
         - expiresAt
         - mimetype
         - isOwn
-        - truncatedReference
+        - reference
         - owner
 
     FileReferenceTruncated:
@@ -5663,9 +5443,6 @@ components:
       properties:
         "@type":
           type: string
-        title:
-          type: string
-          description: Will be rendered as title of the request.
         description:
           type: string
           description: Will be rendered as description of the request.
@@ -6255,9 +6032,9 @@ components:
             - $ref: "#/components/schemas/RelationshipID"
           nullable: false
           description: The ID of the relationship.
-        template:
+        templateId:
           allOf:
-            - $ref: "#/components/schemas/RelationshipTemplate"
+            - $ref: "#/components/schemas/RelationshipTemplateID"
           nullable: false
         status:
           $ref: "#/components/schemas/RelationshipStatus"
@@ -6308,7 +6085,7 @@ components:
           description: The audit log of the relationship.
       required:
         - id
-        - template
+        - templateId
         - status
         - peer
         - peerIdentity
@@ -6422,11 +6199,6 @@ components:
             - $ref: "#/components/schemas/RelationshipTemplateContent"
             - $ref: "#/components/schemas/ArbitraryRelationshipTemplateContent"
           nullable: false
-        truncatedReference:
-          type: string
-          format: byte
-          nullable: false
-          description: The base64 encoded truncated reference of the RelationshipTemplate, which actually consists of all information to get and decrypt it.
         reference:
           type: object
           allOf:
@@ -6439,7 +6211,7 @@ components:
         - createdAt
         - expiresAt
         - content
-        - truncatedReference
+        - reference
 
     RelationshipAuditLogEntry:
       type: object
@@ -6573,11 +6345,6 @@ components:
           $ref: "#/components/schemas/PasswordProtection"
           nullable: true
           description: The password that is required to load this Token and information about the password.
-        truncatedReference:
-          type: string
-          format: byte
-          nullable: false
-          description: The base64 encoded truncated reference of the Token, which actually consists of all information to get and decrypt it.
         reference:
           type: object
           allOf:
@@ -6589,7 +6356,7 @@ components:
         - content
         - createdAt
         - expiresAt
-        - truncatedReference
+        - reference
 
     TokenContent:
       type: object

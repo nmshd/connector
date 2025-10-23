@@ -47,7 +47,7 @@ describe("Attributes", () => {
                     "@type": "GivenName",
                     value: "AGivenName"
                 },
-                tags: ["content:edu.de"]
+                tags: ["x:content.edu.de"]
             }
         });
 
@@ -61,7 +61,7 @@ describe("Attributes", () => {
                     "@type": "GivenName",
                     value: "AGivenName"
                 },
-                tags: ["content:edu.de"]
+                tags: ["x:content.edu.de"]
             }
         });
 
@@ -91,7 +91,7 @@ describe("Attributes", () => {
                         "@type": "GivenName",
                         value: "AGivenName"
                     },
-                    tags: ["content:edu.de"]
+                    tags: ["x:content.edu.de"]
                 }
             })
         ).result.id;
@@ -104,11 +104,6 @@ describe("Attributes", () => {
         expect(getAttributesResponse).toBeSuccessful();
     });
 
-    test("should get the created attribute in the list of valid attributes", async () => {
-        const getAttributesResponse = await client1.attributes.getValidAttributes({});
-        expect(getAttributesResponse).toBeSuccessful();
-    });
-
     test("should succeed a Repository Attribute", async () => {
         const newRepositoryAttribute: CreateRepositoryAttributeRequest = {
             content: {
@@ -116,7 +111,7 @@ describe("Attributes", () => {
                     "@type": "GivenName",
                     value: "AGivenName"
                 },
-                tags: ["content:edu.de"]
+                tags: ["x:content.edu.de"]
             }
         };
         const createAttributeResponse = await client1.attributes.createRepositoryAttribute(newRepositoryAttribute);
@@ -129,7 +124,7 @@ describe("Attributes", () => {
                     "@type": "GivenName",
                     value: "ANewGivenName"
                 },
-                tags: ["content:edu.de"]
+                tags: ["x:content.edu.de"]
             }
         });
 
@@ -219,7 +214,7 @@ describe("Attributes Query", () => {
                         "@type": "GivenName",
                         value: "AGivenName"
                     },
-                    tags: ["content:edu.de"]
+                    tags: ["x:content.edu.de"]
                 }
             })
         ).result;
@@ -229,8 +224,6 @@ describe("Attributes Query", () => {
             .addStringSet("content.@type")
             .addStringArraySet("content.tags")
             .addStringSet("content.owner")
-            .addDateSet("content.validFrom")
-            .addDateSet("content.validTo")
             .addStringSet("content.key")
             .addBooleanSet("content.isTechnical")
             .addStringSet("content.confidentiality")
@@ -242,35 +235,6 @@ describe("Attributes Query", () => {
             .addStringSet("shareInfo.sourceAttribute");
 
         await conditions.executeTests((c, q) => c.attributes.getAttributes(q));
-    });
-
-    test("should query valid attributes", async () => {
-        const attribute = (
-            await client1.attributes.createRepositoryAttribute({
-                content: {
-                    value: {
-                        "@type": "GivenName",
-                        value: "AGivenName"
-                    }
-                }
-            })
-        ).result;
-
-        const conditions = new QueryParamConditions(attribute, client1)
-            .addStringSet("content.@type")
-            .addStringArraySet("content.tags")
-            .addStringSet("content.owner")
-            .addStringSet("content.key")
-            .addBooleanSet("content.isTechnical")
-            .addStringSet("content.confidentiality")
-            .addStringSet("content.value.@type")
-            .addStringSet("succeeds")
-            .addStringSet("succeededBy")
-            .addStringSet("shareInfo.requestReference")
-            .addStringSet("shareInfo.peer")
-            .addStringSet("shareInfo.sourceAttribute");
-
-        await conditions.executeTests((c, q) => c.attributes.getValidAttributes(q));
     });
 
     test("should query own shared identity attributes", async () => {

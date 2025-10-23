@@ -3,14 +3,14 @@ import { Endpoint } from "./Endpoint";
 
 export class AccountEndpoint extends Endpoint {
     public async getIdentityInfo(): Promise<ConnectorHttpResponse<IdentityInfo>> {
-        return await this.get("/api/v2/Account/IdentityInfo");
+        return await this.get("/api/core/v1/Account/IdentityInfo");
     }
 
     public async sync(): Promise<ConnectorHttpResponse<void>> {
-        return await this.post("/api/v2/Account/Sync", undefined, 204);
+        return await this.post("/api/core/v1/Account/Sync", undefined, 204);
     }
 
     public async getSyncInfo(): Promise<ConnectorHttpResponse<ConnectorSyncInfo>> {
-        return await this.get("/api/v2/Account/SyncInfo");
+        return await this.get("/api/core/v1/Account/SyncInfo");
     }
 }

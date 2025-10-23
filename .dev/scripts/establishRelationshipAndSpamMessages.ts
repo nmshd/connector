@@ -1,15 +1,15 @@
 import { sleep } from "@js-soft/ts-utils";
-import { ConnectorClient, RelationshipStatus } from "@nmshd/connector-sdk";
+import { ApiKeyAuthenticator, ConnectorClient, RelationshipStatus } from "@nmshd/connector-sdk";
 
 async function run() {
     const connector1 = ConnectorClient.create({
         baseUrl: "http://localhost:3000",
-        apiKey: "This_is_a_test_APIKEY_with_30_chars+"
+        authenticator: new ApiKeyAuthenticator("This_is_a_test_APIKEY_with_30_chars+")
     });
 
     const connector2 = ConnectorClient.create({
         baseUrl: "http://localhost:3001",
-        apiKey: "This_is_a_test_APIKEY_with_30_chars+"
+        authenticator: new ApiKeyAuthenticator("This_is_a_test_APIKEY_with_30_chars+")
     });
 
     const { connector1Address, connector2Address } = await establishOrReturnRelationship(connector1, connector2);

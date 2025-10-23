@@ -26,7 +26,7 @@ export class IdentityStatus extends BaseCommand {
         if (identityDeletionProcessResult.isSuccess) {
             const identityDeletionProcess = identityDeletionProcessResult.value;
             message += `\nIdentity deletion status: ${identityDeletionProcess.status}`;
-            if (identityDeletionProcess.gracePeriodEndsAt && identityDeletionProcess.status === IdentityDeletionProcessStatus.Approved) {
+            if (identityDeletionProcess.gracePeriodEndsAt && identityDeletionProcess.status === IdentityDeletionProcessStatus.Active) {
                 message += `\nEnd of grace period: ${DateTime.fromISO(identityDeletionProcess.gracePeriodEndsAt).toLocaleString()}`;
             }
         }
