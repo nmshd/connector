@@ -51,7 +51,7 @@
         "@js-soft/logging-abstractions": "^1.0.2",
         "@types/express": "^5.0.3",
         "@types/luxon": "^3.7.1",
-        "@types/node": "^24.8.1",
+        "@types/node": "^24.9.1",
         "@types/qrcode": "^1.5.5",
         "typescript": "^5.9.3"
     },
