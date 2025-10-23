@@ -1,4 +1,4 @@
-export interface GetSharedVersionsOfAttributeRequest {
-    peers?: string[];
+export interface GetVersionsOfAttributeSharedWithPeerRequest {
+    peer: string;
     onlyLatestVersions?: boolean;
 }

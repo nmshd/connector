@@ -3,7 +3,7 @@ import { DataEvent, EventBus, SubscriptionTarget, sleep } from "@js-soft/ts-util
 import {
     ConnectorClient,
     CreateOutgoingRequestRequest,
-    CreateRepositoryAttributeRequest,
+    CreateOwnIdentityAttributeRequest,
     FileDTO,
     LocalAttributeDTO,
     LocalRequestDTO,
@@ -19,7 +19,6 @@ import { PasswordLocationIndicator } from "@nmshd/core-types";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata } from "./Launcher";
-import { ValidationSchema } from "./validation";
 
 export interface MessageProcessedEventData {
     message: MessageDTO;
@@ -317,8 +316,8 @@ export async function establishRelationship(client1: ConnectorClient, client2: C
     await syncUntilHasRelationship(client2, acceptResponse.result.id);
 }
 
-export async function createRepositoryAttribute(client: ConnectorClient, request: CreateRepositoryAttributeRequest): Promise<LocalAttributeDTO> {
-    const response = await client.attributes.createRepositoryAttribute(request);
+export async function createRepositoryAttribute(client: ConnectorClient, request: CreateOwnIdentityAttributeRequest): Promise<LocalAttributeDTO> {
+    const response = await client.attributes.createOwnIdentityAttribute(request);
     expect(response).toBeSuccessful();
     return response.result;
 }
@@ -403,7 +402,7 @@ export async function executeFullCreateAndShareRepositoryAttributeFlow(
     recipients: ConnectorClient | ConnectorClient[],
     attributeValue: AttributeValues.Identity.Json
 ): Promise<LocalAttributeDTO | LocalAttributeDTO[]> {
-    const createAttributeRequestResult = await sender.attributes.createRepositoryAttribute({ content: { value: attributeValue } });
+    const createAttributeRequestResult = await sender.attributes.createOwnIdentityAttribute({ content: { value: attributeValue } });
     const attribute = createAttributeRequestResult.result;
 
     if (!Array.isArray(recipients)) {
@@ -424,7 +423,7 @@ export async function executeFullCreateAndShareRepositoryAttributeFlow(
                     {
                         "@type": "ShareAttributeRequestItem",
                         mustBeAccepted: true,
-                        sourceAttributeId: attribute.id,
+                        attributeId: attribute.id,
                         attribute: attribute.content
                     }
                 ]
@@ -449,10 +448,9 @@ export async function executeFullCreateAndShareRepositoryAttributeFlow(
 
         await recipient.incomingRequests.accept(requestId, { items: [{ accept: true }] });
 
-        const responseMessage = await syncUntilHasMessageWithResponse(sender, requestId);
-        const sharedAttributeId = (responseMessage as any).content.response.items[0].attributeId;
+        await syncUntilHasMessageWithResponse(sender, requestId);
 
-        const senderOwnSharedIdentityAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
+        const senderOwnSharedIdentityAttribute = (await sender.attributes.getAttribute(attribute.id)).result;
         results.push(senderOwnSharedIdentityAttribute);
     }
 
@@ -529,35 +527,12 @@ export async function waitForEvent<TEvent>(
     });
 }
 
-export async function deleteAllAttributes(client: ConnectorClient, clientAddress: string): Promise<void> {
+export async function deleteAllAttributes(client: ConnectorClient): Promise<void> {
     const attributesResponse = await client.attributes.getAttributes({});
     expect(attributesResponse).toBeSuccessful();
 
     for (const attribute of attributesResponse.result) {
-        if (!attribute.shareInfo) {
-            const result = await client.attributes.deleteRepositoryAttribute(attribute.id);
-            expect(result).toBeSuccessfulVoidResult();
-            continue;
-        }
-
-        if (attribute.shareInfo.thirdPartyAddress) {
-            const result = await client.attributes.deleteThirdPartyRelationshipAttributeAndNotifyPeer(attribute.id);
-            expect(result).toBeSuccessful(ValidationSchema.DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse);
-            continue;
-        }
-
-        if (attribute.content.owner === clientAddress) {
-            const result = await client.attributes.deleteOwnSharedAttributeAndNotifyPeer(attribute.id);
-            expect(result).toBeSuccessful(ValidationSchema.DeleteOwnSharedAttributeAndNotifyPeerResponse);
-            continue;
-        }
-
-        if (attribute.content.owner !== clientAddress) {
-            const result = await client.attributes.deletePeerSharedAttributeAndNotifyOwner(attribute.id);
-            expect(result).toBeSuccessful(ValidationSchema.DeletePeerSharedAttributeAndNotifyOwnerResponse);
-            continue;
-        }
-
-        throw new Error("No delete method called");
+        const result = await client.attributes.deleteAttributeAndNotify(attribute.id);
+        expect(result).toBeSuccessful();
     }
 }

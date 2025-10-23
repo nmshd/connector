@@ -803,7 +803,7 @@ paths:
 
   /api/core/v1/Attributes/{id}/Versions/Shared:
     get:
-      operationId: getSharedVersionsOfAttribute
+      operationId: getVersionsOfAttributeSharedWithPeer
       tags:
         - Attributes
       parameters:
@@ -1030,167 +1030,20 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
     delete:
-      operationId: deleteRepositoryAttribute
-      description: Delete a repository attribute.
+      operationId: deleteAttributeAndNotify
+      description: Delete an attribute and notify peers.
       tags:
         - Attributes
       parameters:
         - in: path
           name: id
-          description: The ID of the repository attribute to delete.
+          description: The ID of the attribute to delete.
           required: true
           schema:
             $ref: "#/components/schemas/AttributeID"
       responses:
         204:
-          description: Success. Deleting a repository attribute.
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
-  /api/core/v1/Attributes/Own/Shared/{id}:
-    delete:
-      operationId: deleteOwnSharedAttributeAndNotifyPeer
-      description: Delete an own shared attribute and notify the peer.
-      tags:
-        - Attributes
-      parameters:
-        - in: path
-          name: id
-          description: The ID of the own shared attribute to delete.
-          required: true
-          schema:
-            $ref: "#/components/schemas/AttributeID"
-      responses:
-        200:
-          description: |
-            Success. Deleting an own shared attribute and notifying the peer returns the notificationId of the send notification.
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: false
-                required:
-                  - result
-                properties:
-                  result:
-                    nullable: false
-                    type: object
-                    additionalProperties: false
-                    required:
-                      - id
-                    properties:
-                      id:
-                        $ref: "#/components/schemas/NotificationID"
-
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
-  /api/core/v1/Attributes/Peer/Shared/{id}:
-    delete:
-      operationId: deletePeerSharedAttributeAndNotifyOwner
-      description: Delete an peer shared attribute and notify the owner.
-      tags:
-        - Attributes
-      parameters:
-        - in: path
-          name: id
-          description: The ID of the peer shared attribute to delete.
-          required: true
-          schema:
-            $ref: "#/components/schemas/AttributeID"
-      responses:
-        200:
-          description: |
-            Success. Deleting an peer shared attribute and notifying the owner returns the notificationId of the send notification.
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: false
-                required:
-                  - result
-                properties:
-                  result:
-                    nullable: false
-                    type: object
-                    additionalProperties: false
-                    required:
-                      - id
-                    properties:
-                      id:
-                        $ref: "#/components/schemas/NotificationID"
-
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
-  /api/core/v1/Attributes/ThirdParty/{id}:
-    delete:
-      operationId: deleteThirdPartyRelationshipAttributeAndNotifyPeer
-      description: Delete a ThirdPartyRelationshipAttribute and notify the peer.
-      tags:
-        - Attributes
-      parameters:
-        - in: path
-          name: id
-          description: The ID of the ThirdPartyRelationshipAttribute to delete.
-          required: true
-          schema:
-            $ref: "#/components/schemas/AttributeID"
-      responses:
-        200:
-          description: |
-            Success. Deleting a ThirdPartyRelationshipAttribute and notifying the peer returns the NotificationId of the sent Notification.
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: false
-                required:
-                  - result
-                properties:
-                  result:
-                    nullable: false
-                    type: object
-                    additionalProperties: false
-                    required:
-                      - id
-                    properties:
-                      id:
-                        $ref: "#/components/schemas/NotificationID"
-
+          description: Success. Deleting an attribute.
           headers:
             X-Response-Duration-ms:
               schema:

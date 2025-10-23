@@ -67,18 +67,32 @@ export class AttributesController extends BaseController {
     }
 
     @GET
-    @Path("/Own/OwnIdentity")
+    @Path("/Own/Identity")
     @Accept("application/json")
-    public async getOwnOwnIdentityAttributes(@Context context: ServiceContext, @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean): Promise<Envelope> {
+    public async getOwnIdentityAttributes(@Context context: ServiceContext, @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean): Promise<Envelope> {
         const query: Record<string, any> = this.extractQuery(context.request.query, ["onlyLatestVersions"]);
         const result = await this.consumptionServices.attributes.getOwnIdentityAttributes({ onlyLatestVersions, query });
         return this.ok(result);
     }
 
     @GET
-    @Path("/:id/SharingDetails")
+    @Path("/Own/Shared/:peer")
     @Accept("application/json")
-    public async getSharingDetailsForAttribute(@PathParam("id") attributeId: string): Promise<Envelope> {
+    public async getOwnAttributesSharedWithPeer(
+        @Context context: ServiceContext,
+        @PathParam("peer") peer: string,
+        @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean,
+        @QueryParam("hideTechnical") hideTechnical?: boolean
+    ): Promise<Envelope> {
+        const query: Record<string, any> = this.extractQuery(context.request.query, ["onlyLatestVersions", "hideTechnical"]);
+        const result = await this.consumptionServices.attributes.getOwnAttributesSharedWithPeer({ peer, onlyLatestVersions, hideTechnical, query });
+        return this.ok(result);
+    }
+
+    @GET
+    @Path("/:id/ForwardingDetails")
+    @Accept("application/json")
+    public async getForwardingDetailsForAttribute(@PathParam("id") attributeId: string): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.getForwardingDetailsForAttribute({ attributeId });
         return this.ok(result);
     }
@@ -96,7 +110,7 @@ export class AttributesController extends BaseController {
     @GET
     @Path("/:id/Versions/Shared")
     @Accept("application/json")
-    public async getSharedVersionsOfAttribute(
+    public async getVersionsOfAttributeSharedWithPeer(
         @PathParam("id") attributeId: string,
         @QueryParam("peer") peer: string,
         @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean
@@ -163,7 +177,7 @@ export class AttributesController extends BaseController {
 
     @DELETE
     @Path(":id")
-    public async deleteOwnSharedAttributeAndNotifyPeer(@PathParam("id") attributeId: string): Promise<Envelope> {
+    public async deleteAttributeAndNotify(@PathParam("id") attributeId: string): Promise<Envelope> {
         const result = await this.consumptionServices.attributes.deleteAttributeAndNotify({ attributeId });
         return this.ok(result);
     }

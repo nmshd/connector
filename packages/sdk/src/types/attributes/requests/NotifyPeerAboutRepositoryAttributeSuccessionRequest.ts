@@ -1,3 +1,3 @@
-export interface NotifyPeerAboutRepositoryAttributeSuccessionRequest {
+export interface NotifyPeerAboutOwnIdentityAttributeSuccessionRequest {
     peer: string;
 }

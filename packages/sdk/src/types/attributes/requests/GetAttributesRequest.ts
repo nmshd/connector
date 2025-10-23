@@ -1,4 +1,6 @@
 export interface GetAttributesRequest {
+    "@type"?: string;
+    peer?: string;
     createdAt?: string;
     content?: {
         "@type"?: string;
