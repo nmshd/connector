@@ -99,8 +99,7 @@ export class AttributesController extends BaseController {
         @QueryParam("hideTechnical") hideTechnical?: boolean
     ): Promise<Envelope> {
         const query: Record<string, any> = this.extractQuery(context.request.query, ["onlyLatestVersions", "hideTechnical"]);
-
-        const result = await this.consumptionServices.attributes.getPeerAttributes({ peer, hideTechnical, query, onlyLatestVersions });
+        const result = await this.consumptionServices.attributes.getPeerAttributes({ peer, onlyLatestVersions, hideTechnical, query });
         return this.ok(result);
     }
 
