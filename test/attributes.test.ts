@@ -40,7 +40,7 @@ beforeEach(async () => {
 });
 
 describe("Attributes", () => {
-    test("should check if a repository attribute can be created", async () => {
+    test("should check if an OwnIdentityAttribute can be created", async () => {
         const canCreateAttributeResponse = await client1.attributes.canCreateOwnIdentityAttribute({
             content: {
                 value: {
@@ -54,7 +54,7 @@ describe("Attributes", () => {
         expect(canCreateAttributeResponse.result.isSuccess).toBe(true);
     });
 
-    test("should create a repository attribute", async () => {
+    test("should create an OwnIdentityAttribute", async () => {
         const createAttributeResponse = await client1.attributes.createOwnIdentityAttribute({
             content: {
                 value: {
@@ -136,7 +136,7 @@ describe("Attributes", () => {
         expect((succeededAttribute.content.value as GivenNameJSON).value).toBe("ANewGivenName");
     });
 
-    test("Should notify peer about OwnIdentityAttribute Succession", async () => {
+    test("should notify peer about OwnIdentityAttribute Succession", async () => {
         const ownIdentityAttribute = await executeFullCreateAndShareOwnIdentityAttributeFlow(client1, client2, {
             "@type": "GivenName",
             value: "AGivenName"
@@ -166,7 +166,7 @@ describe("Attributes", () => {
         expect(notificationResponse.result.successor.content.value).toStrictEqual(succeededAttributeResponse.result.content.value);
     });
 
-    test("Should succeed a Relationship Attribute", async () => {
+    test("should succeed an OwnRelationshipAttribute", async () => {
         const attribute = await executeFullCreateAndShareRelationshipAttributeFlow(client1, client2, {
             value: {
                 "@type": "ProprietaryString",
@@ -284,7 +284,7 @@ describe("Read Attribute and versions", () => {
         await connectAndEmptyCollection(client2._metadata!.accountName, "Attributes");
     });
 
-    test("should get all the repository attributes only", async () => {
+    test("should get all OwnIdentityAttributes", async () => {
         const attributes = await client1.attributes.getOwnIdentityAttributes({});
         expect(attributes.result).toHaveLength(0);
 
@@ -310,7 +310,7 @@ describe("Read Attribute and versions", () => {
         expect(newAttributes.result).toHaveLength(6);
     });
 
-    test("should get all the latest repository attributes only", async () => {
+    test("should get latest versions of all OwnIdentityAttributes", async () => {
         const attributesResponse = await client1.attributes.getOwnIdentityAttributes({});
         expect(attributesResponse.result).toHaveLength(0);
 
@@ -343,6 +343,7 @@ describe("Read Attribute and versions", () => {
         expect(onlyLatestAttributesResponse.result).toHaveLength(5);
     });
 
+    // TODO:
     test("should get all own/peer shared identity attributes", async () => {
         await executeFullCreateAndShareOwnIdentityAttributeFlow(client1, client2, {
             "@type": "GivenName",
@@ -365,6 +366,7 @@ describe("Read Attribute and versions", () => {
         expect(peerAttributesResponse.result).toHaveLength(1);
     });
 
+    // TODO:
     test("should get the latest own/peer shared identity attributes", async () => {
         const sharedAttribute = await executeFullCreateAndShareOwnIdentityAttributeFlow(client1, client2, {
             "@type": "GivenName",
@@ -390,7 +392,7 @@ describe("Read Attribute and versions", () => {
         expect(peerAttributesResponse.result).toHaveLength(1);
     });
 
-    test("should get all local/shard versions of an attribute", async () => {
+    test("should get all (shared) versions of an Attribute", async () => {
         const newLauncher = new Launcher();
         const [client3] = await newLauncher.launch(1);
         await establishRelationship(client1, client3);
@@ -441,7 +443,7 @@ describe("Read Attribute and versions", () => {
 });
 
 describe("Delete attributes", () => {
-    test("should delete an own attribute and notify peer", async () => {
+    test("should delete an OwnIdentityAttribute and notify peer", async () => {
         const ownIdentityAttribute = await executeFullCreateAndShareOwnIdentityAttributeFlow(client1, client2, {
             "@type": "GivenName",
             value: "AGivenName"
@@ -460,7 +462,7 @@ describe("Delete attributes", () => {
         expect(client2DeletedAttribute.result.deletionInfo?.deletionStatus).toBe("DeletedByEmitter");
     });
 
-    test("should delete a peer attribute and notify owner", async () => {
+    test("should delete a PeerIdentityAttribute and notify owner", async () => {
         const ownIdentityAttribute = await executeFullCreateAndShareOwnIdentityAttributeFlow(client1, client2, {
             "@type": "GivenName",
             value: "AGivenName"
@@ -480,7 +482,7 @@ describe("Delete attributes", () => {
         expect(forwardingDetails.result[0].deletionInfo?.deletionStatus).toBe("DeletedByRecipient");
     });
 
-    test("should delete a repository attribute", async () => {
+    test("should delete an unshared OwnIdentityAttribute", async () => {
         const attribute = await client1.attributes.createOwnIdentityAttribute({
             content: {
                 value: {

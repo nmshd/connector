@@ -668,6 +668,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  # TODO:
   /api/core/v1/Attributes/Peer/Shared/Identity:
     get:
       operationId: getPeerSharedIdentityAttributes
