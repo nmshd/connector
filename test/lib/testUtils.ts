@@ -370,8 +370,8 @@ export async function executeFullCreateAndShareRelationshipAttributeFlow(
         await sleep(500);
     }
 
-    const senderOwnSharedRelationshipAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
-    return senderOwnSharedRelationshipAttribute;
+    const senderOwnRelationshipAttribute = (await sender.attributes.getAttribute(sharedAttributeId)).result;
+    return senderOwnRelationshipAttribute;
 }
 
 export async function executeFullCreateAndShareOwnIdentityAttributeFlow(
@@ -437,8 +437,8 @@ export async function executeFullCreateAndShareOwnIdentityAttributeFlow(
 
         await syncUntilHasMessageWithResponse(sender, requestId);
 
-        const senderOwnSharedIdentityAttribute = (await sender.attributes.getAttribute(attribute.id)).result;
-        results.push(senderOwnSharedIdentityAttribute);
+        const senderOwnIdentityAttribute = (await sender.attributes.getAttribute(attribute.id)).result;
+        results.push(senderOwnIdentityAttribute);
     }
 
     return results.length === 1 ? results[0] : results;
