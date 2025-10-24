@@ -12,6 +12,7 @@ import {
     GetAttributesRequest,
     GetOwnAttributesSharedWithPeerRequest,
     GetOwnIdentityAttributesRequest,
+    GetPeerAttributesRequest,
     GetVersionsOfAttributeSharedWithPeerRequest,
     NotifyPeerAboutOwnIdentityAttributeSuccessionRequest,
     NotifyPeerAboutOwnIdentityAttributeSuccessionResponse,
@@ -66,6 +67,10 @@ export class AttributesEndpoint extends Endpoint {
             hideTechnical: request.hideTechnical,
             ...request.query
         });
+    }
+
+    public async getPeerAttributes(request: GetPeerAttributesRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
+        return await this.get(`/api/core/v1/Attributes/Peer/${request.peer}`, request);
     }
 
     public async getVersionsOfAttribute(attributeId: string): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {

@@ -220,7 +220,7 @@ describe("Relationships", () => {
         expect(relationships).toBeSuccessful();
         expect(relationships.result).toHaveLength(0);
 
-        const attributesAfterDecomposition = await client2.attributes.getAttributes({ peer: client2Address });
+        const attributesAfterDecomposition = await client2.attributes.getPeerAttributes({ peer: client2Address });
         expect(attributesAfterDecomposition).toBeSuccessful();
         expect(attributesAfterDecomposition.result).toHaveLength(0);
 

@@ -90,6 +90,21 @@ export class AttributesController extends BaseController {
     }
 
     @GET
+    @Path("/Peer/Shared/:peer")
+    @Accept("application/json")
+    public async getPeerAttributes(
+        @Context context: ServiceContext,
+        @PathParam("peer") peer: string,
+        @QueryParam("onlyLatestVersions") onlyLatestVersions?: boolean,
+        @QueryParam("hideTechnical") hideTechnical?: boolean
+    ): Promise<Envelope> {
+        const query: Record<string, any> = this.extractQuery(context.request.query, ["onlyLatestVersions", "hideTechnical"]);
+
+        const result = await this.consumptionServices.attributes.getPeerAttributes({ peer, hideTechnical, query, onlyLatestVersions });
+        return this.ok(result);
+    }
+
+    @GET
     @Path("/:id/ForwardingDetails")
     @Accept("application/json")
     public async getForwardingDetailsForAttribute(@PathParam("id") attributeId: string): Promise<Envelope> {

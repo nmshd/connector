@@ -624,11 +624,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: peer
-          in: query
-          required: true
-          schema:
-            $ref: "#/components/schemas/Address"
         - name: hideTechnical
           in: query
           required: false
@@ -668,14 +663,19 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  # TODO:
-  /api/core/v1/Attributes/Peer/Shared/Identity:
+  /api/core/v1/Attributes/Peer/Shared/{peer}:
     get:
-      operationId: getPeerSharedIdentityAttributes
+      operationId: getPeerAttributes
       tags:
         - Attributes
 
       parameters:
+        - name: peer
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+          description: The address of the peer.
         - name: createdAt
           in: query
           required: false
@@ -726,11 +726,6 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: peer
-          in: query
-          required: true
-          schema:
-            $ref: "#/components/schemas/Address"
         - name: hideTechnical
           in: query
           required: false

@@ -9,6 +9,7 @@ export * from "./requests/ExecuteThirdPartyRelationshipAttributeQueryRequest";
 export * from "./requests/GetAttributesRequest";
 export * from "./requests/GetOwnAttributesSharedWithPeerRequest";
 export * from "./requests/GetOwnIdentityAttributesRequest";
+export * from "./requests/GetPeerAttributesRequest";
 export * from "./requests/GetVersionsOfAttributeSharedWithPeerRequest";
 export * from "./requests/NotifyPeerAboutOwnIdentityAttributeSuccessionRequest";
 export * from "./requests/NotifyPeerAboutOwnIdentityAttributeSuccessionResponse";

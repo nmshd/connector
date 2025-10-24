@@ -343,8 +343,7 @@ describe("Read Attribute and versions", () => {
         expect(onlyLatestAttributesResponse.result).toHaveLength(5);
     });
 
-    // TODO:
-    test("should get all own/peer shared identity attributes", async () => {
+    test("should get all own Attributes shared with peer and peer Attributes", async () => {
         await executeFullCreateAndShareOwnIdentityAttributeFlow(client1, client2, {
             "@type": "GivenName",
             value: "ANewGivenName"
@@ -360,14 +359,13 @@ describe("Read Attribute and versions", () => {
         });
 
         const ownAttributesResponse = await client1.attributes.getOwnAttributesSharedWithPeer({ peer: client2Address });
-        const peerAttributesResponse = await client2.attributes.getAttributes({ "@type": "PeerIdentityAttribute", peer: client1Address });
+        const peerAttributesResponse = await client2.attributes.getPeerAttributes({ peer: client1Address });
 
         expect(ownAttributesResponse.result).toHaveLength(1);
         expect(peerAttributesResponse.result).toHaveLength(1);
     });
 
-    // TODO:
-    test("should get the latest own/peer shared identity attributes", async () => {
+    test("should get latest versions of own Attributes shared with peer and peer Attributes", async () => {
         const sharedAttribute = await executeFullCreateAndShareOwnIdentityAttributeFlow(client1, client2, {
             "@type": "GivenName",
             value: "AGivenName"
@@ -388,7 +386,7 @@ describe("Read Attribute and versions", () => {
         const ownAttributesResponse = await client1.attributes.getOwnAttributesSharedWithPeer({ peer: client2Address, onlyLatestVersions: true });
         expect(ownAttributesResponse.result).toHaveLength(1);
 
-        const peerAttributesResponse = await client2.attributes.getAttributes({ peer: client1Address });
+        const peerAttributesResponse = await client2.attributes.getPeerAttributes({ peer: client1Address });
         expect(peerAttributesResponse.result).toHaveLength(1);
     });
 
