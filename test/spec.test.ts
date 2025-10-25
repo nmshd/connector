@@ -99,10 +99,9 @@ describe.skip("test openapi spec against routes", () => {
 
     test("all generated params should be in the manual spec", () => {
         const pathsWithDBQueries = [
-            { path: "/api/core/v1/Attributes/Own/Shared/Identity", method: "get" },
-            { path: "/api/core/v1/Attributes/Peer/Shared/Identity", method: "get" },
-            { path: "/api/core/v1/Attributes/Own/Shared/Identity", method: "get" },
-            { path: "/api/core/v1/Attributes/Own/Repository", method: "get" }
+            { path: "/api/core/v1/Attributes/Own/Shared/{peer}", method: "get" },
+            { path: "/api/core/v1/Attributes/Peer/Shared/{peer}", method: "get" },
+            { path: "/api/core/v1/Attributes/Own/Identity", method: "get" }
         ];
 
         const generatedPaths = getPaths(generatedOpenApiSpec);
