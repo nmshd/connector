@@ -398,6 +398,11 @@ paths:
       tags:
         - Attributes
       parameters:
+        - name: "@type"
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
         - name: createdAt
           in: query
           required: false
@@ -448,17 +453,27 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.requestReference
+        - name: sourceReference
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.peer
+        - name: peer
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.sourceAttribute
+        - name: initialAttributePeer
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: deletionInfo.deletionStatus
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: deletionInfo.deletionDate
           in: query
           required: false
           schema:
@@ -520,7 +535,7 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: deletionInfo.deletionDate"
+        - name: deletionInfo.deletionDate
           in: query
           required: false
           schema:
@@ -569,6 +584,11 @@ paths:
           schema:
             $ref: "#/components/schemas/Address"
           description: The address of the peer.
+        - name: "@type"
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
         - name: createdAt
           in: query
           required: false
@@ -604,22 +624,22 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo
+        - name: sourceReference
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.requestReference
+        - name: deletionInfo
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.notificationReference
+        - name: deletionInfo.deletionStatus
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.sourceAttribute
+        - name: deletionInfo.deletionDate
           in: query
           required: false
           schema:
@@ -676,6 +696,11 @@ paths:
           schema:
             $ref: "#/components/schemas/Address"
           description: The address of the peer.
+        - name: "@type"
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
         - name: createdAt
           in: query
           required: false
@@ -711,17 +736,27 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo
+        - name: sourceReference
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.requestReference
+        - name: initialAttributePeer
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.notificationReference
+        - name: deletionInfo
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: deletionInfo.deletionStatus
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: deletionInfo.deletionDate
           in: query
           required: false
           schema:
@@ -4909,8 +4944,6 @@ components:
           type: string
           format: date-time
           description: The date and time when the attribute was created.
-        shareInfo:
-          "$ref": "#/components/schemas/AttributeShareInfo"
         deletionInfo:
           "$ref": "#/components/schemas/AttributeDeletionInfo"
         succeededBy:
@@ -4929,33 +4962,29 @@ components:
             - "$ref": "#/components/schemas/RelationshipAttribute"
         isDefault:
           type: boolean
-      required:
-        - id
-        - createdAt
-        - content
-
-    AttributeShareInfo:
-      type: object
-      additionalProperties: false
-      properties:
         peer:
           type: string
           allOf:
             - $ref: "#/components/schemas/Address"
           description: The address of the peer that received the attribute.
-        requestReference:
+        sourceReference:
           type: string
           allOf:
             - $ref: "#/components/schemas/RequestID"
-          description: The ID of the request that was used to share the attribute.
-        sourceAttribute:
+            - $ref: "#/components/schemas/NotificationID"
+          description: The ID of the Request or Notification that was used to share the attribute.
+        initialAttributePeer:
           type: string
           allOf:
-            - $ref: "#/components/schemas/AttributeID"
-          description: The ID of the attribute that was copied for sharing.
+            - $ref: "#/components/schemas/Address"
+          description: The address of the peer that the ThirdPartyRelationshipAttribute was initially shared with.
+        numberOfForwards:
+          type: number
+          description: The number of peers the Attribute was forwarded to.
       required:
-        - requestReference
-        - peer
+        - id
+        - createdAt
+        - content
 
     AttributeDeletionInfo:
       type: object
@@ -5592,44 +5621,6 @@ components:
       required:
         - content
         - peer
-
-    CreateOwnIdentityAttributeResponse:
-      type: object
-      additionalProperties: false
-      properties:
-        id:
-          allOf:
-            - $ref: "#/components/schemas/AttributeID"
-          nullable: false
-          description: The ID of the attribute.
-        parentId:
-          "$ref": "#/components/schemas/AttributeID"
-        createdAt:
-          type: string
-          format: date-time
-          description: The date and time when the attribute was created.
-        shareInfo:
-          "$ref": "#/components/schemas/AttributeShareInfo"
-        succeededBy:
-          type: string
-          allOf:
-            - $ref: "#/components/schemas/AttributeID"
-          description: The ID of the attribute that was used to succeed this attribute.
-        succeeds:
-          type: string
-          allOf:
-            - $ref: "#/components/schemas/AttributeID"
-          description: The ID of the attribute that this attribute succeeds.
-        content:
-          anyOf:
-            - "$ref": "#/components/schemas/IdentityAttribute"
-        isDefault:
-          type: boolean
-          enum: [true]
-      required:
-        - id
-        - createdAt
-        - content
 
     RequestValidationResult:
       type: object
