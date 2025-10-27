@@ -122,7 +122,7 @@
         "@types/amqplib": "^0.10.8",
         "@types/compression": "^1.8.1",
         "@types/cors": "^2.8.19",
-        "@types/express": "5.0.4",
+        "@types/express": "5.0.5",
         "@types/jest": "^30.0.0",
         "@types/jest-json-schema": "^6.1.5",
         "@types/json-stringify-safe": "^5.0.3",
