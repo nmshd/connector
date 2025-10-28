@@ -104,6 +104,17 @@ describe("Attributes", () => {
         expect(getAttributesResponse).toBeSuccessful();
     });
 
+    test("should get ForwardingDetails for a forwarded OwnIdentityAttribute", async () => {
+        const forwardedAttribute = await executeFullCreateAndShareOwnIdentityAttributeFlow(client1, client2, {
+            "@type": "GivenName",
+            value: "AGivenName"
+        });
+
+        const forwardingDetails = (await client1.attributes.getForwardingDetailsForAttribute(forwardedAttribute.id)).result;
+        expect(forwardingDetails).toHaveLength(1);
+        expect(forwardingDetails[0].peer).toStrictEqual(client2Address);
+    });
+
     test("should succeed an OwnIdentityAttribute", async () => {
         const newOwnIdentityAttribute: CreateOwnIdentityAttributeRequest = {
             content: {
@@ -383,7 +394,7 @@ describe("Read Attribute and versions", () => {
         const result = await client1.attributes.notifyPeerAboutOwnIdentityAttributeSuccession(succeededAttributeResponse.result.successor.id, { peer: client2Address });
         expect(result).toBeSuccessful();
 
-        const ownAttributesResponse = await client1.attributes.getOwnAttributesSharedWithPeer({ peer: client2Address, onlyLatestVersions: true });
+        const ownAttributesResponse = await client1.attributes.getOwnAttributesSharedWithPeer({ peer: client2Address });
         expect(ownAttributesResponse.result).toHaveLength(1);
 
         const peerAttributesResponse = await client2.attributes.getPeerAttributes({ peer: client1Address });
