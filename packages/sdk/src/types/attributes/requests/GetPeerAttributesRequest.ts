@@ -8,7 +8,6 @@ export interface GetPeerAttributesRequest {
 export interface GetPeerAttributesRequestQuery {
     "@type"?: string | string[];
     createdAt?: string;
-    wasViewedAt?: string | string[];
     "content.@type"?: string | string[];
     "content.tags"?: string | string[];
     "content.key"?: string | string[];
