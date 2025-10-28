@@ -187,7 +187,6 @@ describe("Relationships", () => {
     test("terminate relationship and decompose it", async () => {
         await establishRelationship(client1, client2);
         const relationship = await getRelationship(client1);
-        const client2Address = (await client2.account.getIdentityInfo()).result.address;
 
         await executeFullCreateAndShareRelationshipAttributeFlow(client1, client2, {
             value: {
@@ -204,6 +203,7 @@ describe("Relationships", () => {
             value: "AGivenName"
         });
 
+        const client2Address = (await client2.account.getIdentityInfo()).result.address;
         const attributes = await client1.attributes.getOwnAttributesSharedWithPeer({ peer: client2Address });
         expect(attributes).toBeSuccessful();
         expect(attributes.result).toHaveLength(2);
@@ -220,7 +220,8 @@ describe("Relationships", () => {
         expect(relationships).toBeSuccessful();
         expect(relationships.result).toHaveLength(0);
 
-        const attributesAfterDecomposition = await client2.attributes.getPeerAttributes({ peer: client2Address });
+        const client1Address = (await client1.account.getIdentityInfo()).result.address;
+        const attributesAfterDecomposition = await client2.attributes.getPeerAttributes({ peer: client1Address });
         expect(attributesAfterDecomposition).toBeSuccessful();
         expect(attributesAfterDecomposition.result).toHaveLength(0);
 
