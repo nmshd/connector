@@ -1,10 +1,10 @@
-import { BaseController, HttpServerRole } from "@nmshd/connector-types";
+import { BaseController } from "@nmshd/connector-types";
 import { TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Path, POST, Security } from "@nmshd/typescript-rest";
 
-@Security([HttpServerRole.ADMIN, "core:*", "core:backboneNotifications"])
-@Path("/api/v2/BackboneNotifications")
+@Security("core:backboneNotifications")
+@Path("/api/core/v1/BackboneNotifications")
 export class BackboneNotificationsController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();

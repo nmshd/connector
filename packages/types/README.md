@@ -26,4 +26,4 @@ Contribution to this project is highly appreciated. Head over to our [contributi
 
 ## License
 
-[MIT](LICENSE)
+[AGPL-3.0-or-later](LICENSE)
