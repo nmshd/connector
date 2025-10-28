@@ -1,5 +1,5 @@
 import { BaseController, Envelope, HttpServerRole } from "@nmshd/connector-types";
-import { TransportServices } from "@nmshd/runtime";
+import { AnnouncementDTO, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, GET, Path, QueryParam, Security } from "@nmshd/typescript-rest";
 
@@ -12,7 +12,7 @@ export class AnnouncementsController extends BaseController {
 
     @GET
     @Accept("application/json")
-    public async getAnnouncements(@QueryParam("language") language: string): Promise<Envelope> {
+    public async getAnnouncements(@QueryParam("language") language: string): Promise<Envelope<AnnouncementDTO[]>> {
         const result = await this.transportServices.announcements.getAnnouncements({ language: language as any });
         return this.ok(result);
     }
