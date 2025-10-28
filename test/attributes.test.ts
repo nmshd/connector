@@ -110,9 +110,25 @@ describe("Attributes", () => {
             value: "AGivenName"
         });
 
-        const forwardingDetails = (await client1.attributes.getForwardingDetailsForAttribute(forwardedAttribute.id)).result;
+        const forwardingDetails = (await client1.attributes.getForwardingDetailsForAttribute({ attributeId: forwardedAttribute.id })).result;
         expect(forwardingDetails).toHaveLength(1);
         expect(forwardingDetails[0].peer).toStrictEqual(client2Address);
+    });
+
+    test("should get ForwardingDetails using a query", async () => {
+        const forwardedAttribute = await executeFullCreateAndShareOwnIdentityAttributeFlow(client1, client2, {
+            "@type": "GivenName",
+            value: "AGivenName"
+        });
+
+        const forwardingDetailsForPeerWithoutForward = (
+            await client1.attributes.getForwardingDetailsForAttribute({ attributeId: forwardedAttribute.id, query: { peer: "aPeerWithoutForward" } })
+        ).result;
+        expect(forwardingDetailsForPeerWithoutForward).toHaveLength(0);
+
+        const forwardingDetailsForClient2 = (await client1.attributes.getForwardingDetailsForAttribute({ attributeId: forwardedAttribute.id, query: { peer: client2Address } }))
+            .result;
+        expect(forwardingDetailsForClient2).toHaveLength(1);
     });
 
     test("should succeed an OwnIdentityAttribute", async () => {
@@ -487,7 +503,7 @@ describe("Delete attributes", () => {
         const client2DeletedAttribute = await client2.attributes.getAttribute(ownIdentityAttribute.id);
         expect(client2DeletedAttribute.isSuccess).toBe(false);
 
-        const forwardingDetails = await client1.attributes.getForwardingDetailsForAttribute(ownIdentityAttribute.id);
+        const forwardingDetails = await client1.attributes.getForwardingDetailsForAttribute({ attributeId: ownIdentityAttribute.id });
         expect(forwardingDetails.result[0].deletionInfo?.deletionStatus).toBe("DeletedByRecipient");
     });
 

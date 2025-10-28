@@ -7,6 +7,7 @@ export * from "./requests/ExecuteIQLQueryRequest";
 export * from "./requests/ExecuteRelationshipAttributeQueryRequest";
 export * from "./requests/ExecuteThirdPartyRelationshipAttributeQueryRequest";
 export * from "./requests/GetAttributesRequest";
+export * from "./requests/GetForwardingDetailsForAttributeRequest";
 export * from "./requests/GetOwnAttributesSharedWithPeerRequest";
 export * from "./requests/GetOwnIdentityAttributesRequest";
 export * from "./requests/GetPeerAttributesRequest";

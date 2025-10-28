@@ -106,8 +106,8 @@ export class AttributesController extends BaseController {
     @GET
     @Path("/:id/ForwardingDetails")
     @Accept("application/json")
-    public async getForwardingDetailsForAttribute(@PathParam("id") attributeId: string): Promise<Envelope> {
-        const result = await this.consumptionServices.attributes.getForwardingDetailsForAttribute({ attributeId });
+    public async getForwardingDetailsForAttribute(@Context context: ServiceContext, @PathParam("id") attributeId: string): Promise<Envelope> {
+        const result = await this.consumptionServices.attributes.getForwardingDetailsForAttribute({ attributeId, query: context.request.query });
         return this.ok(result);
     }
 

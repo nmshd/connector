@@ -10,6 +10,7 @@ import {
     ExecuteRelationshipAttributeQueryRequest,
     ExecuteThirdPartyRelationshipAttributeQueryRequest,
     GetAttributesRequest,
+    GetForwardingDetailsForAttributeRequest,
     GetOwnAttributesSharedWithPeerRequest,
     GetOwnIdentityAttributesRequest,
     GetPeerAttributesRequest,
@@ -49,8 +50,8 @@ export class AttributesEndpoint extends Endpoint {
         return await this.get(`/api/core/v1/Attributes/${attributeId}`);
     }
 
-    public async getForwardingDetailsForAttribute(attributeId: string): Promise<ConnectorHttpResponse<LocalAttributeForwardingDetailsDTO[]>> {
-        return await this.get(`/api/core/v1/Attributes/${attributeId}/ForwardingDetails`);
+    public async getForwardingDetailsForAttribute(request: GetForwardingDetailsForAttributeRequest): Promise<ConnectorHttpResponse<LocalAttributeForwardingDetailsDTO[]>> {
+        return await this.get(`/api/core/v1/Attributes/${request.attributeId}/ForwardingDetails`, request.query);
     }
 
     public async getAttributeTagCollection(): Promise<ConnectorHttpResponse<AttributeTagCollectionDTO>> {
