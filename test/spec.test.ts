@@ -1,11 +1,11 @@
 /* eslint-disable jest/no-conditional-in-test */
 import swaggerParser from "@apidevtools/swagger-parser";
 import { MetadataGenerator, SpecGenerator, Swagger } from "@nmshd/typescript-rest-swagger";
+import { writeFile } from "node:fs/promises";
 import { OpenAPIV3 } from "openapi-types";
 import yamljs from "yamljs";
 
-// eslint-disable-next-line jest/no-disabled-tests -- typescript-rest-swagger is not compatible with typescript 5.9 and we should not block ourselves with this test
-describe.skip("test openapi spec against routes", () => {
+describe("test openapi spec against routes", () => {
     let manualOpenApiSpec: Swagger.Spec;
     let generatedOpenApiSpec: Swagger.Spec;
 
@@ -28,6 +28,7 @@ describe.skip("test openapi spec against routes", () => {
         };
         const generator = new SpecGenerator(metadata, defaultOptions);
         generatedOpenApiSpec = generator.getOpenApiSpec();
+        await writeFile("test.yml", yamljs.stringify(generatedOpenApiSpec, 999, 2));
         generatedOpenApiSpec = (await swaggerParser.dereference(generatedOpenApiSpec as any)) as Swagger.Spec;
         manualOpenApiSpec = (await swaggerParser.dereference(manualOpenApiSpec as any)) as Swagger.Spec;
         harmonizeSpec(manualOpenApiSpec);
