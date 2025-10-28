@@ -1,5 +1,12 @@
 import { DataEvent } from "@js-soft/ts-utils";
-import { ConnectorHttpResponse, CreateOwnIdentityAttributeRequest, LocalAttributeDTO, SucceedAttributeRequest } from "@nmshd/connector-sdk";
+import {
+    ConnectorHttpResponse,
+    CreateOwnIdentityAttributeRequest,
+    GetOwnAttributesSharedWithPeerRequestQuery,
+    GetPeerAttributesRequestQuery,
+    LocalAttributeDTO,
+    SucceedAttributeRequest
+} from "@nmshd/connector-sdk";
 import { GivenNameJSON, RelationshipAttributeConfidentiality } from "@nmshd/content";
 import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { QueryParamConditions } from "./lib/QueryParamConditions";
@@ -255,6 +262,43 @@ describe("Attributes Query", () => {
             .addStringSet("initialAttributePeer");
 
         await conditions.executeTests((c, q) => c.attributes.getAttributes(q));
+    });
+
+    test("should query own Attributes shared with peer", async () => {
+        const forwardedAttribute = await executeFullCreateAndShareOwnIdentityAttributeFlow(client1, client2, {
+            "@type": "GivenName",
+            value: "AGivenName"
+        });
+
+        const query: GetOwnAttributesSharedWithPeerRequestQuery = {
+            "@type": "OwnIdentityAttribute",
+            createdAt: forwardedAttribute.createdAt,
+            "content.@type": "IdentityAttribute",
+            "content.tags": [],
+            "content.value.@type": "GivenName",
+            deletionInfo: "!"
+        };
+
+        const forwardingDetailsForClient2 = (await client1.attributes.getOwnAttributesSharedWithPeer({ peer: client2Address, query })).result;
+        expect(forwardingDetailsForClient2).toHaveLength(1);
+    });
+
+    test("should peer Attributes", async () => {
+        await executeFullCreateAndShareOwnIdentityAttributeFlow(client2, client1, {
+            "@type": "GivenName",
+            value: "AGivenName"
+        });
+
+        const query: GetPeerAttributesRequestQuery = {
+            "@type": "PeerIdentityAttribute",
+            "content.@type": "IdentityAttribute",
+            "content.tags": [],
+            "content.value.@type": "GivenName",
+            deletionInfo: "!"
+        };
+
+        const forwardingDetailsForClient2 = (await client1.attributes.getPeerAttributes({ peer: client2Address, query })).result;
+        expect(forwardingDetailsForClient2).toHaveLength(1);
     });
 });
 
