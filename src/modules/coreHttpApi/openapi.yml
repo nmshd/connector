@@ -4980,7 +4980,7 @@ components:
           description: The address of the peer that the ThirdPartyRelationshipAttribute was initially shared with.
         numberOfForwards:
           type: number
-          description: The number of ForwardingDetails associated with this Attribute.
+          description: The number of AttributeForwardingDetails associated with this Attribute.
       required:
         - id
         - createdAt
