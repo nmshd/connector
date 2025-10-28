@@ -1,7 +1,6 @@
 /* eslint-disable jest/no-conditional-in-test */
 import swaggerParser from "@apidevtools/swagger-parser";
 import { MetadataGenerator, SpecGenerator, Swagger } from "@nmshd/typescript-rest-swagger";
-import { writeFile } from "node:fs/promises";
 import { OpenAPIV3 } from "openapi-types";
 import yamljs from "yamljs";
 
@@ -28,7 +27,6 @@ describe("test openapi spec against routes", () => {
         };
         const generator = new SpecGenerator(metadata, defaultOptions);
         generatedOpenApiSpec = generator.getOpenApiSpec();
-        await writeFile("test.yml", yamljs.stringify(generatedOpenApiSpec, 999, 2));
         generatedOpenApiSpec = (await swaggerParser.dereference(generatedOpenApiSpec as any)) as Swagger.Spec;
         manualOpenApiSpec = (await swaggerParser.dereference(manualOpenApiSpec as any)) as Swagger.Spec;
         harmonizeSpec(manualOpenApiSpec);
