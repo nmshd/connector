@@ -283,7 +283,7 @@ describe("Attributes Query", () => {
         expect(forwardingDetailsForClient2).toHaveLength(1);
     });
 
-    test("should peer Attributes", async () => {
+    test("should query peer Attributes", async () => {
         await executeFullCreateAndShareOwnIdentityAttributeFlow(client2, client1, {
             "@type": "GivenName",
             value: "AGivenName"
@@ -297,8 +297,8 @@ describe("Attributes Query", () => {
             deletionInfo: "!"
         };
 
-        const forwardingDetailsForClient2 = (await client1.attributes.getPeerAttributes({ peer: client2Address, query })).result;
-        expect(forwardingDetailsForClient2).toHaveLength(1);
+        const peerAttributes = (await client1.attributes.getPeerAttributes({ peer: client2Address, query })).result;
+        expect(peerAttributes).toHaveLength(1);
     });
 });
 

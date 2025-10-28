@@ -4,7 +4,7 @@ export interface GetForwardingDetailsForAttributeRequest {
 }
 
 export interface GetForwardingDetailsForAttributeRequestQuery {
-    peer: string | string[];
+    peer?: string | string[];
     sourceReference?: string | string[];
     sharedAt?: string | string[];
     deletionInfo?: string | string[];
