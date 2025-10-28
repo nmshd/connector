@@ -1,4 +1,4 @@
-export interface GetOwnRepositoryAttributesRequest {
+export interface GetOwnIdentityAttributesRequest {
     onlyLatestVersions?: boolean;
     createdAt?: string;
     "content.tags"?: string | string[];
