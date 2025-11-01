@@ -1,5 +1,5 @@
 import { BaseController, Envelope, HttpServerRole } from "@nmshd/connector-types";
-import { TransportServices } from "@nmshd/runtime";
+import { ChallengeDTO, TransportServices, ValidateChallengeResponse } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Path, POST, Return, Security } from "@nmshd/typescript-rest";
 
@@ -12,7 +12,7 @@ export class ChallengesController extends BaseController {
 
     @POST
     @Accept("application/json")
-    public async createChallenge(request: any): Promise<Return.NewResource<Envelope>> {
+    public async createChallenge(request: any): Promise<Return.NewResource<Envelope<ChallengeDTO>>> {
         const result = await this.transportServices.challenges.createChallenge(request);
         return this.created(result);
     }
@@ -20,7 +20,7 @@ export class ChallengesController extends BaseController {
     @POST
     @Path("/Validate")
     @Accept("application/json")
-    public async validateChallenge(request: any): Promise<Envelope> {
+    public async validateChallenge(request: any): Promise<Envelope<ValidateChallengeResponse>> {
         const result = await this.transportServices.challenges.validateChallenge(request);
         return this.ok(result);
     }

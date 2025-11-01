@@ -1,5 +1,5 @@
 import { BaseController, Envelope, HttpServerRole } from "@nmshd/connector-types";
-import { TransportServices } from "@nmshd/runtime";
+import { IdentityDeletionProcessDTO, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, DELETE, GET, Path, POST, QueryParam, Security } from "@nmshd/typescript-rest";
 
@@ -12,21 +12,21 @@ export class IdentityDeletionProcessController extends BaseController {
 
     @POST
     @Accept("application/json")
-    public async initiateIdentityDeletionProcess(@QueryParam("lengthOfGracePeriodInDays") lengthOfGracePeriodInDays?: number): Promise<Envelope> {
+    public async initiateIdentityDeletionProcess(@QueryParam("lengthOfGracePeriodInDays") lengthOfGracePeriodInDays?: number): Promise<Envelope<IdentityDeletionProcessDTO>> {
         const result = await this.transportServices.identityDeletionProcesses.initiateIdentityDeletionProcess({ lengthOfGracePeriodInDays });
         return this.ok(result);
     }
 
     @GET
     @Accept("application/json")
-    public async getActiveIdentityDeletionProcess(): Promise<Envelope> {
+    public async getActiveIdentityDeletionProcess(): Promise<Envelope<IdentityDeletionProcessDTO>> {
         const result = await this.transportServices.identityDeletionProcesses.getActiveIdentityDeletionProcess();
         return this.ok(result);
     }
 
     @DELETE
     @Accept("application/json")
-    public async cancelIdentityDeletionProcess(): Promise<Envelope> {
+    public async cancelIdentityDeletionProcess(): Promise<Envelope<IdentityDeletionProcessDTO>> {
         const result = await this.transportServices.identityDeletionProcesses.cancelIdentityDeletionProcess();
         return this.ok(result);
     }
