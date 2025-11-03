@@ -11,7 +11,7 @@
         "url": "https://github.com/nmshd/connector.git",
         "directory": "/packages/types"
     },
-    "license": "MIT",
+    "license": "AGPL-3.0-or-later",
     "author": "j&s-soft AG",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -22,27 +22,7 @@
     "scripts": {
         "build": "tsc",
         "build:ci": "tsc",
-        "build:watch": "tsc --watch",
-        "test": "jest -i",
-        "test:ci": "npm run test",
-        "test:local": "npm run test"
-    },
-    "jest": {
-        "maxWorkers": 2,
-        "preset": "ts-jest",
-        "testEnvironment": "node",
-        "testPathIgnorePatterns": [
-            "/node_modules/"
-        ],
-        "testTimeout": 60000,
-        "transform": {
-            "^.+\\.ts$": [
-                "ts-jest",
-                {
-                    "tsconfig": "test/tsconfig.json"
-                }
-            ]
-        }
+        "build:watch": "tsc --watch"
     },
     "dependencies": {
         "qrcode": "^1.5.4"
@@ -58,8 +38,8 @@
     "peerDependencies": {
         "@js-soft/docdb-access-abstractions": "^1.2.1",
         "@js-soft/ts-utils": "^2.3.5",
-        "@nmshd/runtime": "^6.63.7",
-        "@nmshd/typescript-rest": "3.1.6",
+        "@nmshd/runtime": "7.0.0",
+        "@nmshd/typescript-rest": "^3.2.1",
         "express": "^5.1.0"
     },
     "publishConfig": {

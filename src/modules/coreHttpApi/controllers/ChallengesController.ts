@@ -1,10 +1,10 @@
-import { BaseController, Envelope, HttpServerRole } from "@nmshd/connector-types";
+import { BaseController, Envelope } from "@nmshd/connector-types";
 import { ChallengeDTO, TransportServices, ValidateChallengeResponse } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Path, POST, Return, Security } from "@nmshd/typescript-rest";
 
-@Security([HttpServerRole.ADMIN, "core:*", "core:challenges"])
-@Path("/api/v2/Challenges")
+@Security("core:challenges")
+@Path("/api/core/v1/Challenges")
 export class ChallengesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();

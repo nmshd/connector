@@ -39,12 +39,12 @@ beforeAll(async () => {
                 "@type": "GivenName",
                 value: "ASecondGivenName"
             },
-            tags: ["language:de", "content:edu.de.higher"]
+            tags: ["language:de", "x:content.edu.de.higher"]
         }
     ];
     attributeIds = [];
     for (const attribute of attributes) {
-        const attributeId = (await client1.attributes.createRepositoryAttribute({ content: { value: attribute.value, tags: attribute.tags } })).result.id;
+        const attributeId = (await client1.attributes.createOwnIdentityAttribute({ content: { value: attribute.value, tags: attribute.tags } })).result.id;
         attributeIds.push(attributeId);
     }
 
@@ -69,9 +69,9 @@ afterAll(() => launcher.stop());
 
 test("Local IQL Query", async () => {
     const table = [
-        { iqlQuery: "#content:edu.de.higher", matches: [1] },
-        { iqlQuery: "#content:edu.de.higher || #language:en", matches: [0, 1] },
-        { iqlQuery: "#content:edu.de.higher && ( #language:de || #language:en )", matches: [1] }
+        { iqlQuery: "#x:content.edu.de.higher", matches: [1] },
+        { iqlQuery: "#x:content.edu.de.higher || #language:en", matches: [0, 1] },
+        { iqlQuery: "#x:content.edu.de.higher && ( #language:de || #language:en )", matches: [1] }
     ];
 
     for (const e of table) {
@@ -86,8 +86,8 @@ test("Local IQL Query", async () => {
 
 test("Remote ReadAttributeRequest containing IQL Query", async () => {
     const table = [
-        { iqlQuery: "#content:edu.de.higher", matches: 1 },
-        { iqlQuery: "#content:edu.de.higher && ( #language:de || #language:en )", matches: 1 }
+        { iqlQuery: "#x:content.edu.de.higher", matches: 1 },
+        { iqlQuery: "#x:content.edu.de.higher && ( #language:de || #language:en )", matches: 1 }
     ];
 
     /* Create request on C2. */
@@ -136,8 +136,8 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
 
 test("Remote ProposeAttributeRequest containing IQL Query with existing attribute response", async () => {
     const table = [
-        { iqlQuery: "#content:edu.de.higher", matches: 1 },
-        { iqlQuery: "#content:edu.de.higher && ( #language:de || #language:en )", matches: 1 }
+        { iqlQuery: "#x:content.edu.de.higher", matches: 1 },
+        { iqlQuery: "#x:content.edu.de.higher && ( #language:de || #language:en )", matches: 1 }
     ];
 
     /* Create request on C2. */
@@ -233,7 +233,7 @@ test("Remote ProposeAttributeRequest containing IQL Query without existing attri
 
     incomingRequestItem.attribute.owner = client1Address;
     const requestItemAttribute = incomingRequestItem.attribute as IdentityAttributeJSON;
-    const attributeId = (await client1.attributes.createRepositoryAttribute({ content: { value: requestItemAttribute.value } })).result.id;
+    const attributeId = (await client1.attributes.createOwnIdentityAttribute({ content: { value: requestItemAttribute.value } })).result.id;
 
     /* Reply to the response with the first matched attribute. Wait on C2 for
      * the message to arrive. */

@@ -5,6 +5,6 @@ import { Endpoint } from "./Endpoint";
 
 export class AnnouncementsEndpoint extends Endpoint {
     public async getAnnouncements(request: GetAnnouncementsRequest): Promise<ConnectorHttpResponse<AnnouncementDTO[]>> {
-        return await this.get("/api/v2/Announcements", request);
+        return await this.get("/api/core/v1/Announcements", request);
     }
 }

@@ -1,21 +1,27 @@
-import { sleep } from "@js-soft/ts-utils";
-import { ConnectorInfrastructure, Envelope, HttpErrors, HttpMethod, HttpServerRole, IHttpServer, InfrastructureConfiguration, routeRequiresRoles } from "@nmshd/connector-types";
+import { ConnectorInfrastructure, HttpMethod, IHttpServer, InfrastructureConfiguration } from "@nmshd/connector-types";
 import { Container } from "@nmshd/typescript-ioc";
-import { Server } from "@nmshd/typescript-rest";
+import { Server, ServiceAuthenticator, routeRequiresAuthorization } from "@nmshd/typescript-rest";
 import compression from "compression";
 import correlator from "correlation-id";
 import cors, { CorsOptions } from "cors";
-import express, { Application, RequestHandler, Router } from "express";
+import express, { Application, RequestHandler } from "express";
 import { AuthOptions as BearerAuthOptions, auth as bearerAuth } from "express-oauth2-jwt-bearer";
 import { ConfigParams as OauthParams, auth as openidAuth } from "express-openid-connect";
 import helmet, { HelmetOptions } from "helmet";
 import http from "http";
 import { RequestTracker } from "./RequestTracker";
-import { csrfErrorHandler } from "./middlewares/csrfErrorHandler";
-import { RouteNotFoundError, genericErrorHandler } from "./middlewares/genericErrorHandler";
-import { requestLogger } from "./middlewares/requestLogger";
-import { setDurationHeader } from "./middlewares/setResponseDurationHeader";
-import { setResponseTimeHeader } from "./middlewares/setResponseTimeHeader";
+import {
+    ApiKeyAuthenticationConfig,
+    RouteNotFoundError,
+    apiKeyAuth,
+    csrfErrorHandler,
+    enforceAuthentication,
+    genericErrorHandler,
+    isApiKeyAuthenticationEnabled,
+    requestLogger,
+    setDurationHeader,
+    setResponseTimeHeader
+} from "./middlewares";
 
 export interface CustomEndpoint {
     httpMethod: HttpMethod;
@@ -36,12 +42,14 @@ export interface ControllerConfig {
 }
 
 export interface HttpServerConfiguration extends InfrastructureConfiguration {
-    oidc?: OauthParams;
-    jwtBearer?: BearerAuthOptions;
     port?: number;
-    apiKey: string;
     cors?: CorsOptions;
     helmetOptions?: HelmetOptions;
+    authentication: {
+        apiKey: ApiKeyAuthenticationConfig;
+        oidc: { enabled?: boolean; rolesPath?: string } & OauthParams;
+        jwtBearer: { enabled?: boolean } & BearerAuthOptions;
+    };
 }
 
 export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration> implements IHttpServer {
@@ -92,11 +100,10 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.useUnsecuredCustomEndpoints();
 
         this.useHealthEndpoint();
-        this.initAuthentication();
         this.useAuthentication();
 
         this.useVersionEndpoint();
-        this.useResponsesEndpoint();
+        this.useRequestsEndpoint();
         this.useSupportEndpoint();
 
         this.useCustomControllers();
@@ -135,6 +142,10 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
                     }
                 };
         }
+    }
+
+    get #authenticator(): ServiceAuthenticator {
+        return { getRoles: (req) => req.userRoles ?? [] };
     }
 
     private useUnsecuredCustomEndpoints() {
@@ -190,99 +201,59 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
         this.app.use(genericErrorHandler(this.connectorMode, this.logger));
     }
 
-    private initAuthentication() {
-        if (!this.configuration.apiKey && !this.configuration.oidc && !this.configuration.jwtBearer) {
+    private useAuthentication() {
+        const apiKeyAuthenticationEnabled = isApiKeyAuthenticationEnabled(this.configuration.authentication.apiKey);
+        const oidcAuthenticationEnabled = this.configuration.authentication.oidc.enabled ?? Object.keys(this.configuration.authentication.oidc).length !== 0;
+        const jwtBearerAuthenticationEnabled = this.configuration.authentication.jwtBearer.enabled ?? Object.keys(this.configuration.authentication.jwtBearer).length !== 0;
+        if (!apiKeyAuthenticationEnabled && !oidcAuthenticationEnabled && !jwtBearerAuthenticationEnabled) {
             switch (this.connectorMode) {
                 case "debug":
+                    this.app.use((req: express.Request, _: express.Response, next: express.NextFunction) => {
+                        req.userRoles = ["**"];
+
+                        next();
+                    });
                     return;
                 case "production":
                     throw new Error(`No API key and OAuth config set in configuration. At least one is required in production mode.`);
             }
         }
 
-        this.initApiKey();
-        this.initOIDC();
-        this.initJWTBearer();
-    }
+        if (apiKeyAuthenticationEnabled) {
+            this.app.use(apiKeyAuth(this.configuration.authentication.apiKey));
+        }
 
-    private initOIDC() {
-        if (!this.configuration.oidc) return;
+        if (oidcAuthenticationEnabled) {
+            const config = { ...this.configuration.authentication.oidc, authRequired: false };
+            // remove the enabled and rolesPath properties as they are not supported by the express-openid-connect library
+            delete config.enabled;
+            delete config.rolesPath;
 
-        this.app.use(openidAuth({ ...this.configuration.oidc, authRequired: false }));
-    }
+            this.app.use(openidAuth(config));
+        }
 
-    private initJWTBearer() {
-        if (!this.configuration.jwtBearer) return;
+        if (jwtBearerAuthenticationEnabled) {
+            const config = { ...this.configuration.authentication.jwtBearer, authRequired: false };
+            // remove the enabled property as it is not supported by the express-oauth2-jwt-bearer library
+            delete config.enabled;
+
+            this.app.use(bearerAuth(config));
+        }
 
         this.app.use(
-            bearerAuth({
-                ...this.configuration.jwtBearer,
-                authRequired: false
-            })
+            enforceAuthentication(
+                {
+                    apiKey: {
+                        enabled: apiKeyAuthenticationEnabled,
+                        headerName: this.configuration.authentication.apiKey.headerName.toLocaleLowerCase()
+                    },
+                    jwtBearer: { enabled: jwtBearerAuthenticationEnabled },
+                    oidc: { enabled: oidcAuthenticationEnabled, rolesPath: this.configuration.authentication.oidc.rolesPath },
+                    connectorMode: this.connectorMode
+                },
+                this.logger
+            )
         );
-    }
-
-    private initApiKey() {
-        if (!this.configuration.apiKey) return;
-
-        const apiKeyPolicy = /^(?=.*[A-Z].*[A-Z])(?=.*[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z]).{30,}$/;
-        if (!this.configuration.apiKey.match(apiKeyPolicy)) {
-            this.logger.warn(
-                "The configured API key does not meet the requirements. It must be at least 30 characters long and contain at least 2 digits, 2 uppercase letters, 2 lowercase letters and 1 special character (!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~])."
-            );
-            this.logger.warn("The API key will be used as is, but it is recommended to change it as it will not be supported in future versions.");
-        }
-    }
-
-    private useAuthentication() {
-        if (!this.configuration.apiKey && !this.configuration.oidc && !this.configuration.jwtBearer) return;
-
-        const unauthorized = async (_: express.Request, res: express.Response) => {
-            await sleep(1000 * (Math.floor(Math.random() * 4) + 1));
-            res.status(401).send(Envelope.error(HttpErrors.unauthorized(), this.connectorMode));
-        };
-
-        this.app.use(async (req, res, next) => {
-            const apiKeyFromHeader = req.headers["x-api-key"];
-            if (this.configuration.apiKey && apiKeyFromHeader) {
-                if (apiKeyFromHeader !== this.configuration.apiKey) return await unauthorized(req, res);
-
-                const apiKeyRoles = this.connectorMode === "debug" ? [HttpServerRole.ADMIN, HttpServerRole.DEVELOPER] : [HttpServerRole.ADMIN];
-                req.userRoles = apiKeyRoles;
-
-                next();
-                return;
-            }
-
-            if (this.configuration.jwtBearer && req.headers["authorization"]) {
-                if (!req.auth) return await unauthorized(req, res);
-
-                const scope = req.auth.payload.scope;
-
-                if (typeof scope === "string") {
-                    req.userRoles = scope.split(" ");
-                } else {
-                    this.logger.warn("JWT Bearer token does not contain a scope, using empty array as default.");
-                    req.userRoles = [];
-                }
-
-                next();
-                return;
-            }
-
-            if (this.configuration.oidc) {
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- we need to check if req.oidc is defined as there could be cases where the auth middleware is not applied
-                if (!req.oidc) return next(new Error("req.oidc is not found, did you include the auth middleware?"));
-                if (!req.oidc.isAuthenticated()) return await res.oidc.login();
-
-                req.userRoles = [];
-
-                next();
-                return;
-            }
-
-            await unauthorized(req, res);
-        });
     }
 
     private useHealthEndpoint() {
@@ -294,20 +265,20 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
     }
 
     private useVersionEndpoint() {
-        this.app.get("/Monitoring/Version", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Version", routeRequiresAuthorization(this.#authenticator, "monitoring:version"), (_: express.Request, res: express.Response) => {
             const buildInformation = this.runtime.getBuildInformation();
             res.status(200).json(buildInformation);
         });
     }
 
-    private useResponsesEndpoint() {
-        this.app.get("/Monitoring/Requests", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), (_: express.Request, res: express.Response) => {
+    private useRequestsEndpoint() {
+        this.app.get("/Monitoring/Requests", routeRequiresAuthorization(this.#authenticator, "monitoring:requests"), (_: express.Request, res: express.Response) => {
             res.status(200).json(this.requestTracker.getCount());
         });
     }
 
     private useSupportEndpoint() {
-        this.app.get("/Monitoring/Support", routeRequiresRoles(HttpServerRole.ADMIN, HttpServerRole.MONITORING), async (_: express.Request, res: express.Response) => {
+        this.app.get("/Monitoring/Support", routeRequiresAuthorization(this.#authenticator, "monitoring:support"), async (_: express.Request, res: express.Response) => {
             const supportInformation = await this.runtime.getSupportInformation();
             res.status(200).json(supportInformation);
         });
@@ -336,15 +307,7 @@ export class HttpServer extends ConnectorInfrastructure<HttpServerConfiguration>
             }
         });
 
-        Server.registerAuthenticator({
-            getMiddleware: () => (_req, _res, next) => next(),
-
-            initialize: (_app: Router) => {
-                // no initialization needed
-            },
-
-            getRoles: (req) => req.userRoles ?? []
-        });
+        Server.registerAuthenticator(this.#authenticator);
 
         for (const controller of this.controllers) {
             Server.loadControllers(this.app, controller.globs, controller.baseDirectory);

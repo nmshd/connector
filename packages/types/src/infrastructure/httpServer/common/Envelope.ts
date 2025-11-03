@@ -1,7 +1,7 @@
 import { ConnectorMode } from "../../../ConnectorMode";
 import { HttpError, HttpErrorJSON } from "./HttpError";
 
-export class Envelope<T = any> {
+export class Envelope<T> {
     protected constructor(
         public result?: T,
         public error?: HttpErrorJSON

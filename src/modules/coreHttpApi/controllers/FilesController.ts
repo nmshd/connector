@@ -1,4 +1,4 @@
-import { BaseController, Envelope, HttpServerRole, Mimetype, QRCode } from "@nmshd/connector-types";
+import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
 import { Reference } from "@nmshd/core-types";
 import { FileDTO, OwnerRestriction, TokenDTO, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
@@ -15,15 +15,14 @@ import {
     Path,
     PathParam,
     POST,
-    QueryParam,
     Return,
     Security,
     ServiceContext
 } from "@nmshd/typescript-rest";
 import express from "express";
 
-@Security([HttpServerRole.ADMIN, "core:*", "core:files"])
-@Path("/api/v2/Files")
+@Security("core:files")
+@Path("/api/core/v1/Files")
 export class FilesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();
@@ -34,7 +33,7 @@ export class FilesController extends BaseController {
     @Accept("application/json")
     public async uploadOwnFile(
         @FormParam("expiresAt") expiresAt: string,
-        @FormParam("title") title: string,
+        @FormParam("title") title?: string,
         @FileParam("file") file?: Express.Multer.File,
         @FormParam("description") description?: string,
         @FormParam("tags") tags?: string[]
@@ -103,8 +102,7 @@ export class FilesController extends BaseController {
     public async getFile(
         @PathParam("idOrReference") idOrReference: string,
         @ContextAccept accept: string,
-        @ContextResponse response: express.Response,
-        @QueryParam("newQRCodeFormat") newQRCodeFormat?: boolean
+        @ContextResponse response: express.Response
     ): Promise<Envelope<FileDTO> | void> {
         const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.from(idOrReference).id.toString();
 
@@ -112,7 +110,7 @@ export class FilesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(newQRCodeFormat ? r.value.reference.url : r.value.reference.truncated), `${fileId}.png`, response, 200);
+                return await this.qrCode(result, `${fileId}.png`, response, 200);
             default:
                 return this.ok(result);
         }
@@ -126,10 +124,7 @@ export class FilesController extends BaseController {
         @ContextAccept accept: string,
         @ContextResponse response: express.Response,
         request: any
-    ): Promise<void | Return.NewResource<Envelope<TokenDTO>>> {
-        const newQRCodeFormat = request["newQRCodeFormat"] === true;
-        delete request["newQRCodeFormat"];
-
+    ): Promise<Return.NewResource<Envelope<TokenDTO>> | void> {
         const result = await this.transportServices.files.createTokenForFile({
             fileId: id,
             expiresAt: request.expiresAt,
@@ -140,7 +135,7 @@ export class FilesController extends BaseController {
 
         switch (accept) {
             case "image/png":
-                return await this.qrCode(result, (r) => QRCode.for(newQRCodeFormat ? r.value.reference.url : r.value.reference.truncated), `${id}.png`, response, 201);
+                return await this.qrCode(result, `${id}.png`, response, 201);
             default:
                 return this.created(result);
         }

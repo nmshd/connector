@@ -1,11 +1,11 @@
-import { BaseController, Envelope, HttpServerRole, Mimetype } from "@nmshd/connector-types";
+import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
 import { FileDTO, MessageDTO, MessageWithAttachmentsDTO, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, ContextResponse, GET, Path, PathParam, POST, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
 
-@Security([HttpServerRole.ADMIN, "core:*", "core:messages"])
-@Path("/api/v2/Messages")
+@Security("core:messages")
+@Path("/api/core/v1/Messages")
 export class MessagesController extends BaseController {
     public constructor(@Inject private readonly transportServices: TransportServices) {
         super();
