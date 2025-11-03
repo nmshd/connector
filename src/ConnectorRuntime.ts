@@ -177,7 +177,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
             throw e;
         });
 
-        const consumptionController = await new ConsumptionController(this.transport, this.accountController, { setDefaultRepositoryAttributes: false }).init();
+        const consumptionController = await new ConsumptionController(this.transport, this.accountController, { setDefaultOwnIdentityAttributes: false }).init();
 
         await this.checkDeviceCredentials(this.accountController);
 

@@ -15,7 +15,7 @@ info:
     View this documenation in [rapidoc](/docs/rapidoc) or [swagger](/docs/swagger).
 
   license:
-    name: MIT
+    name: AGPL-3.0-or-later
     url: https://raw.githubusercontent.com/nmshd/connector/main/LICENSE
   contact:
     name: j&s-soft AG
@@ -300,8 +300,8 @@ paths:
 
   /api/core/v1/Attributes/CanCreate:
     put:
-      operationId: canCreateRepositoryAttribute
-      description: "Checks if a Repository Attribute can be created with the given parameters."
+      operationId: canCreateOwnIdentityAttribute
+      description: "Checks if an OwnIdentityAttribute can be created with the given parameters."
       tags:
         - Attributes
       requestBody:
@@ -330,7 +330,7 @@ paths:
                 properties:
                   result:
                     nullable: false
-                    $ref: "#/components/schemas/CanCreateRepositoryAttributeResponse"
+                    $ref: "#/components/schemas/CanCreateOwnIdentityAttributeResponse"
                 required:
                   - result
           headers:
@@ -347,8 +347,8 @@ paths:
 
   /api/core/v1/Attributes:
     post:
-      operationId: createRepositoryAttribute
-      description: "Creates a Repository Attribute."
+      operationId: createOwnIdentityAttribute
+      description: "Creates an OwnIdentityAttribute."
       tags:
         - Attributes
       requestBody:
@@ -378,7 +378,7 @@ paths:
                   - result
                 properties:
                   result:
-                    $ref: "#/components/schemas/CreateRepositoryAttributeResponse"
+                    $ref: "#/components/schemas/Attribute"
 
           headers:
             X-Response-Duration-ms:
@@ -398,6 +398,11 @@ paths:
       tags:
         - Attributes
       parameters:
+        - name: "@type"
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
         - name: createdAt
           in: query
           required: false
@@ -448,17 +453,27 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.requestReference
+        - name: sourceReference
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.peer
+        - name: peer
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.sourceAttribute
+        - name: initialAttributePeer
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: deletionInfo.deletionStatus
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
+        - name: deletionInfo.deletionDate
           in: query
           required: false
           schema:
@@ -489,9 +504,9 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/core/v1/Attributes/Own/Repository:
+  /api/core/v1/Attributes/Own/Identity:
     get:
-      operationId: getOwnRepositoryAttributes
+      operationId: getOwnIdentityAttributes
       tags:
         - Attributes
       parameters:
@@ -520,7 +535,7 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: deletionInfo.deletionDate"
+        - name: deletionInfo.deletionDate
           in: query
           required: false
           schema:
@@ -557,12 +572,23 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/core/v1/Attributes/Own/Shared/Identity:
+  /api/core/v1/Attributes/Own/Shared/{peer}:
     get:
-      operationId: getOwnSharedIdentityAttributes
+      operationId: getOwnAttributesSharedWithPeer
       tags:
         - Attributes
       parameters:
+        - name: peer
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+          description: The address of the peer.
+        - name: "@type"
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
         - name: createdAt
           in: query
           required: false
@@ -598,31 +624,26 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo
+        - name: sourceReference
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.requestReference
+        - name: deletionInfo
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.notificationReference
+        - name: deletionInfo.deletionStatus
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.sourceAttribute
+        - name: deletionInfo.deletionDate
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: peer
-          in: query
-          required: true
-          schema:
-            $ref: "#/components/schemas/Address"
         - name: hideTechnical
           in: query
           required: false
@@ -662,13 +683,24 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/core/v1/Attributes/Peer/Shared/Identity:
+  /api/core/v1/Attributes/Peer/{peer}:
     get:
-      operationId: getPeerSharedIdentityAttributes
+      operationId: getPeerAttributes
       tags:
         - Attributes
 
       parameters:
+        - name: peer
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/Address"
+          description: The address of the peer.
+        - name: "@type"
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
         - name: createdAt
           in: query
           required: false
@@ -704,26 +736,31 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo
+        - name: sourceReference
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.requestReference
+        - name: initialAttributePeer
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: shareInfo.notificationReference
+        - name: deletionInfo
           in: query
           required: false
           schema:
             $ref: "#/components/schemas/TextFilter"
-        - name: peer
+        - name: deletionInfo.deletionStatus
           in: query
-          required: true
+          required: false
           schema:
-            $ref: "#/components/schemas/Address"
+            $ref: "#/components/schemas/TextFilter"
+        - name: deletionInfo.deletionDate
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TextFilter"
         - name: hideTechnical
           in: query
           required: false
@@ -801,9 +838,47 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
+  /api/core/v1/Attributes/{id}/ForwardingDetails:
+    get:
+      operationId: getForwardingDetailsOfAttribute
+      tags:
+        - Attributes
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Attribute.
+          required: true
+          schema:
+            $ref: "#/components/schemas/AttributeID"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AttributeForwardingDetails"
+                required:
+                  - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+
   /api/core/v1/Attributes/{id}/Versions/Shared:
     get:
-      operationId: getSharedVersionsOfAttribute
+      operationId: getVersionsOfAttributeSharedWithPeer
       tags:
         - Attributes
       parameters:
@@ -814,13 +889,11 @@ paths:
           schema:
             $ref: "#/components/schemas/AttributeID"
         - in: query
-          name: peers
-          description: An array of peers
-          required: false
+          name: peer
+          description: The address of the peer.
+          required: true
           schema:
-            type: array
-            items:
-              $ref: "#/components/schemas/Address"
+            $ref: "#/components/schemas/Address"
         - in: query
           name: onlyLatestVersions
           description: Whether to only get the latest version of the attribute for each peer
@@ -857,7 +930,7 @@ paths:
   /api/core/v1/Attributes/{predecessorId}/Succeed:
     post:
       operationId: succeedAttribute
-      description: Succeeds either a relationship attribute or a repository attribute.
+      description: Succeeds either an OwnIdentityAttribute or an OwnRelationshipAttribute.
       tags:
         - Attributes
       parameters:
@@ -887,8 +960,8 @@ paths:
       responses:
         201:
           description: |
-            Success. Succeeding a relationship/repository attribute returns the predecessor and successor.
-            Additionally, for relationship attributes the ID of the notification sent to the peer is returned.
+            Success. Succeeding an OwnIdentityAttribute/OwnRelationshipAttribute returns the predecessor and successor.
+            Additionally, for OwnRelationshipAttributes the ID of the notification sent to the peer is returned.
           content:
             application/json:
               schema:
@@ -927,10 +1000,9 @@ paths:
 
   /api/core/v1/Attributes/{attributeId}/NotifyPeer:
     post:
-      operationId: notifyPeerAboutRepositoryAttributeSuccession
+      operationId: notifyPeerAboutOwnIdentityAttributeSuccession
       description: |
-        Notifies a peer about a succeeded and previously shared repository
-        attribute.
+        Notifies a peer about a succeeded and previously shared OwnIdentityAttribute.
       tags:
         - Attributes
       parameters:
@@ -939,7 +1011,7 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/AttributeID"
-          description: ID of the succeeded repository attribute
+          description: ID of the succeeded OwnIdentityAttribute
       requestBody:
         content:
           application/json:
@@ -952,8 +1024,8 @@ paths:
       responses:
         201:
           description: |
-            "Success. Returns the successor and predecessor own shared identity
-            attributes as well as the ID of the notification sent to the peer."
+            "Success. Returns the successor and predecessor OwnIdentityAttributes
+            as well as the ID of the notification sent to the peer."
           content:
             application/json:
               schema:
@@ -1030,167 +1102,20 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
     delete:
-      operationId: deleteRepositoryAttribute
-      description: Delete a repository attribute.
+      operationId: deleteAttributeAndNotify
+      description: Delete an Attribute and notify peers.
       tags:
         - Attributes
       parameters:
         - in: path
           name: id
-          description: The ID of the repository attribute to delete.
+          description: The ID of the Attribute to delete.
           required: true
           schema:
             $ref: "#/components/schemas/AttributeID"
       responses:
         204:
-          description: Success. Deleting a repository attribute.
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
-  /api/core/v1/Attributes/Own/Shared/{id}:
-    delete:
-      operationId: deleteOwnSharedAttributeAndNotifyPeer
-      description: Delete an own shared attribute and notify the peer.
-      tags:
-        - Attributes
-      parameters:
-        - in: path
-          name: id
-          description: The ID of the own shared attribute to delete.
-          required: true
-          schema:
-            $ref: "#/components/schemas/AttributeID"
-      responses:
-        200:
-          description: |
-            Success. Deleting an own shared attribute and notifying the peer returns the notificationId of the send notification.
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: false
-                required:
-                  - result
-                properties:
-                  result:
-                    nullable: false
-                    type: object
-                    additionalProperties: false
-                    required:
-                      - id
-                    properties:
-                      id:
-                        $ref: "#/components/schemas/NotificationID"
-
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
-  /api/core/v1/Attributes/Peer/Shared/{id}:
-    delete:
-      operationId: deletePeerSharedAttributeAndNotifyOwner
-      description: Delete an peer shared attribute and notify the owner.
-      tags:
-        - Attributes
-      parameters:
-        - in: path
-          name: id
-          description: The ID of the peer shared attribute to delete.
-          required: true
-          schema:
-            $ref: "#/components/schemas/AttributeID"
-      responses:
-        200:
-          description: |
-            Success. Deleting an peer shared attribute and notifying the owner returns the notificationId of the send notification.
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: false
-                required:
-                  - result
-                properties:
-                  result:
-                    nullable: false
-                    type: object
-                    additionalProperties: false
-                    required:
-                      - id
-                    properties:
-                      id:
-                        $ref: "#/components/schemas/NotificationID"
-
-          headers:
-            X-Response-Duration-ms:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
-            X-Response-Time:
-              schema:
-                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        403:
-          $ref: "#/components/responses/Forbidden"
-        404:
-          $ref: "#/components/responses/NotFound"
-
-  /api/core/v1/Attributes/ThirdParty/{id}:
-    delete:
-      operationId: deleteThirdPartyRelationshipAttributeAndNotifyPeer
-      description: Delete a ThirdPartyRelationshipAttribute and notify the peer.
-      tags:
-        - Attributes
-      parameters:
-        - in: path
-          name: id
-          description: The ID of the ThirdPartyRelationshipAttribute to delete.
-          required: true
-          schema:
-            $ref: "#/components/schemas/AttributeID"
-      responses:
-        200:
-          description: |
-            Success. Deleting a ThirdPartyRelationshipAttribute and notifying the peer returns the NotificationId of the sent Notification.
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: false
-                required:
-                  - result
-                properties:
-                  result:
-                    nullable: false
-                    type: object
-                    additionalProperties: false
-                    required:
-                      - id
-                    properties:
-                      id:
-                        $ref: "#/components/schemas/NotificationID"
-
+          description: Success. Deleting an Attribute.
           headers:
             X-Response-Duration-ms:
               schema:
@@ -5055,8 +4980,6 @@ components:
           type: string
           format: date-time
           description: The date and time when the attribute was created.
-        shareInfo:
-          "$ref": "#/components/schemas/AttributeShareInfo"
         deletionInfo:
           "$ref": "#/components/schemas/AttributeDeletionInfo"
         succeededBy:
@@ -5075,12 +4998,31 @@ components:
             - "$ref": "#/components/schemas/RelationshipAttribute"
         isDefault:
           type: boolean
+        peer:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          description: The address of the peer that received the attribute.
+        sourceReference:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/RequestID"
+            - $ref: "#/components/schemas/NotificationID"
+          description: The ID of the Request or Notification that was used to share the attribute.
+        initialAttributePeer:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/Address"
+          description: The address of the peer that the ThirdPartyRelationshipAttribute was initially shared with.
+        numberOfForwards:
+          type: number
+          description: The number of AttributeForwardingDetails associated with this Attribute.
       required:
         - id
         - createdAt
         - content
 
-    AttributeShareInfo:
+    AttributeForwardingDetails:
       type: object
       additionalProperties: false
       properties:
@@ -5088,20 +5030,23 @@ components:
           type: string
           allOf:
             - $ref: "#/components/schemas/Address"
-          description: The address of the peer that received the attribute.
-        requestReference:
+          description: The address of the peer the attribute was forwarded to.
+        sourceReference:
           type: string
           allOf:
             - $ref: "#/components/schemas/RequestID"
-          description: The ID of the request that was used to share the attribute.
-        sourceAttribute:
+            - $ref: "#/components/schemas/NotificationID"
+          description: The ID of the Request or Notification that was used to forward the attribute.
+        sharedAt:
           type: string
-          allOf:
-            - $ref: "#/components/schemas/AttributeID"
-          description: The ID of the attribute that was copied for sharing.
+          format: date-time
+          description: The date and time when the attribute was forwarded.
+        deletionInfo:
+          "$ref": "#/components/schemas/AttributeDeletionInfo"
       required:
-        - requestReference
         - peer
+        - sourceReference
+        - sharedAt
 
     AttributeDeletionInfo:
       type: object
@@ -5168,7 +5113,7 @@ components:
       required:
         - displayNames
 
-    CanCreateRepositoryAttributeResponse:
+    CanCreateOwnIdentityAttributeResponse:
       type: object
       properties:
         isSuccess:
@@ -5738,44 +5683,6 @@ components:
       required:
         - content
         - peer
-
-    CreateRepositoryAttributeResponse:
-      type: object
-      additionalProperties: false
-      properties:
-        id:
-          allOf:
-            - $ref: "#/components/schemas/AttributeID"
-          nullable: false
-          description: The ID of the attribute.
-        parentId:
-          "$ref": "#/components/schemas/AttributeID"
-        createdAt:
-          type: string
-          format: date-time
-          description: The date and time when the attribute was created.
-        shareInfo:
-          "$ref": "#/components/schemas/AttributeShareInfo"
-        succeededBy:
-          type: string
-          allOf:
-            - $ref: "#/components/schemas/AttributeID"
-          description: The ID of the attribute that was used to succeed this attribute.
-        succeeds:
-          type: string
-          allOf:
-            - $ref: "#/components/schemas/AttributeID"
-          description: The ID of the attribute that this attribute succeeds.
-        content:
-          anyOf:
-            - "$ref": "#/components/schemas/IdentityAttribute"
-        isDefault:
-          type: boolean
-          enum: [true]
-      required:
-        - id
-        - createdAt
-        - content
 
     RequestValidationResult:
       type: object

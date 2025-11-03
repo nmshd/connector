@@ -4,8 +4,7 @@ import { MetadataGenerator, SpecGenerator, Swagger } from "@nmshd/typescript-res
 import { OpenAPIV3 } from "openapi-types";
 import yamljs from "yamljs";
 
-// eslint-disable-next-line jest/no-disabled-tests -- typescript-rest-swagger is not compatible with typescript 5.9 and we should not block ourselves with this test
-describe.skip("test openapi spec against routes", () => {
+describe("test openapi spec against routes", () => {
     let manualOpenApiSpec: Swagger.Spec;
     let generatedOpenApiSpec: Swagger.Spec;
 
@@ -73,7 +72,7 @@ describe.skip("test openapi spec against routes", () => {
                 return;
             }
 
-            if (!generatedOpenApiSpec.paths[path]) {
+            if (!generatedOpenApiSpec.paths?.[path]) {
                 // This case would result in an error in the previous test
                 return;
             }
@@ -81,15 +80,15 @@ describe.skip("test openapi spec against routes", () => {
             const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path] ?? {})
                 .map((method) => method.toLocaleLowerCase())
                 .sort();
-            const manualMethods = Object.keys(manualOpenApiSpec.paths[path] ?? {})
+            const manualMethods = Object.keys(manualOpenApiSpec.paths?.[path] ?? {})
                 .map((method) => method.toLocaleLowerCase())
                 .sort();
 
             expect(generatedMethods, `Path ${path} do not have the same methods`).toStrictEqual(manualMethods);
 
-            Object.keys(manualOpenApiSpec.paths[path] ?? {}).forEach((method) => {
+            Object.keys(manualOpenApiSpec.paths?.[path] ?? {}).forEach((method) => {
                 const key = method as "get" | "put" | "post" | "delete" | "options" | "head" | "patch";
-                const manualResponses = Object.keys(manualOpenApiSpec.paths[path]?.[key]?.responses ?? {});
+                const manualResponses = Object.keys(manualOpenApiSpec.paths?.[path]?.[key]?.responses ?? {});
                 let expectedResponseCode = key === "post" ? "201" : "200";
                 expectedResponseCode = returnCodeOverwrite[path]?.[method] ?? expectedResponseCode;
                 expect(manualResponses, `Path ${path} and method ${method} does not contain response code ${expectedResponseCode}`).toContainEqual(expectedResponseCode);
@@ -99,25 +98,24 @@ describe.skip("test openapi spec against routes", () => {
 
     test("all generated params should be in the manual spec", () => {
         const pathsWithDBQueries = [
-            { path: "/api/core/v1/Attributes/Own/Shared/Identity", method: "get" },
-            { path: "/api/core/v1/Attributes/Peer/Shared/Identity", method: "get" },
-            { path: "/api/core/v1/Attributes/Own/Shared/Identity", method: "get" },
-            { path: "/api/core/v1/Attributes/Own/Repository", method: "get" }
+            { path: "/api/core/v1/Attributes/Own/Shared/{param}", method: "get" },
+            { path: "/api/core/v1/Attributes/Peer/{param}", method: "get" },
+            { path: "/api/core/v1/Attributes/Own/Identity", method: "get" }
         ];
 
         const generatedPaths = getPaths(generatedOpenApiSpec);
         generatedPaths.forEach((path) => {
-            const generatedMethods = Object.keys(generatedOpenApiSpec.paths[path] ?? {})
+            const generatedMethods = Object.keys(generatedOpenApiSpec.paths?.[path] ?? {})
                 .map((method) => method.toLowerCase())
                 .sort() as OpenAPIV3.HttpMethods[];
             generatedMethods.forEach((method: OpenAPIV3.HttpMethods) => {
-                const generatedOperation = generatedOpenApiSpec.paths[path]?.[method];
+                const generatedOperation = generatedOpenApiSpec.paths?.[path]?.[method];
                 if (!isOperation(generatedOperation) || !generatedOperation.parameters || generatedOperation.parameters.length === 0) {
                     return;
                 }
 
                 const generatedParameters = generatedOperation.parameters as OpenAPIV3.ParameterObject[];
-                if (!manualOpenApiSpec.paths[path]) {
+                if (!manualOpenApiSpec.paths?.[path]) {
                     // This case would result in an error in the previous test
                     return;
                 }
@@ -149,7 +147,7 @@ describe.skip("test openapi spec against routes", () => {
 
                         expect(param.name).toBe(manualParameter!.name);
                         expect(param.in).toBe(manualParameter!.in);
-                        expect(param.required).toBe(manualParameter!.required);
+                        expect(param.required, `${path} ${method} ${param.name} required status does not match`).toBe(manualParameter!.required);
                     });
 
                 const manualRequestBody = manualOperation.requestBody as OpenAPIV3.RequestBodyObject | undefined;
@@ -173,7 +171,7 @@ function harmonizeSpec(spec: any) {
 // Paths not defined in the typescript-rest way
 const ignorePaths = ["/health", "/Monitoring/Version", "/Monitoring/Requests", "/Monitoring/Support"];
 function getPaths(spec: Swagger.Spec) {
-    return Object.keys(spec.paths).filter((paths) => !ignorePaths.includes(paths));
+    return Object.keys(spec.paths ?? {}).filter((paths) => !ignorePaths.includes(paths));
 }
 
 function isOperation(obj: any): obj is OpenAPIV3.OperationObject {

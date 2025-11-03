@@ -1,4 +1,4 @@
-export type CanCreateRepositoryAttributeResponse =
+export type CanCreateOwnIdentityAttributeResponse =
     | { isSuccess: true }
     | {
           isSuccess: false;
