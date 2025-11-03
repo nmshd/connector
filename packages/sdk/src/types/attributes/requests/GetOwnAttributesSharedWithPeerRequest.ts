@@ -8,7 +8,6 @@ export interface GetOwnAttributesSharedWithPeerRequest {
 export interface GetOwnAttributesSharedWithPeerRequestQuery {
     "@type"?: string | string[];
     createdAt?: string;
-    isDefault?: string;
     "content.@type"?: string | string[];
     "content.tags"?: string | string[];
     "content.key"?: string | string[];
