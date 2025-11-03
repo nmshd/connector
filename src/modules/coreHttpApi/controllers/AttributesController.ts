@@ -90,7 +90,7 @@ export class AttributesController extends BaseController {
     }
 
     @GET
-    @Path("/Peer/Shared/:peer")
+    @Path("/Peer/:peer")
     @Accept("application/json")
     public async getPeerAttributes(
         @Context context: ServiceContext,
