@@ -378,7 +378,7 @@ paths:
                   - result
                 properties:
                   result:
-                    $ref: "#/components/schemas/CreateOwnIdentityAttributeResponse"
+                    $ref: "#/components/schemas/Attribute"
 
           headers:
             X-Response-Duration-ms:
