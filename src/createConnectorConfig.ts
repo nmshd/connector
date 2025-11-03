@@ -34,8 +34,7 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
             },
             database: {
                 driver: "mongodb",
-                dbName: "default",
-                dbNamePrefix: "acc-"
+                dbName: "default"
             },
             logging: {
                 appenders: {
@@ -63,6 +62,12 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
 
                     cors: {
                         origin: false
+                    },
+
+                    authentication: {
+                        apiKey: { headerName: "X-API-KEY", keys: {} },
+                        oidc: {},
+                        jwtBearer: {}
                     }
                 }
             },
@@ -70,7 +75,6 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
                 notification: { enabled: true, location: "@nmshd/runtime:NotificationModule" },
                 decider: { enabled: true, location: "@nmshd/runtime:DeciderModule" },
                 request: { enabled: true, location: "@nmshd/runtime:RequestModule" },
-                attributeListener: { enabled: true, location: "@nmshd/runtime:AttributeListenerModule" },
                 autoAcceptPendingRelationships: { enabled: false, location: "@nmshd/connector:AutoAcceptPendingRelationshipsModule" },
                 autoDecomposeDeletionProposedRelationships: { enabled: false, location: "@nmshd/connector:AutoDecomposeDeletionProposedRelationshipsModule" },
                 coreHttpApi: {
@@ -139,7 +143,6 @@ function addCorrelationIdSupportToLogger(connectorConfig: ConnectorRuntimeConfig
 
 const envKeyMapping: Record<string, string> = {
     DATABASE_NAME: "database:dbName", // eslint-disable-line @typescript-eslint/naming-convention
-    API_KEY: "infrastructure:httpServer:apiKey", // eslint-disable-line @typescript-eslint/naming-convention
     DATABASE_CONNECTION_STRING: "database:connectionString", // eslint-disable-line @typescript-eslint/naming-convention
     SYNC_ENABLED: "modules:sync:enabled", // eslint-disable-line @typescript-eslint/naming-convention
     PLATFORM_CLIENT_ID: "transportLibrary:platformClientId", // eslint-disable-line @typescript-eslint/naming-convention

@@ -18,9 +18,7 @@ export enum ValidationSchema {
     ConnectorSyncInfo = "ConnectorSyncInfo",
     ConnectorChallengeValidationResult = "ConnectorChallengeValidationResult",
     SucceedAttributeResponse = "SucceedAttributeResponse",
-    DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse = "DeleteThirdPartyRelationshipAttributeAndNotifyPeerResponse",
-    DeleteOwnSharedAttributeAndNotifyPeerResponse = "DeleteOwnSharedAttributeAndNotifyPeerResponse",
-    DeletePeerSharedAttributeAndNotifyOwnerResponse = "DeletePeerSharedAttributeAndNotifyOwnerResponse"
+    DeleteAttributeAndNotifyResponse = "DeleteAttributeAndNotifyResponse"
 }
 
 export function validateSchema(schemaName: ValidationSchema, obj: any): void {

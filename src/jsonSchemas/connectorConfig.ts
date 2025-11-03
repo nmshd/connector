@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // To regenerate the json schema, execute the following command:
-// npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t "ConnectorConfig" --no-top-ref
+// npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t "ConnectorConfig" --no-top-ref && npx prettier --write src/jsonSchemas/connectorConfig.json
 
 export interface MongoDBSettings {
     driver: "mongodb";
@@ -15,7 +15,7 @@ export interface LokiJSSettings {
 export interface ConnectorConfig {
     debug: boolean;
 
-    database: (MongoDBSettings | LokiJSSettings) & { dbName: string; dbNamePrefix: string };
+    database: (MongoDBSettings | LokiJSSettings) & { dbName: string };
 
     transportLibrary: IConfigOverwrite;
 
@@ -40,13 +40,32 @@ interface ModuleConfiguration {
 
 interface InfrastructureConfiguration {
     httpServer: {
-        oidc?: any;
-        jwtBearer?: any;
         enabled: boolean;
         port?: string | number;
-        apiKey: string;
         cors?: any;
         helmetOptions?: any;
+        authentication: {
+            apiKey?: {
+                enabled?: boolean;
+                headerName: string;
+                keys: Record<
+                    string,
+                    {
+                        enabled?: boolean;
+                        key: string;
+                        description?: string;
+                        /**
+                         * @errorMessage must match ISO8601 datetime format
+                         * @pattern ^([+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24:?00)([.,]\d+(?!:))?)?(\17[0-5]\d([.,]\d+)?)?([zZ]|([+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$
+                         */
+                        expiresAt?: string;
+                        scopes?: string[];
+                    }
+                >;
+            };
+            oidc?: any & { enabled?: boolean };
+            jwtBearer?: any & { enabled?: boolean };
+        };
     };
 }
 

@@ -5,8 +5,8 @@ import { QueryParamConditions } from "./lib/QueryParamConditions";
 import { getTimeout } from "./lib/setTimeout";
 import {
     establishRelationship,
+    executeFullCreateAndShareOwnIdentityAttributeFlow,
     executeFullCreateAndShareRelationshipAttributeFlow,
-    executeFullCreateAndShareRepositoryAttributeFlow,
     getRelationship,
     getTemplateToken,
     syncUntilHasRelationship
@@ -69,7 +69,7 @@ describe("Relationships", () => {
     test("query relationships", async () => {
         await establishRelationship(client1, client2);
         const relationship = await getRelationship(client1);
-        const conditions = new QueryParamConditions(relationship, client1).addStringSet("peer").addStringSet("status").addStringSet("template.id");
+        const conditions = new QueryParamConditions(relationship, client1).addStringSet("peer").addStringSet("status").addStringSet("templateId");
 
         await conditions.executeTests((c, q) => c.relationships.getRelationships(q));
     });
@@ -187,7 +187,6 @@ describe("Relationships", () => {
     test("terminate relationship and decompose it", async () => {
         await establishRelationship(client1, client2);
         const relationship = await getRelationship(client1);
-        const client2Address = (await client2.account.getIdentityInfo()).result.address;
 
         await executeFullCreateAndShareRelationshipAttributeFlow(client1, client2, {
             value: {
@@ -199,12 +198,13 @@ describe("Relationships", () => {
             confidentiality: RelationshipAttributeConfidentiality.Public
         });
 
-        await executeFullCreateAndShareRepositoryAttributeFlow(client1, client2, {
+        await executeFullCreateAndShareOwnIdentityAttributeFlow(client1, client2, {
             "@type": "GivenName",
             value: "AGivenName"
         });
 
-        const attributes = await client1.attributes.getAttributes({ shareInfo: { peer: client2Address } });
+        const client2Address = (await client2.account.getIdentityInfo()).result.address;
+        const attributes = await client1.attributes.getOwnAttributesSharedWithPeer({ peer: client2Address });
         expect(attributes).toBeSuccessful();
         expect(attributes.result).toHaveLength(2);
 
@@ -220,7 +220,8 @@ describe("Relationships", () => {
         expect(relationships).toBeSuccessful();
         expect(relationships.result).toHaveLength(0);
 
-        const attributesAfterDecomposition = await client2.attributes.getAttributes({ shareInfo: { peer: client2Address } });
+        const client1Address = (await client1.account.getIdentityInfo()).result.address;
+        const attributesAfterDecomposition = await client2.attributes.getPeerAttributes({ peer: client1Address });
         expect(attributesAfterDecomposition).toBeSuccessful();
         expect(attributesAfterDecomposition.result).toHaveLength(0);
 
@@ -238,7 +239,7 @@ describe("Relationships", () => {
         expect(client1RelationshipsAfterDecompose).toBeSuccessful();
         expect(client1RelationshipsAfterDecompose.result).toHaveLength(0);
 
-        const client1AttributesAfterDecomposition = await client1.attributes.getAttributes({ shareInfo: { peer: client2Address } });
+        const client1AttributesAfterDecomposition = await client1.attributes.getOwnAttributesSharedWithPeer({ peer: client2Address });
         expect(client1AttributesAfterDecomposition).toBeSuccessful();
         expect(client1AttributesAfterDecomposition.result).toHaveLength(0);
     });
