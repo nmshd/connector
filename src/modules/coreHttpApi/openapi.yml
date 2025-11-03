@@ -683,7 +683,7 @@ paths:
         403:
           $ref: "#/components/responses/Forbidden"
 
-  /api/core/v1/Attributes/Peer/Shared/{peer}:
+  /api/core/v1/Attributes/Peer/{peer}:
     get:
       operationId: getPeerAttributes
       tags:

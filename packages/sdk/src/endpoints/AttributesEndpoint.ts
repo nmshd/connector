@@ -71,7 +71,7 @@ export class AttributesEndpoint extends Endpoint {
     }
 
     public async getPeerAttributes(request: GetPeerAttributesRequest): Promise<ConnectorHttpResponse<LocalAttributeDTO[]>> {
-        return await this.get(`/api/core/v1/Attributes/Peer/Shared/${request.peer}`, {
+        return await this.get(`/api/core/v1/Attributes/Peer/${request.peer}`, {
             onlyLatestVersions: request.onlyLatestVersions,
             hideTechnical: request.hideTechnical,
             ...request.query
