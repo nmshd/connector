@@ -19,6 +19,7 @@ import { PasswordLocationIndicator } from "@nmshd/core-types";
 import fs from "fs";
 import { DateTime } from "luxon";
 import { ConnectorClientWithMetadata } from "./Launcher";
+import { ValidationSchema } from "./validation";
 
 export interface MessageProcessedEventData {
     message: MessageDTO;
@@ -481,6 +482,6 @@ export async function deleteAllAttributes(client: ConnectorClient): Promise<void
 
     for (const attribute of attributesResponse.result) {
         const result = await client.attributes.deleteAttributeAndNotify(attribute.id);
-        expect(result).toBeSuccessful();
+        expect(result).toBeSuccessful(ValidationSchema.DeleteAttributeAndNotifyResponse);
     }
 }
