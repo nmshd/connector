@@ -10,5 +10,5 @@ npm run lint:eslint
 npm run lint:prettier
 
 # auditing
-npx license-check --ignoreRegex @nmshd/connector
+npx license-check --ignoreRegex "@nmshd/*"
 npx better-npm-audit audit
