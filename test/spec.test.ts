@@ -98,8 +98,8 @@ describe("test openapi spec against routes", () => {
 
     test("all generated params should be in the manual spec", () => {
         const pathsWithDBQueries = [
-            { path: "/api/core/v1/Attributes/Own/Shared/{peer}", method: "get" },
-            { path: "/api/core/v1/Attributes/Peer/{peer}", method: "get" },
+            { path: "/api/core/v1/Attributes/Own/Shared/{param}", method: "get" },
+            { path: "/api/core/v1/Attributes/Peer/{param}", method: "get" },
             { path: "/api/core/v1/Attributes/Own/Identity", method: "get" }
         ];
 
@@ -147,7 +147,7 @@ describe("test openapi spec against routes", () => {
 
                         expect(param.name).toBe(manualParameter!.name);
                         expect(param.in).toBe(manualParameter!.in);
-                        expect(param.required).toBe(manualParameter!.required);
+                        expect(param.required, `${path} ${method} ${param.name} required status does not match`).toBe(manualParameter!.required);
                     });
 
                 const manualRequestBody = manualOperation.requestBody as OpenAPIV3.RequestBodyObject | undefined;
