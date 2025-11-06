@@ -11,8 +11,8 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
-if [[ "$REF" == *-* ]]; then
-    PRERELEASE="${REF#*-}"
+if [[ "$VERSION" == *-* ]]; then
+    PRERELEASE="${VERSION#*-}"
     PRERELEASETYPE="${PRERELEASE%%.*}"
     BASE_TAG="${PRERELEASETYPE}"
 else
