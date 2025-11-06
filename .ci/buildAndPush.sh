@@ -11,13 +11,13 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
-case "$VERSION" in
-*-alpha*) BASE_TAG=alpha ;;
-*-beta*) BASE_TAG=beta ;;
-*-rc*) BASE_TAG=rc ;;
-*-openid4vc*) BASE_TAG=openid4vc ;;
-*) BASE_TAG=latest ;;
-esac
+if [[ "$REF" == *-* ]]; then
+    PRERELEASE="${REF#*-}"
+    PRERELEASETYPE="${PRERELEASE%%.*}"
+    BASE_TAG="${PRERELEASETYPE}"
+else
+    BASE_TAG="latest"
+fi
 
 echo "pushing tag '$BUILD_NUMBER' and '$COMMIT_HASH'"
 
