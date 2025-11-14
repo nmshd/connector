@@ -61,7 +61,7 @@ describe("test openapi spec against routes", () => {
             "/api/core/v1/BackboneNotifications": { post: "204" },
             "/api/core/v1/Challenges/Validate": { post: "200" },
             "/api/core/v1/Relationships/{param}": { delete: "204" },
-            "/api/core/v1/Attributes/{param}": { delete: "204" },
+            "/api/core/v1/Attributes/{param}": { delete: "200" },
             "/api/core/v1/Files/{param}": { delete: "204" },
             "/api/core/v1/IdentityMetadata": { delete: "204" }
         };
