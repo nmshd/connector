@@ -1114,8 +1114,19 @@ paths:
           schema:
             $ref: "#/components/schemas/AttributeID"
       responses:
-        204:
+        200:
           description: Success. Deleting an Attribute.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notificationIds:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/NotificationID"
+                required:
+                  - notificationIds
           headers:
             X-Response-Duration-ms:
               schema:
