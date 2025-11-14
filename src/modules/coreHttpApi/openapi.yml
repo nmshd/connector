@@ -1114,7 +1114,7 @@ paths:
           schema:
             $ref: "#/components/schemas/AttributeID"
       responses:
-        204:
+        200:
           description: Success. Deleting an Attribute.
           content:
             application/json:
