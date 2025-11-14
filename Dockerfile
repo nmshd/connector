@@ -7,14 +7,14 @@ ARG VERSION
 WORKDIR /usr/app
 COPY package.json package-lock.json tsconfig.json tsconfig.publish.json ./
 COPY packages/types/package.json packages/types/tsconfig.json packages/types/
+COPY *.tgz ./
 COPY .ci .ci
 
-RUN npm ci
+RUN npm i --force
 COPY src src
 COPY packages/types/src packages/types/src
 
 RUN npm run build:ci --ws
-RUN .ci/writeBuildInformation.sh
 
 FROM node:24.11.1-slim@sha256:f752e4821362614eab35016f01dea3af61d2f59d0445381c25683e4331520a7b
 
@@ -29,10 +29,11 @@ WORKDIR /usr/app
 
 COPY package.json package-lock.json ./
 COPY packages/types/package.json packages/types/
+COPY *.tgz ./
 
 RUN cd packages/types && npm version --no-git-tag-version $VERSION
 
-RUN npm ci --omit=dev
+RUN npm i --omit=dev --force
 
 COPY --from=builder /usr/app/dist/ dist/
 COPY --from=builder /usr/app/packages/types/dist packages/types/dist/
