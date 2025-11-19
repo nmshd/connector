@@ -48,7 +48,7 @@ describe("File Upload", () => {
         const response = await client1.files.uploadOwnFile({
             title: "File Title",
             filename: "test.txt",
-            file: await fs.promises.readFile(`${__dirname}/__assets__/test.txt`),
+            file: new Uint8Array([116, 101, 115, 116]),
             expiresAt: DateTime.utc().plus({ minutes: 5 }).toString()
         });
 
