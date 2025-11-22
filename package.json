@@ -97,7 +97,7 @@
         "eventsource": "^4.1.0",
         "express": "^5.1.0",
         "express-oauth2-jwt-bearer": "^1.7.1",
-        "express-openid-connect": "^2.19.2",
+        "express-openid-connect": "^2.19.3",
         "helmet": "8.1.0",
         "json-stringify-safe": "5.0.1",
         "jsonschema": "1.5.0",
