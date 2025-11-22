@@ -13,7 +13,7 @@ jobs:
   run-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
@@ -22,7 +22,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Start Backbone
         run: npm run start:backbone
       - uses: actions/setup-node@v6
@@ -49,13 +49,13 @@ jobs:
   build-docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Build the productive docker image
         run: bash .ci/testBuildingProductiveDockerImage.sh
 
   lint-helm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: azure/setup-helm@v4
       - run: helm lint ./helmChart
