@@ -1,24 +1,24 @@
 export interface GetAttributesRequest {
-    "@type"?: string;
+    "@type"?: string | string[];
     createdAt?: string;
     content?: {
-        "@type"?: string;
-        tags?: string[];
-        owner?: string;
-        key?: string;
-        isTechnical?: string;
+        "@type"?: string | string[];
+        tags?: string | string[];
+        owner?: string | string[];
+        key?: string | string[];
+        isTechnical?: string | string[];
         confidentiality?: "public" | "private" | "protected";
         value?: {
-            "@type"?: string;
+            "@type"?: string | string[];
         };
     };
-    succeeds?: string;
-    succeededBy?: string;
-    peer?: string;
-    sourceReference?: string;
-    initialAttributePeer?: string;
+    succeeds?: string | string[];
+    succeededBy?: string | string[];
+    peer?: string | string[];
+    sourceReference?: string | string[];
+    initialAttributePeer?: string | string[];
     deletionInfo?: {
-        deletionStatus?: string;
-        deletionDate?: string;
+        deletionStatus?: string | string[];
+        deletionDate?: string | string[];
     };
 }
