@@ -39,7 +39,8 @@ describe("Messaging", () => {
                 body: "b",
                 cc: [],
                 subject: "a",
-                to: [connector2Address]
+                to: [connector2Address],
+                bodyFormat: "PlainText"
             },
             attachments: [fileId]
         });
@@ -61,7 +62,8 @@ describe("Messaging", () => {
             body: "b",
             cc: [],
             subject: "a",
-            to: [connector2Address]
+            to: [connector2Address],
+            bodyFormat: "PlainText"
         });
     });
 
@@ -79,7 +81,8 @@ describe("Messaging", () => {
             body: "b",
             cc: [],
             subject: "a",
-            to: [connector2Address]
+            to: [connector2Address],
+            bodyFormat: "PlainText"
         });
     });
 
@@ -101,7 +104,8 @@ describe("Message errors", () => {
                 "@type": "Mail",
                 to: [],
                 subject: "A Subject",
-                body: "A Body"
+                body: "A Body",
+                bodyFormat: "PlainText"
             }
         });
         expect(result).toBeAnError("Mail.to:Array :: may not be empty", "error.runtime.requestDeserialization");

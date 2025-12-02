@@ -264,7 +264,8 @@ export async function sendMessage(client: ConnectorClient, recipient: string): P
             subject: "This is the mail subject",
             body: "This is the mail body",
             cc: [],
-            to: [recipient]
+            to: [recipient],
+            bodyFormat: "PlainText"
         }
     });
     expect(response).toBeSuccessful();
