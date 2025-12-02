@@ -7,7 +7,6 @@ ARG VERSION
 WORKDIR /usr/app
 COPY package.json package-lock.json tsconfig.json tsconfig.publish.json ./
 COPY packages/types/package.json packages/types/tsconfig.json packages/types/
-COPY *.tgz ./
 COPY .ci .ci
 
 RUN npm i --force
@@ -29,7 +28,6 @@ WORKDIR /usr/app
 
 COPY package.json package-lock.json ./
 COPY packages/types/package.json packages/types/
-COPY *.tgz ./
 
 RUN cd packages/types && npm version --no-git-tag-version $VERSION
 
