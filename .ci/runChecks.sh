@@ -11,4 +11,4 @@ npm run lint:prettier
 
 # auditing
 npx license-check --ignoreRegex "@nmshd/*"
-npx better-npm-audit audit --exclude 1109809
+npx better-npm-audit audit
