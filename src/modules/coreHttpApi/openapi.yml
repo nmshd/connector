@@ -5881,7 +5881,7 @@ components:
           type: string
         bodyFormat:
           type: string
-          enum: ["PlainText", "HTML"]
+          enum: ["PlainText", "Markdown"]
       required:
         - "@type"
         - to
