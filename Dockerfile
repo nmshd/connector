@@ -9,7 +9,7 @@ COPY package.json package-lock.json tsconfig.json tsconfig.publish.json ./
 COPY packages/types/package.json packages/types/tsconfig.json packages/types/
 COPY .ci .ci
 
-RUN npm i --force
+RUN npm ci
 COPY src src
 COPY packages/types/src packages/types/src
 
@@ -31,7 +31,7 @@ COPY packages/types/package.json packages/types/
 
 RUN cd packages/types && npm version --no-git-tag-version $VERSION
 
-RUN npm i --omit=dev --force
+RUN npm ci --omit=dev
 
 COPY --from=builder /usr/app/dist/ dist/
 COPY --from=builder /usr/app/packages/types/dist packages/types/dist/
