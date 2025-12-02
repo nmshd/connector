@@ -5879,11 +5879,15 @@ components:
           type: string
         body:
           type: string
+        bodyFormat:
+          type: string
+          enum: ["PlainText", "Markdown"]
       required:
         - "@type"
         - to
         - subject
         - body
+        - bodyFormat
 
     ArbitraryMessageContent:
       type: object
