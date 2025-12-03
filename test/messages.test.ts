@@ -117,7 +117,8 @@ describe("Message errors", () => {
             content: {
                 "@type": "Mail",
                 subject: "A Subject",
-                body: "A Body"
+                body: "A Body",
+                bodyFormat: "PlainText"
             } as any
         });
         expect(result).toBeAnError("Mail.to :: Value is not defined", "error.runtime.requestDeserialization");
@@ -135,6 +136,7 @@ describe("Message query", () => {
             .addStringSet("content.@type")
             .addStringSet("content.subject")
             .addStringSet("content.body")
+            .addStringSet("content.bodyFormat")
             .addStringSet("createdByDevice")
             .addStringArraySet("attachments")
             .addSingleCondition({
