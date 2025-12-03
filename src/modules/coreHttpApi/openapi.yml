@@ -2365,6 +2365,7 @@ paths:
                     cc: [did:e:<base-url>:dids:<22-characters>]
                     subject: Subject
                     body: Body
+                    bodyFormat: PlainText
                   description: Either a Mail, a Request, a ResponseWrapper, a Notification or an ArbitraryMessageContent must be provided as the `content` of the Message.
                 attachments:
                   type: array
@@ -2452,6 +2453,10 @@ paths:
           name: content.body
           schema:
             $ref: "#/components/schemas/TextFilter"
+        - in: query
+          name: content.bodyFormat
+          schema:
+            $ref: "#/components/schemas/BodyFormat"
 
       responses:
         200:
@@ -5881,13 +5886,19 @@ components:
           type: string
         bodyFormat:
           type: string
-          enum: ["PlainText", "Markdown"]
+          $ref: "#/components/schemas/BodyFormat"
       required:
         - "@type"
         - to
         - subject
         - body
         - bodyFormat
+
+    BodyFormat:
+      enum:
+        - PlainText
+        - Markdown
+      type: string
 
     ArbitraryMessageContent:
       type: object
