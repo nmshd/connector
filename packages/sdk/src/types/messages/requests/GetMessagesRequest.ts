@@ -10,5 +10,6 @@ export interface GetMessagesRequest {
         "@type"?: string | string[];
         subject?: string | string[];
         body?: string | string[];
+        bodyFormat?: string | string[];
     };
 }
