@@ -1,0 +1,13 @@
+diff --git a/node_modules/@openid4vc/openid4vp/dist/index.mjs b/node_modules/@openid4vc/openid4vp/dist/index.mjs
+index 18d18f8..1948db5 100644
+--- a/node_modules/@openid4vc/openid4vp/dist/index.mjs
++++ b/node_modules/@openid4vc/openid4vp/dist/index.mjs
+@@ -619,7 +619,7 @@ async function validateOpenid4vpClientId(options, parserConfig) {
+ 			});
+ 			if (!isOpenid4vpAuthorizationRequestDcApi(authorizationRequestPayload)) {
+ 				const uri = authorizationRequestPayload.redirect_uri ?? authorizationRequestPayload.response_uri;
+-				if (!uri || new URL(uri).hostname !== clientIdIdentifier) throw new Oauth2ServerErrorResponseError({
++				if (!uri || new URL(uri).hostname.toLowerCase() !== clientIdIdentifier.toLowerCase()) throw new Oauth2ServerErrorResponseError({
+ 					error: Oauth2ErrorCodes.InvalidRequest,
+ 					error_description: "Invalid client identifier. The fully qualified domain name of the redirect_uri value MUST match the Client Identifier without the prefix x509_san_dns."
+ 				});
