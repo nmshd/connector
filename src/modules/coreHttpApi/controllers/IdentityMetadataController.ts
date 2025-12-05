@@ -1,5 +1,5 @@
 import { BaseController, Envelope } from "@nmshd/connector-types";
-import { ConsumptionServices } from "@nmshd/runtime";
+import { ConsumptionServices, IdentityMetadataDTO } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, DELETE, GET, PUT, Path, QueryParam, Security } from "@nmshd/typescript-rest";
 
@@ -12,13 +12,13 @@ export class IdentityMetadataController extends BaseController {
 
     @PUT
     @Accept("application/json")
-    public async upsertIdentityMetadata(request: any): Promise<Envelope> {
+    public async upsertIdentityMetadata(request: any): Promise<Envelope<IdentityMetadataDTO>> {
         const result = await this.consumptionServices.identityMetadata.upsertIdentityMetadata(request);
         return this.ok(result);
     }
 
     @GET
-    public async getIdentityMetadata(@QueryParam("reference") reference: string, @QueryParam("key") key?: string): Promise<Envelope> {
+    public async getIdentityMetadata(@QueryParam("reference") reference: string, @QueryParam("key") key?: string): Promise<Envelope<IdentityMetadataDTO>> {
         const result = await this.consumptionServices.identityMetadata.getIdentityMetadata({ reference, key });
         return this.ok(result);
     }
