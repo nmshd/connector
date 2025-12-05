@@ -18,6 +18,7 @@
         "copy-additional-files": "cpx \"src/**/*.{json,yml,ico}\" dist",
         "copy-additional-files:watch": "cpx \"src/**/*.{json,yml,ico}\" dist --watch",
         "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json",
+        "postinstall": "npx patch-package && echo 'Postinstall done.'",
         "lint": "npm run lint:tsc && npm run lint:prettier && npm run lint:eslint",
         "lint:eslint": "eslint",
         "lint:prettier": "prettier --check .",
@@ -78,7 +79,7 @@
             ]
         },
         "transformIgnorePatterns": [
-            "<rootDir>/node_modules/(?!(@noble|@stablelib|@credo\\-ts)/)"
+            "<rootDir>/node_modules/(?!(@noble|@stablelib|@digitalcredentials|dcql|@openid4vc|@credo\\-ts)/)"
         ]
     },
     "c8": {
@@ -130,6 +131,8 @@
     },
     "devDependencies": {
         "@apidevtools/swagger-parser": "^12.1.0",
+        "@babel/preset-env": "^7.28.5",
+        "@babel/preset-typescript": "^7.28.5",
         "@js-soft/eslint-config-ts": "2.0.4",
         "@js-soft/license-check": "1.0.10",
         "@nmshd/connector-sdk": "*",
@@ -161,6 +164,7 @@
         "nodemon": "^3.1.11",
         "npm-run-all2": "^8.0.4",
         "openapi-types": "^12.1.3",
+        "patch-package": "^8.0.1",
         "prettier": "^3.7.4",
         "ts-jest": "^29.4.6",
         "ts-node": "^10.9.2",

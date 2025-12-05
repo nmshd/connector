@@ -8,12 +8,14 @@ WORKDIR /usr/app
 COPY package.json package-lock.json tsconfig.json tsconfig.publish.json ./
 COPY packages/types/package.json packages/types/tsconfig.json packages/types/
 COPY .ci .ci
+COPY patches patches
 
 RUN npm ci
 COPY src src
 COPY packages/types/src packages/types/src
 
 RUN npm run build:ci --ws
+RUN .ci/writeBuildInformation.sh
 
 FROM node:24.11.1-slim@sha256:0afb7822fac7bf9d7c1bf3b6e6c496dee6b2b64d8dfa365501a3c68e8eba94b2
 
@@ -28,6 +30,7 @@ WORKDIR /usr/app
 
 COPY package.json package-lock.json ./
 COPY packages/types/package.json packages/types/
+COPY patches patches
 
 RUN cd packages/types && npm version --no-git-tag-version $VERSION
 

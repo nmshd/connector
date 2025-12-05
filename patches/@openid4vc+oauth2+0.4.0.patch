@@ -1,0 +1,21 @@
+diff --git a/node_modules/@openid4vc/oauth2/dist/index.mjs b/node_modules/@openid4vc/oauth2/dist/index.mjs
+index f468772..77525c8 100644
+--- a/node_modules/@openid4vc/oauth2/dist/index.mjs
++++ b/node_modules/@openid4vc/oauth2/dist/index.mjs
+@@ -1554,11 +1554,16 @@ async function createJarAuthorizationRequest(options) {
+ * @throws {Error} if parsing json from response fails
+ */
+ async function fetchWellKnownMetadata(wellKnownMetadataUrl, schema, options) {
++	try {
+ 	const { result, response } = await createZodFetcher(options?.fetch)(schema, options?.acceptedContentType ?? [ContentType.Json], wellKnownMetadataUrl);
+ 	if (response.status === 404) return null;
+ 	if (!response.ok) throw new InvalidFetchResponseError$1(`Fetching well known metadata from '${wellKnownMetadataUrl}' resulted in an unsuccessful response with status '${response.status}'.`, await response.clone().text(), response);
+ 	if (!result?.success) throw new ValidationError$1(`Validation of metadata from '${wellKnownMetadataUrl}' failed`, result?.error);
+ 	return result.data;
++	} catch (e) {
++	    console.log('Changed By JS-SOFT: Error can probably be ignored', e);
++    	return null;
++	}
+ }
+ 
+ //#endregion
