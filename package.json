@@ -79,7 +79,7 @@
             ]
         },
         "transformIgnorePatterns": [
-            "<rootDir>/node_modules/(?!(@noble|@stablelib|@credo\\-ts)/)"
+            "<rootDir>/node_modules/(?!(@noble|@stablelib|@digitalcredentials|dcql|@openid4vc|@credo\\-ts)/)"
         ]
     },
     "c8": {
