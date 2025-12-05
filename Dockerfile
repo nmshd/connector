@@ -8,6 +8,7 @@ WORKDIR /usr/app
 COPY package.json package-lock.json tsconfig.json tsconfig.publish.json ./
 COPY packages/types/package.json packages/types/tsconfig.json packages/types/
 COPY .ci .ci
+COPY patches patches
 
 RUN npm ci
 COPY src src
@@ -29,6 +30,7 @@ WORKDIR /usr/app
 
 COPY package.json package-lock.json ./
 COPY packages/types/package.json packages/types/
+COPY patches patches
 
 RUN cd packages/types && npm version --no-git-tag-version $VERSION
 
