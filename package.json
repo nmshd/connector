@@ -130,7 +130,7 @@
         "@types/lodash": "^4.17.21",
         "@types/luxon": "^3.7.1",
         "@types/nconf": "^0.10.7",
-        "@types/node": "^24.10.1",
+        "@types/node": "^24.10.2",
         "@types/on-headers": "^1.0.4",
         "@types/swagger-ui-express": "^4.1.8",
         "@types/ws": "^8.18.1",
