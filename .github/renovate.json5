@@ -4,7 +4,7 @@
     extends: ["config:recommended", "docker:pinDigests", ":disableDependencyDashboard"],
     labels: ["dependencies"],
     schedule: ["after 10pm every weekday", "before 5am every weekday", "every weekend"],
-    reviewers: ["jkoenig134", "Milena-Czierlinski"],
+    reviewers: ["Milena-Czierlinski", "britsta"],
     packageRules: [
         {
             // all patch versions of all packages should be part of a single group
