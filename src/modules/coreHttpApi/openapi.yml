@@ -3603,7 +3603,6 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/core/v1/RelationshipTemplates/{id}:
     delete:
       operationId: deleteRelationshipTemplate
       description: Delete a RelationshipTemplate.
@@ -4527,7 +4526,6 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
-  /api/core/v1/Tokens/{id}:
     delete:
       operationId: deleteToken
       description: Delete a Token.
