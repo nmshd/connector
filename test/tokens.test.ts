@@ -21,21 +21,21 @@ test("send a token", async () => {
 });
 
 test("load a token", async () => {
-    const template = await uploadOwnToken(client1);
+    const token = await uploadOwnToken(client1);
 
     const response = await client2.tokens.loadPeerToken({
-        reference: template.reference.truncated
+        reference: token.reference.truncated
     });
     expect(response).toBeSuccessful();
 });
 
 test("send and receive a personalized token", async () => {
     const client2address = (await client2.account.getIdentityInfo()).result.address;
-    const template = await uploadOwnToken(client1, client2address);
-    expect(template.forIdentity).toBe(client2address);
+    const token = await uploadOwnToken(client1, client2address);
+    expect(token.forIdentity).toBe(client2address);
 
     const response = await client2.tokens.loadPeerToken({
-        reference: template.reference.truncated
+        reference: token.reference.truncated
     });
     expect(response).toBeSuccessful();
     expect(response.result.forIdentity).toBe(client2address);
