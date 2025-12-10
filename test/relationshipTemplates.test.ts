@@ -302,7 +302,10 @@ describe("Template Tests", () => {
         expect(deleteTemplateResult).toBeSuccessfulVoidResult();
 
         const getTemplateAfterDeletionResult = await client1.relationshipTemplates.getRelationshipTemplate(template.id);
-        expect(getTemplateAfterDeletionResult).toBeAnError("RelationshipTemplate not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+        expect(getTemplateAfterDeletionResult).toBeAnError(
+            "RelationshipTemplate not found. Make sure the ID exists and the record is not expired.",
+            "error.runtime.recordNotFound"
+        );
     });
 });
 

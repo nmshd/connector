@@ -74,7 +74,7 @@ export class RelationshipTemplatesController extends BaseController {
     @DELETE
     @Path("/:id")
     public async deleteRelationshipTemplate(@PathParam("id") id: string): Promise<void> {
-        const result = await this.transportServices.relationshipTemplates.deleteRelationshipTemplate({templateId: id});
+        const result = await this.transportServices.relationshipTemplates.deleteRelationshipTemplate({ templateId: id });
         return this.noContent(result);
     }
 

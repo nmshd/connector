@@ -124,10 +124,12 @@ test("cannot set an invalid number as PasswordLocationIndicator", async () => {
 });
 
 test("delete a token", async () => {
-    const token = (await client1.tokens.createOwnToken({
-        content: { aKey: "aValue" },
-        expiresAt: DateTime.utc().plus({ days: 1 }).toString()
-    })).result;
+    const token = (
+        await client1.tokens.createOwnToken({
+            content: { aKey: "aValue" },
+            expiresAt: DateTime.utc().plus({ days: 1 }).toString()
+        })
+    ).result;
 
     const getTokenResult = await client1.tokens.getToken(token.id);
     expect(getTokenResult).toBeSuccessful();

@@ -54,7 +54,7 @@ export class TokensController extends BaseController {
     @DELETE
     @Path("/:id")
     public async deleteToken(@PathParam("id") id: string): Promise<void> {
-        const result = await this.transportServices.tokens.deleteToken({tokenId: id});
+        const result = await this.transportServices.tokens.deleteToken({ tokenId: id });
         return this.noContent(result);
     }
 
