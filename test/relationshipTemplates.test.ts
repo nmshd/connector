@@ -291,6 +291,19 @@ describe("Template Tests", () => {
         });
         expect(response).toBeSuccessful();
     });
+
+    test("delete a template", async () => {
+        const template = await createTemplate(client1);
+
+        const getTemplateResult = await client1.relationshipTemplates.getRelationshipTemplate(template.id);
+        expect(getTemplateResult).toBeSuccessful();
+
+        const deleteTemplateResult = await client1.relationshipTemplates.deleteRelationshipTemplate(template.id);
+        expect(deleteTemplateResult).toBeSuccessfulVoidResult();
+
+        const getTemplateAfterDeletionResult = await client1.relationshipTemplates.getRelationshipTemplate(template.id);
+        expect(getTemplateAfterDeletionResult).toBeAnError("RelationshipTemplate not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+    });
 });
 
 describe("Serialization Errors", () => {

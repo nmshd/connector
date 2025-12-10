@@ -123,6 +123,22 @@ test("cannot set an invalid number as PasswordLocationIndicator", async () => {
     expect(response.error.message).toBe("must be a number from 50 to 99 or one of the following strings: Self, Letter, RegistrationLetter, Email, SMS, Website");
 });
 
+test("delete a token", async () => {
+    const token = (await client1.tokens.createOwnToken({
+        content: { aKey: "aValue" },
+        expiresAt: DateTime.utc().plus({ days: 1 }).toString()
+    })).result;
+
+    const getTokenResult = await client1.tokens.getToken(token.id);
+    expect(getTokenResult).toBeSuccessful();
+
+    const deleteTokenResult = await client1.tokens.deleteToken(token.id);
+    expect(deleteTokenResult).toBeSuccessfulVoidResult();
+
+    const getTokenAfterDeletionResult = await client1.tokens.getToken(token.id);
+    expect(getTokenAfterDeletionResult).toBeAnError("Token not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+});
+
 describe("Tokens query", () => {
     test("query own tokens", async () => {
         const token = await uploadOwnToken(client1, (await client1.account.getIdentityInfo()).result.address, { password: "password", passwordLocationIndicator: 50 });
