@@ -36,7 +36,7 @@
         "typescript": "^5.9.3"
     },
     "peerDependencies": {
-        "@js-soft/docdb-access-abstractions": "^1.2.1",
+        "@js-soft/docdb-access-abstractions": "^1.3.0",
         "@js-soft/ts-utils": "^2.3.5",
         "@nmshd/runtime": "7.2.0-openid4vc.5",
         "@nmshd/typescript-rest": "^3.2.2",
