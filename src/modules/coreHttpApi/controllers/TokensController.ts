@@ -1,7 +1,7 @@
 import { BaseController, Envelope } from "@nmshd/connector-types";
 import { OwnerRestriction, TokenDTO, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, GET, Path, PathParam, POST, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, DELETE, GET, Path, PathParam, POST, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
 
 @Security("core:tokens")
@@ -49,6 +49,13 @@ export class TokensController extends BaseController {
             ownerRestriction: OwnerRestriction.Peer
         });
         return this.ok(result);
+    }
+
+    @DELETE
+    @Path("/:id")
+    public async deleteToken(@PathParam("id") id: string): Promise<void> {
+        const result = await this.transportServices.tokens.deleteToken({ tokenId: id });
+        return this.noContent(result);
     }
 
     @GET
