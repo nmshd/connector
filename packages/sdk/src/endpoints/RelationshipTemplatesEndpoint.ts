@@ -55,4 +55,8 @@ export class RelationshipTemplatesEndpoint extends Endpoint {
     public async loadPeerRelationshipTemplate(request: LoadPeerRelationshipTemplateRequest): Promise<ConnectorHttpResponse<RelationshipTemplateDTO>> {
         return await this.post("/api/core/v1/RelationshipTemplates/Peer", request);
     }
+
+    public async deleteRelationshipTemplate(id: string): Promise<ConnectorHttpResponse<void>> {
+        return await this.delete(`/api/core/v1/RelationshipTemplates/${id}`, undefined, 204);
+    }
 }

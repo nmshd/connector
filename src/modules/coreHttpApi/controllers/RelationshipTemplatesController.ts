@@ -1,7 +1,7 @@
 import { BaseController, Envelope } from "@nmshd/connector-types";
 import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
-import { Accept, Context, ContextAccept, ContextResponse, GET, POST, Path, PathParam, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
+import { Accept, Context, ContextAccept, ContextResponse, DELETE, GET, POST, Path, PathParam, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
 
 @Security("core:relationshipTemplates")
@@ -69,6 +69,13 @@ export class RelationshipTemplatesController extends BaseController {
     public async loadPeerTemplate(request: any): Promise<Return.NewResource<Envelope>> {
         const result = await this.transportServices.relationshipTemplates.loadPeerRelationshipTemplate(request);
         return this.created(result);
+    }
+
+    @DELETE
+    @Path("/:id")
+    public async deleteRelationshipTemplate(@PathParam("id") id: string): Promise<void> {
+        const result = await this.transportServices.relationshipTemplates.deleteRelationshipTemplate({ templateId: id });
+        return this.noContent(result);
     }
 
     @POST
