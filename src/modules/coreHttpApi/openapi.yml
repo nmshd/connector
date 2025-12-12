@@ -3603,6 +3603,35 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
 
+    delete:
+      operationId: deleteRelationshipTemplate
+      description: Delete a RelationshipTemplate.
+      tags:
+        - RelationshipTemplates
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the RelationshipTemplate to delete.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RelationshipTemplateID"
+      responses:
+        204:
+          description: Success. Deleting a RelationshipTemplate.
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
   /api/core/v1/RelationshipTemplates/Own/{id}/Token:
     post:
       operationId: createTokenForOwnRelationshipTemplate
@@ -4483,6 +4512,35 @@ paths:
                     $ref: "#/components/schemas/Token"
                 required:
                   - result
+          headers:
+            X-Response-Duration-ms:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Duration-ms"
+            X-Response-Time:
+              schema:
+                $ref: "#/components/schemas/HeaderContent_X-Response-Time"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      operationId: deleteToken
+      description: Delete a Token.
+      tags:
+        - Tokens
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the Token to delete.
+          required: true
+          schema:
+            $ref: "#/components/schemas/TokenID"
+      responses:
+        204:
+          description: Success. Deleting a Token.
           headers:
             X-Response-Duration-ms:
               schema:

@@ -31,4 +31,8 @@ export class TokensEndpoint extends Endpoint {
     public async loadPeerToken(request: LoadPeerTokenRequest): Promise<ConnectorHttpResponse<TokenDTO>> {
         return await this.post("/api/core/v1/Tokens/Peer", request);
     }
+
+    public async deleteToken(tokenId: string): Promise<ConnectorHttpResponse<void>> {
+        return await this.delete(`/api/core/v1/Tokens/${tokenId}`, undefined, 204);
+    }
 }
