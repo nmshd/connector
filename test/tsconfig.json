@@ -19,7 +19,9 @@
         "strictPropertyInitialization": false,
         "downlevelIteration": true,
         "lib": ["es2022", "dom"],
-        "baseUrl": "../"
+        "baseUrl": "../",
+        "skipLibCheck": true,
+        "allowJs": true // we want to use the ts compiler to compile ESM node modules into CJS which is understood by jest. This is required since those node modules are javascript.
     },
     "files": ["../node_modules/jest-expect-message/types/index.d.ts"],
     "include": ["**/*.ts"],
