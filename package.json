@@ -95,7 +95,7 @@
         "cors": "2.8.5",
         "eventsource": "^4.1.0",
         "express": "^5.2.1",
-        "express-oauth2-jwt-bearer": "^1.7.1",
+        "express-oauth2-jwt-bearer": "^1.7.2",
         "express-openid-connect": "^2.19.3",
         "helmet": "8.1.0",
         "json-stringify-safe": "5.0.1",
