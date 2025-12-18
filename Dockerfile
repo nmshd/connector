@@ -43,7 +43,5 @@ COPY --from=builder /usr/app/dist/ dist/
 COPY --from=builder /usr/app/packages/types/dist packages/types/dist/
 COPY --from=installer /usr/app/node_modules/ node_modules/
 
-USER node
-
 ENTRYPOINT ["node", "/usr/app/dist/index.js"]
 CMD ["start"]
