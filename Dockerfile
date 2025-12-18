@@ -1,4 +1,4 @@
-FROM dhi.io/node:25.2.0-dev AS builder
+FROM dhi.io/node:25.2.0-dev@sha256:4c4c2404d8456661e0dc2aa72d67b010d5257359a8218c977d808323dbcdc878 AS builder
 
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
@@ -16,7 +16,7 @@ COPY packages/types/src packages/types/src
 RUN npm run build:ci --ws
 RUN .ci/writeBuildInformation.sh
 
-FROM dhi.io/node:25.2.0-dev AS installer
+FROM dhi.io/node:25.2.0-dev@sha256:4c4c2404d8456661e0dc2aa72d67b010d5257359a8218c977d808323dbcdc878 AS installer
 
 ARG VERSION
 
@@ -29,12 +29,10 @@ RUN npm --prefix packages/types version --no-git-tag-version $VERSION
 
 RUN npm ci --omit=dev
 
-FROM dhi.io/node:25.2.0
+FROM dhi.io/node:25.2.0@sha256:c1f02c8108ebce76999fc0f809f535c5702c3e54fe2af1561c9ab6bc271712e8
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=5 CMD [ "node", "/usr/app/dist/healthcheck.js" ]
 LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
-
-# RUN apt-get update && apt-get -qq install -y --no-install-recommends tini && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/app
 
