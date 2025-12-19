@@ -6,6 +6,7 @@
 4. Optional: install the VS Code extension [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks)
 5. Optional: restarting the Connector using the VSCode task `More Tasks > Restart` requires the tool socat. Make sure to install it on your system. This can be done for example using `apt-get install socat` on Ubuntu and `brew install socat` using Homebrew.
 6. run `npm i`
+7. make sure to be logged in to `dhi.io` container registry using `docker login dhi.io` (you need a DockerHub personal access token as password)
 
 ## How to run
 
