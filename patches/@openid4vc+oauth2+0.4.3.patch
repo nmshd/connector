@@ -1,8 +1,8 @@
 diff --git a/node_modules/@openid4vc/oauth2/dist/index.mjs b/node_modules/@openid4vc/oauth2/dist/index.mjs
-index f468772..77525c8 100644
+index baadef7..9a847a4 100644
 --- a/node_modules/@openid4vc/oauth2/dist/index.mjs
 +++ b/node_modules/@openid4vc/oauth2/dist/index.mjs
-@@ -1554,11 +1554,16 @@ async function createJarAuthorizationRequest(options) {
+@@ -1558,11 +1558,16 @@ async function createJarAuthorizationRequest(options) {
  * @throws {Error} if parsing json from response fails
  */
  async function fetchWellKnownMetadata(wellKnownMetadataUrl, schema, options) {

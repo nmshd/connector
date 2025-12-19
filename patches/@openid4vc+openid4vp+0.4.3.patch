@@ -1,5 +1,5 @@
 diff --git a/node_modules/@openid4vc/openid4vp/dist/index.mjs b/node_modules/@openid4vc/openid4vp/dist/index.mjs
-index 18d18f8..1948db5 100644
+index 4fbea61..3f67eaf 100644
 --- a/node_modules/@openid4vc/openid4vp/dist/index.mjs
 +++ b/node_modules/@openid4vc/openid4vp/dist/index.mjs
 @@ -619,7 +619,7 @@ async function validateOpenid4vpClientId(options, parserConfig) {
