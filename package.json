@@ -95,7 +95,7 @@
         ]
     },
     "dependencies": {
-        "@google-cloud/pubsub": "^5.2.0",
+        "@google-cloud/pubsub": "^5.2.1",
         "@js-soft/docdb-access-loki": "^1.4.0",
         "@js-soft/docdb-access-mongo": "1.4.0",
         "@js-soft/node-logger": "1.2.1",
