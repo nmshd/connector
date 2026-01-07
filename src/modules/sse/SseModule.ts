@@ -24,7 +24,7 @@ export class SseModule extends ConnectorRuntimeModule<SseModuleConfiguration> {
         await this.recreateEventSource();
 
         this.connectionCheckingTimer = setInterval(async () => {
-            if (!this.eventSource || this.eventSource.readyState !== EventSource.CLOSED) return;
+            if (this.eventSource?.readyState !== EventSource.CLOSED) return;
 
             this.logger.error("The event source has closed without reconnecting on its own");
 
