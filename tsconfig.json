@@ -19,7 +19,8 @@
         "strictPropertyInitialization": false,
         "downlevelIteration": true,
         "noImplicitOverride": true,
-        "lib": ["es2022", "dom"]
+        "lib": ["es2022", "dom"],
+        "skipLibCheck": true
     },
     "include": ["src/**/*"]
 }
