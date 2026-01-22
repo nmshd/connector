@@ -78,7 +78,7 @@
         ]
     },
     "dependencies": {
-        "@google-cloud/pubsub": "^5.2.1",
+        "@google-cloud/pubsub": "^5.2.2",
         "@js-soft/docdb-access-loki": "^1.4.0",
         "@js-soft/docdb-access-mongo": "1.4.0",
         "@js-soft/node-logger": "1.2.1",
@@ -131,7 +131,7 @@
         "@types/lodash": "^4.17.23",
         "@types/luxon": "^3.7.1",
         "@types/nconf": "^0.10.7",
-        "@types/node": "^24.10.8",
+        "@types/node": "^24.10.9",
         "@types/on-headers": "^1.0.4",
         "@types/swagger-ui-express": "^4.1.8",
         "@types/ws": "^8.18.1",
@@ -142,11 +142,11 @@
         "jest": "^30.2.0",
         "jest-expect-message": "^1.1.3",
         "jest-json-schema": "^6.1.0",
-        "lodash": "^4.17.21",
+        "lodash": "^4.17.23",
         "nodemon": "^3.1.11",
         "npm-run-all2": "^8.0.4",
         "openapi-types": "^12.1.3",
-        "prettier": "^3.8.0",
+        "prettier": "^3.8.1",
         "ts-jest": "^29.4.6",
         "ts-node": "^10.9.2",
         "typescript": "^5.9.3"
