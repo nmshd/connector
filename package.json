@@ -109,7 +109,7 @@
         "redis": "^5.10.0",
         "reflect-metadata": "0.2.2",
         "swagger-ui-express": "5.0.1",
-        "undici": "^7.18.2",
+        "undici": "^7.19.0",
         "yamljs": "0.3.0",
         "yargs": "^18.0.0"
     },
@@ -153,6 +153,6 @@
     },
     "engines": {
         "node": ">=24.13.0",
-        "npm": ">=11.7.0"
+        "npm": ">=11.8.0"
     }
 }
