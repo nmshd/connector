@@ -90,7 +90,7 @@
         "agentkeepalive": "4.6.0",
         "amqp-connection-manager": "^5.0.0",
         "amqplib": "^0.10.9",
-        "axios": "^1.13.3",
+        "axios": "^1.13.4",
         "compression": "1.8.1",
         "correlation-id": "^5.2.0",
         "cors": "2.8.6",
@@ -109,7 +109,7 @@
         "redis": "^5.10.0",
         "reflect-metadata": "0.2.2",
         "swagger-ui-express": "5.0.1",
-        "undici": "^7.19.1",
+        "undici": "^7.19.2",
         "yamljs": "0.3.0",
         "yargs": "^18.0.0"
     },
