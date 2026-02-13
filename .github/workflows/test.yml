@@ -31,7 +31,7 @@ jobs:
       - run: npm ci
       - run: npm run build:ci --workspaces --if-present
       - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@v1
+        uses: supercharge/mongodb-github-action@1.12.1
       - run: npm run test:ci --workspaces --if-present
         env:
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017
