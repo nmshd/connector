@@ -78,7 +78,7 @@
         ]
     },
     "dependencies": {
-        "@google-cloud/pubsub": "^5.2.2",
+        "@google-cloud/pubsub": "^5.2.3",
         "@js-soft/docdb-access-loki": "^1.4.0",
         "@js-soft/docdb-access-mongo": "1.4.0",
         "@js-soft/node-logger": "1.2.1",
@@ -89,7 +89,7 @@
         "@nmshd/typescript-rest": "^3.2.2",
         "agentkeepalive": "4.6.0",
         "amqplib": "^0.10.9",
-        "axios": "^1.13.4",
+        "axios": "^1.13.5",
         "compression": "1.8.1",
         "correlation-id": "^5.2.0",
         "cors": "2.8.6",
@@ -105,10 +105,10 @@
         "nconf": "0.13.0",
         "on-headers": "1.1.0",
         "rapidoc": "9.3.8",
-        "redis": "^5.10.0",
+        "redis": "^5.11.0",
         "reflect-metadata": "0.2.2",
         "swagger-ui-express": "5.0.1",
-        "undici": "^7.21.0",
+        "undici": "^7.22.0",
         "yamljs": "0.3.0",
         "yargs": "^18.0.0"
     },
@@ -130,7 +130,7 @@
         "@types/lodash": "^4.17.23",
         "@types/luxon": "^3.7.1",
         "@types/nconf": "^0.10.7",
-        "@types/node": "^24.10.12",
+        "@types/node": "^24.10.13",
         "@types/on-headers": "^1.0.4",
         "@types/swagger-ui-express": "^4.1.8",
         "@types/ws": "^8.18.1",
@@ -151,7 +151,7 @@
         "typescript": "^5.9.3"
     },
     "engines": {
-        "node": ">=24.13.0",
-        "npm": ">=11.9.0"
+        "node": ">=24.13.1",
+        "npm": ">=11.10.0"
     }
 }
