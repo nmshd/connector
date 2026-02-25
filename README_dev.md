@@ -176,7 +176,3 @@ It's now possible to access the Connector on port 8080. Validating this is possi
 
 - run `npm ci` (this will symlink the SDK in the node_modules of the Connector)
 - run `npm run build --workspaces` to build the changes for the Connector and its packages
-
-# TODO
-
-Remove this
