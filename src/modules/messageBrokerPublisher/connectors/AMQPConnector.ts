@@ -1,5 +1,5 @@
 import { ILogger } from "@js-soft/logging-abstractions";
-import amqp from "amqplib";
+import { AmqpConnectionManager, ChannelWrapper, connect as amqpConnect } from "amqp-connection-manager";
 import { MessageBrokerConnector } from "./MessageBrokerConnector";
 
 export interface AMQPConnectorConfiguration {
@@ -9,8 +9,8 @@ export interface AMQPConnectorConfiguration {
 }
 
 export class AMQPConnector extends MessageBrokerConnector<AMQPConnectorConfiguration> {
-    private connection?: amqp.ChannelModel;
-    private channel?: amqp.Channel;
+    private connection?: AmqpConnectionManager;
+    private channel?: ChannelWrapper;
 
     public constructor(configuration: AMQPConnectorConfiguration, logger: ILogger) {
         super(configuration, logger);
@@ -21,24 +21,24 @@ export class AMQPConnector extends MessageBrokerConnector<AMQPConnectorConfigura
     public async init(): Promise<void> {
         const url = this.configuration.url;
 
-        this.connection = await amqp.connect(url, { timeout: this.configuration.timeout ?? 2000 }).catch((e) => {
+        this.connection = amqpConnect(url, { connectionOptions: { timeout: this.configuration.timeout ?? 2000 } });
+
+        await this.connection.connect().catch((e) => {
             throw new Error(`Could not connect to RabbitMQ at '${url}' (${e.message})`);
         });
 
-        this.channel = await this.connection.createChannel().catch((e) => {
-            throw new Error(`Could not create a channel for RabbitMQ (${e.message})`);
-        });
-
         const exchange = this.configuration.exchange ?? "";
+        this.channel = this.connection.createChannel({ json: true });
+
         await this.channel.checkExchange(exchange).catch(() => {
             throw new Error(`The configured exchange '${exchange}' does not exist.`);
         });
     }
 
-    public publish(namespace: string, data: Buffer): void {
+    public async publish(namespace: string, data: Buffer): Promise<void> {
         const exchangeName = this.configuration.exchange ?? "";
 
-        const sent = this.channel!.publish(exchangeName, namespace, data);
+        const sent = await this.channel!.publish(exchangeName, namespace, data);
         if (!sent) {
             this.logger.error(`Publishing event '${namespace}' to exchange '${exchangeName}' failed.`);
         }
