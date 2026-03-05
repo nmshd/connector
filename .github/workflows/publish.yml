@@ -40,13 +40,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Docker Login
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Login to DHI.io
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: dhi.io
           username: ${{ secrets.DHI_DOCKERHUB_USERNAME }}
