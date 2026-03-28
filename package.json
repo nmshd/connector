@@ -88,7 +88,7 @@
         "@nmshd/typescript-ioc": "^3.2.5",
         "@nmshd/typescript-rest": "^3.2.3",
         "agentkeepalive": "4.6.0",
-        "amqplib": "^0.10.9",
+        "amqplib": "^1.0.2",
         "axios": "^1.13.6",
         "compression": "1.8.1",
         "correlation-id": "^5.2.0",
