@@ -108,7 +108,7 @@
         "redis": "^5.11.0",
         "reflect-metadata": "0.2.2",
         "swagger-ui-express": "5.0.1",
-        "undici": "^7.24.6",
+        "undici": "^7.24.7",
         "yamljs": "0.3.0",
         "yargs": "^18.0.0"
     },
@@ -146,7 +146,7 @@
         "npm-run-all2": "^8.0.4",
         "openapi-types": "^12.1.3",
         "prettier": "^3.8.1",
-        "ts-jest": "^29.4.6",
+        "ts-jest": "^29.4.9",
         "ts-node": "^10.9.2",
         "typescript": "^5.9.3"
     },
