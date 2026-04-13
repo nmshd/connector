@@ -81,7 +81,7 @@ jobs:
           COMMIT_HASH: ${{ github.sha }}
           VERSION: ${{ github.ref_name }}
       - name: Add zipped Connector to release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: connector-${{ github.ref_name }}.zip
     needs: ["publish-npm"]
