@@ -95,7 +95,7 @@
         "cors": "2.8.6",
         "eventsource": "^4.1.0",
         "express": "^5.2.1",
-        "express-oauth2-jwt-bearer": "^1.8.0",
+        "express-oauth2-jwt-bearer": "^1.9.0",
         "express-openid-connect": "^2.20.2",
         "helmet": "8.1.0",
         "json-stringify-safe": "5.0.1",
@@ -152,6 +152,6 @@
     },
     "engines": {
         "node": ">=24.15.0",
-        "npm": ">=11.14.1"
+        "npm": ">=11.15.0"
     }
 }
