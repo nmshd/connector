@@ -4,12 +4,12 @@ set -x
 npm ci
 
 echo "=== BEFORE ==="
-npm ls --all
+npm ls --all --depth=0
 
 npm run build:ci --workspaces --if-present
 
 echo "=== AFTER ==="
-npm ls --all
+npm ls --all --depth=0
 
 # linting
 npm run lint:tsc
