@@ -17,8 +17,7 @@
         "noImplicitReturns": true,
         "strictNullChecks": true,
         "strictPropertyInitialization": false,
-        "lib": ["es2022", "dom"],
-        "baseUrl": "../"
+        "lib": ["es2022", "dom"]
     },
     "files": ["../node_modules/jest-expect-message/types/index.d.ts"],
     "include": ["**/*.ts"],
