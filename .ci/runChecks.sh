@@ -10,5 +10,5 @@ npm run lint:eslint
 npm run lint:prettier
 
 # auditing
-npx --workspaces license-check
+npx license-check
 npx better-npm-audit audit --exclude 1112030
