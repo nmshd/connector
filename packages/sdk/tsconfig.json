@@ -18,7 +18,6 @@
         "noImplicitReturns": true,
         "strictNullChecks": true,
         "strictPropertyInitialization": false,
-        "downlevelIteration": true,
         "lib": ["es2022", "dom"],
         "declarationMap": true
     },
