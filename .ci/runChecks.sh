@@ -3,12 +3,13 @@ set -x
 
 npm ci
 
-npm ls --all > before.txt # remove this
+echo "=== BEFORE ==="
+npm ls --all
 
 npm run build:ci --workspaces --if-present
 
-npm ls --all > after.txt # remove this
-diff before.txt after.txt # remove this
+echo "=== AFTER ==="
+npm ls --all
 
 # linting
 npm run lint:tsc
