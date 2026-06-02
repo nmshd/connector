@@ -18,7 +18,7 @@
         "copy-additional-files": "cpx \"src/**/*.{json,yml,ico}\" dist",
         "copy-additional-files:watch": "cpx \"src/**/*.{json,yml,ico}\" dist --watch",
         "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json",
-        "postinstall": "patch-package && echo 'Postinstall done.'",
+        "postinstall": "npx patch-package && echo 'Postinstall done.'",
         "lint": "npm run lint:tsc && npm run lint:prettier && npm run lint:eslint",
         "lint:eslint": "eslint",
         "lint:prettier": "prettier --check .",
