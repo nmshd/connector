@@ -18,7 +18,8 @@
         "strictNullChecks": true,
         "strictPropertyInitialization": false,
         "lib": ["es2022", "dom"],
-        "declarationMap": true
+        "declarationMap": true,
+        "skipLibCheck": true
     },
     "include": ["src/**/*"]
 }
