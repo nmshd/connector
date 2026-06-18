@@ -27,8 +27,8 @@ describe("test openapi spec against routes", () => {
         };
         const generator = new SpecGenerator(metadata, defaultOptions);
         generatedOpenApiSpec = generator.getOpenApiSpec();
-        generatedOpenApiSpec = (await swaggerParser.dereference(generatedOpenApiSpec as any)) as Swagger.Spec;
-        manualOpenApiSpec = (await swaggerParser.dereference(manualOpenApiSpec as any)) as Swagger.Spec;
+        generatedOpenApiSpec = (await swaggerParser.dereference(generatedOpenApiSpec)) as Swagger.Spec;
+        manualOpenApiSpec = (await swaggerParser.dereference(manualOpenApiSpec)) as Swagger.Spec;
         harmonizeSpec(manualOpenApiSpec);
         harmonizeSpec(generatedOpenApiSpec);
     });

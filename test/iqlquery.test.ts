@@ -102,7 +102,7 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
     const createRequestRes = await client2.outgoingRequests.createRequest({
         content: {
             items: [outRequest],
-            expiresAt: DateTime.now().plus({ hour: 1 }).toISO() as any
+            expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
         },
         peer: client1Address
     });
@@ -161,7 +161,7 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
     const createRequestRes = await client2.outgoingRequests.createRequest({
         content: {
             items: [outRequest],
-            expiresAt: DateTime.now().plus({ hour: 1 }).toISO() as any
+            expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
         },
         peer: client1Address
     });
@@ -213,7 +213,7 @@ test("Remote ProposeAttributeRequest containing IQL Query without existing attri
     const createRequestRes = await client2.outgoingRequests.createRequest({
         content: {
             items: [outRequest],
-            expiresAt: DateTime.now().plus({ hour: 1 }).toISO() as any
+            expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
         },
         peer: client1Address
     });
