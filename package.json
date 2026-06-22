@@ -168,7 +168,7 @@
         "prettier": "^3.8.4",
         "ts-jest": "^29.4.11",
         "ts-node": "^10.9.2",
-        "typescript": "^5.9.3"
+        "typescript": "^6.0.2"
     },
     "engines": {
         "node": ">=24.17.0",
