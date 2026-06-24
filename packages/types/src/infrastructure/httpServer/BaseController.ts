@@ -6,20 +6,20 @@ import { Envelope } from "./common/Envelope";
 import { Mimetype } from "./common/Mimetype";
 
 export abstract class BaseController {
-    protected created<T>(result: Result<T>): Return.NewResource<Envelope> {
-        return new Return.NewResource<Envelope>("_", this.json<T>(result));
+    protected created<T>(result: Result<T>): Return.NewResource<Envelope<T>> {
+        return new Return.NewResource<Envelope<T>>("_", this.json<T>(result));
     }
 
-    protected ok<T>(result: Result<T>): Envelope {
-        return this.json(result);
+    protected ok<T>(result: Result<T>): Envelope<T> {
+        return this.json<T>(result);
     }
 
     protected noContent<T>(result: Result<T>): void {
-        this.guard(result);
+        this.guard<T>(result);
         return;
     }
 
-    private json<T>(result: Result<T>): Envelope {
+    private json<T>(result: Result<T>): Envelope<T> {
         this.guard(result);
         return Envelope.ok(result.value);
     }
