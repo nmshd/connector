@@ -36,8 +36,8 @@
         "qs": "^6.15.3"
     },
     "devDependencies": {
-        "@types/qs": "^6.15.1",
-        "ts-json-schema-generator": "^2.9.0"
+        "@types/qs": "6.15.1",
+        "ts-json-schema-generator": "2.9.0"
     },
     "publishConfig": {
         "access": "public",
