@@ -1,0 +1,19 @@
+name: Weekly Release of Dependency Updates
+
+on:
+  schedule:
+    - cron: "0 2 * * 2" # every Tuesday at 02:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekly-dependency-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    uses: js-soft/github-actions/.github/workflows/release-dependency-updates.yml@9b8903f62d9e84d33e1e00be5e65c7e91ea03ab6 # main
+    secrets:
+      github-token: ${{ secrets.GH_PAT }}
