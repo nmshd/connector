@@ -79,7 +79,7 @@
             ]
         },
         "transformIgnorePatterns": [
-            "<rootDir>/node_modules/(?!(@noble|@stablelib|@digitalcredentials|dcql|@openid4vc|@credo\\-ts|uuid)/)"
+            "<rootDir>/node_modules/(?!(@noble|@stablelib|@digitalcredentials|dcql|@openid4vc|@credo\\-ts|uuid|express-openid-connect|openid-client|oauth4webapi|jose)/)"
         ]
     },
     "c8": {
