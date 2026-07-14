@@ -79,7 +79,7 @@
             ]
         },
         "transformIgnorePatterns": [
-            "<rootDir>/node_modules/(?!(@noble|@stablelib|@digitalcredentials|dcql|@openid4vc|@credo\\-ts|uuid)/)"
+            "<rootDir>/node_modules/(?!(@noble|@stablelib|@digitalcredentials|dcql|@openid4vc|@credo\\-ts|uuid|express-openid-connect|openid-client|oauth4webapi|jose)/)"
         ]
     },
     "c8": {
@@ -113,7 +113,7 @@
         "eventsource": "^4.1.0",
         "express": "^5.2.1",
         "express-oauth2-jwt-bearer": "^1.9.1",
-        "express-openid-connect": "^2.20.2",
+        "express-openid-connect": "^3.0.0",
         "helmet": "8.2.0",
         "json-stringify-safe": "5.0.1",
         "jsonschema": "1.5.0",
