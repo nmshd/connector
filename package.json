@@ -78,8 +78,11 @@
                 }
             ]
         },
+        "moduleNameMapper": {
+            "^@verifiables/request-converter$": "<rootDir>/node_modules/@verifiables/request-converter/dist/index.js"
+        },
         "transformIgnorePatterns": [
-            "<rootDir>/node_modules/(?!(@noble|@stablelib|@digitalcredentials|dcql|@openid4vc|@credo\\-ts|uuid|express-openid-connect|openid-client|oauth4webapi|jose)/)"
+            "<rootDir>/node_modules/(?!(@noble|@owf|@scure|@stablelib|@verifiables|@digitalcredentials|dcql|@openid4vc|@credo\\-ts|uuid|express-openid-connect|openid-client|oauth4webapi|jose)/)"
         ]
     },
     "c8": {
