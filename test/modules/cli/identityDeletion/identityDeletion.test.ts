@@ -4,8 +4,8 @@ import { resetDB, setupEnvironment } from "../setup";
 describe("Identity deletion", () => {
     const randomAccountName = Math.random().toString(36).substring(2, 15);
 
-    beforeAll(() => {
-        setupEnvironment(randomAccountName);
+    beforeAll(async () => {
+        await setupEnvironment(randomAccountName);
     });
 
     afterAll(async () => {

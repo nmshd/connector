@@ -6,8 +6,8 @@ describe("Identity status", () => {
     const randomAccountName = Math.random().toString(36).substring(2, 15);
     const identityStatusPattern = /Identity Address: did:e:((([A-Za-z0-9]+(-[A-Za-z0-9]+)*)\.)+[a-z]{2,}|localhost):dids:[0-9a-f]{22}/;
 
-    beforeAll(() => {
-        setupEnvironment(randomAccountName);
+    beforeAll(async () => {
+        await setupEnvironment(randomAccountName);
     });
 
     afterAll(async () => {
