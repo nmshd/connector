@@ -2,7 +2,7 @@ import { rm } from "fs/promises";
 import { join } from "path";
 import getPort from "../../lib/getPort";
 
-export function setupEnvironment(randomAccountName: string): void {
+export async function setupEnvironment(randomAccountName: string): Promise<void> {
     process.env.database = JSON.stringify({
         driver: "lokijs",
         folder: "./",
@@ -10,7 +10,7 @@ export function setupEnvironment(randomAccountName: string): void {
     });
     process.env.CUSTOM_CONFIG_LOCATION = ".dev/test.json";
     process.env["infrastructure:httpServer:authentication:apiKey:keys:test:key"] = "test";
-    process.env["infrastructure:httpServer:port"] = getPort().toString();
+    process.env["infrastructure:httpServer:port"] = (await getPort()).toString();
 
     process.env["transportLibrary:baseUrl"] = process.env["NMSHD_TEST_BASEURL"];
     process.env["transportLibrary:platformClientId"] = process.env["NMSHD_TEST_CLIENTID"];
