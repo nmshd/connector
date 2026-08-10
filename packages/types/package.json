@@ -28,7 +28,7 @@
         "qrcode": "^1.5.4"
     },
     "devDependencies": {
-        "@js-soft/logging-abstractions": "1.2.8",
+        "@js-soft/logging-abstractions": "1.2.9",
         "@types/express": "5.0.6",
         "@types/luxon": "3.7.3",
         "@types/node": "24.13.3",
