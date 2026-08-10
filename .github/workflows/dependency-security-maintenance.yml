@@ -9,6 +9,6 @@ permissions: {}
 
 jobs:
   npm-audit:
-    uses: js-soft/github-actions/.github/workflows/dependency-security-maintenance.yml@main
+    uses: js-soft/github-actions/.github/workflows/dependency-security-maintenance.yml@902c2ae6951187b136fc378a2de6f64b41666015 # main
     secrets:
       github-token: ${{ secrets.GH_PAT }}
