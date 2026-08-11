@@ -1,12 +1,5 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": ["github>js-soft/renovate-config"],
-    "reviewers": ["team:npm-dependency-update-reviewers"],
-    "packageRules": [
-        {
-            "groupName": "backbone",
-            "matchPackageNames": ["ghcr.io/nmshd/backbone-*"],
-            "matchDatasources": ["docker"]
-        }
-    ]
+    "reviewers": ["team:npm-dependency-update-reviewers"]
 }
