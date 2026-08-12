@@ -1,4 +1,4 @@
-FROM dhi.io/node:24.12.0-dev@sha256:7aaf36e50a3b73acc6eec2dec8317239769929ddcf6f792c91c2ab79a3a4634d AS builder
+FROM dhi.io/node:24.19.0-dev@sha256:dfbe5b95d1fcf228c70dcb17bcbd46b790d87bac938b272bb4df40be37d7867b AS builder
 
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
@@ -17,7 +17,7 @@ COPY packages/types/src packages/types/src
 RUN npm run build:ci --ws
 RUN .ci/writeBuildInformation.sh
 
-FROM dhi.io/node:24.12.0-dev@sha256:7aaf36e50a3b73acc6eec2dec8317239769929ddcf6f792c91c2ab79a3a4634d AS installer
+FROM dhi.io/node:24.19.0-dev@sha256:dfbe5b95d1fcf228c70dcb17bcbd46b790d87bac938b272bb4df40be37d7867b AS installer
 
 ARG VERSION
 
@@ -31,7 +31,7 @@ RUN npm --prefix packages/types version --no-git-tag-version $VERSION
 
 RUN npm ci --omit=dev
 
-FROM dhi.io/node:24.12.0@sha256:e805d972f53c2db92cab8c56242ba8609736e461ef16d4073d52d5404263bbc9
+FROM dhi.io/node:24.19.0@sha256:bf96f6c2ac657a3378b36917d7afbd8f8ad49ffe41af8d115c98ea5d124aecec
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=5 CMD [ "node", "/usr/app/dist/healthcheck.js" ]
 LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
