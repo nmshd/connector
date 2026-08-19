@@ -45,7 +45,6 @@
     },
     "jest": {
         "maxWorkers": 2,
-        "preset": "ts-jest",
         "setupFilesAfterEnv": [
             "jest-expect-message",
             "./test/lib/validation.ts",
@@ -58,32 +57,17 @@
         ],
         "testTimeout": 60000,
         "transform": {
-            "^.+\\.(t|j)s$": [
+            "^.+\\.ts$": [
                 "ts-jest",
                 {
                     "tsconfig": "test/tsconfig.json"
                 }
-            ],
-            "^.+\\.mjs$": [
-                "babel-jest",
-                {
-                    "presets": [
-                        [
-                            "@babel/preset-env",
-                            {
-                                "modules": "commonjs"
-                            }
-                        ]
-                    ]
-                }
             ]
         },
         "moduleNameMapper": {
-            "^@verifiables/request-converter$": "<rootDir>/node_modules/@verifiables/request-converter/dist/index.js"
-        },
-        "transformIgnorePatterns": [
-            "<rootDir>/node_modules/(?!(@noble|@owf|@scure|@stablelib|@verifiables|@digitalcredentials|dcql|@openid4vc|@credo\\-ts|uuid|express-openid-connect|openid-client|oauth4webapi|jose)/)"
-        ]
+            "^@verifiables/request-converter$": "<rootDir>/node_modules/@verifiables/request-converter/dist/index.js",
+            "^webcrypto-core$": "<rootDir>/node_modules/webcrypto-core/build/webcrypto-core.js"
+        }
     },
     "c8": {
         "all": true,
