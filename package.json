@@ -96,7 +96,7 @@
         "compression": "1.8.1",
         "correlation-id": "^5.2.0",
         "cors": "2.8.6",
-        "eventsource": "^4.1.0",
+        "eventsource": "^5.0.0",
         "express": "^5.2.1",
         "express-oauth2-jwt-bearer": "^1.9.1",
         "express-openid-connect": "^3.3.0",
