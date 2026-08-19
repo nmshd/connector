@@ -35,17 +35,16 @@
         "teardown:backbone": "docker compose -f .dev/compose.backbone.yml down -v",
         "teardown:test-env": "docker compose -f test/compose.yml down -v",
         "teardown:testconnectors": "docker compose -f .dev/compose.yml down -v",
-        "test:ci": "npm run build && c8 jest -i",
+        "test:ci": "npm run build && c8 node --experimental-vm-modules node_modules/jest/bin/jest.js -i",
         "test:local": "npm run test:local:mongo",
-        "test:local:coverage": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" c8 jest",
-        "test:local:ferretdb": "npm run build --workspaces && npm run start:test-env:ferretdb && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27019\" jest",
-        "test:local:mongo": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" jest",
+        "test:local:coverage": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" c8 node --experimental-vm-modules node_modules/jest/bin/jest.js",
+        "test:local:ferretdb": "npm run build --workspaces && npm run start:test-env:ferretdb && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27019\" node --experimental-vm-modules node_modules/jest/bin/jest.js",
+        "test:local:mongo": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" node --experimental-vm-modules node_modules/jest/bin/jest.js",
         "tsc": "tsc",
         "tsc:watch": "tsc --build tsconfig.watch.json -w"
     },
     "jest": {
         "maxWorkers": 2,
-        "preset": "ts-jest",
         "setupFilesAfterEnv": [
             "jest-expect-message",
             "./test/lib/validation.ts",
@@ -58,32 +57,17 @@
         ],
         "testTimeout": 60000,
         "transform": {
-            "^.+\\.(t|j)s$": [
+            "^.+\\.ts$": [
                 "ts-jest",
                 {
                     "tsconfig": "test/tsconfig.json"
                 }
-            ],
-            "^.+\\.mjs$": [
-                "babel-jest",
-                {
-                    "presets": [
-                        [
-                            "@babel/preset-env",
-                            {
-                                "modules": "commonjs"
-                            }
-                        ]
-                    ]
-                }
             ]
         },
         "moduleNameMapper": {
-            "^@verifiables/request-converter$": "<rootDir>/node_modules/@verifiables/request-converter/dist/index.js"
-        },
-        "transformIgnorePatterns": [
-            "<rootDir>/node_modules/(?!(@noble|@owf|@scure|@stablelib|@verifiables|@digitalcredentials|dcql|@openid4vc|@credo\\-ts|uuid|express-openid-connect|openid-client|oauth4webapi|jose)/)"
-        ]
+            "^@verifiables/request-converter$": "<rootDir>/node_modules/@verifiables/request-converter/dist/index.js",
+            "^webcrypto-core$": "<rootDir>/node_modules/webcrypto-core/build/webcrypto-core.js"
+        }
     },
     "c8": {
         "all": true,
