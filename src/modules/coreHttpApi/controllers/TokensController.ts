@@ -1,5 +1,5 @@
 import { BaseController, Envelope } from "@nmshd/connector-types";
-import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
+import { OwnerRestriction, TokenDTO, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, ContextAccept, ContextResponse, DELETE, GET, Path, PathParam, POST, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
@@ -14,7 +14,7 @@ export class TokensController extends BaseController {
     @POST
     @Path("/Own")
     @Accept("application/json")
-    public async createOwnToken(request: any): Promise<Return.NewResource<Envelope>> {
+    public async createOwnToken(request: any): Promise<Return.NewResource<Envelope<TokenDTO>>> {
         request.ephemeral ??= false;
         const result = await this.transportServices.tokens.createOwnToken(request);
         return this.created(result);
@@ -23,7 +23,7 @@ export class TokensController extends BaseController {
     @POST
     @Path("/Peer")
     @Accept("application/json")
-    public async loadPeerToken(request: any): Promise<Return.NewResource<Envelope>> {
+    public async loadPeerToken(request: any): Promise<Return.NewResource<Envelope<TokenDTO>>> {
         request.ephemeral ??= false;
         const result = await this.transportServices.tokens.loadPeerToken(request);
         return this.created(result);
@@ -32,7 +32,7 @@ export class TokensController extends BaseController {
     @GET
     @Path("/Own")
     @Accept("application/json")
-    public async getOwnTokens(@Context context: ServiceContext): Promise<Envelope> {
+    public async getOwnTokens(@Context context: ServiceContext): Promise<Envelope<TokenDTO[]>> {
         const result = await this.transportServices.tokens.getTokens({
             query: context.request.query,
             ownerRestriction: OwnerRestriction.Own
@@ -43,7 +43,7 @@ export class TokensController extends BaseController {
     @GET
     @Path("/Peer")
     @Accept("application/json")
-    public async getPeerTokens(@Context context: ServiceContext): Promise<Envelope> {
+    public async getPeerTokens(@Context context: ServiceContext): Promise<Envelope<TokenDTO[]>> {
         const result = await this.transportServices.tokens.getTokens({
             query: context.request.query,
             ownerRestriction: OwnerRestriction.Peer
@@ -61,7 +61,7 @@ export class TokensController extends BaseController {
     @GET
     @Path("/:id")
     @Accept("application/json", "image/png")
-    public async getToken(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+    public async getToken(@PathParam("id") id: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope<TokenDTO> | void> {
         const result = await this.transportServices.tokens.getToken({ id });
 
         switch (accept) {
