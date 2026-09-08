@@ -1,4 +1,4 @@
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 node_modules
 *.db
 dist
