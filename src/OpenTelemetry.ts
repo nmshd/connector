@@ -13,7 +13,7 @@ type OpenTelemetryLogsApi = typeof import("@opentelemetry/api-logs").logs;
 type SeverityNumberType = typeof import("@opentelemetry/api-logs").SeverityNumber;
 
 const OPEN_TELEMETRY_APPENDER_NAME = "openTelemetry";
-const SERVICE_NAME = "enmeshed-connector";
+const SERVICE_NAME = "enmeshed.connector";
 
 export class OpenTelemetry {
     private shutdownPromise?: Promise<void>;
@@ -111,19 +111,13 @@ export class OpenTelemetry {
     }
 
     public addLogAppender(configuration: log4js.Configuration): log4js.Configuration {
-        const extendedConfiguration: log4js.Configuration = {
-            ...configuration,
-            appenders: { ...configuration.appenders },
-            categories: Object.fromEntries(Object.entries(configuration.categories).map(([name, category]) => [name, { ...category, appenders: [...category.appenders] }]))
-        };
-
-        const appenderName = OpenTelemetry.getAvailableAppenderName(extendedConfiguration);
+        const appenderName = OpenTelemetry.getAvailableAppenderName(configuration);
         const loggers = new Map<string, Logger>();
 
         const appenderModule: log4js.AppenderModule = {
             configure: () => (event) => {
-                const severityNumber = OpenTelemetry.mapSeverity(event.level.levelStr, this.severityNumbers);
-                const logger = OpenTelemetry.getLogger(loggers, this.logs, event.categoryName);
+                const severityNumber = this.mapSeverity(event.level.levelStr);
+                const logger = this.getLogger(loggers, event.categoryName);
                 if (!logger.enabled({ severityNumber })) return;
 
                 const attributes: Record<string, string | number> = {
@@ -147,12 +141,12 @@ export class OpenTelemetry {
             }
         };
 
-        extendedConfiguration.appenders[appenderName] = { type: appenderModule };
-        for (const category of Object.values(extendedConfiguration.categories)) {
+        configuration.appenders[appenderName] = { type: appenderModule };
+        for (const category of Object.values(configuration.categories)) {
             if (!category.appenders.includes(appenderName)) category.appenders.push(appenderName);
         }
 
-        return extendedConfiguration;
+        return configuration;
     }
 
     private static getAvailableAppenderName(configuration: log4js.Configuration): string {
@@ -161,31 +155,31 @@ export class OpenTelemetry {
         return appenderName;
     }
 
-    private static getLogger(loggers: Map<string, Logger>, logs: OpenTelemetryLogsApi, categoryName: string): Logger {
+    private getLogger(loggers: Map<string, Logger>, categoryName: string): Logger {
         let logger = loggers.get(categoryName);
         if (!logger) {
-            logger = logs.getLogger(categoryName);
+            logger = this.logs.getLogger(categoryName);
             loggers.set(categoryName, logger);
         }
         return logger;
     }
 
-    private static mapSeverity(level: string, severityNumbers: SeverityNumberType): OpenTelemetrySeverityNumber {
+    private mapSeverity(level: string): OpenTelemetrySeverityNumber {
         switch (level.toUpperCase()) {
             case "TRACE":
-                return severityNumbers.TRACE;
+                return this.severityNumbers.TRACE;
             case "DEBUG":
-                return severityNumbers.DEBUG;
+                return this.severityNumbers.DEBUG;
             case "INFO":
-                return severityNumbers.INFO;
+                return this.severityNumbers.INFO;
             case "WARN":
-                return severityNumbers.WARN;
+                return this.severityNumbers.WARN;
             case "ERROR":
-                return severityNumbers.ERROR;
+                return this.severityNumbers.ERROR;
             case "FATAL":
-                return severityNumbers.FATAL;
+                return this.severityNumbers.FATAL;
             default:
-                return severityNumbers.UNSPECIFIED;
+                return this.severityNumbers.UNSPECIFIED;
         }
     }
 

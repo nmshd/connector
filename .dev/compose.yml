@@ -14,7 +14,7 @@ services:
       - SYNC_ENABLED=${SYNC_ENABLED:-false}
       - DATABASE_NAME=${DATABASE_NAME_PREFIX:-connector}-1
       - openTelemetry__endpoint=http://otel-collector:4318
-      - OTEL_SERVICE_NAME=enmeshed-connector-1
+      - OTEL_SERVICE_NAME=enmeshed.connector-1
       - transportLibrary__baseUrl
       - transportLibrary__addressGenerationHostnameOverride
       - transportLibrary__platformClientId
@@ -46,7 +46,7 @@ services:
       - SYNC_ENABLED=${SYNC_ENABLED:-false}
       - DATABASE_NAME=${DATABASE_NAME_PREFIX:-connector}-2
       - openTelemetry__endpoint=http://otel-collector:4318
-      - OTEL_SERVICE_NAME=enmeshed-connector-2
+      - OTEL_SERVICE_NAME=enmeshed.connector-2
       - transportLibrary__baseUrl
       - transportLibrary__addressGenerationHostnameOverride
       - transportLibrary__platformClientId
