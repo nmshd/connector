@@ -1,5 +1,7 @@
+import type { Span } from "@opentelemetry/api";
 import type { Logger, SeverityNumber as OpenTelemetrySeverityNumber } from "@opentelemetry/api-logs";
 import correlator from "correlation-id";
+import type { ClientRequest, IncomingMessage } from "http";
 import type * as log4js from "log4js";
 import { formatWithOptions } from "util";
 import type { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
@@ -45,7 +47,8 @@ export class OpenTelemetry {
         };
         instrumentationConfiguration["@opentelemetry/instrumentation-host-metrics"] = hostMetricsConfiguration;
         instrumentationConfiguration["@opentelemetry/instrumentation-http"] = {
-            ignoreIncomingRequestHook: (request) => new URL(request.url ?? "", "http://localhost").pathname === "/health"
+            ignoreIncomingRequestHook: (request) => new URL(request.url ?? "", "http://localhost").pathname === "/health",
+            requestHook: OpenTelemetry.updateHttpSpanName
         };
         instrumentationConfiguration["@opentelemetry/instrumentation-net"] = { enabled: false };
         instrumentationConfiguration["@opentelemetry/instrumentation-router"] = { enabled: false };
@@ -136,6 +139,16 @@ export class OpenTelemetry {
 
         const disabledInstrumentations = process.env.OTEL_NODE_DISABLED_INSTRUMENTATIONS?.split(",").map((instrumentation) => instrumentation.trim());
         return !disabledInstrumentations?.includes("host-metrics");
+    }
+
+    private static updateHttpSpanName(span: Span, request: ClientRequest | IncomingMessage): void {
+        if ("path" in request) span.setAttribute("peer.service", request.host);
+
+        const requestPath = "path" in request ? request.path : request.url;
+        if (!requestPath) return;
+
+        const pathname = new URL(requestPath, "http://localhost").pathname;
+        span.updateName(`${request.method ?? "GET"} ${pathname}`);
     }
 
     private static getAvailableAppenderName(configuration: log4js.Configuration): string {
