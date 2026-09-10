@@ -13,7 +13,7 @@ type OpenTelemetryLogsApi = typeof import("@opentelemetry/api-logs").logs;
 type SeverityNumberType = typeof import("@opentelemetry/api-logs").SeverityNumber;
 
 const OPEN_TELEMETRY_APPENDER_NAME = "openTelemetry";
-const OPEN_TELEMETRY_SERVICE_NAME = "enmeshed-connector";
+const SERVICE_NAME = "enmeshed-connector";
 
 export class OpenTelemetry {
     private shutdownPromise?: Promise<void>;
@@ -27,12 +27,13 @@ export class OpenTelemetry {
 
     public static async initialize(connectorConfig: ConnectorRuntimeConfig): Promise<OpenTelemetry | undefined> {
         const endpoint = connectorConfig.openTelemetry?.endpoint;
-        if (!endpoint) return;
 
         if (!process.env.OTEL_EXPORTER_OTLP_ENDPOINT?.trim()) process.env.OTEL_EXPORTER_OTLP_ENDPOINT = endpoint;
-        if (!process.env.OTEL_SERVICE_NAME?.trim()) process.env.OTEL_SERVICE_NAME = OPEN_TELEMETRY_SERVICE_NAME;
+        if (!process.env.OTEL_SERVICE_NAME?.trim()) process.env.OTEL_SERVICE_NAME = SERVICE_NAME;
 
-        const [sdkModule, apiModule, autoInstrumentationModule, expressInstrumentationModule, logsModule] = await Promise.all([
+        if (!process.env.OTEL_EXPORTER_OTLP_ENDPOINT) return;
+
+        const [nodeSdkModule, apiModule, autoInstrumentationModule, expressInstrumentationModule, logsModule] = await Promise.all([
             import("@opentelemetry/sdk-node"),
             import("@opentelemetry/api"),
             import("@opentelemetry/auto-instrumentations-node"),
@@ -40,13 +41,12 @@ export class OpenTelemetry {
             import("@opentelemetry/api-logs")
         ]);
 
-        const hostMetricsConfiguration = OpenTelemetry.shouldEnableHostMetricsByDefault() ? { enabled: true } : {};
         const instrumentationConfiguration: NonNullable<Parameters<typeof autoInstrumentationModule.getNodeAutoInstrumentations>[0]> = {};
         instrumentationConfiguration["@opentelemetry/instrumentation-dns"] = { enabled: false };
         instrumentationConfiguration["@opentelemetry/instrumentation-express"] = {
             ignoreLayersType: [expressInstrumentationModule.ExpressLayerType.MIDDLEWARE]
         };
-        instrumentationConfiguration["@opentelemetry/instrumentation-host-metrics"] = hostMetricsConfiguration;
+        instrumentationConfiguration["@opentelemetry/instrumentation-host-metrics"] = { enabled: OpenTelemetry.shouldEnableHostMetricsByDefault() };
         instrumentationConfiguration["@opentelemetry/instrumentation-http"] = {
             ignoreIncomingRequestHook: (request) => new URL(request.url ?? "", "http://localhost").pathname === "/health",
             requestHook: OpenTelemetry.updateHttpSpanName
@@ -57,10 +57,10 @@ export class OpenTelemetry {
         instrumentationConfiguration["@opentelemetry/instrumentation-net"] = { enabled: false };
         instrumentationConfiguration["@opentelemetry/instrumentation-router"] = { enabled: false };
 
-        const sdk = new sdkModule.NodeSDK({
+        const sdk = new nodeSdkModule.NodeSDK({
             instrumentations: [autoInstrumentationModule.getNodeAutoInstrumentations(instrumentationConfiguration)],
-            resource: sdkModule.resources.defaultResource().merge(
-                sdkModule.resources.resourceFromAttributes({
+            resource: nodeSdkModule.resources.defaultResource().merge(
+                nodeSdkModule.resources.resourceFromAttributes({
                     "service.version": connectorVersion
                 })
             )
@@ -70,8 +70,30 @@ export class OpenTelemetry {
         return new OpenTelemetry(sdk, apiModule, logsModule.logs, logsModule.SeverityNumber);
     }
 
+    private static shouldEnableHostMetricsByDefault(): boolean {
+        const enabledInstrumentations = process.env.OTEL_NODE_ENABLED_INSTRUMENTATIONS;
+        if (enabledInstrumentations?.trim()) return false;
+
+        const disabledInstrumentations = process.env.OTEL_NODE_DISABLED_INSTRUMENTATIONS?.split(",").map((instrumentation) => instrumentation.trim());
+        return !disabledInstrumentations?.includes("host-metrics");
+    }
+
+    private static updateHttpSpanName(span: Span, request: ClientRequest | IncomingMessage): void {
+        if ("path" in request) span.setAttribute("peer.service", request.host);
+
+        const requestPath = "path" in request ? request.path : request.url;
+        if (!requestPath) return;
+
+        const pathname = new URL(requestPath, "http://localhost").pathname;
+        span.updateName(`${request.method ?? "GET"} ${pathname}`);
+    }
+
+    private static setMongoDbPeerService(span: Span): void {
+        span.setAttribute("peer.service", "mongodb");
+    }
+
     public async traceStartup<T>(start: () => Promise<T>): Promise<T> {
-        const tracer = this.api.trace.getTracer(OPEN_TELEMETRY_SERVICE_NAME);
+        const tracer = this.api.trace.getTracer(SERVICE_NAME);
 
         return await tracer.startActiveSpan("connector.startup", {}, this.api.ROOT_CONTEXT, async (span) => {
             try {
@@ -133,37 +155,6 @@ export class OpenTelemetry {
         return extendedConfiguration;
     }
 
-    public async shutdown(): Promise<void> {
-        this.shutdownPromise ??= this.sdk.shutdown().catch((error: unknown) => {
-            // eslint-disable-next-line no-console
-            console.error("Failed to shut down OpenTelemetry cleanly.", error);
-        });
-
-        await this.shutdownPromise;
-    }
-
-    private static shouldEnableHostMetricsByDefault(): boolean {
-        const enabledInstrumentations = process.env.OTEL_NODE_ENABLED_INSTRUMENTATIONS;
-        if (enabledInstrumentations?.trim()) return false;
-
-        const disabledInstrumentations = process.env.OTEL_NODE_DISABLED_INSTRUMENTATIONS?.split(",").map((instrumentation) => instrumentation.trim());
-        return !disabledInstrumentations?.includes("host-metrics");
-    }
-
-    private static updateHttpSpanName(span: Span, request: ClientRequest | IncomingMessage): void {
-        if ("path" in request) span.setAttribute("peer.service", request.host);
-
-        const requestPath = "path" in request ? request.path : request.url;
-        if (!requestPath) return;
-
-        const pathname = new URL(requestPath, "http://localhost").pathname;
-        span.updateName(`${request.method ?? "GET"} ${pathname}`);
-    }
-
-    private static setMongoDbPeerService(span: Span): void {
-        span.setAttribute("peer.service", "mongodb");
-    }
-
     private static getAvailableAppenderName(configuration: log4js.Configuration): string {
         let appenderName = OPEN_TELEMETRY_APPENDER_NAME;
         while (Object.hasOwn(configuration.appenders, appenderName)) appenderName = `_${appenderName}`;
@@ -196,5 +187,14 @@ export class OpenTelemetry {
             default:
                 return severityNumbers.UNSPECIFIED;
         }
+    }
+
+    public async shutdown(): Promise<void> {
+        this.shutdownPromise ??= this.sdk.shutdown().catch((error: unknown) => {
+            // eslint-disable-next-line no-console
+            console.error("Failed to shut down OpenTelemetry cleanly.", error);
+        });
+
+        await this.shutdownPromise;
     }
 }
