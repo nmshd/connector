@@ -4,6 +4,7 @@ import correlator from "correlation-id";
 import type { ClientRequest, IncomingMessage } from "http";
 import type * as log4js from "log4js";
 import { formatWithOptions } from "util";
+import { version as connectorVersion } from "../package.json";
 import type { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 
 type OpenTelemetrySdk = import("@opentelemetry/sdk-node").NodeSDK;
@@ -54,7 +55,12 @@ export class OpenTelemetry {
         instrumentationConfiguration["@opentelemetry/instrumentation-router"] = { enabled: false };
 
         const sdk = new sdkModule.NodeSDK({
-            instrumentations: [autoInstrumentationModule.getNodeAutoInstrumentations(instrumentationConfiguration)]
+            instrumentations: [autoInstrumentationModule.getNodeAutoInstrumentations(instrumentationConfiguration)],
+            resource: sdkModule.resources.defaultResource().merge(
+                sdkModule.resources.resourceFromAttributes({
+                    "service.version": connectorVersion
+                })
+            )
         });
 
         sdk.start();
