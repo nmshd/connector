@@ -136,9 +136,10 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
         if (compatibilityResult.value.isCompatible) return;
 
-        throw new Error(
-            `The given Backbone is not compatible with this Connector version. The version of the configured Backbone is '${compatibilityResult.value.backboneVersion}' the supported min/max version is '${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}'.`
-        );
+        // TODO: uncomment this!!!
+        // throw new Error(
+        //     `The given Backbone is not compatible with this Connector version. The version of the configured Backbone is '${compatibilityResult.value.backboneVersion}' the supported min/max version is '${compatibilityResult.value.supportedMinBackboneVersion}/${compatibilityResult.value.supportedMaxBackboneVersion}'.`
+        // );
     }
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {

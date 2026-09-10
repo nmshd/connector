@@ -5,6 +5,7 @@ import { formatWithOptions } from "util";
 import type { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 
 type OpenTelemetrySdk = import("@opentelemetry/sdk-node").NodeSDK;
+type OpenTelemetryApi = typeof import("@opentelemetry/api");
 type OpenTelemetryLogsApi = typeof import("@opentelemetry/api-logs").logs;
 type SeverityNumberType = typeof import("@opentelemetry/api-logs").SeverityNumber;
 
@@ -16,6 +17,7 @@ export class OpenTelemetry {
 
     private constructor(
         private readonly sdk: OpenTelemetrySdk,
+        private readonly api: OpenTelemetryApi,
         private readonly logs: OpenTelemetryLogsApi,
         private readonly severityNumbers: SeverityNumberType
     ) {}
@@ -27,8 +29,9 @@ export class OpenTelemetry {
         if (!process.env.OTEL_EXPORTER_OTLP_ENDPOINT?.trim()) process.env.OTEL_EXPORTER_OTLP_ENDPOINT = endpoint;
         if (!process.env.OTEL_SERVICE_NAME?.trim()) process.env.OTEL_SERVICE_NAME = OPEN_TELEMETRY_SERVICE_NAME;
 
-        const [sdkModule, autoInstrumentationModule, expressInstrumentationModule, logsModule] = await Promise.all([
+        const [sdkModule, apiModule, autoInstrumentationModule, expressInstrumentationModule, logsModule] = await Promise.all([
             import("@opentelemetry/sdk-node"),
+            import("@opentelemetry/api"),
             import("@opentelemetry/auto-instrumentations-node"),
             import("@opentelemetry/instrumentation-express"),
             import("@opentelemetry/api-logs")
@@ -52,7 +55,25 @@ export class OpenTelemetry {
         });
 
         sdk.start();
-        return new OpenTelemetry(sdk, logsModule.logs, logsModule.SeverityNumber);
+        return new OpenTelemetry(sdk, apiModule, logsModule.logs, logsModule.SeverityNumber);
+    }
+
+    public async traceStartup<T>(start: () => Promise<T>): Promise<T> {
+        const tracer = this.api.trace.getTracer(OPEN_TELEMETRY_SERVICE_NAME);
+
+        return await tracer.startActiveSpan("connector.startup", {}, this.api.ROOT_CONTEXT, async (span) => {
+            try {
+                const result = await start();
+                span.setStatus({ code: this.api.SpanStatusCode.OK });
+                return result;
+            } catch (error) {
+                if (error instanceof Error) span.recordException(error);
+                span.setStatus({ code: this.api.SpanStatusCode.ERROR, message: error instanceof Error ? error.message : String(error) });
+                throw error;
+            } finally {
+                span.end();
+            }
+        });
     }
 
     public addLogAppender(configuration: log4js.Configuration): log4js.Configuration {

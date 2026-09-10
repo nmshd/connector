@@ -11,9 +11,15 @@ const startConnectorHandler = async ({ config }: ConfigFileOptions): Promise<voi
     let runtime: ConnectorRuntime | undefined;
 
     try {
-        const connectorRuntimeModule = await import("../../ConnectorRuntime");
-        runtime = await connectorRuntimeModule.ConnectorRuntime.create(connectorConfig, openTelemetry);
-        await runtime.start();
+        const startRuntime = async () => {
+            const connectorRuntimeModule = await import("../../ConnectorRuntime");
+            const createdRuntime = await connectorRuntimeModule.ConnectorRuntime.create(connectorConfig, openTelemetry);
+            runtime = createdRuntime;
+            await createdRuntime.start();
+            return createdRuntime;
+        };
+
+        runtime = openTelemetry ? await openTelemetry.traceStartup(startRuntime) : await startRuntime();
     } catch (error) {
         if (runtime) {
             await runtime.stop();

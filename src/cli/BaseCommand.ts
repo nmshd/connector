@@ -71,9 +71,18 @@ export abstract class BaseCommand {
         if (this.#cliRuntime) return;
         if (!this.#connectorConfig) throw new Error("Connector config not initialized");
 
-        const connectorRuntimeModule = await import("../ConnectorRuntime");
-        this.#cliRuntime = await connectorRuntimeModule.ConnectorRuntime.create(this.#connectorConfig, this.#openTelemetry);
-        await this.#cliRuntime.start();
+        const startRuntime = async () => {
+            const connectorRuntimeModule = await import("../ConnectorRuntime");
+            const runtime = await connectorRuntimeModule.ConnectorRuntime.create(this.#connectorConfig!, this.#openTelemetry);
+            this.#cliRuntime = runtime;
+            await runtime.start();
+        };
+
+        if (this.#openTelemetry) {
+            await this.#openTelemetry.traceStartup(startRuntime);
+        } else {
+            await startRuntime();
+        }
     }
 
     protected abstract runInternal(): Promise<void>;
