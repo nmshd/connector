@@ -104,8 +104,6 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
       - --web.enable-remote-write-receiver
-    ports:
-      - "9090:9090"
     volumes:
       - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
@@ -113,8 +111,6 @@ services:
   loki:
     image: grafana/loki:3.7.4
     command: ["-config.file=/etc/loki/local-config.yaml"]
-    ports:
-      - "3100:3100"
     volumes:
       - ./observability/loki.yml:/etc/loki/local-config.yaml:ro
       - loki_data:/loki
@@ -123,8 +119,6 @@ services:
     image: grafana/tempo:2.10.7
     command: ["-config.file=/etc/tempo.yml"]
     user: "0:0"
-    ports:
-      - "3200:3200"
     volumes:
       - ./observability/tempo.yml:/etc/tempo.yml:ro
       - tempo_data:/var/tempo
