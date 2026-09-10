@@ -51,6 +51,9 @@ export class OpenTelemetry {
             ignoreIncomingRequestHook: (request) => new URL(request.url ?? "", "http://localhost").pathname === "/health",
             requestHook: OpenTelemetry.updateHttpSpanName
         };
+        instrumentationConfiguration["@opentelemetry/instrumentation-mongodb"] = {
+            responseHook: OpenTelemetry.setMongoDbPeerService
+        };
         instrumentationConfiguration["@opentelemetry/instrumentation-net"] = { enabled: false };
         instrumentationConfiguration["@opentelemetry/instrumentation-router"] = { enabled: false };
 
@@ -155,6 +158,10 @@ export class OpenTelemetry {
 
         const pathname = new URL(requestPath, "http://localhost").pathname;
         span.updateName(`${request.method ?? "GET"} ${pathname}`);
+    }
+
+    private static setMongoDbPeerService(span: Span): void {
+        span.setAttribute("peer.service", "mongodb");
     }
 
     private static getAvailableAppenderName(configuration: log4js.Configuration): string {
