@@ -9,6 +9,17 @@
         "debug": {
             "type": "boolean"
         },
+        "openTelemetry": {
+            "additionalProperties": false,
+            "properties": {
+                "endpoint": {
+                    "pattern": "^https?://",
+                    "type": "string"
+                }
+            },
+            "required": ["endpoint"],
+            "type": "object"
+        },
         "transportLibrary": {
             "additionalProperties": false,
             "properties": {

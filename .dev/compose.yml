@@ -13,6 +13,8 @@ services:
       - CUSTOM_CONFIG_LOCATION=/config.json
       - SYNC_ENABLED=${SYNC_ENABLED:-false}
       - DATABASE_NAME=${DATABASE_NAME_PREFIX:-connector}-1
+      - openTelemetry__endpoint=http://otel-collector:4318
+      - OTEL_SERVICE_NAME=enmeshed-connector-1
       - transportLibrary__baseUrl
       - transportLibrary__addressGenerationHostnameOverride
       - transportLibrary__platformClientId
@@ -25,6 +27,7 @@ services:
     depends_on:
       - mongo
       - mongo-express
+      - otel-collector
     stdin_open: true
     tty: true
 
@@ -42,6 +45,8 @@ services:
       - CUSTOM_CONFIG_LOCATION=/config.json
       - SYNC_ENABLED=${SYNC_ENABLED:-false}
       - DATABASE_NAME=${DATABASE_NAME_PREFIX:-connector}-2
+      - openTelemetry__endpoint=http://otel-collector:4318
+      - OTEL_SERVICE_NAME=enmeshed-connector-2
       - transportLibrary__baseUrl
       - transportLibrary__addressGenerationHostnameOverride
       - transportLibrary__platformClientId
@@ -54,6 +59,7 @@ services:
     depends_on:
       - mongo
       - mongo-express
+      - otel-collector
     stdin_open: true
     tty: true
 
@@ -79,5 +85,71 @@ services:
     depends_on:
       - mongo
 
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.160.0
+    command: ["--config=/etc/otelcol-contrib/config.yml"]
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - ./observability/otel-collector.yml:/etc/otelcol-contrib/config.yml:ro
+    depends_on:
+      - loki
+      - prometheus
+      - tempo
+
+  prometheus:
+    image: prom/prometheus:v3.12.0
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-remote-write-receiver
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+
+  loki:
+    image: grafana/loki:3.7.4
+    command: ["-config.file=/etc/loki/local-config.yaml"]
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./observability/loki.yml:/etc/loki/local-config.yaml:ro
+      - loki_data:/loki
+
+  tempo:
+    image: grafana/tempo:2.10.7
+    command: ["-config.file=/etc/tempo.yml"]
+    user: "0:0"
+    ports:
+      - "3200:3200"
+    volumes:
+      - ./observability/tempo.yml:/etc/tempo.yml:ro
+      - tempo_data:/var/tempo
+    depends_on:
+      - prometheus
+
+  grafana:
+    image: grafana/grafana:13.2.1
+    ports:
+      - "3002:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./observability/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - loki
+      - prometheus
+      - tempo
+
 volumes:
   mongo_data:
+  grafana_data:
+  loki_data:
+  prometheus_data:
+  tempo_data:

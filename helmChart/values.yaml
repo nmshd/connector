@@ -11,6 +11,10 @@ config:
       consoleAppender:
         layout:
           type: json
+  # OpenTelemetry is enabled when this endpoint is configured.
+  # Protocol, authentication headers and other settings can be supplied with OTEL_* environment variables.
+  # openTelemetry:
+  #   endpoint: http://otel-collector:4318
 
 pod:
   # securityContext for the pod deployed by the Deployment

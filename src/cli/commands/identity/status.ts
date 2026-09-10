@@ -1,4 +1,3 @@
-import { IdentityDeletionProcessStatus } from "@nmshd/runtime";
 import { DateTime } from "luxon";
 import { CommandModule } from "yargs";
 import { BaseCommand, ConfigFileOptions, configOptionBuilder } from "../../BaseCommand";
@@ -17,6 +16,7 @@ export const yargsIdentityStatusCommand: CommandModule<{}, ConfigFileOptions> = 
 export class IdentityStatus extends BaseCommand {
     protected async runInternal(): Promise<void> {
         await this.createRuntime();
+        const runtimeModule = await import("@nmshd/runtime");
 
         const identityInfoResult = await this.cliRuntime.getServices().transportServices.account.getIdentityInfo();
         const identityInfo = identityInfoResult.value;
@@ -26,7 +26,7 @@ export class IdentityStatus extends BaseCommand {
         if (identityDeletionProcessResult.isSuccess) {
             const identityDeletionProcess = identityDeletionProcessResult.value;
             message += `\nIdentity deletion status: ${identityDeletionProcess.status}`;
-            if (identityDeletionProcess.gracePeriodEndsAt && identityDeletionProcess.status === IdentityDeletionProcessStatus.Active) {
+            if (identityDeletionProcess.gracePeriodEndsAt && identityDeletionProcess.status === runtimeModule.IdentityDeletionProcessStatus.Active) {
                 message += `\nEnd of grace period: ${DateTime.fromISO(identityDeletionProcess.gracePeriodEndsAt).toLocaleString()}`;
             }
         }

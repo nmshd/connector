@@ -35,6 +35,18 @@ You can find a more detailed documentation [in the enmeshed docs](https://enmesh
 helm install connector oci://ghcr.io/nmshd/connector-helm-chart --version <version> -f <your-config-file>.yaml
 ```
 
+## OpenTelemetry
+
+Configure an OTLP endpoint to export logs, traces and metrics:
+
+```yaml
+config:
+    openTelemetry:
+        endpoint: "http://otel-collector:4318"
+```
+
+The existing log appenders remain active. Standard `OTEL_*` environment variables can be added under `pod.connector.environment` to configure the protocol, authentication headers, sampling, signal-specific endpoints and other OpenTelemetry options. Environment-provided endpoints take precedence over `config.openTelemetry.endpoint`.
+
 ## FerretDB Sidecar
 
 The chart can be configured to deploy a sidecar container with FerretDB. This is useful if you want to connect the Connector to a PostgreSQL database.

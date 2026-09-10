@@ -22,6 +22,7 @@ import { Agent as HTTPSAgent, AgentOptions as HTTPSAgentOptions } from "https";
 import { checkServerIdentity, PeerCertificate } from "tls";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { HealthChecker } from "./HealthChecker";
+import type { OpenTelemetry } from "./OpenTelemetry";
 import { buildInformation } from "./buildInformation";
 import { ConnectorInfrastructureRegistry, HttpServer } from "./infrastructure";
 import {
@@ -61,17 +62,22 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
     private healthChecker: HealthChecker;
 
-    private constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory) {
+    private constructor(
+        connectorConfig: ConnectorRuntimeConfig,
+        loggerFactory: NodeLoggerFactory,
+        private readonly openTelemetry?: OpenTelemetry
+    ) {
         super(connectorConfig, loggerFactory, undefined, correlator);
     }
 
-    public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
-        const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
+    public static async create(connectorConfig: ConnectorRuntimeConfig, openTelemetry?: OpenTelemetry): Promise<ConnectorRuntime> {
+        const loggingConfiguration = openTelemetry?.addLogAppender(connectorConfig.logging) ?? connectorConfig.logging;
+        const loggerFactory = new NodeLoggerFactory(loggingConfiguration);
 
         this.setServerIdentityCheckFromKeyPinning(connectorConfig, loggerFactory.getLogger(ConnectorRuntime));
         this.forceEnableMandatoryModules(connectorConfig);
 
-        const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
+        const runtime = new ConnectorRuntime(connectorConfig, loggerFactory, openTelemetry);
         await runtime.init();
 
         await this.runBackboneCompatibilityCheck(runtime);
@@ -414,6 +420,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
         // This must be the last operation as some stop tasks use the logger
         (this.loggerFactory as NodeLoggerFactory).close();
+        await this.openTelemetry?.shutdown();
     }
 
     protected override async stopInfrastructure(): Promise<void> {

@@ -1112,6 +1112,17 @@
             },
             "type": "object"
         },
+        "openTelemetry": {
+            "additionalProperties": false,
+            "properties": {
+                "endpoint": {
+                    "pattern": "^https?://",
+                    "type": "string"
+                }
+            },
+            "required": ["endpoint"],
+            "type": "object"
+        },
         "pinnedTLSCertificateSHA256Fingerprints": {
             "additionalProperties": {
                 "items": {

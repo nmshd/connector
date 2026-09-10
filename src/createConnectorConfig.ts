@@ -123,6 +123,8 @@ export function createConnectorConfig(customConfigLocation?: string): ConnectorR
 
     validateConnectorConfig(connectorConfig);
 
+    validateOpenTelemetryEndpoint(connectorConfig);
+
     return connectorConfig;
 }
 
@@ -181,5 +183,20 @@ function validateConnectorConfig(connectorConfig: ConnectorRuntimeConfig): void 
         // eslint-disable-next-line no-console
         console.error("The 'transportLibrary.baseUrl' must either start with 'http://' or 'https://'.");
         process.exit(1);
+    }
+}
+
+function validateOpenTelemetryEndpoint(connectorConfig: ConnectorRuntimeConfig): void {
+    if (!connectorConfig.openTelemetry) return;
+
+    let endpoint: URL;
+    try {
+        endpoint = new URL(connectorConfig.openTelemetry.endpoint);
+    } catch {
+        throw new Error("The 'openTelemetry.endpoint' must be an absolute HTTP(S) URL.");
+    }
+
+    if (endpoint.protocol !== "http:" && endpoint.protocol !== "https:") {
+        throw new Error("The 'openTelemetry.endpoint' must be an absolute HTTP(S) URL.");
     }
 }

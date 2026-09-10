@@ -17,6 +17,17 @@ The documentation for this project is available at https://enmeshed.eu/integrate
 
 To get started developing in this repository, see the [developer's guide](README_dev.md).
 
+## OpenTelemetry
+
+The Connector exports logs, traces and metrics when an OTLP endpoint is configured:
+
+```yaml
+openTelemetry:
+    endpoint: "http://otel-collector:4318"
+```
+
+Existing log appenders remain active. Standard `OTEL_*` environment variables configure protocol, authentication, sampling and signal-specific endpoints, and take precedence over the configured base endpoint.
+
 ## Feedback
 
 Please file any bugs or feature requests by creating an [issue](https://github.com/nmshd/feedback/issues).
