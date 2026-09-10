@@ -24,9 +24,10 @@ The Connector exports logs, traces and metrics when an OTLP endpoint is configur
 ```yaml
 openTelemetry:
     endpoint: "http://otel-collector:4318"
+    logLevel: "INFO"
 ```
 
-Existing log appenders remain active. Standard `OTEL_*` environment variables configure protocol, authentication, sampling and signal-specific endpoints, and take precedence over the configured base endpoint.
+Existing log appenders remain active. `openTelemetry.logLevel` controls the minimum level exported through OpenTelemetry and defaults to `INFO`. Standard `OTEL_*` environment variables configure protocol, authentication, sampling and signal-specific endpoints, and take precedence over the configured base endpoint.
 
 ## Feedback
 

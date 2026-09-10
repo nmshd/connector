@@ -43,9 +43,10 @@ Configure an OTLP endpoint to export logs, traces and metrics:
 config:
     openTelemetry:
         endpoint: "http://otel-collector:4318"
+        logLevel: "INFO"
 ```
 
-The existing log appenders remain active. Standard `OTEL_*` environment variables can be added under `pod.connector.environment` to configure the protocol, authentication headers, sampling, signal-specific endpoints and other OpenTelemetry options. Environment-provided endpoints take precedence over `config.openTelemetry.endpoint`.
+The existing log appenders remain active. `config.openTelemetry.logLevel` controls the minimum level exported through OpenTelemetry and defaults to `INFO`. Standard `OTEL_*` environment variables can be added under `pod.connector.environment` to configure the protocol, authentication headers, sampling, signal-specific endpoints and other OpenTelemetry options. Environment-provided endpoints take precedence over `config.openTelemetry.endpoint`.
 
 ## FerretDB Sidecar
 

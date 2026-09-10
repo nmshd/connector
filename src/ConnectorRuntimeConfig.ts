@@ -5,6 +5,7 @@ import { HttpServerConfiguration } from "./infrastructure";
 
 export interface OpenTelemetryConfiguration {
     endpoint: string;
+    logLevel?: "ALL" | "TRACE" | "DEBUG" | "INFO" | "WARN" | "ERROR" | "FATAL" | "OFF";
 }
 
 export interface MongoDBSettings {

@@ -13,6 +13,8 @@ type OpenTelemetryLogsApi = typeof import("@opentelemetry/api-logs").logs;
 type SeverityNumberType = typeof import("@opentelemetry/api-logs").SeverityNumber;
 
 const OPEN_TELEMETRY_APPENDER_NAME = "openTelemetry";
+const OPEN_TELEMETRY_LOG_LEVEL_FILTER_APPENDER_NAME = "openTelemetryLogLevelFilter";
+const DEFAULT_OPEN_TELEMETRY_LOG_LEVEL = "INFO";
 const SERVICE_NAME = "enmeshed.connector";
 
 export class OpenTelemetry {
@@ -22,7 +24,8 @@ export class OpenTelemetry {
         private readonly sdk: OpenTelemetrySdk,
         private readonly api: OpenTelemetryApi,
         private readonly logs: OpenTelemetryLogsApi,
-        private readonly severityNumbers: SeverityNumberType
+        private readonly severityNumbers: SeverityNumberType,
+        private readonly logLevel: string
     ) {}
 
     public static async initialize(connectorConfig: ConnectorRuntimeConfig): Promise<OpenTelemetry | undefined> {
@@ -67,7 +70,7 @@ export class OpenTelemetry {
         });
 
         sdk.start();
-        return new OpenTelemetry(sdk, apiModule, logsModule.logs, logsModule.SeverityNumber);
+        return new OpenTelemetry(sdk, apiModule, logsModule.logs, logsModule.SeverityNumber, connectorConfig.openTelemetry?.logLevel ?? DEFAULT_OPEN_TELEMETRY_LOG_LEVEL);
     }
 
     private static shouldEnableHostMetricsByDefault(): boolean {
@@ -111,7 +114,8 @@ export class OpenTelemetry {
     }
 
     public addLogAppender(configuration: log4js.Configuration): log4js.Configuration {
-        const appenderName = OpenTelemetry.getAvailableAppenderName(configuration);
+        const appenderName = OpenTelemetry.getAvailableAppenderName(configuration, OPEN_TELEMETRY_APPENDER_NAME);
+        const filterAppenderName = OpenTelemetry.getAvailableAppenderName(configuration, OPEN_TELEMETRY_LOG_LEVEL_FILTER_APPENDER_NAME);
         const loggers = new Map<string, Logger>();
 
         const appenderModule: log4js.AppenderModule = {
@@ -142,15 +146,16 @@ export class OpenTelemetry {
         };
 
         configuration.appenders[appenderName] = { type: appenderModule };
+        configuration.appenders[filterAppenderName] = { type: "logLevelFilter", appender: appenderName, level: this.logLevel };
         for (const category of Object.values(configuration.categories)) {
-            if (!category.appenders.includes(appenderName)) category.appenders.push(appenderName);
+            if (!category.appenders.includes(filterAppenderName)) category.appenders.push(filterAppenderName);
         }
 
         return configuration;
     }
 
-    private static getAvailableAppenderName(configuration: log4js.Configuration): string {
-        let appenderName = OPEN_TELEMETRY_APPENDER_NAME;
+    private static getAvailableAppenderName(configuration: log4js.Configuration, preferredName: string): string {
+        let appenderName = preferredName;
         while (Object.hasOwn(configuration.appenders, appenderName)) appenderName = `_${appenderName}`;
         return appenderName;
     }
