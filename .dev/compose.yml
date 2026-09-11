@@ -28,6 +28,7 @@ services:
       - mongo
       - mongo-express
       - otel-collector
+      - grafana
     stdin_open: true
     tty: true
 
@@ -60,6 +61,7 @@ services:
       - mongo
       - mongo-express
       - otel-collector
+      - grafana
     stdin_open: true
     tty: true
 
