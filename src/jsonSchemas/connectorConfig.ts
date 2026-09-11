@@ -21,6 +21,8 @@ export interface ConnectorConfig {
 
     logging: Log4jsConfiguration;
 
+    openTelemetry?: OpenTelemetryConfiguration;
+
     modules: Record<string, ModuleConfiguration>;
     infrastructure: InfrastructureConfiguration;
 
@@ -28,6 +30,12 @@ export interface ConnectorConfig {
     enforceCertificatePinning?: boolean;
 
     [key: string]: any;
+}
+
+interface OpenTelemetryConfiguration {
+    /** @pattern ^https?:// */
+    endpoint: string;
+    logLevel?: "ALL" | "TRACE" | "DEBUG" | "INFO" | "WARN" | "ERROR" | "FATAL" | "OFF";
 }
 
 interface ModuleConfiguration {

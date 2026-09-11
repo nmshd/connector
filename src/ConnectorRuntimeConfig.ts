@@ -1,7 +1,12 @@
-import { ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
-import { DeciderModuleConfiguration, RuntimeConfig } from "@nmshd/runtime";
+import type { ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
+import type { DeciderModuleConfiguration, RuntimeConfig } from "@nmshd/runtime";
 import * as log4js from "log4js";
 import { HttpServerConfiguration } from "./infrastructure";
+
+export interface OpenTelemetryConfiguration {
+    endpoint: string;
+    logLevel?: "ALL" | "TRACE" | "DEBUG" | "INFO" | "WARN" | "ERROR" | "FATAL" | "OFF";
+}
 
 export interface MongoDBSettings {
     driver: "mongodb";
@@ -19,6 +24,8 @@ export interface ConnectorRuntimeConfig extends RuntimeConfig {
     database: (MongoDBSettings | LokiJSSettings) & { dbName: string };
 
     logging: log4js.Configuration;
+
+    openTelemetry?: OpenTelemetryConfiguration;
 
     modules: Record<string, ConnectorRuntimeModuleConfiguration> & {
         decider: DeciderModuleConfiguration;

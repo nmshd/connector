@@ -38,7 +38,8 @@ LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
 
 WORKDIR /usr/app
 
-COPY package.json package-lock.json ./
+COPY --from=builder /usr/app/package.json ./
+COPY package-lock.json ./
 COPY packages/types/package.json packages/types/
 
 COPY --from=builder /usr/app/dist/ dist/

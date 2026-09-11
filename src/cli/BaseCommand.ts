@@ -1,7 +1,8 @@
 import { ApplicationError } from "@js-soft/ts-utils";
 import yargs from "yargs";
-import { ConnectorRuntime } from "../ConnectorRuntime";
-import { ConnectorRuntimeConfig } from "../ConnectorRuntimeConfig";
+import type { ConnectorRuntime } from "../ConnectorRuntime";
+import type { ConnectorRuntimeConfig } from "../ConnectorRuntimeConfig";
+import { OpenTelemetry } from "../OpenTelemetry";
 import { createConnectorConfig } from "../createConnectorConfig";
 
 export interface ConfigFileOptions {
@@ -21,6 +22,7 @@ Can also be set via the CUSTOM_CONFIG_LOCATION env variable`,
 export abstract class BaseCommand {
     #connectorConfig?: ConnectorRuntimeConfig;
     #cliRuntime?: ConnectorRuntime;
+    #openTelemetry?: OpenTelemetry;
 
     protected get cliRuntime(): ConnectorRuntime {
         if (!this.#cliRuntime) throw new Error("Connector runtime not initialized");
@@ -42,13 +44,18 @@ export abstract class BaseCommand {
                 default: { appenders: ["console"], level: "OFF" }
             }
         };
+        this.#openTelemetry = await OpenTelemetry.initialize(this.#connectorConfig);
 
         try {
             await this.runInternal();
 
             await this.#cliRuntime?.stop();
         } catch (error: any) {
-            await this.#cliRuntime?.stop();
+            if (this.#cliRuntime) {
+                await this.#cliRuntime.stop();
+            } else {
+                await this.#openTelemetry?.shutdown();
+            }
 
             if (error instanceof ApplicationError) {
                 this.log.log(`This command failed with the code '${error.code}' and the message '${error.message}'.`);
@@ -64,8 +71,18 @@ export abstract class BaseCommand {
         if (this.#cliRuntime) return;
         if (!this.#connectorConfig) throw new Error("Connector config not initialized");
 
-        this.#cliRuntime = await ConnectorRuntime.create(this.#connectorConfig);
-        await this.#cliRuntime.start();
+        const startRuntime = async () => {
+            const connectorRuntimeModule = await import("../ConnectorRuntime");
+            const runtime = await connectorRuntimeModule.ConnectorRuntime.create(this.#connectorConfig!, this.#openTelemetry);
+            this.#cliRuntime = runtime;
+            await runtime.start();
+        };
+
+        if (this.#openTelemetry) {
+            await this.#openTelemetry.traceStartup(startRuntime);
+        } else {
+            await startRuntime();
+        }
     }
 
     protected abstract runInternal(): Promise<void>;
