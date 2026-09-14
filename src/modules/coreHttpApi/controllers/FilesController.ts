@@ -1,6 +1,6 @@
 import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
 import { Reference } from "@nmshd/core-types";
-import { OwnerRestriction, TransportServices } from "@nmshd/runtime";
+import { FileDTO, OwnerRestriction, TokenDTO, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import {
     Accept,
@@ -39,7 +39,7 @@ export class FilesController extends BaseController {
         @FormParam("mimetype") mimetype?: string,
         @FormParam("description") description?: string,
         @FormParam("tags") tags?: string[]
-    ): Promise<Return.NewResource<Envelope>> {
+    ): Promise<Return.NewResource<Envelope<FileDTO>>> {
         const result = await this.transportServices.files.uploadOwnFile({
             content: file?.buffer,
             expiresAt,
@@ -55,7 +55,7 @@ export class FilesController extends BaseController {
     @POST
     @Path("/Peer")
     @Accept("application/json")
-    public async loadPeerFile(request: any): Promise<Return.NewResource<Envelope>> {
+    public async loadPeerFile(request: any): Promise<Return.NewResource<Envelope<FileDTO>>> {
         const result = await this.transportServices.files.getOrLoadFile(request);
         return this.created(result);
     }
@@ -77,7 +77,7 @@ export class FilesController extends BaseController {
 
     @GET
     @Accept("application/json")
-    public async getFiles(@Context context: ServiceContext): Promise<Envelope> {
+    public async getFiles(@Context context: ServiceContext): Promise<Envelope<FileDTO[]>> {
         const result = await this.transportServices.files.getFiles({ query: context.request.query });
         return this.ok(result);
     }
@@ -85,7 +85,7 @@ export class FilesController extends BaseController {
     @GET
     @Path("/Own")
     @Accept("application/json")
-    public async getOwnFiles(@Context context: ServiceContext): Promise<Envelope> {
+    public async getOwnFiles(@Context context: ServiceContext): Promise<Envelope<FileDTO[]>> {
         const result = await this.transportServices.files.getFiles({ query: context.request.query, ownerRestriction: OwnerRestriction.Own });
         return this.ok(result);
     }
@@ -93,7 +93,7 @@ export class FilesController extends BaseController {
     @GET
     @Path("/Peer")
     @Accept("application/json")
-    public async getPeerFiles(@Context context: ServiceContext): Promise<Envelope> {
+    public async getPeerFiles(@Context context: ServiceContext): Promise<Envelope<FileDTO[]>> {
         const result = await this.transportServices.files.getFiles({ query: context.request.query, ownerRestriction: OwnerRestriction.Peer });
         return this.ok(result);
     }
@@ -101,7 +101,11 @@ export class FilesController extends BaseController {
     @GET
     @Path("/:idOrReference")
     @Accept("application/json", "image/png")
-    public async getFile(@PathParam("idOrReference") idOrReference: string, @ContextAccept accept: string, @ContextResponse response: express.Response): Promise<Envelope | void> {
+    public async getFile(
+        @PathParam("idOrReference") idOrReference: string,
+        @ContextAccept accept: string,
+        @ContextResponse response: express.Response
+    ): Promise<Envelope<FileDTO> | void> {
         const fileId = idOrReference.startsWith("FIL") ? idOrReference : Reference.from(idOrReference).id.toString();
 
         const result = await this.transportServices.files.getFile({ id: fileId });
@@ -122,7 +126,7 @@ export class FilesController extends BaseController {
         @ContextAccept accept: string,
         @ContextResponse response: express.Response,
         request: any
-    ): Promise<Return.NewResource<Envelope> | void> {
+    ): Promise<Return.NewResource<Envelope<TokenDTO>> | void> {
         const result = await this.transportServices.files.createTokenForFile({
             fileId: id,
             expiresAt: request.expiresAt,
@@ -148,7 +152,7 @@ export class FilesController extends BaseController {
 
     @PATCH
     @Path("/:id/RegenerateOwnershipToken")
-    public async regenerateOwnershipToken(@PathParam("id") id: string): Promise<Envelope> {
+    public async regenerateOwnershipToken(@PathParam("id") id: string): Promise<Envelope<FileDTO>> {
         const result = await this.transportServices.files.regenerateFileOwnershipToken({ id });
         return this.ok(result);
     }
