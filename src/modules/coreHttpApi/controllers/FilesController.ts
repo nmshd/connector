@@ -36,7 +36,6 @@ export class FilesController extends BaseController {
         @FormParam("title") title?: string,
         @FileParam("file") file?: Express.Multer.File,
         @FormParam("filenameOverride") filenameOverride?: string,
-        @FormParam("mimetype") mimetype?: string,
         @FormParam("description") description?: string,
         @FormParam("tags") tags?: string[]
     ): Promise<Return.NewResource<Envelope>> {
@@ -44,7 +43,7 @@ export class FilesController extends BaseController {
             content: file?.buffer,
             expiresAt,
             filename: filenameOverride ?? (file?.originalname !== undefined ? Buffer.from(file.originalname, "latin1").toString("utf8") : undefined),
-            mimetype: mimetype ?? file?.mimetype,
+            mimetype: file?.mimetype,
             title,
             description,
             tags
