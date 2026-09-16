@@ -35,7 +35,7 @@ export class FilesController extends BaseController {
         @FormParam("expiresAt") expiresAt: string,
         @FormParam("title") title?: string,
         @FileParam("file") file?: Express.Multer.File,
-        @FormParam("filename") filename?: string,
+        @FormParam("filenameOverride") filenameOverride?: string,
         @FormParam("mimetype") mimetype?: string,
         @FormParam("description") description?: string,
         @FormParam("tags") tags?: string[]
@@ -43,7 +43,7 @@ export class FilesController extends BaseController {
         const result = await this.transportServices.files.uploadOwnFile({
             content: file?.buffer,
             expiresAt,
-            filename: filename ?? (file?.originalname !== undefined ? Buffer.from(file.originalname, "latin1").toString("utf8") : undefined),
+            filename: filenameOverride ?? (file?.originalname !== undefined ? Buffer.from(file.originalname, "latin1").toString("utf8") : undefined),
             mimetype: mimetype ?? file?.mimetype,
             title,
             description,
