@@ -12,8 +12,6 @@ type OpenTelemetryApi = typeof import("@opentelemetry/api");
 type OpenTelemetryLogsApi = typeof import("@opentelemetry/api-logs").logs;
 type SeverityNumberType = typeof import("@opentelemetry/api-logs").SeverityNumber;
 
-const OPEN_TELEMETRY_APPENDER_NAME = "openTelemetry";
-const OPEN_TELEMETRY_LOG_LEVEL_FILTER_APPENDER_NAME = "openTelemetryLogLevelFilter";
 const DEFAULT_OPEN_TELEMETRY_LOG_LEVEL = "INFO";
 const SERVICE_NAME = "enmeshed.connector";
 
@@ -114,13 +112,13 @@ export class OpenTelemetry {
         });
     }
 
-    public addLogAppender(configuration: log4js.Configuration): log4js.Configuration {
-        const appenderName = OpenTelemetry.getAvailableAppenderName(configuration, OPEN_TELEMETRY_APPENDER_NAME);
-        const filterAppenderName = OpenTelemetry.getAvailableAppenderName(configuration, OPEN_TELEMETRY_LOG_LEVEL_FILTER_APPENDER_NAME);
+    public createLogAppender(): log4js.Appender {
         const loggers = new Map<string, Logger>();
 
         const appenderModule: log4js.AppenderModule = {
             configure: () => (event) => {
+                if (!event.level.isGreaterThanOrEqualTo(this.logLevel)) return;
+
                 const severityNumber = this.mapSeverity(event.level.levelStr);
                 const logger = this.getLogger(loggers, event.categoryName);
                 if (!logger.enabled({ severityNumber })) return;
@@ -146,19 +144,7 @@ export class OpenTelemetry {
             }
         };
 
-        configuration.appenders[appenderName] = { type: appenderModule };
-        configuration.appenders[filterAppenderName] = { type: "logLevelFilter", appender: appenderName, level: this.logLevel };
-        for (const category of Object.values(configuration.categories)) {
-            if (!category.appenders.includes(filterAppenderName)) category.appenders.push(filterAppenderName);
-        }
-
-        return configuration;
-    }
-
-    private static getAvailableAppenderName(configuration: log4js.Configuration, preferredName: string): string {
-        let appenderName = preferredName;
-        while (Object.hasOwn(configuration.appenders, appenderName)) appenderName = `_${appenderName}`;
-        return appenderName;
+        return { type: appenderModule };
     }
 
     private getLogger(loggers: Map<string, Logger>, categoryName: string): Logger {

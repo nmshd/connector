@@ -42,6 +42,8 @@ interface SupportInformation {
     identityInfo: GetIdentityInfoResponse | { error: string };
 }
 
+const OPEN_TELEMETRY_APPENDER_NAME = "openTelemetry";
+
 export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeConfig> {
     private accountController: AccountController;
 
@@ -71,8 +73,8 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
     }
 
     public static async create(connectorConfig: ConnectorRuntimeConfig, openTelemetry?: OpenTelemetry): Promise<ConnectorRuntime> {
-        const loggingConfiguration = openTelemetry?.addLogAppender(connectorConfig.logging) ?? connectorConfig.logging;
-        const loggerFactory = new NodeLoggerFactory(loggingConfiguration);
+        this.enrichLoggingConfigurationWithOpenTelemetry(openTelemetry, connectorConfig);
+        const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
 
         this.setServerIdentityCheckFromKeyPinning(connectorConfig, loggerFactory.getLogger(ConnectorRuntime));
         this.forceEnableMandatoryModules(connectorConfig);
@@ -86,6 +88,22 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         runtime.setupGlobalExceptionHandling();
 
         return runtime;
+    }
+
+    private static enrichLoggingConfigurationWithOpenTelemetry(openTelemetry: OpenTelemetry | undefined, connectorConfig: ConnectorRuntimeConfig) {
+        if (openTelemetry) {
+            const appenderName = this.getAvailableAppenderName(connectorConfig.logging, OPEN_TELEMETRY_APPENDER_NAME);
+            connectorConfig.logging.appenders[appenderName] = openTelemetry.createLogAppender();
+            for (const category of Object.values(connectorConfig.logging.categories)) {
+                if (!category.appenders.includes(appenderName)) category.appenders.push(appenderName);
+            }
+        }
+    }
+
+    private static getAvailableAppenderName(configuration: ConnectorRuntimeConfig["logging"], preferredName: string): string {
+        let appenderName = preferredName;
+        while (Object.hasOwn(configuration.appenders, appenderName)) appenderName = `_${appenderName}`;
+        return appenderName;
     }
 
     private static setServerIdentityCheckFromKeyPinning(connectorConfig: ConnectorRuntimeConfig, logger: ILogger) {
