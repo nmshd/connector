@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { OpenTelemetry } from "./OpenTelemetry";
+import { OpenTelemetry } from "./openTelemetry/OpenTelemetry";
 
 const openTelemetry = OpenTelemetry.initialize();
 process.once("beforeExit", () => openTelemetry.shutdown());

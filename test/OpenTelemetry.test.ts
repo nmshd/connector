@@ -1,4 +1,4 @@
-import { OpenTelemetry } from "../src/OpenTelemetry";
+import { OpenTelemetry } from "../src/openTelemetry/OpenTelemetry";
 
 describe("OpenTelemetry", () => {
     const originalSdkDisabled = process.env.OTEL_SDK_DISABLED;

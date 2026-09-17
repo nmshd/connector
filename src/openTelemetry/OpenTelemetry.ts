@@ -11,7 +11,7 @@ import { RuntimeNodeInstrumentation } from "@opentelemetry/instrumentation-runti
 import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
 import { NodeSDK, resources } from "@opentelemetry/sdk-node";
 import type { ClientRequest, IncomingMessage } from "http";
-import { version as connectorVersion } from "../package.json";
+import { version as connectorVersion } from "../../package.json";
 
 const DEFAULT_SERVICE_NAME = "enmeshed.connector";
 const INSTRUMENTATION_FACTORIES: [string, () => Instrumentation][] = [

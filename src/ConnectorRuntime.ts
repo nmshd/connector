@@ -20,10 +20,9 @@ import correlator from "correlation-id";
 import { Agent as HTTPAgent, AgentOptions as HTTPAgentOptions } from "http";
 import { Agent as HTTPSAgent, AgentOptions as HTTPSAgentOptions } from "https";
 import { checkServerIdentity, PeerCertificate } from "tls";
+import { buildInformation } from "./buildInformation";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { HealthChecker } from "./HealthChecker";
-import { createOpenTelemetryLogAppender } from "./OpenTelemetryLogAppender";
-import { buildInformation } from "./buildInformation";
 import { ConnectorInfrastructureRegistry, HttpServer } from "./infrastructure";
 import {
     AutoAcceptPendingRelationshipsModule,
@@ -34,6 +33,7 @@ import {
     SyncModule,
     WebhooksModule
 } from "./modules";
+import { createOpenTelemetryLogAppender } from "./openTelemetry/OpenTelemetryLogAppender";
 
 interface SupportInformation {
     health: RuntimeHealth;
