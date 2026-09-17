@@ -1,26 +1,34 @@
-import { ConnectorRuntimeConfig } from "../src/ConnectorRuntimeConfig";
 import { OpenTelemetry } from "../src/OpenTelemetry";
 
 describe("OpenTelemetry", () => {
-    describe("initialize", () => {
-        const originalEndpoint = process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
-        const originalServiceName = process.env.OTEL_SERVICE_NAME;
+    const originalSdkDisabled = process.env.OTEL_SDK_DISABLED;
+    const originalServiceName = process.env.OTEL_SERVICE_NAME;
 
-        afterEach(() => {
-            restoreEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT", originalEndpoint);
-            restoreEnvironmentVariable("OTEL_SERVICE_NAME", originalServiceName);
-        });
+    beforeEach(() => {
+        process.env.OTEL_SDK_DISABLED = "true";
+    });
 
-        test("does not initialize OpenTelemetry if no endpoint is configured", async () => {
-            delete process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
-            delete process.env.OTEL_SERVICE_NAME;
+    afterEach(() => {
+        restoreEnvironmentVariable("OTEL_SDK_DISABLED", originalSdkDisabled);
+        restoreEnvironmentVariable("OTEL_SERVICE_NAME", originalServiceName);
+    });
 
-            const openTelemetry = await OpenTelemetry.initialize({} as ConnectorRuntimeConfig);
+    test("uses the default service name when none is configured", async () => {
+        delete process.env.OTEL_SERVICE_NAME;
 
-            expect(openTelemetry).toBeUndefined();
-            expect(process.env.OTEL_EXPORTER_OTLP_ENDPOINT).toBeUndefined();
-            expect(process.env.OTEL_SERVICE_NAME).toBeUndefined();
-        });
+        const openTelemetry = OpenTelemetry.initialize();
+
+        expect(process.env.OTEL_SERVICE_NAME).toBe("enmeshed.connector");
+        await openTelemetry.shutdown();
+    });
+
+    test("preserves a service name configured through the environment", async () => {
+        process.env.OTEL_SERVICE_NAME = "custom-service";
+
+        const openTelemetry = OpenTelemetry.initialize();
+
+        expect(process.env.OTEL_SERVICE_NAME).toBe("custom-service");
+        await openTelemetry.shutdown();
     });
 });
 

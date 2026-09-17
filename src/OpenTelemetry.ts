@@ -1,178 +1,75 @@
 import type { Span } from "@opentelemetry/api";
-import type { Logger, SeverityNumber as OpenTelemetrySeverityNumber } from "@opentelemetry/api-logs";
-import correlator from "correlation-id";
+import type { Instrumentation } from "@opentelemetry/instrumentation";
+import { AmqplibInstrumentation } from "@opentelemetry/instrumentation-amqplib";
+import { ExpressInstrumentation, ExpressLayerType } from "@opentelemetry/instrumentation-express";
+import { GrpcInstrumentation } from "@opentelemetry/instrumentation-grpc";
+import { HostMetricsInstrumentation } from "@opentelemetry/instrumentation-host-metrics";
+import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
+import { MongoDBInstrumentation } from "@opentelemetry/instrumentation-mongodb";
+import { RedisInstrumentation } from "@opentelemetry/instrumentation-redis";
+import { RuntimeNodeInstrumentation } from "@opentelemetry/instrumentation-runtime-node";
+import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
+import { NodeSDK, resources } from "@opentelemetry/sdk-node";
 import type { ClientRequest, IncomingMessage } from "http";
-import type * as log4js from "log4js";
-import { formatWithOptions } from "util";
 import { version as connectorVersion } from "../package.json";
-import type { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 
-type OpenTelemetrySdk = import("@opentelemetry/sdk-node").NodeSDK;
-type OpenTelemetryApi = typeof import("@opentelemetry/api");
-type OpenTelemetryLogsApi = typeof import("@opentelemetry/api-logs").logs;
-type SeverityNumberType = typeof import("@opentelemetry/api-logs").SeverityNumber;
-
-const DEFAULT_OPEN_TELEMETRY_LOG_LEVEL = "INFO";
-const SERVICE_NAME = "enmeshed.connector";
+const DEFAULT_SERVICE_NAME = "enmeshed.connector";
+const INSTRUMENTATION_FACTORIES: [string, () => Instrumentation][] = [
+    ["amqplib", () => new AmqplibInstrumentation()],
+    ["express", () => new ExpressInstrumentation({ ignoreLayersType: [ExpressLayerType.MIDDLEWARE] })],
+    ["grpc", () => new GrpcInstrumentation()],
+    ["host-metrics", () => new HostMetricsInstrumentation()],
+    [
+        "http",
+        () =>
+            new HttpInstrumentation({
+                ignoreIncomingRequestHook: (request) => new URL(request.url ?? "", "http://localhost").pathname === "/health",
+                requestHook: updateHttpSpanName
+            })
+    ],
+    ["mongodb", () => new MongoDBInstrumentation({ responseHook: setMongoDbPeerService })],
+    ["redis", () => new RedisInstrumentation()],
+    ["runtime-node", () => new RuntimeNodeInstrumentation()],
+    ["undici", () => new UndiciInstrumentation()]
+];
 
 export class OpenTelemetry {
     private shutdownPromise?: Promise<void>;
 
-    private constructor(
-        private readonly sdk: OpenTelemetrySdk,
-        private readonly api: OpenTelemetryApi,
-        private readonly logs: OpenTelemetryLogsApi,
-        private readonly severityNumbers: SeverityNumberType,
-        private readonly logLevel: string
-    ) {}
+    private constructor(private readonly sdk: NodeSDK) {}
 
-    public static async initialize(connectorConfig: ConnectorRuntimeConfig): Promise<OpenTelemetry | undefined> {
-        const endpoint = connectorConfig.openTelemetry?.otlpExporter.endpoint;
-        const environmentEndpoint = process.env.OTEL_EXPORTER_OTLP_ENDPOINT?.trim();
+    public static initialize(): OpenTelemetry {
+        if (!process.env.OTEL_SERVICE_NAME?.trim()) process.env.OTEL_SERVICE_NAME = DEFAULT_SERVICE_NAME;
 
-        if (!environmentEndpoint && !endpoint) return;
-
-        if (!environmentEndpoint) process.env.OTEL_EXPORTER_OTLP_ENDPOINT = endpoint;
-        if (!process.env.OTEL_SERVICE_NAME?.trim()) process.env.OTEL_SERVICE_NAME = connectorConfig.openTelemetry?.serviceName ?? SERVICE_NAME;
-
-        const [nodeSdkModule, apiModule, autoInstrumentationModule, expressInstrumentationModule, logsModule] = await Promise.all([
-            import("@opentelemetry/sdk-node"),
-            import("@opentelemetry/api"),
-            import("@opentelemetry/auto-instrumentations-node"),
-            import("@opentelemetry/instrumentation-express"),
-            import("@opentelemetry/api-logs")
-        ]);
-
-        const instrumentationConfiguration: NonNullable<Parameters<typeof autoInstrumentationModule.getNodeAutoInstrumentations>[0]> = {};
-        instrumentationConfiguration["@opentelemetry/instrumentation-dns"] = { enabled: false };
-        instrumentationConfiguration["@opentelemetry/instrumentation-express"] = {
-            ignoreLayersType: [expressInstrumentationModule.ExpressLayerType.MIDDLEWARE]
-        };
-        instrumentationConfiguration["@opentelemetry/instrumentation-host-metrics"] = { enabled: OpenTelemetry.shouldEnableHostMetricsByDefault() };
-        instrumentationConfiguration["@opentelemetry/instrumentation-http"] = {
-            ignoreIncomingRequestHook: (request) => new URL(request.url ?? "", "http://localhost").pathname === "/health",
-            requestHook: OpenTelemetry.updateHttpSpanName
-        };
-        instrumentationConfiguration["@opentelemetry/instrumentation-mongodb"] = {
-            responseHook: OpenTelemetry.setMongoDbPeerService
-        };
-        instrumentationConfiguration["@opentelemetry/instrumentation-net"] = { enabled: false };
-        instrumentationConfiguration["@opentelemetry/instrumentation-router"] = { enabled: false };
-
-        const sdk = new nodeSdkModule.NodeSDK({
-            instrumentations: [autoInstrumentationModule.getNodeAutoInstrumentations(instrumentationConfiguration)],
-            resource: nodeSdkModule.resources.defaultResource().merge(
-                nodeSdkModule.resources.resourceFromAttributes({
+        const sdk = new NodeSDK({
+            instrumentations: OpenTelemetry.createInstrumentations(),
+            resource: resources.defaultResource().merge(
+                resources.resourceFromAttributes({
                     "service.version": connectorVersion
                 })
             )
         });
 
         sdk.start();
-        return new OpenTelemetry(sdk, apiModule, logsModule.logs, logsModule.SeverityNumber, connectorConfig.openTelemetry?.logging?.logLevel ?? DEFAULT_OPEN_TELEMETRY_LOG_LEVEL);
+        return new OpenTelemetry(sdk);
     }
 
-    private static shouldEnableHostMetricsByDefault(): boolean {
-        const enabledInstrumentations = process.env.OTEL_NODE_ENABLED_INSTRUMENTATIONS;
-        if (enabledInstrumentations?.trim()) return false;
+    private static createInstrumentations(): Instrumentation[] {
+        const enabledInstrumentations = OpenTelemetry.readInstrumentationNames("OTEL_NODE_ENABLED_INSTRUMENTATIONS");
+        const disabledInstrumentations = OpenTelemetry.readInstrumentationNames("OTEL_NODE_DISABLED_INSTRUMENTATIONS");
 
-        const disabledInstrumentations = process.env.OTEL_NODE_DISABLED_INSTRUMENTATIONS?.split(",").map((instrumentation) => instrumentation.trim());
-        return !disabledInstrumentations?.includes("host-metrics");
+        return INSTRUMENTATION_FACTORIES.filter(([name]) => (enabledInstrumentations.size === 0 || enabledInstrumentations.has(name)) && !disabledInstrumentations.has(name)).map(
+            ([, createInstrumentation]) => createInstrumentation()
+        );
     }
 
-    private static updateHttpSpanName(span: Span, request: ClientRequest | IncomingMessage): void {
-        if ("path" in request) span.setAttribute("peer.service", request.host);
-
-        const requestPath = "path" in request ? request.path : request.url;
-        if (!requestPath) return;
-
-        const pathname = new URL(requestPath, "http://localhost").pathname;
-        span.updateName(`${request.method ?? "GET"} ${pathname}`);
-    }
-
-    private static setMongoDbPeerService(span: Span): void {
-        span.setAttribute("peer.service", "mongodb");
-    }
-
-    public async traceStartup<T>(start: () => Promise<T>): Promise<T> {
-        const tracer = this.api.trace.getTracer(SERVICE_NAME);
-
-        return await tracer.startActiveSpan("connector.startup", {}, this.api.ROOT_CONTEXT, async (span) => {
-            try {
-                const result = await start();
-                span.setStatus({ code: this.api.SpanStatusCode.OK });
-                return result;
-            } catch (error) {
-                if (error instanceof Error) span.recordException(error);
-                span.setStatus({ code: this.api.SpanStatusCode.ERROR, message: error instanceof Error ? error.message : String(error) });
-                throw error;
-            } finally {
-                span.end();
-            }
-        });
-    }
-
-    public createLogAppender(): log4js.Appender {
-        const loggers = new Map<string, Logger>();
-
-        const appenderModule: log4js.AppenderModule = {
-            configure: () => (event) => {
-                if (!event.level.isGreaterThanOrEqualTo(this.logLevel)) return;
-
-                const severityNumber = this.mapSeverity(event.level.levelStr);
-                const logger = this.getLogger(loggers, event.categoryName);
-                if (!logger.enabled({ severityNumber })) return;
-
-                const attributes: Record<string, string | number> = {
-                    "log.logger": event.categoryName,
-                    "process.pid": event.pid
-                };
-                const correlationId = correlator.getId();
-                if (correlationId) attributes["correlation.id"] = correlationId;
-                if (event.fileName) attributes["code.file.path"] = event.fileName;
-                if (event.functionName) attributes["code.function.name"] = event.functionName;
-                if (event.lineNumber) attributes["code.line.number"] = event.lineNumber;
-
-                logger.emit({
-                    timestamp: event.startTime,
-                    severityNumber,
-                    severityText: event.level.levelStr,
-                    body: formatWithOptions({ depth: null }, ...event.data),
-                    attributes,
-                    exception: event.error
-                });
-            }
-        };
-
-        return { type: appenderModule };
-    }
-
-    private getLogger(loggers: Map<string, Logger>, categoryName: string): Logger {
-        let logger = loggers.get(categoryName);
-        if (!logger) {
-            logger = this.logs.getLogger(categoryName);
-            loggers.set(categoryName, logger);
-        }
-        return logger;
-    }
-
-    private mapSeverity(level: string): OpenTelemetrySeverityNumber {
-        switch (level.toUpperCase()) {
-            case "TRACE":
-                return this.severityNumbers.TRACE;
-            case "DEBUG":
-                return this.severityNumbers.DEBUG;
-            case "INFO":
-                return this.severityNumbers.INFO;
-            case "WARN":
-                return this.severityNumbers.WARN;
-            case "ERROR":
-                return this.severityNumbers.ERROR;
-            case "FATAL":
-                return this.severityNumbers.FATAL;
-            default:
-                return this.severityNumbers.UNSPECIFIED;
-        }
+    private static readInstrumentationNames(environmentVariable: string): Set<string> {
+        return new Set(
+            process.env[environmentVariable]
+                ?.split(",")
+                .map((name) => name.trim())
+                .filter(Boolean) ?? []
+        );
     }
 
     public async shutdown(): Promise<void> {
@@ -183,4 +80,18 @@ export class OpenTelemetry {
 
         await this.shutdownPromise;
     }
+}
+
+function updateHttpSpanName(span: Span, request: ClientRequest | IncomingMessage): void {
+    if ("path" in request) span.setAttribute("peer.service", request.host);
+
+    const requestPath = "path" in request ? request.path : request.url;
+    if (!requestPath) return;
+
+    const pathname = new URL(requestPath, "http://localhost").pathname;
+    span.updateName(`${request.method ?? "GET"} ${pathname}`);
+}
+
+function setMongoDbPeerService(span: Span): void {
+    span.setAttribute("peer.service", "mongodb");
 }

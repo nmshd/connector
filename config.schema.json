@@ -9,37 +9,6 @@
         "debug": {
             "type": "boolean"
         },
-        "openTelemetry": {
-            "additionalProperties": false,
-            "properties": {
-                "logging": {
-                    "additionalProperties": false,
-                    "properties": {
-                        "logLevel": {
-                            "enum": ["ALL", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL", "OFF"],
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
-                "otlpExporter": {
-                    "additionalProperties": false,
-                    "properties": {
-                        "endpoint": {
-                            "pattern": "^https?://",
-                            "type": "string"
-                        }
-                    },
-                    "required": ["endpoint"],
-                    "type": "object"
-                },
-                "serviceName": {
-                    "type": "string"
-                }
-            },
-            "required": ["otlpExporter"],
-            "type": "object"
-        },
         "transportLibrary": {
             "additionalProperties": false,
             "properties": {

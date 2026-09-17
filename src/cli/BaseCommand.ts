@@ -1,9 +1,9 @@
 import { ApplicationError } from "@js-soft/ts-utils";
 import yargs from "yargs";
-import type { ConnectorRuntime } from "../ConnectorRuntime";
-import type { ConnectorRuntimeConfig } from "../ConnectorRuntimeConfig";
-import { OpenTelemetry } from "../OpenTelemetry";
+import { ConnectorRuntime } from "../ConnectorRuntime";
+import { ConnectorRuntimeConfig } from "../ConnectorRuntimeConfig";
 import { createConnectorConfig } from "../createConnectorConfig";
+import { startConnectorRuntime } from "../startConnectorRuntime";
 
 export interface ConfigFileOptions {
     config?: string;
@@ -22,7 +22,6 @@ Can also be set via the CUSTOM_CONFIG_LOCATION env variable`,
 export abstract class BaseCommand {
     #connectorConfig?: ConnectorRuntimeConfig;
     #cliRuntime?: ConnectorRuntime;
-    #openTelemetry?: OpenTelemetry;
 
     protected get cliRuntime(): ConnectorRuntime {
         if (!this.#cliRuntime) throw new Error("Connector runtime not initialized");
@@ -44,18 +43,13 @@ export abstract class BaseCommand {
                 default: { appenders: ["console"], level: "OFF" }
             }
         };
-        this.#openTelemetry = await OpenTelemetry.initialize(this.#connectorConfig);
 
         try {
             await this.runInternal();
 
             await this.#cliRuntime?.stop();
         } catch (error: any) {
-            if (this.#cliRuntime) {
-                await this.#cliRuntime.stop();
-            } else {
-                await this.#openTelemetry?.shutdown();
-            }
+            await this.#cliRuntime?.stop();
 
             if (error instanceof ApplicationError) {
                 this.log.log(`This command failed with the code '${error.code}' and the message '${error.message}'.`);
@@ -63,7 +57,7 @@ export abstract class BaseCommand {
                 this.log.log(error.message);
             }
 
-            process.exit(1);
+            process.exitCode = 1;
         }
     }
 
@@ -71,18 +65,7 @@ export abstract class BaseCommand {
         if (this.#cliRuntime) return;
         if (!this.#connectorConfig) throw new Error("Connector config not initialized");
 
-        const startRuntime = async () => {
-            const connectorRuntimeModule = await import("../ConnectorRuntime");
-            const runtime = await connectorRuntimeModule.ConnectorRuntime.create(this.#connectorConfig!, this.#openTelemetry);
-            this.#cliRuntime = runtime;
-            await runtime.start();
-        };
-
-        if (this.#openTelemetry) {
-            await this.#openTelemetry.traceStartup(startRuntime);
-        } else {
-            await startRuntime();
-        }
+        this.#cliRuntime = await startConnectorRuntime(this.#connectorConfig);
     }
 
     protected abstract runInternal(): Promise<void>;

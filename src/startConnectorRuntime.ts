@@ -1,0 +1,27 @@
+import { ROOT_CONTEXT, SpanStatusCode, trace } from "@opentelemetry/api";
+import { ConnectorRuntime } from "./ConnectorRuntime";
+import type { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
+
+const TRACER_NAME = "enmeshed.connector";
+
+export async function startConnectorRuntime(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
+    const tracer = trace.getTracer(TRACER_NAME);
+
+    return await tracer.startActiveSpan("connector.startup", {}, ROOT_CONTEXT, async (span) => {
+        let runtime: ConnectorRuntime | undefined;
+
+        try {
+            runtime = await ConnectorRuntime.create(connectorConfig);
+            await runtime.start();
+            span.setStatus({ code: SpanStatusCode.OK });
+            return runtime;
+        } catch (error) {
+            if (runtime) await runtime.stop();
+            if (error instanceof Error) span.recordException(error);
+            span.setStatus({ code: SpanStatusCode.ERROR, message: error instanceof Error ? error.message : String(error) });
+            throw error;
+        } finally {
+            span.end();
+        }
+    });
+}

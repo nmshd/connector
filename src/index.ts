@@ -1,22 +1,19 @@
 #!/usr/bin/env node
 
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
-import { startConnectorCommand, yargsIdentityDeletionCancelCommand, yargsIdentityDeletionInitCommand, yargsIdentityStatusCommand } from "./cli/commands";
+import { OpenTelemetry } from "./OpenTelemetry";
 
-yargs(hideBin(process.argv))
-    .command("identity [command]", "Identity related commands", (yargs) => yargs.command(yargsIdentityStatusCommand).demandCommand(1, "Please specify a command"))
-    .command("identityDeletion [command]", "Identity deletion related commands", (yargs) =>
-        yargs.command(yargsIdentityDeletionInitCommand).command(yargsIdentityDeletionCancelCommand).demandCommand(1, "Please specify a command")
-    )
-    .command(startConnectorCommand)
-    .demandCommand(1, 1, "Please specify a command")
-    .scriptName("")
-    .strict()
-    .alias("h", "help")
-    .parseAsync()
-    .catch((e) => {
-        // eslint-disable-next-line no-console
-        console.error(e);
-        process.exit(1);
-    });
+const openTelemetry = OpenTelemetry.initialize();
+process.once("beforeExit", () => openTelemetry.shutdown());
+
+async function bootstrap(): Promise<void> {
+    // Auto-instrumentation must be registered before application dependencies are loaded.
+    const { main } = await import("./main");
+    await main();
+}
+
+bootstrap().catch(async (error) => {
+    // eslint-disable-next-line no-console
+    console.error(error);
+    process.exitCode = 1;
+    await openTelemetry.shutdown();
+});

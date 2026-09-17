@@ -37,19 +37,23 @@ helm install connector oci://ghcr.io/nmshd/connector-helm-chart --version <versi
 
 ## OpenTelemetry
 
-Configure an OTLP endpoint to export logs, traces and metrics:
+Configure the OpenTelemetry SDK through environment variables to export logs, traces and metrics:
 
 ```yaml
-config:
-    openTelemetry:
-        serviceName: "enmeshed.connector"
-        otlpExporter:
-            endpoint: "http://otel-collector:4318"
-        logging:
-            logLevel: "INFO"
+pod:
+    connector:
+        environment:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector:4318"
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: "http/protobuf"
+            - name: OTEL_SERVICE_NAME
+              value: "enmeshed.connector"
 ```
 
-The existing log appenders remain active. `config.openTelemetry.serviceName` controls the service name and defaults to `enmeshed.connector`. `config.openTelemetry.logging.logLevel` controls the minimum level exported through OpenTelemetry and defaults to `INFO`. Standard `OTEL_*` environment variables can be added under `pod.connector.environment` to configure the protocol, authentication headers, sampling, signal-specific endpoints and other OpenTelemetry options. Environment variables take precedence over the corresponding configuration properties.
+The service name defaults to `enmeshed.connector`. Existing log appenders remain active, and application logs accepted by the configured log4js category levels are exported directly through the OpenTelemetry Logs SDK. Other standard `OTEL_*` variables can configure authentication headers, sampling, resource attributes and signal-specific endpoints.
+
+Only the instrumentations used by the Connector are included: `amqplib`, `express`, `grpc`, `host-metrics`, `http`, `mongodb`, `redis`, `runtime-node` and `undici`. `OTEL_NODE_ENABLED_INSTRUMENTATIONS` and `OTEL_NODE_DISABLED_INSTRUMENTATIONS` can select a subset of this list. Set `OTEL_SDK_DISABLED=true` to disable telemetry entirely.
 
 ## FerretDB Sidecar
 

@@ -19,18 +19,17 @@ To get started developing in this repository, see the [developer's guide](README
 
 ## OpenTelemetry
 
-The Connector exports logs, traces and metrics when an OTLP endpoint is configured:
+The Connector exports logs, traces and metrics through OpenTelemetry. Configure the SDK with standard `OTEL_*` environment variables:
 
-```yaml
-openTelemetry:
-    serviceName: "enmeshed.connector"
-    otlpExporter:
-        endpoint: "http://otel-collector:4318"
-    logging:
-        logLevel: "INFO"
+```sh
+OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+OTEL_SERVICE_NAME=enmeshed.connector
 ```
 
-Existing log appenders remain active. `openTelemetry.serviceName` controls the service name and defaults to `enmeshed.connector`. `openTelemetry.logging.logLevel` controls the minimum level exported through OpenTelemetry and defaults to `INFO`. Standard `OTEL_*` environment variables configure protocol, authentication, sampling and signal-specific endpoints, and take precedence over the corresponding configuration properties.
+The service name defaults to `enmeshed.connector`. Existing log appenders remain active, and application logs accepted by the configured log4js category levels are exported directly through the OpenTelemetry Logs SDK. Exporters, endpoints, protocols, authentication headers, sampling and resource attributes can be configured with their standard OpenTelemetry environment variables.
+
+Only the instrumentations used by the Connector are included: `amqplib`, `express`, `grpc`, `host-metrics`, `http`, `mongodb`, `redis`, `runtime-node` and `undici`. `OTEL_NODE_ENABLED_INSTRUMENTATIONS` and `OTEL_NODE_DISABLED_INSTRUMENTATIONS` can select a subset of this list. Set `OTEL_SDK_DISABLED=true` to disable telemetry entirely.
 
 ## Feedback
 

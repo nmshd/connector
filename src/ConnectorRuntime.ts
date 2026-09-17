@@ -22,7 +22,7 @@ import { Agent as HTTPSAgent, AgentOptions as HTTPSAgentOptions } from "https";
 import { checkServerIdentity, PeerCertificate } from "tls";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { HealthChecker } from "./HealthChecker";
-import type { OpenTelemetry } from "./OpenTelemetry";
+import { createOpenTelemetryLogAppender } from "./OpenTelemetryLogAppender";
 import { buildInformation } from "./buildInformation";
 import { ConnectorInfrastructureRegistry, HttpServer } from "./infrastructure";
 import {
@@ -64,22 +64,18 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
     private healthChecker: HealthChecker;
 
-    private constructor(
-        connectorConfig: ConnectorRuntimeConfig,
-        loggerFactory: NodeLoggerFactory,
-        private readonly openTelemetry?: OpenTelemetry
-    ) {
+    private constructor(connectorConfig: ConnectorRuntimeConfig, loggerFactory: NodeLoggerFactory) {
         super(connectorConfig, loggerFactory, undefined, correlator);
     }
 
-    public static async create(connectorConfig: ConnectorRuntimeConfig, openTelemetry?: OpenTelemetry): Promise<ConnectorRuntime> {
-        this.enrichLoggingConfigurationWithOpenTelemetry(openTelemetry, connectorConfig);
+    public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
+        this.enrichLoggingConfigurationWithOpenTelemetry(connectorConfig);
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
 
         this.setServerIdentityCheckFromKeyPinning(connectorConfig, loggerFactory.getLogger(ConnectorRuntime));
         this.forceEnableMandatoryModules(connectorConfig);
 
-        const runtime = new ConnectorRuntime(connectorConfig, loggerFactory, openTelemetry);
+        const runtime = new ConnectorRuntime(connectorConfig, loggerFactory);
         await runtime.init();
 
         await this.runBackboneCompatibilityCheck(runtime);
@@ -90,13 +86,11 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         return runtime;
     }
 
-    private static enrichLoggingConfigurationWithOpenTelemetry(openTelemetry: OpenTelemetry | undefined, connectorConfig: ConnectorRuntimeConfig) {
-        if (openTelemetry) {
-            const appenderName = this.getAvailableAppenderName(connectorConfig.logging, OPEN_TELEMETRY_APPENDER_NAME);
-            connectorConfig.logging.appenders[appenderName] = openTelemetry.createLogAppender();
-            for (const category of Object.values(connectorConfig.logging.categories)) {
-                if (!category.appenders.includes(appenderName)) category.appenders.push(appenderName);
-            }
+    private static enrichLoggingConfigurationWithOpenTelemetry(connectorConfig: ConnectorRuntimeConfig) {
+        const appenderName = this.getAvailableAppenderName(connectorConfig.logging, OPEN_TELEMETRY_APPENDER_NAME);
+        connectorConfig.logging.appenders[appenderName] = createOpenTelemetryLogAppender();
+        for (const category of Object.values(connectorConfig.logging.categories)) {
+            if (!category.appenders.includes(appenderName)) category.appenders.push(appenderName);
         }
     }
 
@@ -438,7 +432,6 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
         // This must be the last operation as some stop tasks use the logger
         (this.loggerFactory as NodeLoggerFactory).close();
-        await this.openTelemetry?.shutdown();
     }
 
     protected override async stopInfrastructure(): Promise<void> {
