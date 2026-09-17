@@ -83,13 +83,21 @@ export class OpenTelemetry {
 }
 
 function updateHttpSpanName(span: Span, request: ClientRequest | IncomingMessage): void {
-    if ("path" in request) span.setAttribute("peer.service", request.host);
+    let requestPath: string;
 
-    const requestPath = "path" in request ? request.path : request.url;
-    if (!requestPath) return;
+    if ("path" in request) {
+        // ClientRequest
+        span.setAttribute("peer.service", request.host);
+        requestPath = request.path;
+    } else {
+        // IncomingMessage
+        requestPath = request.url ?? "";
+    }
 
-    const pathname = new URL(requestPath, "http://localhost").pathname;
-    span.updateName(`${request.method ?? "GET"} ${pathname}`);
+    if (requestPath) {
+        const pathname = new URL(requestPath, "http://localhost").pathname;
+        span.updateName(`${request.method ?? "GET"} ${pathname}`);
+    }
 }
 
 function setMongoDbPeerService(span: Span): void {
