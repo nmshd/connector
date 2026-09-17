@@ -49,9 +49,11 @@ pod:
               value: "http/protobuf"
             - name: OTEL_SERVICE_NAME
               value: "enmeshed.connector"
+            - name: NMSHD_OTEL_LOG_LEVEL
+              value: "INFO"
 ```
 
-The service name defaults to `enmeshed.connector`. Existing log appenders remain active, and application logs accepted by the configured log4js category levels are exported directly through the OpenTelemetry Logs SDK. Other standard `OTEL_*` variables can configure authentication headers, sampling, resource attributes and signal-specific endpoints.
+The service name defaults to `enmeshed.connector`. Existing log appenders remain active, and application logs accepted by the configured log4js category levels are exported directly through the OpenTelemetry Logs SDK. `NMSHD_OTEL_LOG_LEVEL` controls the minimum level exported through OpenTelemetry and defaults to `INFO`; accepted values are `ALL`, `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `FATAL` and `OFF`. This setting does not affect other log appenders. Other standard `OTEL_*` variables can configure authentication headers, sampling, resource attributes and signal-specific endpoints.
 
 Only the instrumentations used by the Connector are included: `amqplib`, `express`, `grpc`, `host-metrics`, `http`, `mongodb`, `redis`, `runtime-node` and `undici`. `OTEL_NODE_ENABLED_INSTRUMENTATIONS` and `OTEL_NODE_DISABLED_INSTRUMENTATIONS` can select a subset of this list. Set `OTEL_SDK_DISABLED=true` to disable telemetry entirely.
 
