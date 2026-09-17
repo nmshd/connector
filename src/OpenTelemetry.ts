@@ -29,7 +29,7 @@ export class OpenTelemetry {
     ) {}
 
     public static async initialize(connectorConfig: ConnectorRuntimeConfig): Promise<OpenTelemetry | undefined> {
-        const endpoint = connectorConfig.openTelemetry?.endpoint;
+        const endpoint = connectorConfig.openTelemetry?.otlpExporter.endpoint;
 
         if (!process.env.OTEL_EXPORTER_OTLP_ENDPOINT?.trim()) process.env.OTEL_EXPORTER_OTLP_ENDPOINT = endpoint;
         if (!process.env.OTEL_SERVICE_NAME?.trim()) process.env.OTEL_SERVICE_NAME = SERVICE_NAME;
@@ -70,7 +70,7 @@ export class OpenTelemetry {
         });
 
         sdk.start();
-        return new OpenTelemetry(sdk, apiModule, logsModule.logs, logsModule.SeverityNumber, connectorConfig.openTelemetry?.logLevel ?? DEFAULT_OPEN_TELEMETRY_LOG_LEVEL);
+        return new OpenTelemetry(sdk, apiModule, logsModule.logs, logsModule.SeverityNumber, connectorConfig.openTelemetry?.logging?.logLevel ?? DEFAULT_OPEN_TELEMETRY_LOG_LEVEL);
     }
 
     private static shouldEnableHostMetricsByDefault(): boolean {

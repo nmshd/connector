@@ -191,12 +191,12 @@ function validateOpenTelemetryEndpoint(connectorConfig: ConnectorRuntimeConfig):
 
     let endpoint: URL;
     try {
-        endpoint = new URL(connectorConfig.openTelemetry.endpoint);
+        endpoint = new URL(connectorConfig.openTelemetry.otlpExporter.endpoint);
     } catch {
-        throw new Error("The 'openTelemetry.endpoint' must be an absolute HTTP(S) URL.");
+        throw new Error("The 'openTelemetry.otlpExporter.endpoint' must be an absolute HTTP(S) URL.");
     }
 
     if (endpoint.protocol !== "http:" && endpoint.protocol !== "https:") {
-        throw new Error("The 'openTelemetry.endpoint' must be an absolute HTTP(S) URL.");
+        throw new Error("The 'openTelemetry.otlpExporter.endpoint' must be an absolute HTTP(S) URL.");
     }
 }

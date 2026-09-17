@@ -12,16 +12,29 @@
         "openTelemetry": {
             "additionalProperties": false,
             "properties": {
-                "endpoint": {
-                    "pattern": "^https?://",
-                    "type": "string"
+                "logging": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "logLevel": {
+                            "enum": ["ALL", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL", "OFF"],
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 },
-                "logLevel": {
-                    "enum": ["ALL", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL", "OFF"],
-                    "type": "string"
+                "otlpExporter": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "endpoint": {
+                            "pattern": "^https?://",
+                            "type": "string"
+                        }
+                    },
+                    "required": ["endpoint"],
+                    "type": "object"
                 }
             },
-            "required": ["endpoint"],
+            "required": ["otlpExporter"],
             "type": "object"
         },
         "transportLibrary": {

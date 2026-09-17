@@ -33,9 +33,13 @@ export interface ConnectorConfig {
 }
 
 interface OpenTelemetryConfiguration {
-    /** @pattern ^https?:// */
-    endpoint: string;
-    logLevel?: "ALL" | "TRACE" | "DEBUG" | "INFO" | "WARN" | "ERROR" | "FATAL" | "OFF";
+    otlpExporter: {
+        /** @pattern ^https?:// */
+        endpoint: string;
+    };
+    logging?: {
+        logLevel?: "ALL" | "TRACE" | "DEBUG" | "INFO" | "WARN" | "ERROR" | "FATAL" | "OFF";
+    };
 }
 
 interface ModuleConfiguration {
