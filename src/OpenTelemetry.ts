@@ -30,11 +30,12 @@ export class OpenTelemetry {
 
     public static async initialize(connectorConfig: ConnectorRuntimeConfig): Promise<OpenTelemetry | undefined> {
         const endpoint = connectorConfig.openTelemetry?.otlpExporter.endpoint;
+        const environmentEndpoint = process.env.OTEL_EXPORTER_OTLP_ENDPOINT?.trim();
 
-        if (!process.env.OTEL_EXPORTER_OTLP_ENDPOINT?.trim()) process.env.OTEL_EXPORTER_OTLP_ENDPOINT = endpoint;
+        if (!environmentEndpoint && !endpoint) return;
+
+        if (!environmentEndpoint) process.env.OTEL_EXPORTER_OTLP_ENDPOINT = endpoint;
         if (!process.env.OTEL_SERVICE_NAME?.trim()) process.env.OTEL_SERVICE_NAME = SERVICE_NAME;
-
-        if (!process.env.OTEL_EXPORTER_OTLP_ENDPOINT) return;
 
         const [nodeSdkModule, apiModule, autoInstrumentationModule, expressInstrumentationModule, logsModule] = await Promise.all([
             import("@opentelemetry/sdk-node"),
