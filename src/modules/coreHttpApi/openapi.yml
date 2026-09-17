@@ -1750,6 +1750,11 @@ paths:
                   type: string
                   format: binary
                   nullable: false
+                filenameOverride:
+                  type: string
+                  nullable: false
+                  description: Overrides the filename supplied with the file.
+                  example: new-name.pdf
                 tags:
                   type: array
                   items:
