@@ -6,7 +6,9 @@ const openTelemetry = OpenTelemetry.initialize();
 process.once("beforeExit", () => openTelemetry.shutdown());
 
 async function bootstrap(): Promise<void> {
-    // Auto-instrumentation must be registered before application dependencies are loaded.
+    // OpenTelemetry adds tracing to supported libraries when they are first loaded. Importing the
+    // application only after initialization ensures those libraries are instrumented; a static
+    // top-level import of `main` would load them too early and their operations would not create spans.
     const { main } = await import("./main");
     await main();
 }
