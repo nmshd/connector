@@ -35,7 +35,7 @@ export class OpenTelemetry {
         if (!environmentEndpoint && !endpoint) return;
 
         if (!environmentEndpoint) process.env.OTEL_EXPORTER_OTLP_ENDPOINT = endpoint;
-        if (!process.env.OTEL_SERVICE_NAME?.trim()) process.env.OTEL_SERVICE_NAME = SERVICE_NAME;
+        if (!process.env.OTEL_SERVICE_NAME?.trim()) process.env.OTEL_SERVICE_NAME = connectorConfig.openTelemetry?.serviceName ?? SERVICE_NAME;
 
         const [nodeSdkModule, apiModule, autoInstrumentationModule, expressInstrumentationModule, logsModule] = await Promise.all([
             import("@opentelemetry/sdk-node"),

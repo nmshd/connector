@@ -33,6 +33,7 @@ export interface ConnectorConfig {
 }
 
 interface OpenTelemetryConfiguration {
+    serviceName?: string;
     otlpExporter: {
         /** @pattern ^https?:// */
         endpoint: string;

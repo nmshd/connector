@@ -1135,6 +1135,9 @@
                     },
                     "required": ["endpoint"],
                     "type": "object"
+                },
+                "serviceName": {
+                    "type": "string"
                 }
             },
             "required": ["otlpExporter"],

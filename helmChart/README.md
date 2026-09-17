@@ -42,13 +42,14 @@ Configure an OTLP endpoint to export logs, traces and metrics:
 ```yaml
 config:
     openTelemetry:
+        serviceName: "enmeshed.connector"
         otlpExporter:
             endpoint: "http://otel-collector:4318"
         logging:
             logLevel: "INFO"
 ```
 
-The existing log appenders remain active. `config.openTelemetry.logging.logLevel` controls the minimum level exported through OpenTelemetry and defaults to `INFO`. Standard `OTEL_*` environment variables can be added under `pod.connector.environment` to configure the protocol, authentication headers, sampling, signal-specific endpoints and other OpenTelemetry options. Environment-provided endpoints take precedence over `config.openTelemetry.otlpExporter.endpoint`.
+The existing log appenders remain active. `config.openTelemetry.serviceName` controls the service name and defaults to `enmeshed.connector`. `config.openTelemetry.logging.logLevel` controls the minimum level exported through OpenTelemetry and defaults to `INFO`. Standard `OTEL_*` environment variables can be added under `pod.connector.environment` to configure the protocol, authentication headers, sampling, signal-specific endpoints and other OpenTelemetry options. Environment variables take precedence over the corresponding configuration properties.
 
 ## FerretDB Sidecar
 

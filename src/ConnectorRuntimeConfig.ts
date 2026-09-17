@@ -4,6 +4,7 @@ import * as log4js from "log4js";
 import { HttpServerConfiguration } from "./infrastructure";
 
 export interface OpenTelemetryConfiguration {
+    serviceName?: string;
     otlpExporter: {
         endpoint: string;
     };
