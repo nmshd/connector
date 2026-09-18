@@ -1,5 +1,6 @@
 import { Logger, logs, SeverityNumber } from "@opentelemetry/api-logs";
 import correlator from "correlation-id";
+import { levels } from "log4js";
 import type * as log4js from "log4js";
 import { formatWithOptions } from "util";
 
@@ -43,7 +44,7 @@ export function createOpenTelemetryLogAppender(): log4js.Appender {
     return { type: appenderModule };
 }
 
-function readMinimumLogLevel(): string {
+function readMinimumLogLevel(): log4js.Level {
     const configuredLogLevel = process.env[LOG_LEVEL_ENVIRONMENT_VARIABLE]?.trim();
     const minimumLogLevel = (configuredLogLevel === undefined || configuredLogLevel === "" ? DEFAULT_LOG_LEVEL : configuredLogLevel).toUpperCase();
 
@@ -51,7 +52,7 @@ function readMinimumLogLevel(): string {
         throw new Error(`Invalid value '${configuredLogLevel}' for ${LOG_LEVEL_ENVIRONMENT_VARIABLE}. Expected one of: ${SUPPORTED_LOG_LEVELS.join(", ")}.`);
     }
 
-    return minimumLogLevel;
+    return levels.getLevel(minimumLogLevel);
 }
 
 function getLogger(loggers: Map<string, Logger>, categoryName: string): Logger {
