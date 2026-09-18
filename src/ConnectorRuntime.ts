@@ -68,7 +68,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         super(connectorConfig, loggerFactory, undefined, correlator);
     }
 
-    public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
+    public static async create(connectorConfig: ConnectorRuntimeConfig, shutdownOpenTelemetry?: () => Promise<void>): Promise<ConnectorRuntime> {
         this.enrichLoggingConfigurationWithOpenTelemetry(connectorConfig);
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
 
@@ -80,7 +80,7 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
         await this.runBackboneCompatibilityCheck(runtime);
 
-        runtime.scheduleKillTask();
+        runtime.scheduleKillTask(shutdownOpenTelemetry);
         runtime.setupGlobalExceptionHandling();
 
         return runtime;
@@ -442,11 +442,21 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         await super.stopInfrastructure();
     }
 
-    private scheduleKillTask() {
-        const signals = ["SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGTERM"];
+    private scheduleKillTask(shutdownOpenTelemetry?: () => Promise<void>) {
+        const signals: NodeJS.Signals[] = ["SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGTERM"];
+        let shutdownPromise: Promise<void> | undefined;
+        const shutdown = () => {
+            shutdownPromise ??= (async () => {
+                try {
+                    await this.stop();
+                } finally {
+                    await shutdownOpenTelemetry?.();
+                }
+            })();
+        };
 
         for (const signal of signals) {
-            process.on(signal, () => this.stop());
+            process.once(signal, shutdown);
         }
     }
 

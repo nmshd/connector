@@ -10,7 +10,7 @@ async function bootstrap(): Promise<void> {
     // application only after initialization ensures those libraries are instrumented; a static
     // top-level import of `main` would load them too early and their operations would not create spans.
     const { main } = await import("./main");
-    await main();
+    await main(() => openTelemetry.shutdown());
 }
 
 bootstrap().catch(async (error) => {

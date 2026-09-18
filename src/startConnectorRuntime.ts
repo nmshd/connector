@@ -3,14 +3,14 @@ import { ConnectorRuntime } from "./ConnectorRuntime";
 import type { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { getConnectorTracer } from "./openTelemetry/tracing";
 
-export async function startConnectorRuntime(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
+export async function startConnectorRuntime(connectorConfig: ConnectorRuntimeConfig, shutdownOpenTelemetry?: () => Promise<void>): Promise<ConnectorRuntime> {
     const tracer = getConnectorTracer();
 
     return await tracer.startActiveSpan("connector.startup", {}, ROOT_CONTEXT, async (span) => {
         let runtime: ConnectorRuntime | undefined;
 
         try {
-            runtime = await ConnectorRuntime.create(connectorConfig);
+            runtime = await ConnectorRuntime.create(connectorConfig, shutdownOpenTelemetry);
             await runtime.start();
             span.setStatus({ code: SpanStatusCode.OK });
             return runtime;
