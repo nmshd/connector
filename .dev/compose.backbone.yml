@@ -3,10 +3,9 @@ name: local-test-backbone
 services:
   consumer-api:
     image: ghcr.io/nmshd/backbone-consumer-api:7.2.1@sha256:b8f0ce01d057c726fadae11554bf2b5659f3d592b20592ffd6cf19a398c9eb1c
-    container_name: consumer-api
-    hostname: consumer-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
     ports:
       - "8090:8080"
     depends_on:
@@ -26,7 +25,8 @@ services:
 
   event-handler-service:
     image: ghcr.io/nmshd/backbone-event-handler:7.2.1@sha256:f4d6a2006530f55a6963be756cbf56f13087c90782e74c03623a8ec49ad486d8
-    container_name: event-handler-service
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
     depends_on:
       database:
         condition: service_started
@@ -40,8 +40,8 @@ services:
 
   sse-server:
     image: ghcr.io/nmshd/backbone-sse-server:7.2.1@sha256:88717021ac5ab3442ea6f88db61e5a6b1de3e32cfd90c276636fb986ba546e56
-    container_name: sse-server
-    hostname: sse-server
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
     ports:
       - "8092:8080"
     depends_on:
@@ -53,8 +53,8 @@ services:
 
   admin-ui:
     image: ghcr.io/nmshd/backbone-admin-ui:7.2.1@sha256:69c9f075d2d9156b7922c4739bfbc4ffb64a0b13bef5d6b92977d40eb35cdf85
-    container_name: admin-ui
-    hostname: admin-ui
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
     ports:
       - "8091:8080"
     depends_on:
@@ -71,7 +71,6 @@ services:
         target: app/appsettings.override.json
 
   database-migrator:
-    container_name: database-migrator
     image: ghcr.io/nmshd/backbone-database-migrator:7.2.1@sha256:2c0c5e0227149458199500856e0440bdec23d8de69ee68f3cc2d1c7beb6d67e1
     environment:
       Infrastructure__SqlDatabase__Provider: Postgres
@@ -87,7 +86,6 @@ services:
   ### infrastructure ###
 
   database:
-    container_name: bkb-postgres
     hostname: postgres
     image: postgres@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
     environment:
@@ -100,21 +98,17 @@ services:
       retries: 5
 
   azure-storage-emulator:
-    container_name: azure-storage-emulator
     hostname: azurite
     image: mcr.microsoft.com/azure-storage/azurite@sha256:830430c1da1a2d537e08f3e6764dd1f5ae00cf0346bcaf625b968ec3f0971fd5
     pull_policy: always
     command: azurite -d /data/debug.log -l /data --blobHost "0.0.0.0" --queueHost "0.0.0.0" --skipApiVersionCheck
 
   rabbitmq:
-    container_name: bkb-rabbitmq
-    hostname: rabbitmq
     image: rabbitmq:4.3.6-alpine@sha256:ada6e65d776efafacce1477ba677fa0d9cf56bfaeafca456c8ed9188613dafbe
 
   ### seeds ###
 
   seed-client:
-    container_name: seed-client
     image: ghcr.io/nmshd/backbone-admin-cli:7.2.1@sha256:f7d095c04a75be42c7d82a513464ad3d073647c2760307de3c0705589ef98142
     depends_on:
       consumer-api:
