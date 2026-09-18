@@ -3,7 +3,6 @@ name: local-test-backbone
 services:
   consumer-api:
     image: ghcr.io/nmshd/backbone-consumer-api:7.2.1@sha256:b8f0ce01d057c726fadae11554bf2b5659f3d592b20592ffd6cf19a398c9eb1c
-    hostname: consumer-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
@@ -26,7 +25,7 @@ services:
 
   event-handler-service:
     image: ghcr.io/nmshd/backbone-event-handler:7.2.1@sha256:f4d6a2006530f55a6963be756cbf56f13087c90782e74c03623a8ec49ad486d8
-environment:
+    environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
     depends_on:
       database:
@@ -41,8 +40,7 @@ environment:
 
   sse-server:
     image: ghcr.io/nmshd/backbone-sse-server:7.2.1@sha256:88717021ac5ab3442ea6f88db61e5a6b1de3e32cfd90c276636fb986ba546e56
-    hostname: sse-server
-environment:
+    environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
     ports:
       - "8092:8080"
@@ -55,7 +53,6 @@ environment:
 
   admin-ui:
     image: ghcr.io/nmshd/backbone-admin-ui:7.2.1@sha256:69c9f075d2d9156b7922c4739bfbc4ffb64a0b13bef5d6b92977d40eb35cdf85
-    hostname: admin-ui
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
     ports:
@@ -107,7 +104,6 @@ environment:
     command: azurite -d /data/debug.log -l /data --blobHost "0.0.0.0" --queueHost "0.0.0.0" --skipApiVersionCheck
 
   rabbitmq:
-    hostname: rabbitmq
     image: rabbitmq:4.3.6-alpine@sha256:ada6e65d776efafacce1477ba677fa0d9cf56bfaeafca456c8ed9188613dafbe
 
   ### seeds ###
