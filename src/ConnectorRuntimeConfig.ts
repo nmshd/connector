@@ -1,5 +1,5 @@
-import { ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
-import { DeciderModuleConfiguration, RuntimeConfig } from "@nmshd/runtime";
+import type { ConnectorRuntimeModuleConfiguration } from "@nmshd/connector-types";
+import type { DeciderModuleConfiguration, RuntimeConfig } from "@nmshd/runtime";
 import * as log4js from "log4js";
 import { HttpServerConfiguration } from "./infrastructure";
 
