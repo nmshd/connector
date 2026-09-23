@@ -88,7 +88,7 @@ services:
       - mongo
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.160.0
+    image: otel/opentelemetry-collector-contrib:0.160.0@sha256:799dc6cf12c96192af37b5bdba804da8c10b3bc563b43cb90c3f3c58d9572ad6
     command: ["--config=/etc/otelcol-contrib/config.yml"]
     ports:
       - "4317:4317"
@@ -101,7 +101,7 @@ services:
       - tempo
 
   prometheus:
-    image: prom/prometheus:v3.12.0
+    image: prom/prometheus:v3.12.0@sha256:69f5241418838263316593f7274a304b095c40bcf22e57272865da91bd60a8ac
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
@@ -111,14 +111,14 @@ services:
       - prometheus_data:/prometheus
 
   loki:
-    image: grafana/loki:3.7.4
+    image: grafana/loki:3.7.4@sha256:87f0a067673756a3cede1bcbf0c74875f7df9b09fddb53e399d0c576f756cfcc
     command: ["-config.file=/etc/loki/local-config.yaml"]
     volumes:
       - ./observability/loki.yml:/etc/loki/local-config.yaml:ro
       - loki_data:/loki
 
   tempo:
-    image: grafana/tempo:2.10.7
+    image: grafana/tempo:2.10.7@sha256:032b3acb51ed02c4b801473d54bb63e9e9f13738d215126d9843c30283794f4b
     command: ["-config.file=/etc/tempo.yml"]
     user: "0:0"
     volumes:
@@ -128,7 +128,7 @@ services:
       - prometheus
 
   grafana:
-    image: grafana/grafana:13.2.1
+    image: grafana/grafana:13.2.1@sha256:f772d434e8fab0049deb2b1b30abd43342bcfca1537614aa8d36080232cf4283
     ports:
       - "3002:3000"
     environment:
