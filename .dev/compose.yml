@@ -111,14 +111,14 @@ services:
       - prometheus_data:/prometheus
 
   loki:
-    image: grafana/loki:3.7.4@sha256:87f0a067673756a3cede1bcbf0c74875f7df9b09fddb53e399d0c576f756cfcc
+    image: grafana/loki:3.7.8@sha256:1107dd5274e0ada47e42472b7a7e71f3b2a2fe878878108f3e2f9e51528f0193
     command: ["-config.file=/etc/loki/local-config.yaml"]
     volumes:
       - ./observability/loki.yml:/etc/loki/local-config.yaml:ro
       - loki_data:/loki
 
   tempo:
-    image: grafana/tempo:2.10.7@sha256:032b3acb51ed02c4b801473d54bb63e9e9f13738d215126d9843c30283794f4b
+    image: grafana/tempo:2.10.8@sha256:f0561deb1c68ec44d6e6e7e4487f30106c4e5e768642077695b37958b105812a
     command: ["-config.file=/etc/tempo.yml"]
     user: "0:0"
     volumes:
@@ -128,7 +128,7 @@ services:
       - prometheus
 
   grafana:
-    image: grafana/grafana:13.2.1@sha256:f772d434e8fab0049deb2b1b30abd43342bcfca1537614aa8d36080232cf4283
+    image: grafana/grafana:13.2.3@sha256:b28bae15e219c998fb0e0424ed724930cc61b1f61fb404d47c862f9a23f9e572
     ports:
       - "3002:3000"
     environment:
