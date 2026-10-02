@@ -23,6 +23,8 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
             }
         }
 
+        this.useOpenApi();
+
         this.runtime.infrastructure.httpServer.addControllers(["controllers/*.js", "controllers/*.ts", "!controllers/*.d.ts"], this.baseDirectory);
 
         if (this.connectorMode === "debug") {
@@ -39,7 +41,6 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
             res.redirect(301, "/docs/swagger");
         });
 
-        this.useOpenApi();
         this.useSwagger();
         this.useRapidoc();
         this.useFavicon();
