@@ -28,15 +28,15 @@
         "qrcode": "^1.5.4"
     },
     "devDependencies": {
-        "@js-soft/logging-abstractions": "1.2.16",
+        "@js-soft/logging-abstractions": "1.2.17",
         "@types/express": "5.0.6",
-        "@types/luxon": "3.7.5",
-        "@types/node": "24.19.0",
+        "@types/luxon": "3.7.6",
+        "@types/node": "24.19.1",
         "@types/qrcode": "1.5.6",
         "typescript": "6.0.3"
     },
     "peerDependencies": {
-        "@nmshd/runtime": "7.5.17",
+        "@nmshd/runtime": "7.5.18",
         "@js-soft/docdb-access-abstractions": "^1.4.2",
         "@js-soft/ts-utils": "^2.3.6",
         "@nmshd/typescript-rest": "^3.2.3",

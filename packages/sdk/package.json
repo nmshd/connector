@@ -29,8 +29,8 @@
         "build:watch": "tsc --watch"
     },
     "dependencies": {
-        "@nmshd/content": "7.5.17",
-        "@nmshd/runtime-types": "7.5.17",
+        "@nmshd/content": "7.5.18",
+        "@nmshd/runtime-types": "7.5.18",
         "axios": "^1.18.1",
         "form-data": "^4.0.6",
         "qs": "^6.15.3"
