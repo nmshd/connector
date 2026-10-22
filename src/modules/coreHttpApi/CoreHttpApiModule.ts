@@ -59,17 +59,21 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
                         <link rel="icon" href="/favicon.ico" />
                         <meta charset="utf-8">
                         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&amp;family=Roboto+Mono&amp;display=swap" rel="stylesheet">
+                        <style>
+                            rapi-doc {
+                                --font-sans: 'Open Sans';
+                                --font-mono: 'Roboto Mono';
+                                --background: #2B303B;
+                                --foreground: #dee3ec;
+                            }
+                        </style>
                         <script type="module" src="/rapidoc/rapidoc-min.js"></script>
                     </head>
                     <body>
                         <rapi-doc
                             spec-url="/docs/json"
-                            regular-font="Open Sans"
-                            mono-font="Roboto Mono"
                             show-header="false"
-                            bg-color="#2B303B"
-                            text-color="#dee3ec"
-                            theme="dark"
+                            color-scheme="dark"
                             schema-description-expanded="true"
                             default-schema-tab="example"
                             persist-auth="${this.configuration.docs.rapidoc.persistAuth}"
