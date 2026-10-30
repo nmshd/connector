@@ -104,7 +104,7 @@ services:
     command: azurite -d /data/debug.log -l /data --blobHost "0.0.0.0" --queueHost "0.0.0.0" --skipApiVersionCheck
 
   rabbitmq:
-    image: rabbitmq:4.4.0-alpine@sha256:8668a6ed4a878a6619213d9d5721dd4983ecb662312fe233816e1d1ff8a96753
+    image: rabbitmq:4.4.0-alpine@sha256:21577d148f4f7563a87d761862fa353f59348a094833ca8b1b1a46a8102dffce
 
   ### seeds ###
 
