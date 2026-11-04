@@ -58,11 +58,8 @@ export class CoreHttpApiModule extends ConnectorRuntimeModule<CoreHttpApiModuleC
                         <title>enmeshed Connector API</title>
                         <link rel="icon" href="/favicon.ico" />
                         <meta charset="utf-8">
-                        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&amp;family=Roboto+Mono&amp;display=swap" rel="stylesheet">
                         <style>
                             rapi-doc {
-                                --font-sans: 'Open Sans';
-                                --font-mono: 'Roboto Mono';
                                 --background: #2B303B;
                                 --foreground: #dee3ec;
                             }

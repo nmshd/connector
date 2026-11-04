@@ -35,7 +35,17 @@ describe("API documentation", () => {
         const response = await axiosClient.get("/docs/rapidoc/");
         expect(response.status).toBe(200);
         expect(response.data).toContain("<rapi-doc");
+        expect(response.data).toContain('src="/rapidoc/rapidoc-min.js"');
+        expect(response.data).not.toContain("fonts.googleapis.com");
+        expect(response.data).not.toContain("fonts.gstatic.com");
         // expect(response.headers["content-type"]).toContain("text/html");
+    });
+
+    test("the RapiDoc JavaScript bundle should be accessible", async () => {
+        const response = await axiosClient.get("/rapidoc/rapidoc-min.js");
+        expect(response.status).toBe(200);
+        expect(response.data).toContain("customElements.define");
+        expect(response.data).toContain("rapi-doc");
     });
 
     test("the /favicon.ico route should be accessible", async () => {
