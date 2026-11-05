@@ -9,7 +9,8 @@ import { MongoDBInstrumentation } from "@opentelemetry/instrumentation-mongodb";
 import { RedisInstrumentation } from "@opentelemetry/instrumentation-redis";
 import { RuntimeNodeInstrumentation } from "@opentelemetry/instrumentation-runtime-node";
 import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
-import { NodeSDK, resources } from "@opentelemetry/sdk-node";
+import { defaultResource, resourceFromAttributes } from "@opentelemetry/resources";
+import { NodeSDK } from "@opentelemetry/sdk-node";
 import type { ClientRequest, IncomingMessage } from "http";
 import { version as connectorVersion } from "../../package.json";
 
@@ -43,8 +44,8 @@ export class OpenTelemetry {
 
         const sdk = new NodeSDK({
             instrumentations: OpenTelemetry.createInstrumentations(),
-            resource: resources.defaultResource().merge(
-                resources.resourceFromAttributes({
+            resource: defaultResource().merge(
+                resourceFromAttributes({
                     "service.version": connectorVersion
                 })
             )

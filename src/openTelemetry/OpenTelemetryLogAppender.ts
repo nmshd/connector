@@ -1,4 +1,4 @@
-import { Logger, logs, SeverityNumber } from "@opentelemetry/api-logs";
+import { Logger, logs, SeverityNumber } from "@opentelemetry/api";
 import correlator from "correlation-id";
 import { levels } from "log4js";
 import type * as log4js from "log4js";
