@@ -1,4 +1,4 @@
-FROM dhi.io/node:26.13.0-dev@sha256:d51251ff62ddc8771572a7a47c42092e0d576926640d505eff46ec64e2b27cba AS builder
+FROM dhi.io/node:26.13.0-dev@sha256:c765f9fd629d5204e6f06e7d599fbc977bdfa1f14450a8c35b7e1b8690b8e68b AS builder
 
 ARG COMMIT_HASH
 ARG BUILD_NUMBER
@@ -16,7 +16,7 @@ COPY packages/types/src packages/types/src
 RUN npm run build:ci --ws
 RUN .ci/writeBuildInformation.sh
 
-FROM dhi.io/node:26.13.0-dev@sha256:d51251ff62ddc8771572a7a47c42092e0d576926640d505eff46ec64e2b27cba AS installer
+FROM dhi.io/node:26.13.0-dev@sha256:c765f9fd629d5204e6f06e7d599fbc977bdfa1f14450a8c35b7e1b8690b8e68b AS installer
 
 ARG VERSION
 
