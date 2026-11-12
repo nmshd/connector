@@ -29,7 +29,7 @@ RUN npm --prefix packages/types version --no-git-tag-version $VERSION
 
 RUN npm ci --omit=dev
 
-FROM dhi.io/node:26.13.0@sha256:dea81b92cdabf3879e8edaad05c8aa4460603b6b0351fcf6c481eb12b24c8bd5
+FROM dhi.io/node:26.13.0@sha256:861a0b9096f784618b562257bed86f9f6035cf58f386d8582cfe8f204e798a22
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=5 CMD [ "node", "/usr/app/dist/healthcheck.js" ]
 LABEL org.opencontainers.image.source="https://github.com/nmshd/connector"
