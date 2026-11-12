@@ -13,8 +13,8 @@ jobs:
   run-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
       - run: bash .ci/runChecks.sh
@@ -22,25 +22,29 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Start Backbone
-        run: npm run start:backbone
-      - uses: actions/setup-node@v6
+        run: npm run start:backbone:ci
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
       - run: npm ci
       - run: npm run build:ci --workspaces --if-present
       - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@v1
+        uses: supercharge/mongodb-github-action@315db7fe45ac2880b7758f1933e6e5d59afd5e94 # 1.12.1
       - run: npm run test:ci --workspaces --if-present
         env:
+          # No collector runs in CI. Keep instrumentation active without exporting telemetry.
+          OTEL_TRACES_EXPORTER: none
+          OTEL_LOGS_EXPORTER: none
+          OTEL_METRICS_EXPORTER: none
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017
           NMSHD_TEST_BASEURL: http://localhost:8090
           NMSHD_TEST_CLIENTID: test
           NMSHD_TEST_CLIENTSECRET: test
 
       - name: Code coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
         with:
           fail_ci_if_error: false
           files: ./coverage/cobertura-coverage.xml
@@ -49,9 +53,9 @@ jobs:
   build-docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Login to DHI.io
-        uses: docker/login-action@v3
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4
         with:
           registry: dhi.io
           username: ${{ secrets.DHI_DOCKERHUB_USERNAME }}
@@ -62,6 +66,6 @@ jobs:
   lint-helm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: azure/setup-helm@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5
       - run: helm lint ./helmChart

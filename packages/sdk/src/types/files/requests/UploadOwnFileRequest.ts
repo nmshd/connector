@@ -4,5 +4,6 @@ export interface UploadOwnFileRequest {
     expiresAt: string;
     file: Uint8Array;
     filename: string;
+    filenameOverride?: string;
     tags?: string[];
 }

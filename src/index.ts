@@ -1,22 +1,21 @@
 #!/usr/bin/env node
 
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
-import { startConnectorCommand, yargsIdentityDeletionCancelCommand, yargsIdentityDeletionInitCommand, yargsIdentityStatusCommand } from "./cli/commands";
+import { OpenTelemetry } from "./openTelemetry/OpenTelemetry";
 
-yargs(hideBin(process.argv))
-    .command("identity [command]", "Identity related commands", (yargs) => yargs.command(yargsIdentityStatusCommand).demandCommand(1, "Please specify a command"))
-    .command("identityDeletion [command]", "Identity deletion related commands", (yargs) =>
-        yargs.command(yargsIdentityDeletionInitCommand).command(yargsIdentityDeletionCancelCommand).demandCommand(1, "Please specify a command")
-    )
-    .command(startConnectorCommand)
-    .demandCommand(1, 1, "Please specify a command")
-    .scriptName("")
-    .strict()
-    .alias("h", "help")
-    .parseAsync()
-    .catch((e) => {
-        // eslint-disable-next-line no-console
-        console.error(e);
-        process.exit(1);
-    });
+const openTelemetry = OpenTelemetry.initialize();
+process.once("beforeExit", () => openTelemetry.shutdown());
+
+async function bootstrap(): Promise<void> {
+    // OpenTelemetry adds tracing to supported libraries when they are first loaded. Importing the
+    // application only after initialization ensures those libraries are instrumented; a static
+    // top-level import of `main` would load them too early and their operations would not create spans.
+    const { main } = await import("./main");
+    await main(() => openTelemetry.shutdown());
+}
+
+bootstrap().catch(async (error) => {
+    // eslint-disable-next-line no-console
+    console.error(error);
+    process.exitCode = 1;
+    await openTelemetry.shutdown();
+});

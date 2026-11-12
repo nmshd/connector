@@ -13,6 +13,8 @@ services:
       - CUSTOM_CONFIG_LOCATION=/config.json
       - SYNC_ENABLED=${SYNC_ENABLED:-false}
       - DATABASE_NAME=${DATABASE_NAME_PREFIX:-connector}-1
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_SERVICE_NAME=enmeshed.connector-1
       - transportLibrary__baseUrl
       - transportLibrary__addressGenerationHostnameOverride
       - transportLibrary__platformClientId
@@ -25,6 +27,8 @@ services:
     depends_on:
       - mongo
       - mongo-express
+      - otel-collector
+      - grafana
     stdin_open: true
     tty: true
 
@@ -42,6 +46,8 @@ services:
       - CUSTOM_CONFIG_LOCATION=/config.json
       - SYNC_ENABLED=${SYNC_ENABLED:-false}
       - DATABASE_NAME=${DATABASE_NAME_PREFIX:-connector}-2
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_SERVICE_NAME=enmeshed.connector-2
       - transportLibrary__baseUrl
       - transportLibrary__addressGenerationHostnameOverride
       - transportLibrary__platformClientId
@@ -54,13 +60,15 @@ services:
     depends_on:
       - mongo
       - mongo-express
+      - otel-collector
+      - grafana
     stdin_open: true
     tty: true
 
   mongo:
     container_name: mongo
     hostname: mongo
-    image: mongo@sha256:d6b569590880bca35e43318418133a426b024bcb649eeb63bb071bc1490bee41
+    image: mongo@sha256:452bdaf2127b8ff851e31410a267809b9829eded219979f2210e7c7efb85a058
     ports:
       - "27017:27017"
     volumes:
@@ -79,5 +87,65 @@ services:
     depends_on:
       - mongo
 
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.164.0@sha256:340c9ca6a36617084c6661bdc4f0fe92b7cda5a805d61673ec8db375fddc522b
+    command: ["--config=/etc/otelcol-contrib/config.yml"]
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - ./observability/otel-collector.yml:/etc/otelcol-contrib/config.yml:ro
+    depends_on:
+      - loki
+      - prometheus
+      - tempo
+
+  prometheus:
+    image: prom/prometheus:v3.15.1@sha256:fa3302279710be2f21a8301ec17a8b4f2301fd829bd113839b3b6b02b6f191a2
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-remote-write-receiver
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+
+  loki:
+    image: grafana/loki:3.7.9@sha256:0db216b630ae1f348a1584c67f3cead8b4c1fc839169a39501db664744158e28
+    command: ["-config.file=/etc/loki/local-config.yaml"]
+    volumes:
+      - ./observability/loki.yml:/etc/loki/local-config.yaml:ro
+      - loki_data:/loki
+
+  tempo:
+    image: grafana/tempo:3.1.1@sha256:64e2fbd56d9c2b3412a4b430a58ea59e91a670b1e75f920a0c702213ad145044
+    command: ["-config.file=/etc/tempo.yml"]
+    user: "0:0"
+    volumes:
+      - ./observability/tempo.yml:/etc/tempo.yml:ro
+      - tempo_data:/var/tempo
+    depends_on:
+      - prometheus
+
+  grafana:
+    image: grafana/grafana:13.3.1@sha256:0615ec4fbd4072004b7d86b46ded63013a74b7d6eb1119273dd89e8fa25c13cf
+    ports:
+      - "3002:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./observability/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - loki
+      - prometheus
+      - tempo
+
 volumes:
   mongo_data:
+  grafana_data:
+  loki_data:
+  prometheus_data:
+  tempo_data:

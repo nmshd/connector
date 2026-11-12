@@ -20,9 +20,9 @@ import correlator from "correlation-id";
 import { Agent as HTTPAgent, AgentOptions as HTTPAgentOptions } from "http";
 import { Agent as HTTPSAgent, AgentOptions as HTTPSAgentOptions } from "https";
 import { checkServerIdentity, PeerCertificate } from "tls";
+import { buildInformation } from "./buildInformation";
 import { ConnectorRuntimeConfig } from "./ConnectorRuntimeConfig";
 import { HealthChecker } from "./HealthChecker";
-import { buildInformation } from "./buildInformation";
 import { ConnectorInfrastructureRegistry, HttpServer } from "./infrastructure";
 import {
     AutoAcceptPendingRelationshipsModule,
@@ -33,6 +33,7 @@ import {
     SyncModule,
     WebhooksModule
 } from "./modules";
+import { createOpenTelemetryLogAppender } from "./openTelemetry/OpenTelemetryLogAppender";
 
 interface SupportInformation {
     health: RuntimeHealth;
@@ -40,6 +41,8 @@ interface SupportInformation {
     version: { version: string; build: string; date: string; commit: string };
     identityInfo: GetIdentityInfoResponse | { error: string };
 }
+
+const OPEN_TELEMETRY_APPENDER_NAME = "openTelemetry";
 
 export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeConfig> {
     private accountController: AccountController;
@@ -65,7 +68,8 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         super(connectorConfig, loggerFactory, undefined, correlator);
     }
 
-    public static async create(connectorConfig: ConnectorRuntimeConfig): Promise<ConnectorRuntime> {
+    public static async create(connectorConfig: ConnectorRuntimeConfig, shutdownOpenTelemetry?: () => Promise<void>): Promise<ConnectorRuntime> {
+        this.enrichLoggingConfigurationWithOpenTelemetry(connectorConfig);
         const loggerFactory = new NodeLoggerFactory(connectorConfig.logging);
 
         this.setServerIdentityCheckFromKeyPinning(connectorConfig, loggerFactory.getLogger(ConnectorRuntime));
@@ -76,10 +80,24 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
 
         await this.runBackboneCompatibilityCheck(runtime);
 
-        runtime.scheduleKillTask();
+        runtime.scheduleKillTask(shutdownOpenTelemetry);
         runtime.setupGlobalExceptionHandling();
 
         return runtime;
+    }
+
+    private static enrichLoggingConfigurationWithOpenTelemetry(connectorConfig: ConnectorRuntimeConfig) {
+        const appenderName = this.getAvailableAppenderName(connectorConfig.logging, OPEN_TELEMETRY_APPENDER_NAME);
+        connectorConfig.logging.appenders[appenderName] = createOpenTelemetryLogAppender();
+        for (const category of Object.values(connectorConfig.logging.categories)) {
+            if (!category.appenders.includes(appenderName)) category.appenders.push(appenderName);
+        }
+    }
+
+    private static getAvailableAppenderName(configuration: ConnectorRuntimeConfig["logging"], preferredName: string): string {
+        let appenderName = preferredName;
+        while (Object.hasOwn(configuration.appenders, appenderName)) appenderName = `_${appenderName}`;
+        return appenderName;
     }
 
     private static setServerIdentityCheckFromKeyPinning(connectorConfig: ConnectorRuntimeConfig, logger: ILogger) {
@@ -424,11 +442,21 @@ export class ConnectorRuntime extends AbstractConnectorRuntime<ConnectorRuntimeC
         await super.stopInfrastructure();
     }
 
-    private scheduleKillTask() {
-        const signals = ["SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGTERM"];
+    private scheduleKillTask(shutdownOpenTelemetry?: () => Promise<void>) {
+        const signals: NodeJS.Signals[] = ["SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGTERM"];
+        let shutdownPromise: Promise<void> | undefined;
+        const shutdown = () => {
+            shutdownPromise ??= (async () => {
+                try {
+                    await this.stop();
+                } finally {
+                    await shutdownOpenTelemetry?.();
+                }
+            })();
+        };
 
         for (const signal of signals) {
-            process.on(signal, () => this.stop());
+            process.once(signal, shutdown);
         }
     }
 

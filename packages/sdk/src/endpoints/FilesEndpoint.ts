@@ -24,6 +24,7 @@ export class FilesEndpoint extends Endpoint {
                 description: request.description,
                 expiresAt: request.expiresAt,
                 file: Buffer.isBuffer(request.file) ? request.file : Buffer.from(request.file),
+                filenameOverride: request.filenameOverride,
                 tags: request.tags
             },
             request.filename

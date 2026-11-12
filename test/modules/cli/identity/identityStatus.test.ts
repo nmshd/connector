@@ -1,13 +1,13 @@
 import { sleep } from "@js-soft/ts-utils";
-import { identityDeletionInitHandler, identityStatusHandler } from "../../../../dist/cli/commands";
+import { identityDeletionInitHandler, identityStatusHandler } from "../../../../src/cli/commands";
 import { resetDB, setupEnvironment } from "../setup";
 
 describe("Identity status", () => {
     const randomAccountName = Math.random().toString(36).substring(2, 15);
     const identityStatusPattern = /Identity Address: did:e:((([A-Za-z0-9]+(-[A-Za-z0-9]+)*)\.)+[a-z]{2,}|localhost):dids:[0-9a-f]{22}/;
 
-    beforeAll(() => {
-        setupEnvironment(randomAccountName);
+    beforeAll(async () => {
+        await setupEnvironment(randomAccountName);
     });
 
     afterAll(async () => {
@@ -15,11 +15,11 @@ describe("Identity status", () => {
     });
 
     afterEach(() => {
-        jest.resetAllMocks();
+        vi.restoreAllMocks();
     });
 
     test("show identity status", async () => {
-        const consoleSpy = jest.spyOn(console, "log");
+        const consoleSpy = vi.spyOn(console, "log");
         await identityStatusHandler({});
         expect(consoleSpy).toHaveBeenCalledTimes(1);
         expect(consoleSpy.mock.lastCall![0]).toMatch(identityStatusPattern);

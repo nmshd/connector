@@ -2,6 +2,7 @@
     "compilerOptions": {
         "target": "es2022",
         "module": "commonjs",
+        "rootDir": "..",
         "sourceMap": true,
         "declaration": true,
         "outDir": "../dist-test",
@@ -12,16 +13,14 @@
         "esModuleInterop": true,
         "experimentalDecorators": true,
         "resolveJsonModule": true,
-        "moduleResolution": "node",
         "forceConsistentCasingInFileNames": true,
         "noImplicitReturns": true,
         "strictNullChecks": true,
         "strictPropertyInitialization": false,
-        "downlevelIteration": true,
         "lib": ["es2022", "dom"],
-        "baseUrl": "../"
+        "skipLibCheck": true,
+        "types": ["node", "vitest/globals"]
     },
-    "files": ["../node_modules/jest-expect-message/types/index.d.ts"],
     "include": ["**/*.ts"],
     "exclude": []
 }

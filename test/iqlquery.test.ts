@@ -5,11 +5,6 @@ import { ConnectorClientWithMetadata, Launcher } from "./lib/Launcher";
 import { getTimeout } from "./lib/setTimeout";
 import { getTemplateToken, syncUntilHasMessages, syncUntilHasRelationship, syncUntilHasRequest } from "./lib/testUtils";
 
-/* Disable timeout errors if we're debugging */
-if (process.env.NODE_OPTIONS !== undefined && process.env.NODE_OPTIONS.search("inspect") !== -1) {
-    jest.setTimeout(1e9);
-}
-
 const launcher = new Launcher();
 let client1: ConnectorClientWithMetadata;
 let client2: ConnectorClient;
@@ -102,7 +97,7 @@ test("Remote ReadAttributeRequest containing IQL Query", async () => {
     const createRequestRes = await client2.outgoingRequests.createRequest({
         content: {
             items: [outRequest],
-            expiresAt: DateTime.now().plus({ hour: 1 }).toISO() as any
+            expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
         },
         peer: client1Address
     });
@@ -161,7 +156,7 @@ test("Remote ProposeAttributeRequest containing IQL Query with existing attribut
     const createRequestRes = await client2.outgoingRequests.createRequest({
         content: {
             items: [outRequest],
-            expiresAt: DateTime.now().plus({ hour: 1 }).toISO() as any
+            expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
         },
         peer: client1Address
     });
@@ -213,7 +208,7 @@ test("Remote ProposeAttributeRequest containing IQL Query without existing attri
     const createRequestRes = await client2.outgoingRequests.createRequest({
         content: {
             items: [outRequest],
-            expiresAt: DateTime.now().plus({ hour: 1 }).toISO() as any
+            expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
         },
         peer: client1Address
     });
