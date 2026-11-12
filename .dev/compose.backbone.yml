@@ -2,7 +2,7 @@ name: local-test-backbone
 
 services:
   consumer-api:
-    image: ghcr.io/nmshd/backbone-consumer-api:7.2.5@sha256:8bcfc1713eed09e0bf5e5902f9e41599cb59f04a630e8f403bb165286e89ce1a
+    image: ghcr.io/nmshd/backbone-consumer-api:7.2.6@sha256:a381128854a039ea0f9a8659544f399558384717e4112a1e9dc4c02fbe6a17e1
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
@@ -24,7 +24,7 @@ services:
         target: app/appsettings.override.json
 
   event-handler-service:
-    image: ghcr.io/nmshd/backbone-event-handler:7.2.5@sha256:932b4f5b16a784a706a598f0a5ed231abd102091b0177c1a3d4b5ca193973629
+    image: ghcr.io/nmshd/backbone-event-handler:7.2.6@sha256:6570923bc92f216eb242307ac70e7ba7b74f87eeafe200d688b19fe0c15d3fc7
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
     depends_on:
@@ -39,7 +39,7 @@ services:
         target: app/appsettings.override.json
 
   sse-server:
-    image: ghcr.io/nmshd/backbone-sse-server:7.2.5@sha256:b1f8227fbad108dbf1b9521a862c3dcf425a802c6d7961aaac5fec95b579712d
+    image: ghcr.io/nmshd/backbone-sse-server:7.2.6@sha256:1a4ce0b03ec24ec0ecef8a10c865a93557a312b2e091de97690bc22c96b73769
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
     ports:
@@ -52,7 +52,7 @@ services:
         target: app/appsettings.override.json
 
   admin-ui:
-    image: ghcr.io/nmshd/backbone-admin-ui:7.2.5@sha256:59f1271c55663d0113e505e02479c304c474a807ac5b850a3e4c398c0d133681
+    image: ghcr.io/nmshd/backbone-admin-ui:7.2.6@sha256:4b08f807d95f2e2914dbe305753f62a66376c3cc66f9061e4221d335a95018ac
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
     ports:
@@ -71,7 +71,7 @@ services:
         target: app/appsettings.override.json
 
   database-migrator:
-    image: ghcr.io/nmshd/backbone-database-migrator:7.2.5@sha256:49e87eb755349f79187a8bb102a754afc7498d09bc2a6526e3b5fa89564539a0
+    image: ghcr.io/nmshd/backbone-database-migrator:7.2.6@sha256:1ac96d1ca5f72c7916dfb1e89fde473a0d027ccc21e63a0ca533ff0a844d5b2d
     environment:
       Infrastructure__SqlDatabase__Provider: Postgres
       Infrastructure__SqlDatabase__ConnectionString: "Server=postgres;Database=enmeshed;User Id=postgres;Password=Passw0rd;Port=5432"
@@ -109,7 +109,7 @@ services:
   ### seeds ###
 
   seed-client:
-    image: ghcr.io/nmshd/backbone-admin-cli:7.2.5@sha256:bfd2d2438e9b9266fdcc49ec969bbc89562636154f09a0f679bfeaba7d56532e
+    image: ghcr.io/nmshd/backbone-admin-cli:7.2.6@sha256:a54626162952022ea4168663039b00a50151eaae74cf351cb89727c24aea5bf0
     depends_on:
       consumer-api:
         condition: service_healthy
