@@ -1,5 +1,5 @@
 import { sleep } from "@js-soft/ts-utils";
-import { identityDeletionInitHandler, identityStatusHandler } from "../../../../dist/cli/commands";
+import { identityDeletionInitHandler, identityStatusHandler } from "../../../../src/cli/commands";
 import { resetDB, setupEnvironment } from "../setup";
 
 describe("Identity status", () => {
@@ -15,11 +15,11 @@ describe("Identity status", () => {
     });
 
     afterEach(() => {
-        jest.resetAllMocks();
+        vi.restoreAllMocks();
     });
 
     test("show identity status", async () => {
-        const consoleSpy = jest.spyOn(console, "log");
+        const consoleSpy = vi.spyOn(console, "log");
         await identityStatusHandler({});
         expect(consoleSpy).toHaveBeenCalledTimes(1);
         expect(consoleSpy.mock.lastCall![0]).toMatch(identityStatusPattern);

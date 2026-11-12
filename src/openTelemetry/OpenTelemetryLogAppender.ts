@@ -1,7 +1,7 @@
 import { Logger, logs, SeverityNumber } from "@opentelemetry/api";
 import correlator from "correlation-id";
-import { levels } from "log4js";
 import type * as log4js from "log4js";
+import { levels } from "log4js";
 import { formatWithOptions } from "util";
 
 const LOG_LEVEL_ENVIRONMENT_VARIABLE = "NMSHD_OTEL_LOG_LEVEL";

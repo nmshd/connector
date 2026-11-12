@@ -19,7 +19,7 @@ export async function setupEnvironment(randomAccountName: string): Promise<void>
 
 export async function resetDB(randomAccountName: string): Promise<void> {
     try {
-        await rm(join(__dirname, `../../../default${randomAccountName}.db`));
+        await rm(join(process.cwd(), `default${randomAccountName}.db`));
     } catch (_e) {
         // ignore
     }

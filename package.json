@@ -36,51 +36,14 @@
         "teardown:backbone": "docker compose -f .dev/compose.backbone.yml down -v",
         "teardown:test-env": "docker compose -f test/compose.yml down -v",
         "teardown:testconnectors": "docker compose -f .dev/compose.yml down -v",
-        "test:ci": "npm run build && c8 node --experimental-vm-modules node_modules/jest/bin/jest.js -i",
+        "test:ci": "npm run build && npm run test:compile && vitest run --coverage",
         "test:local": "npm run test:local:mongo",
-        "test:local:coverage": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" c8 node --experimental-vm-modules node_modules/jest/bin/jest.js",
-        "test:local:ferretdb": "npm run build --workspaces && npm run start:test-env:ferretdb && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27019\" node --experimental-vm-modules node_modules/jest/bin/jest.js",
-        "test:local:mongo": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" node --experimental-vm-modules node_modules/jest/bin/jest.js",
+        "test:local:coverage": "npm run build --workspaces && npm run test:compile && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" vitest run --coverage",
+        "test:local:ferretdb": "npm run build --workspaces && npm run test:compile && npm run start:test-env:ferretdb && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27019\" vitest run",
+        "test:local:mongo": "npm run build --workspaces && npm run test:compile && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" vitest run",
         "tsc": "tsc",
-        "tsc:watch": "tsc --build tsconfig.watch.json -w"
-    },
-    "jest": {
-        "maxWorkers": 2,
-        "setupFilesAfterEnv": [
-            "jest-expect-message",
-            "./test/lib/validation.ts",
-            "./test/lib/customMatcher.ts",
-            "./test/lib/setTimeout.ts"
-        ],
-        "testEnvironment": "node",
-        "testPathIgnorePatterns": [
-            "/node_modules/"
-        ],
-        "testTimeout": 60000,
-        "transform": {
-            "^.+\\.ts$": [
-                "ts-jest",
-                {
-                    "tsconfig": "test/tsconfig.json"
-                }
-            ]
-        },
-        "moduleNameMapper": {
-            "^@verifiables/request-converter$": "<rootDir>/node_modules/@verifiables/request-converter/dist/index.js",
-            "^webcrypto-core$": "<rootDir>/node_modules/webcrypto-core/build/webcrypto-core.js"
-        }
-    },
-    "c8": {
-        "all": true,
-        "reporter": [
-            "lcov",
-            "text-summary",
-            "cobertura"
-        ],
-        "src": [
-            "src",
-            "packages/sdk/src"
-        ]
+        "tsc:watch": "tsc --build tsconfig.watch.json -w",
+        "test:compile": "tsc -p test/tsconfig.vitest.json && cpx \"src/**/*.{json,yml,ico}\" dist-test/src && cpx \"test/__assets__/**/*\" dist-test/test/__assets__"
     },
     "dependencies": {
         "@google-cloud/pubsub": "^6.0.0",
@@ -131,20 +94,16 @@
     },
     "devDependencies": {
         "@apidevtools/swagger-parser": "13.1.0",
-        "@babel/preset-env": "7.29.7",
-        "@babel/preset-typescript": "7.29.7",
         "@js-soft/eslint-config-ts": "2.0.15",
         "@js-soft/license-check": "1.0.17",
+        "@nmshd/connector-sdk": "*",
         "@nmshd/content": "7.5.20",
         "@nmshd/core-types": "7.5.20",
-        "@nmshd/connector-sdk": "*",
         "@nmshd/typescript-rest-swagger": "2.0.9",
         "@types/amqplib": "0.10.8",
         "@types/compression": "1.8.1",
         "@types/cors": "2.8.19",
         "@types/express": "5.0.6",
-        "@types/jest": "30.0.0",
-        "@types/jest-json-schema": "6.1.5",
         "@types/json-stringify-safe": "5.0.3",
         "@types/lodash": "4.17.27",
         "@types/luxon": "3.7.6",
@@ -154,21 +113,22 @@
         "@types/swagger-ui-express": "4.1.8",
         "@types/ws": "8.18.2",
         "@types/yamljs": "0.2.34",
-        "c8": "12.0.0",
+        "@types/yargs": "17.0.35",
+        "@vitest/coverage-v8": "5.1.0",
+        "@vitest/eslint-plugin": "1.6.28",
+        "ajv": "8.20.0",
+        "ajv-formats": "3.0.1",
         "cpx2": "9.0.3",
         "eslint": "10.14.0",
-        "jest": "30.5.2",
-        "jest-expect-message": "1.1.3",
-        "jest-json-schema": "6.1.0",
         "lodash": "4.18.1",
         "nodemon": "3.1.14",
         "npm-run-all2": "9.0.4",
         "openapi-types": "12.1.3",
         "prettier": "3.9.10",
         "testcontainers": "12.2.1",
-        "ts-jest": "29.4.15",
         "ts-node": "10.9.2",
-        "typescript": "6.0.3"
+        "typescript": "6.0.3",
+        "vitest": "5.1.0"
     },
     "engines": {
         "node": ">=24.18.0",

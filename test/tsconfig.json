@@ -18,9 +18,9 @@
         "strictNullChecks": true,
         "strictPropertyInitialization": false,
         "lib": ["es2022", "dom"],
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "types": ["node", "vitest/globals"]
     },
-    "files": ["../node_modules/jest-expect-message/types/index.d.ts"],
     "include": ["**/*.ts"],
     "exclude": []
 }
