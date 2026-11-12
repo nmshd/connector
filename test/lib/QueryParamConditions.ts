@@ -1,4 +1,4 @@
-/* eslint-disable jest/no-standalone-expect */
+/* eslint-disable vitest/no-standalone-expect */
 
 import { ConnectorClient, ConnectorHttpResponse } from "@nmshd/connector-sdk";
 import { DateTime } from "luxon";
