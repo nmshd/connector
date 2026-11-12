@@ -9,8 +9,8 @@ describe("OpenTelemetryLogAppender", () => {
     });
 
     test("emits logs through the stable OpenTelemetry API", () => {
-        const emit = jest.fn();
-        const enabled = jest.fn().mockReturnValue(true);
+        const emit = vi.fn();
+        const enabled = vi.fn().mockReturnValue(true);
         logs.setGlobalLoggerProvider({ getLogger: () => ({ emit, enabled }) });
         configure({
             appenders: { otel: createOpenTelemetryLogAppender() },

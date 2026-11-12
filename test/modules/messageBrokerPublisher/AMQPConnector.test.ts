@@ -17,12 +17,12 @@ interface RabbitMqTopology {
 }
 
 const logger: ILogger = {
-    trace: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    fatal: jest.fn()
+    trace: vi.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    fatal: vi.fn()
 };
 
 describe("AMQPConnector", () => {
@@ -50,7 +50,7 @@ describe("AMQPConnector", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     test("publishes events to a real RabbitMQ exchange", async () => {
