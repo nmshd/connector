@@ -34,6 +34,10 @@ jobs:
         uses: supercharge/mongodb-github-action@315db7fe45ac2880b7758f1933e6e5d59afd5e94 # 1.12.1
       - run: npm run test:ci --workspaces --if-present
         env:
+          # No collector runs in CI. Keep instrumentation active without exporting telemetry.
+          OTEL_TRACES_EXPORTER: none
+          OTEL_LOGS_EXPORTER: none
+          OTEL_METRICS_EXPORTER: none
           DATABASE_CONNECTION_STRING: mongodb://127.0.0.1:27017
           NMSHD_TEST_BASEURL: http://localhost:8090
           NMSHD_TEST_CLIENTID: test
