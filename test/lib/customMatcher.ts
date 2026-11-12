@@ -1,5 +1,6 @@
 import { SerializableBase } from "@js-soft/ts-serval";
 import { set } from "lodash";
+import type {} from "vitest";
 
 expect.extend({
     toStrictEqualExcluding(received: unknown, expected: unknown, ...excludes: string[]) {
@@ -36,23 +37,17 @@ expect.extend({
                     this.utils.stringify(expectedClone) === this.utils.stringify(receivedClone) ? "" : `Received:     ${this.utils.printReceived(receivedClone)}`
                 }`;
         } else {
-            message = `${this.utils.matcherHint(matcherName, undefined, undefined, options)}\n\n${this.utils.printDiffOrStringify(
-                expectedClone,
-                receivedClone,
-                "Expected",
-                "Received",
-                this.expand ?? true
-            )}`;
+            message = `${this.utils.matcherHint(matcherName, undefined, undefined, options)}\n\n${this.utils.printDiffOrStringify(expectedClone, receivedClone)}`;
         }
 
         return { message: () => message, pass };
     }
 });
 
-declare global {
-    namespace jest {
-        interface Matchers<R> {
-            toStrictEqualExcluding(expected: unknown, ...ignoreProperties: string[]): R;
-        }
+declare module "vitest" {
+    // Vitest requires both type parameters; these matchers do not use the received value type.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    interface Matchers<R, T> {
+        toStrictEqualExcluding(expected: unknown, ...ignoreProperties: string[]): R;
     }
 }
