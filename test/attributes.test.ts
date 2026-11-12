@@ -507,7 +507,7 @@ describe("Read Attribute and versions", () => {
         });
         expect(latestVersionsOfAttributesSharedWithPeer.result).toHaveLength(1);
 
-        newLauncher.stop();
+        await newLauncher.stop();
     });
 });
 

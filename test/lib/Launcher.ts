@@ -5,7 +5,6 @@ import express from "express";
 import http, { Server } from "node:http";
 import https from "node:https";
 import inspector from "node:inspector";
-import path from "path";
 import { DataEventWithHeaders } from "./DataEventWithHeader";
 import { MockEventBus } from "./MockEventBus";
 import getPort from "./getPort";
@@ -35,7 +34,7 @@ export class Launcher {
         try {
             await waitForConnector(port, connector);
         } catch (e) {
-            this.stopClient(connector, webhookServer);
+            await this.stopClient(connector, webhookServer);
             throw e;
         }
 
@@ -74,8 +73,8 @@ export class Launcher {
                 new Promise((resolve, reject) => {
                     waitForConnector(port, connector)
                         .then(resolve)
-                        .catch((e: Error) => {
-                            this.stopClient(connector, webhookServer);
+                        .catch(async (e: Error) => {
+                            await this.stopClient(connector, webhookServer);
                             reject(e);
                         });
                 })
@@ -119,7 +118,7 @@ export class Launcher {
         return {
             connector: spawn("node", ["dist/index.js", "start"], {
                 env: { ...process.env, ...env },
-                cwd: path.resolve(`${__dirname}/../..`),
+                cwd: process.cwd(),
                 stdio: "inherit"
             }),
             webhookServer
@@ -137,15 +136,18 @@ export class Launcher {
             .listen(port);
     }
 
-    public stop(): void {
-        this._processes.forEach((p) => {
-            const { connector, webhookServer } = p;
-            this.stopClient(connector, webhookServer);
-        });
+    public async stop(): Promise<void> {
+        await Promise.all(this._processes.splice(0).map(({ connector, webhookServer }) => this.stopClient(connector, webhookServer)));
     }
 
-    public stopClient(connector: ChildProcess, webhookServer: Server | undefined): void {
-        connector.kill();
-        connector.on("exit", () => webhookServer?.close());
+    public async stopClient(connector: ChildProcess, webhookServer: Server | undefined): Promise<void> {
+        // Wait for exit so subprocess coverage is flushed before Vitest collects it.
+        if (connector.exitCode === null && connector.signalCode === null) {
+            await new Promise<void>((resolve) => {
+                connector.once("exit", () => resolve());
+                connector.kill();
+            });
+        }
+        if (webhookServer) await new Promise<void>((resolve) => webhookServer.close(() => resolve()));
     }
 }
