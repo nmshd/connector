@@ -3,6 +3,9 @@ name: "CodeQL"
 on:
   schedule:
     - cron: "45 19 * * 4"
+  # GitHub requires PR results for every configuration that analyzes the target branch.
+  pull_request:
+    branches: [main, release/**]
 
 jobs:
   analyze:
