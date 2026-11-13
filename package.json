@@ -99,7 +99,7 @@
         "@nmshd/connector-sdk": "*",
         "@nmshd/content": "7.5.20",
         "@nmshd/core-types": "7.5.20",
-        "@nmshd/typescript-rest-swagger": "2.0.9",
+        "@nmshd/typescript-rest-swagger": "2.0.10",
         "@types/amqplib": "0.10.8",
         "@types/compression": "1.8.1",
         "@types/cors": "2.8.19",

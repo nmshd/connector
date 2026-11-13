@@ -1,5 +1,5 @@
 import { BaseController, Envelope, Mimetype } from "@nmshd/connector-types";
-import { TransportServices } from "@nmshd/runtime";
+import { FileDTO, MessageDTO, MessageWithAttachmentsDTO, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, ContextResponse, GET, Path, PathParam, POST, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 import express from "express";
@@ -13,14 +13,14 @@ export class MessagesController extends BaseController {
 
     @POST
     @Accept("application/json")
-    public async sendMessage(request: any): Promise<Return.NewResource<Envelope>> {
+    public async sendMessage(request: any): Promise<Return.NewResource<Envelope<MessageDTO>>> {
         const result = await this.transportServices.messages.sendMessage(request);
         return this.created(result);
     }
 
     @GET
     @Accept("application/json")
-    public async getMessages(@Context context: ServiceContext): Promise<Envelope> {
+    public async getMessages(@Context context: ServiceContext): Promise<Envelope<MessageDTO[]>> {
         const result = await this.transportServices.messages.getMessages({
             query: context.request.query
         });
@@ -31,7 +31,7 @@ export class MessagesController extends BaseController {
     @GET
     @Path("/:id")
     @Accept("application/json")
-    public async getMessage(@PathParam("id") id: string): Promise<Envelope> {
+    public async getMessage(@PathParam("id") id: string): Promise<Envelope<MessageWithAttachmentsDTO>> {
         const result = await this.transportServices.messages.getMessage({ id });
         return this.ok(result);
     }
@@ -39,7 +39,7 @@ export class MessagesController extends BaseController {
     @GET
     @Path("/:id/Attachments/:attachmentId")
     @Accept("application/json")
-    public async getMessageAttachmentMetadata(@PathParam("id") id: string, @PathParam("attachmentId") attachmentId: string): Promise<Envelope> {
+    public async getMessageAttachmentMetadata(@PathParam("id") id: string, @PathParam("attachmentId") attachmentId: string): Promise<Envelope<FileDTO>> {
         const result = await this.transportServices.messages.getAttachmentMetadata({ id, attachmentId });
         return this.ok(result);
     }
