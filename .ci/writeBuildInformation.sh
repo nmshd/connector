@@ -19,12 +19,22 @@ fi
 DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 TARGET_FILE="./dist/buildInformation.js"
+PACKAGE_FILE="./package.json"
 
 echo "Writing the following properties into $TARGET_FILE"
 echo "  - VERSION: $VERSION"
 echo "  - BUILD_NUMBER: $BUILD_NUMBER"
 echo "  - COMMIT_HASH: $COMMIT_HASH"
 echo "  - DATE: $DATE"
+
+node -e '
+const fs = require("fs");
+const packageFile = process.argv[1];
+const version = process.argv[2];
+const packageJson = JSON.parse(fs.readFileSync(packageFile, "utf8"));
+packageJson.version = version;
+fs.writeFileSync(packageFile, `${JSON.stringify(packageJson, null, 4)}\n`);
+' "$PACKAGE_FILE" "$VERSION"
 
 sed -i "s/{{version}}/$VERSION/" $TARGET_FILE
 sed -i "s/{{build}}/$BUILD_NUMBER/" $TARGET_FILE

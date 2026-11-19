@@ -1,5 +1,5 @@
 import { BaseController, Envelope } from "@nmshd/connector-types";
-import { ConsumptionServices } from "@nmshd/runtime";
+import { ConsumptionServices, LocalRequestDTO, RequestValidationResultDTO } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, GET, Path, PathParam, POST, Return, Security, ServiceContext } from "@nmshd/typescript-rest";
 
@@ -13,14 +13,14 @@ export class OutgoingRequestsController extends BaseController {
     @POST
     @Path("/Validate")
     @Accept("application/json")
-    public async canCreate(request: any): Promise<Return.NewResource<Envelope>> {
+    public async canCreate(request: any): Promise<Return.NewResource<Envelope<RequestValidationResultDTO>>> {
         const result = await this.consumptionServices.outgoingRequests.canCreate(request);
         return this.created(result);
     }
 
     @POST
     @Accept("application/json")
-    public async create(request: any): Promise<Return.NewResource<Envelope>> {
+    public async create(request: any): Promise<Return.NewResource<Envelope<LocalRequestDTO>>> {
         const result = await this.consumptionServices.outgoingRequests.create(request);
         return this.created(result);
     }
@@ -28,14 +28,14 @@ export class OutgoingRequestsController extends BaseController {
     @GET
     @Path("/:id")
     @Accept("application/json")
-    public async getRequest(@PathParam("id") id: string): Promise<Envelope> {
+    public async getRequest(@PathParam("id") id: string): Promise<Envelope<LocalRequestDTO>> {
         const result = await this.consumptionServices.outgoingRequests.getRequest({ id });
         return this.ok(result);
     }
 
     @GET
     @Accept("application/json")
-    public async getRequests(@Context context: ServiceContext): Promise<Envelope> {
+    public async getRequests(@Context context: ServiceContext): Promise<Envelope<LocalRequestDTO[]>> {
         const result = await this.consumptionServices.outgoingRequests.getRequests({ query: context.request.query });
         return this.ok(result);
     }

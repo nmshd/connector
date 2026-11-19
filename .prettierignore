@@ -1,2 +1,3 @@
 helmChart/templates
 packages/sdk/schemas.json
+dist-test

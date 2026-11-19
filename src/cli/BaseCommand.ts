@@ -3,6 +3,7 @@ import yargs from "yargs";
 import { ConnectorRuntime } from "../ConnectorRuntime";
 import { ConnectorRuntimeConfig } from "../ConnectorRuntimeConfig";
 import { createConnectorConfig } from "../createConnectorConfig";
+import { startConnectorRuntime } from "../startConnectorRuntime";
 
 export interface ConfigFileOptions {
     config?: string;
@@ -56,7 +57,7 @@ export abstract class BaseCommand {
                 this.log.log(error.message);
             }
 
-            process.exit(1);
+            process.exitCode = 1;
         }
     }
 
@@ -64,8 +65,7 @@ export abstract class BaseCommand {
         if (this.#cliRuntime) return;
         if (!this.#connectorConfig) throw new Error("Connector config not initialized");
 
-        this.#cliRuntime = await ConnectorRuntime.create(this.#connectorConfig);
-        await this.#cliRuntime.start();
+        this.#cliRuntime = await startConnectorRuntime(this.#connectorConfig);
     }
 
     protected abstract runInternal(): Promise<void>;

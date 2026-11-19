@@ -1,5 +1,5 @@
 import { BaseController, Envelope } from "@nmshd/connector-types";
-import { TransportServices } from "@nmshd/runtime";
+import { GetIdentityInfoResponse, SyncInfo, TransportServices } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, GET, Path, POST, Security } from "@nmshd/typescript-rest";
 
@@ -13,7 +13,7 @@ export class AccountController extends BaseController {
     @GET
     @Path("/IdentityInfo")
     @Accept("application/json")
-    public async getIdentityInfo(): Promise<Envelope> {
+    public async getIdentityInfo(): Promise<Envelope<GetIdentityInfoResponse>> {
         const result = await this.transportServices.account.getIdentityInfo();
         return this.ok(result);
     }
@@ -30,7 +30,7 @@ export class AccountController extends BaseController {
     @GET
     @Path("/SyncInfo")
     @Accept("application/json")
-    public async getSyncInfo(): Promise<Envelope> {
+    public async getSyncInfo(): Promise<Envelope<SyncInfo>> {
         const result = await this.transportServices.account.getSyncInfo();
         return this.ok(result);
     }

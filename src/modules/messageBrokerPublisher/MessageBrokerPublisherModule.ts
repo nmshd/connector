@@ -61,7 +61,11 @@ export class MessageBrokerPublisherModule extends ConnectorRuntimeModule<Message
         const buffer = Buffer.from(JSON.stringify(data));
 
         for (const connector of this.connectors) {
-            await connector.publish(event.namespace, buffer);
+            try {
+                await connector.publish(event.namespace, buffer);
+            } catch (error) {
+                this.logger.error(`Publishing event '${event.namespace}' via '${connector.constructor.name}' failed.`, error);
+            }
         }
     }
 

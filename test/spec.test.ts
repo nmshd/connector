@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-conditional-in-test */
 import swaggerParser from "@apidevtools/swagger-parser";
 import { MetadataGenerator, SpecGenerator, Swagger } from "@nmshd/typescript-rest-swagger";
 import { OpenAPIV3 } from "openapi-types";
@@ -132,7 +131,7 @@ describe("test openapi spec against routes", () => {
 
                 // DBQuery are used via context.query and not by injection as QueryParameter so they will not be generated and the length will be different
                 if (!pathsWithDBQueries.some((p) => p.path === path && p.method.toLowerCase() === method.toLowerCase())) {
-                    // eslint-disable-next-line jest/no-conditional-expect
+                    // eslint-disable-next-line vitest/no-conditional-expect
                     expect(generatedParameters, `Parameter length for ${method.toUpperCase()} ${path} is wrong`).toHaveLength(manualParameters.length);
                 }
 

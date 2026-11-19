@@ -44,6 +44,16 @@ describe("File Upload", () => {
         expect(file.filename).toBe("a file.txt");
     });
 
+    test("can upload file with filenameOverride", async () => {
+        const response = await client1.files.uploadOwnFile(await makeUploadRequest({ filename: "original.txt", filenameOverride: "new.txt" }));
+
+        expect(response).toBeSuccessful();
+        expect(response.result.filename).toBe("new.txt");
+
+        const file = await client1.files.getFile(response.result.id);
+        expect(file.result.filename).toBe("new.txt");
+    });
+
     test("can upload file without description", async () => {
         const response = await client1.files.uploadOwnFile({
             title: "File Title",

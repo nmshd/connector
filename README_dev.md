@@ -122,6 +122,10 @@ Afterward you can use the connector-tui or an REST client to test the Connector.
 
 ### Run the tests
 
+Tests are compiled with TypeScript into `dist-test` before Vitest runs them. This preserves CommonJS output and decorator metadata. Vitest runs one worker at a time.
+
+Start the local Backbone (`npm run start:backbone`) and configure `NMSHD_TEST_BASEURL`, `NMSHD_TEST_CLIENTID` and `NMSHD_TEST_CLIENTSECRET` before running integration tests. Leave `DEBUG` unset or set it to `true`: the test configuration enables API documentation and LokiJS, which require debug mode.
+
 ```shell
 npm run test:local
 ```
@@ -131,6 +135,10 @@ If you only want to run a single test suite you can use the following command:
 ```shell
 npm run test:local -- testSuiteName
 ```
+
+Use `npm run test:local:ferretdb` for FerretDB or `npm run test:local:coverage` for MongoDB with coverage. Coverage includes spawned Connector processes and writes LCOV, Cobertura and a text summary to `coverage`.
+
+To run selected tests against an already running environment, use `npm run test:compile` followed by `npx vitest run testSuiteName`. Recompile after editing tests; Vitest discovers JavaScript in `dist-test/test`, not TypeScript sources.
 
 ## Run the Connector without Docker, MongoDB or other Dependencies
 

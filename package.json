@@ -1,5 +1,6 @@
 {
     "name": "@nmshd/connector",
+    "version": "0.0.0",
     "private": true,
     "description": "The enmeshed Connector",
     "homepage": "https://enmeshed.eu/integrate",
@@ -18,7 +19,6 @@
         "copy-additional-files": "cpx \"src/**/*.{json,yml,ico}\" dist",
         "copy-additional-files:watch": "cpx \"src/**/*.{json,yml,ico}\" dist --watch",
         "generate:connectorConfigSchema": "npx ts-json-schema-generator -p ./src/jsonSchemas/connectorConfig.ts -o ./src/jsonSchemas/connectorConfig.json -t \"ConnectorConfig\" --no-top-ref && prettier -w src/jsonSchemas/connectorConfig.json",
-        "postinstall": "npx patch-package && echo 'Postinstall done.'",
         "lint": "npm run lint:tsc && npm run lint:prettier && npm run lint:eslint",
         "lint:eslint": "eslint",
         "lint:prettier": "prettier --check .",
@@ -27,7 +27,8 @@
         "runtime:unlink": "rm -rf node_modules/@nmshd && npm install",
         "sdk:build": "npm run --workspace packages/sdk build",
         "sdk:schemas:watch": "npm run --workspace packages/sdk build:schemas:watch",
-        "start:backbone": "docker compose -f .dev/compose.backbone.yml up -d",
+        "start:backbone": "OTEL_EXPORTER_OTLP_ENDPOINT=http://host.docker.internal:4317 docker compose -f .dev/compose.backbone.yml up -d",
+        "start:backbone:ci": "docker compose -f .dev/compose.backbone.yml up -d",
         "start:test-env": "docker compose -f test/compose.yml up -d",
         "start:test-env:ferretdb": "npm run start:test-env -- ferret",
         "start:test-env:mongo": "npm run start:test-env -- mongo",
@@ -35,85 +36,47 @@
         "teardown:backbone": "docker compose -f .dev/compose.backbone.yml down -v",
         "teardown:test-env": "docker compose -f test/compose.yml down -v",
         "teardown:testconnectors": "docker compose -f .dev/compose.yml down -v",
-        "test:ci": "npm run build && c8 jest -i",
+        "test:ci": "npm run build && npm run test:compile && vitest run --coverage",
         "test:local": "npm run test:local:mongo",
-        "test:local:coverage": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" c8 jest",
-        "test:local:ferretdb": "npm run build --workspaces && npm run start:test-env:ferretdb && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27019\" jest",
-        "test:local:mongo": "npm run build --workspaces && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" jest",
+        "test:local:coverage": "npm run build --workspaces && npm run test:compile && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" vitest run --coverage",
+        "test:local:ferretdb": "npm run build --workspaces && npm run test:compile && npm run start:test-env:ferretdb && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27019\" vitest run",
+        "test:local:mongo": "npm run build --workspaces && npm run test:compile && npm run start:test-env:mongo && DATABASE_CONNECTION_STRING=\"mongodb://localhost:27018\" vitest run",
         "tsc": "tsc",
-        "tsc:watch": "tsc --build tsconfig.watch.json -w"
-    },
-    "jest": {
-        "maxWorkers": 2,
-        "preset": "ts-jest",
-        "setupFilesAfterEnv": [
-            "jest-expect-message",
-            "./test/lib/validation.ts",
-            "./test/lib/customMatcher.ts",
-            "./test/lib/setTimeout.ts"
-        ],
-        "testEnvironment": "node",
-        "testPathIgnorePatterns": [
-            "/node_modules/"
-        ],
-        "testTimeout": 60000,
-        "transform": {
-            "^.+\\.(t|j)s$": [
-                "ts-jest",
-                {
-                    "tsconfig": "test/tsconfig.json"
-                }
-            ],
-            "^.+\\.mjs$": [
-                "babel-jest",
-                {
-                    "presets": [
-                        [
-                            "@babel/preset-env",
-                            {
-                                "modules": "commonjs"
-                            }
-                        ]
-                    ]
-                }
-            ]
-        },
-        "transformIgnorePatterns": [
-            "<rootDir>/node_modules/(?!(@noble|@stablelib|@digitalcredentials|dcql|@openid4vc|@credo\\-ts|uuid|express-openid-connect|openid-client|oauth4webapi|jose)/)"
-        ]
-    },
-    "c8": {
-        "all": true,
-        "reporter": [
-            "lcov",
-            "text-summary",
-            "cobertura"
-        ],
-        "src": [
-            "src",
-            "packages/sdk/src"
-        ]
+        "tsc:watch": "tsc --build tsconfig.watch.json -w",
+        "test:compile": "tsc -p test/tsconfig.vitest.json && cpx \"src/**/*.{json,yml,ico}\" dist-test/src && cpx \"test/__assets__/**/*\" dist-test/test/__assets__"
     },
     "dependencies": {
-        "@google-cloud/pubsub": "^5.3.1",
-        "@js-soft/docdb-access-loki": "^1.4.2",
-        "@js-soft/docdb-access-mongo": "1.4.2",
-        "@js-soft/node-logger": "1.2.5",
-        "@js-soft/ts-utils": "^2.3.6",
+        "@google-cloud/pubsub": "^6.0.0",
+        "@js-soft/docdb-access-loki": "^1.4.3",
+        "@js-soft/docdb-access-mongo": "1.4.6",
+        "@js-soft/node-logger": "1.2.23",
+        "@js-soft/ts-utils": "^2.3.7",
         "@nmshd/connector-types": "*",
-        "@nmshd/runtime": "7.5.2",
-        "@nmshd/typescript-ioc": "^3.2.5",
-        "@nmshd/typescript-rest": "^3.2.3",
+        "@nmshd/runtime": "7.5.21",
+        "@nmshd/typescript-rest": "^3.2.4",
+        "@opentelemetry/api": "^1.10.0",
+        "@opentelemetry/instrumentation": "^0.301.0",
+        "@opentelemetry/instrumentation-amqplib": "^0.72.0",
+        "@opentelemetry/instrumentation-express": "^0.73.0",
+        "@opentelemetry/instrumentation-grpc": "^0.301.0",
+        "@opentelemetry/instrumentation-host-metrics": "^0.8.0",
+        "@opentelemetry/instrumentation-http": "^0.301.0",
+        "@opentelemetry/instrumentation-mongodb": "^0.78.0",
+        "@opentelemetry/instrumentation-redis": "^0.73.0",
+        "@opentelemetry/instrumentation-runtime-node": "^0.38.0",
+        "@opentelemetry/instrumentation-undici": "^0.35.0",
+        "@opentelemetry/resources": "^3.0.0",
+        "@opentelemetry/sdk-node": "^0.301.0",
         "agentkeepalive": "4.6.0",
         "amqplib": "^2.0.1",
-        "axios": "^1.18.1",
-        "compression": "1.8.1",
+        "axios": "^1.19.0",
+        "compression": "1.8.2",
         "correlation-id": "^5.2.0",
         "cors": "2.8.6",
-        "eventsource": "^4.1.0",
+        "eventsource": "^5.0.0",
         "express": "^5.2.1",
         "express-oauth2-jwt-bearer": "^1.9.1",
-        "express-openid-connect": "^3.0.0",
+        "express-openid-connect": "^3.3.0",
         "helmet": "8.3.0",
         "json-stringify-safe": "5.0.1",
         "jsonschema": "1.5.0",
@@ -121,54 +84,52 @@
         "mqtt": "^5.15.2",
         "nconf": "0.13.0",
         "on-headers": "1.1.0",
-        "rapidoc": "9.3.8",
-        "redis": "^6.1.0",
+        "rapidoc": "13.1.0",
+        "redis": "^6.2.0",
         "reflect-metadata": "0.2.2",
         "swagger-ui-express": "5.0.1",
-        "undici": "^8.7.0",
+        "undici": "^8.10.0",
         "yamljs": "0.3.0",
-        "yargs": "^18.0.0"
+        "yargs": "^18.1.0"
     },
     "devDependencies": {
-        "@apidevtools/swagger-parser": "12.1.0",
-        "@babel/preset-env": "7.29.7",
-        "@babel/preset-typescript": "7.29.7",
-        "@js-soft/eslint-config-ts": "2.0.6",
-        "@js-soft/license-check": "1.0.11",
-        "@nmshd/content": "7.5.2",
-        "@nmshd/core-types": "7.5.2",
+        "@apidevtools/swagger-parser": "13.1.0",
+        "@js-soft/eslint-config-ts": "2.0.16",
+        "@js-soft/license-check": "1.0.17",
         "@nmshd/connector-sdk": "*",
-        "@nmshd/typescript-rest-swagger": "2.0.2",
+        "@nmshd/content": "7.5.21",
+        "@nmshd/core-types": "7.5.21",
+        "@nmshd/typescript-rest-swagger": "2.0.10",
         "@types/amqplib": "0.10.8",
         "@types/compression": "1.8.1",
         "@types/cors": "2.8.19",
         "@types/express": "5.0.6",
-        "@types/jest": "30.0.0",
-        "@types/jest-json-schema": "6.1.5",
         "@types/json-stringify-safe": "5.0.3",
-        "@types/lodash": "4.17.24",
-        "@types/luxon": "3.7.2",
+        "@types/lodash": "4.17.27",
+        "@types/luxon": "3.7.6",
         "@types/nconf": "0.10.7",
-        "@types/node": "24.13.3",
+        "@types/node": "26.6.6",
         "@types/on-headers": "1.0.4",
         "@types/swagger-ui-express": "4.1.8",
-        "@types/ws": "8.18.1",
+        "@types/ws": "8.18.2",
         "@types/yamljs": "0.2.34",
-        "c8": "12.0.0",
-        "cpx2": "9.0.0",
-        "eslint": "10.8.0",
-        "jest": "30.4.2",
-        "jest-expect-message": "1.1.3",
-        "jest-json-schema": "6.1.0",
+        "@types/yargs": "17.0.35",
+        "@typescript/native": "npm:typescript@^7.0.2",
+        "@vitest/coverage-v8": "5.1.0",
+        "@vitest/eslint-plugin": "1.6.28",
+        "ajv": "8.20.0",
+        "ajv-formats": "3.0.1",
+        "cpx2": "9.0.3",
+        "eslint": "10.15.0",
         "lodash": "4.18.1",
         "nodemon": "3.1.14",
-        "npm-run-all2": "9.0.2",
+        "npm-run-all2": "9.0.4",
         "openapi-types": "12.1.3",
-        "patch-package": "8.0.1",
-        "prettier": "3.9.5",
-        "ts-jest": "29.4.11",
+        "prettier": "3.10.1",
+        "testcontainers": "12.2.1",
         "ts-node": "10.9.2",
-        "typescript": "7.0.2"
+        "typescript": "npm:@typescript/typescript6@6.0.2",
+        "vitest": "5.1.0"
     },
     "engines": {
         "node": ">=24.18.0",

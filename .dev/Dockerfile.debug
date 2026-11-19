@@ -1,4 +1,4 @@
-FROM dhi.io/node:24.12.0-dev@sha256:7aaf36e50a3b73acc6eec2dec8317239769929ddcf6f792c91c2ab79a3a4634d AS builder
+FROM dhi.io/node:26.13.1-dev@sha256:6d3e8e6f76812d4beb7b1ff5887458e67b33c0e82219bff4cc43d97f12e4d777 AS builder
 WORKDIR /usr/app
 
 # Webserver, Debugger

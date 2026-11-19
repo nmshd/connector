@@ -1,13 +1,8 @@
+import type {} from "vitest";
 import { ConnectorHttpResponse, getJSONSchemaDefinition } from "@nmshd/connector-sdk";
-import ajv, { ErrorObject } from "ajv";
-import { matchersWithOptions } from "jest-json-schema";
+import ajv, { ErrorObject, Schema } from "ajv";
 import _ from "lodash";
-
-expect.extend(
-    matchersWithOptions({
-        schemas: [getJSONSchemaDefinition()]
-    })
-);
+import addFormats from "ajv-formats";
 
 export enum ValidationSchema {
     Error = "ConnectorError",
@@ -32,7 +27,20 @@ const schemaDefinition = getJSONSchemaDefinition();
 const ajvInstance = new ajv({ schemas: [schemaDefinition], allowUnionTypes: true });
 type ExtendedError = ErrorObject<string, Record<string, any>, unknown> & { value: any };
 
+const schemaAjv = new ajv({ schemas: [schemaDefinition], allErrors: true, strict: false });
+
+addFormats(schemaAjv);
+
 expect.extend({
+    toMatchSchema(actual: unknown, schema: Schema) {
+        const validate = schemaAjv.compile(schema);
+        const pass = validate(actual);
+        return {
+            pass,
+            message: () =>
+                pass ? "expected value not to match the schema" : `expected value to match the schema, but got the following errors: ${JSON.stringify(validate.errors, null, 2)}`
+        };
+    },
     toBeSuccessful(actual: ConnectorHttpResponse<unknown>, schemaName?: ValidationSchema) {
         if (!(actual instanceof ConnectorHttpResponse)) {
             return { pass: false, message: () => "expected an instance of Result." };
@@ -117,12 +125,13 @@ expect.extend({
     }
 });
 
-declare global {
-    namespace jest {
-        interface Matchers<R> {
-            toBeSuccessful(schema?: ValidationSchema): R;
-            toBeSuccessfulVoidResult(): R;
-            toBeAnError(expectedMessage: string | RegExp, expectedCode: string | RegExp): R;
-        }
+declare module "vitest" {
+    // Vitest requires both type parameters; these matchers do not use the received value type.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    interface Matchers<R, T> {
+        toMatchSchema(schema: Schema): R;
+        toBeSuccessful(schema?: ValidationSchema): R;
+        toBeSuccessfulVoidResult(): R;
+        toBeAnError(expectedMessage: string | RegExp, expectedCode: string | RegExp): R;
     }
 }

@@ -26,8 +26,7 @@
     "files.eol": "\n",
     "todo-tree.filtering.excludeGlobs": ["**/node_modules/**", "**/dist/**", "**/dist-test/**", "**/lib-web/**", "**/*.min.*", "**/*.map"],
     "todo-tree.general.tags": ["TODO:"],
-    "jest.runMode": "on-demand",
-    "jest.nodeEnv": {
+    "vitest.nodeEnv": {
         "DATABASE_CONNECTION_STRING": "mongodb://localhost:27018"
     },
     "typescript.tsdk": "node_modules/typescript/lib"

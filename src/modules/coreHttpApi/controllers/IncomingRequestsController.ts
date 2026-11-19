@@ -1,6 +1,6 @@
 import { ApplicationError } from "@js-soft/ts-utils";
 import { BaseController, Envelope } from "@nmshd/connector-types";
-import { ConsumptionServices } from "@nmshd/runtime";
+import { ConsumptionServices, LocalRequestDTO, RequestValidationResultDTO } from "@nmshd/runtime";
 import { Inject } from "@nmshd/typescript-ioc";
 import { Accept, Context, GET, Path, PathParam, PUT, Security, ServiceContext } from "@nmshd/typescript-rest";
 
@@ -14,7 +14,7 @@ export class IncomingRequestsController extends BaseController {
     @PUT
     @Path("/:id/CanAccept")
     @Accept("application/json")
-    public async canAccept(@PathParam("id") requestId: string, request: any): Promise<Envelope> {
+    public async canAccept(@PathParam("id") requestId: string, request: any): Promise<Envelope<RequestValidationResultDTO>> {
         if (request?.decidedByAutomation === true) {
             throw new ApplicationError("error.connector.incomingRequests.decidedByAutomation", "Decided by automation is not allowed for this endpoint.");
         }
@@ -26,7 +26,7 @@ export class IncomingRequestsController extends BaseController {
     @PUT
     @Path("/:id/Accept")
     @Accept("application/json")
-    public async accept(@PathParam("id") requestId: string, request: any): Promise<Envelope> {
+    public async accept(@PathParam("id") requestId: string, request: any): Promise<Envelope<LocalRequestDTO>> {
         if (request?.decidedByAutomation === true) {
             throw new ApplicationError("error.connector.incomingRequests.decidedByAutomation", "Decided by automation is not allowed for this endpoint.");
         }
@@ -38,7 +38,7 @@ export class IncomingRequestsController extends BaseController {
     @PUT
     @Path("/:id/CanReject")
     @Accept("application/json")
-    public async canReject(@PathParam("id") requestId: string, request: any): Promise<Envelope> {
+    public async canReject(@PathParam("id") requestId: string, request: any): Promise<Envelope<RequestValidationResultDTO>> {
         if (request?.decidedByAutomation === true) {
             throw new ApplicationError("error.connector.incomingRequests.decidedByAutomation", "Decided by automation is not allowed for this endpoint.");
         }
@@ -50,7 +50,7 @@ export class IncomingRequestsController extends BaseController {
     @PUT
     @Path("/:id/Reject")
     @Accept("application/json")
-    public async reject(@PathParam("id") requestId: string, request: any): Promise<Envelope> {
+    public async reject(@PathParam("id") requestId: string, request: any): Promise<Envelope<LocalRequestDTO>> {
         if (request?.decidedByAutomation === true) {
             throw new ApplicationError("error.connector.incomingRequests.decidedByAutomation", "Decided by automation is not allowed for this endpoint.");
         }
@@ -62,14 +62,14 @@ export class IncomingRequestsController extends BaseController {
     @GET
     @Path("/:id")
     @Accept("application/json")
-    public async getRequest(@PathParam("id") id: string): Promise<Envelope> {
+    public async getRequest(@PathParam("id") id: string): Promise<Envelope<LocalRequestDTO>> {
         const result = await this.consumptionServices.incomingRequests.getRequest({ id });
         return this.ok(result);
     }
 
     @GET
     @Accept("application/json")
-    public async getRequests(@Context context: ServiceContext): Promise<Envelope> {
+    public async getRequests(@Context context: ServiceContext): Promise<Envelope<LocalRequestDTO[]>> {
         const result = await this.consumptionServices.incomingRequests.getRequests({ query: context.request.query });
         return this.ok(result);
     }
