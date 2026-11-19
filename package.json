@@ -114,6 +114,7 @@
         "@types/ws": "8.18.2",
         "@types/yamljs": "0.2.34",
         "@types/yargs": "17.0.35",
+        "@typescript/native": "npm:typescript@^7.0.2",
         "@vitest/coverage-v8": "5.1.0",
         "@vitest/eslint-plugin": "1.6.28",
         "ajv": "8.20.0",
@@ -127,7 +128,7 @@
         "prettier": "3.10.1",
         "testcontainers": "12.2.1",
         "ts-node": "10.9.2",
-        "typescript": "6.0.3",
+        "typescript": "npm:@typescript/typescript6@6.0.2",
         "vitest": "5.1.0"
     },
     "engines": {
