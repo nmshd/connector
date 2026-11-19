@@ -29,5 +29,6 @@
     "vitest.nodeEnv": {
         "DATABASE_CONNECTION_STRING": "mongodb://localhost:27018"
     },
-    "typescript.tsdk": "node_modules/@typescript/old/lib"
+    "js/ts.experimental.useTsgo": true,
+    "js/ts.tsdk.path": "./node_modules/@typescript/native"
 }
