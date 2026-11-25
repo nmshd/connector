@@ -28,7 +28,7 @@
         "qrcode": "^1.5.4"
     },
     "devDependencies": {
-        "@js-soft/logging-abstractions": "1.2.23",
+        "@js-soft/logging-abstractions": "1.2.24",
         "@types/express": "5.0.6",
         "@types/luxon": "3.7.6",
         "@types/node": "26.6.6",
@@ -36,7 +36,7 @@
         "typescript": "npm:@typescript/typescript6@6.0.2"
     },
     "peerDependencies": {
-        "@nmshd/runtime": "7.5.21",
+        "@nmshd/runtime": "7.5.22",
         "@js-soft/docdb-access-abstractions": "^1.4.2",
         "@js-soft/ts-utils": "^2.3.6",
         "@nmshd/typescript-rest": "^3.2.3",
